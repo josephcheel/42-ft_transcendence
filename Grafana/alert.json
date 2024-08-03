@@ -1,0 +1,86 @@
+{
+    "id": null,
+    "uid": null,
+    "orgID": 1,
+    "folderUID": "replace",
+    "ruleGroup": "Alerts 1m",
+    "title": "Alerta",
+    "condition": "C",
+    "data": [
+        {
+            "refId": "A",
+            "queryType": "",
+            "relativeTimeRange": {
+                "from": 600,
+                "to": 0
+            },
+            "datasourceUid": "replace",
+            "model": {
+                "disableTextWrap": false,
+                "editorMode": "builder",
+                "expr": "rate(gateway_django_http_requests_latency_seconds_by_view_method_sum[$__rate_interval])",
+                "fullMetaSearch": false,
+                "includeNullMetadata": false,
+                "instant": true,
+                "intervalMs": 1000,
+                "legendFormat": "__auto",
+                "maxDataPoints": 43200,
+                "range": false,
+                "refId": "A",
+                "useBackend": false
+            }
+        },
+        {
+            "refId": "C",
+            "queryType": "",
+            "relativeTimeRange": {
+                "from": 600,
+                "to": 0
+            },
+            "datasourceUid": "__expr__",
+            "model": {
+                "conditions": [
+                    {
+                        "evaluator": {
+                            "params": [
+                                0.00001
+                            ],
+                            "type": "gt"
+                        },
+                        "operator": {
+                            "type": "and"
+                        },
+                        "query": {
+                            "params": [
+                                "C"
+                            ]
+                        },
+                        "reducer": {
+                            "params": [],
+                            "type": "last"
+                        },
+                        "type": "query"
+                    }
+                ],
+                "datasource": {
+                    "type": "__expr__",
+                    "uid": "__expr__"
+                },
+                "expression": "A",
+                "intervalMs": 1000,
+                "maxDataPoints": 43200,
+                "refId": "C",
+                "type": "threshold"
+            }
+        }
+    ],
+    "updated": "2024-08-02T08:10:20Z",
+    "noDataState": "NoData",
+    "execErrState": "Error",
+    "for": "1m",
+    "isPaused": false,
+    "notification_settings": {
+        "receiver": "Transcendence Slack"
+    },
+    "record": null
+}
