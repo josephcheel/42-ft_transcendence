@@ -12,8 +12,6 @@ datasource_id=$(curl -s -u "admin:newadmin" -H 'Content-Type: application/json' 
 
 
 # Contact point creation
-# URL para el hook no puede ser subido ya que github lo detecta como una informacion importante y lo borra
-# cambiar a uso de .env 
 curl -s -X POST \
   -H "Content-Type: application/json" \
   -u "admin:newadmin" \
@@ -21,7 +19,7 @@ curl -s -X POST \
     "name": "Transcendence Slack",
     "type": "slack",
     "settings": {
-      "url": "",
+      "url": "https://hooks.slack.com/services/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",
       "recipient": "#alerts",
       "username": "Grafana Alert",
       "icon_emoji": ":grafana:"

@@ -5,7 +5,7 @@ WORKDIR /app
 COPY requirements.txt requirements.txt
 RUN pip install -r requirements.txt
 
-COPY . .
+#ensure we still own the files
+RUN chown -R 1000:1000 /app
 
-
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+CMD ["/start.sh"]

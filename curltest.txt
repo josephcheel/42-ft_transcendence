@@ -1,0 +1,6 @@
+curl -X POST http://localhost:8000/create_user/      -H "Content-Type: application/json"      -d '{"name": "testuser1", "password": "testpassword"}'
+
+
+curl -X POST http://localhost:8002/chat/create_conversation/ -H "Content-Type: application/json" -d '{"participant_ids": [1, 2]}'
+
+curl -X POST http://localhost:8000/send_message/      -H "Content-Type: application/json"      -d '{"conversation_id": 2, "content": "Hello, world!"}' -v

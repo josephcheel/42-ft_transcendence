@@ -18,6 +18,13 @@ services:
       - postgres-data:/var/lib/postgresql/data
     env_file:
       - .env
+    healthcheck:
+      # I need to check how to run this using .env
+      test: ["CMD-SHELL", "pg_isready -d transcendence -U transcendence"]
+      interval: 10s
+      timeout: 60s
+      retries: 5
+      start_period: 80s 
 
   gateway:
     container_name: gateway
@@ -26,38 +33,62 @@ services:
       - "8000:8000"
     volumes:
       - ${LOGSTASH_FOLDER}${GATEWAY_LOG}:/var/log/${GATEWAY_LOG}
+      - ./gateway/:/app
+      - ${DJANGO_SCRIPT}:/start.sh
     env_file:
       - .env
 
   usermanagement:
+    depends_on:
+      db:
+        condition: service_healthy
     container_name: usermanagement
     build: ./usermanagement
     volumes:
       - ${LOGSTASH_FOLDER}${USER_LOG}:/var/log/${USER_LOG}
+      - ${DJANGO_SCRIPT}:/start.sh
+      - ./usermanagement:/app
+    environment:
+      - APP=users
     env_file:
       - .env
 
   chat:
+    depends_on:
+      db:
+        condition: service_healthy  
     container_name: chat
     build: ./chat
     volumes:
       - ${LOGSTASH_FOLDER}${CHAT_LOG}:/var/log/${CHAT_LOG}
+      - ${DJANGO_SCRIPT}:/start.sh
+      - ./chat:/app
     env_file:
       - .env
 
   gamestats:
+    depends_on:
+      db:
+        condition: service_healthy
     container_name: gamestats
     build: ./gamestats
     volumes:
       - ${LOGSTASH_FOLDER}${GAMESTATS_LOG}:/var/log/${GAMESTATS_LOG}
+      - ${DJANGO_SCRIPT}:/start.sh
+      - ./gamestats:/app
     env_file:
       - .env
 
   twofactor:
+    depends_on:
+      db:
+        condition: service_healthy
     container_name: twofactor
     build: ./twofactor
     volumes:
       - ${LOGSTASH_FOLDER}${TWOFACTOR_LOG}:/var/log/${TWOFACTOR_LOG}
+      - ${DJANGO_SCRIPT}:/start.sh
+      - ./twofactor:/app
     env_file:
       - .env
 
