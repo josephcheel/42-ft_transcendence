@@ -46,6 +46,7 @@ services:
     volumes:
       - ${LOGSTASH_FOLDER}${USER_LOG}:/var/log/${USER_LOG}
       - ${DJANGO_SCRIPT}:/start.sh
+      - ./usermanagement:/app
     environment:
       - APP=users
     env_file:

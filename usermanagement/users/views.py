@@ -9,11 +9,18 @@ import json
 def create_user(request):
     if request.method == 'POST':
         try:
-            data = json.loads(request.body)
-            name = data.get('name')
+            data = json.loads(request.body) 
+            username = data.get('username')
             password = data.get('password')
-            user = User.objects.create(name=name, password=password)
-            return JsonResponse({'id': user.id, 'name': user.name, 'password': user.password}, status=201)
+            if not username or not password:
+                return JsonResponse({'error': 'Empty username or password'}, status=400)
+            try:
+                user = User.objects.get(username=username)
+                return JsonResponse({'error': "User already Exists"}, status=409)
+            except User.DoesNotExist:
+                user = User(username=username)
+                user.save_password(password)
+                return JsonResponse({'id': user.id, 'name': user.username}, status=201)
         except:
             return JsonResponse({'error': 'Error processing request'}, status=500)
     return JsonResponse({'error': 'Invalid request method'}, status=400)

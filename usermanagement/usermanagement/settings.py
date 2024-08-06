@@ -74,7 +74,7 @@ INSTALLED_APPS = [
     'users',
 
 ]
-
+AUTH_USER_MODEL="users.User"
 MIDDLEWARE = [
     'django_prometheus.middleware.PrometheusBeforeMiddleware',
 
