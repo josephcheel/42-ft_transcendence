@@ -15,17 +15,20 @@ datasource_id=$(curl -s -u "admin:newadmin" -H 'Content-Type: application/json' 
 curl -s -X POST \
   -H "Content-Type: application/json" \
   -u "admin:newadmin" \
-  -d '{
-    "name": "Transcendence Slack",
-    "type": "slack",
-    "settings": {
-      "url": "https://hooks.slack.com/services/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",
-      "recipient": "#alerts",
-      "username": "Grafana Alert",
-      "icon_emoji": ":grafana:"
-    }
-  }' \
-  http://grafana:3000/api/v1/provisioning/contact-points
+  -d @- \
+  http://grafana:3000/api/v1/provisioning/contact-points <<EOF
+{
+  "name": "Transcendence Slack",
+  "type": "slack",
+  "settings": {
+    "url": "${SLACK_HOOK}",
+    "recipient": "#alerts",
+    "username": "Grafana Alert",
+    "icon_emoji": ":grafana:"
+  }
+}
+EOF
+
 
 
 # create folder

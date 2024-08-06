@@ -38,7 +38,7 @@ ALLOWED_HOSTS = ['localhost', 'gateway', 'usermanagement']
 
 # Application definition
 
-"""LOGGING = {
+LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
     'formatters': {
@@ -64,7 +64,7 @@ ALLOWED_HOSTS = ['localhost', 'gateway', 'usermanagement']
     },
 }
 
-logging.config.dictConfig(LOGGING)"""
+logging.config.dictConfig(LOGGING)
 
 # Application definition
 INSTALLED_APPS = [
