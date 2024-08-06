@@ -36,6 +36,8 @@ services:
       - ${DJANGO_SCRIPT}:/start.sh
     env_file:
       - .env
+    environment:
+      - DEBUG=${DEBUG}
 
   usermanagement:
     depends_on:
@@ -49,6 +51,7 @@ services:
       - ./usermanagement:/app
     environment:
       - APP=users
+      - DEBUG=${DEBUG}
     env_file:
       - .env
 
@@ -63,6 +66,9 @@ services:
       - ${DJANGO_SCRIPT}:/start.sh
     env_file:
       - .env
+    environment:
+      - APP=chat
+      - DEBUG=${DEBUG}
 
   gamestats:
     depends_on:
@@ -75,6 +81,9 @@ services:
       - ${DJANGO_SCRIPT}:/start.sh
     env_file:
       - .env
+    environment:
+      - APP=gamestats
+      - DEBUG=${DEBUG}
 
   twofactor:
     depends_on:
@@ -87,6 +96,9 @@ services:
       - ${DJANGO_SCRIPT}:/start.sh
     env_file:
       - .env
+    environment:
+      - APP=twofactor
+      - DEBUG=${DEBUG}
 
 
   prometheus:
