@@ -30,7 +30,7 @@ DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 SECRET_KEY = 'django-insecure-+r@zs#c&itagtc*ns-n)1bj5=w1!u53z3@lp%6cul0_2n70ew9'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-ALLOWED_HOSTS = ['localhost', 'chat']
+ALLOWED_HOSTS = ['localhost', 'chat', 'chatapp']
 
 
 # Application definition
@@ -72,7 +72,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django_prometheus',
-
+    'chatapp',
 ]
 
 MIDDLEWARE = [

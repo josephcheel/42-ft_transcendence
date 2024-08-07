@@ -7,6 +7,19 @@ networks:
 
 services:
 
+  migrations:
+    container_name: migrations
+    build: ./migrator
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      - DEBUG=${DEBUG}
+    env_file:
+      - .env
+    volumes:
+      - ./chat:/app/chat
+      - ./usermanagement:/app/usermanagement
   db:
     container_name: db
     image: postgres:13
@@ -41,8 +54,7 @@ services:
 
   usermanagement:
     depends_on:
-      db:
-        condition: service_healthy
+      - migrations
     container_name: usermanagement
     build: ./usermanagement
     volumes:
@@ -57,17 +69,17 @@ services:
 
   chat:
     depends_on:
-      db:
-        condition: service_healthy  
+      - migrations
     container_name: chat
     build: ./chat
     volumes:
       - ${LOGSTASH_FOLDER}${CHAT_LOG}:/var/log/${CHAT_LOG}
       - ${DJANGO_SCRIPT}:/start.sh
+      - ./chat:/app
     env_file:
       - .env
     environment:
-      - APP=chat
+      - APP=chatapp
       - DEBUG=${DEBUG}
 
   gamestats:
