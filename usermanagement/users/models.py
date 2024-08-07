@@ -7,4 +7,3 @@ class User(AbstractUser):
     def save_password(self, password):
         self.set_password(password)
         self.save()
-    pass
