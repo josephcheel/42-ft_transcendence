@@ -24,6 +24,7 @@ def create_user(request):
                 return JsonResponse({'status': 'error', 'message':'Invalid Json body', 'data' : None}, status=400)
             username = data.get('username')
             password = data.get('password')
+            email = data.get('password')
             if not username or not password:
                 return JsonResponse({'status': 'error', 'message': 'Empty username or password', 'data' : None}, status=400)
             try:
@@ -46,3 +47,18 @@ def create_user(request):
 def list_users(request):
     users = User.objects.all().values('id', 'name', 'password')
     return JsonResponse(list(users), safe=False)
+
+@csrf_exempt
+def login(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            name = data.get('name')
+            password = data.get('password')
+            user = User.objects.get(name=name)
+            if user.password != password:
+                return JsonResponse({'error': 'Invalid password'}, status=401)
+            return JsonResponse({'id': user.id, 'name': user.name, 'password': user.password}, status=201)
+        except:
+            return JsonResponse({'error': 'Error processing request'}, status=500)
+    return JsonResponse({'error': 'Invalid request method'}, status=400)
