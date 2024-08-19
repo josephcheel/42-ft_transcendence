@@ -12,15 +12,20 @@ logger.setLevel(logging.DEBUG)
 @csrf_exempt
 def create_user(request):
     try:
-        data = json.loads(request.body)
+        try:
+            data = json.loads(request.body) 
+        except json.JSONDecodeError:
+                return JsonResponse({'status': 'error', 'message':'Invalid Json body', 'data' : None}, status=400)
+            
         response = requests.post("http://usermanagement:8000/users/create_user/", json=data)
         try:
             response_data = response.json()
+            return JsonResponse(response_data, status=response.status_code)
         except ValueError:
-            return JsonResponse({"error": "Invalid response from usermanagement"}, status=500)
-        return JsonResponse(response_data, status=response.status_code)
+            # This shouldn't happen ever, this is just in case I don't return I forget to return a json response
+            return JsonResponse({{'status' : 'error', 'data' : None, 'message' : '"Invalid response from usermanagement"'}}, status=500)
     except :
-        return JsonResponse({"error": "internal"}, status=500)
+        return JsonResponse({{'status' : 'error', 'data' : None, 'message' : 'Internal error'}}, status=500)
  
 
 @csrf_exempt

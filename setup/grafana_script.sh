@@ -12,24 +12,30 @@ datasource_id=$(curl -s -u "admin:newadmin" -H 'Content-Type: application/json' 
 
 
 # Contact point creation
+
+if [ $(curl -s -X GET -u "admin:newadmin" http://grafana:3000/api/v1/provisioning/contact-points | grep -q "Transcendence Slack"; echo $?) -eq 1 ]; then
+echo "Creating contact point"
 curl -s -X POST \
   -H "Content-Type: application/json" \
   -u "admin:newadmin" \
-  -d '{
-    "name": "Transcendence Slack",
-    "type": "slack",
-    "settings": {
-      "url": "https://hooks.slack.com/services/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",
-      "recipient": "#alerts",
-      "username": "Grafana Alert",
-      "icon_emoji": ":grafana:"
-    }
-  }' \
-  http://grafana:3000/api/v1/provisioning/contact-points
+  -d @- \
+  http://grafana:3000/api/v1/provisioning/contact-points <<EOF
+{
+  "name": "Transcendence Slack",
+  "type": "slack",
+  "settings": {
+    "url": "${SLACK_HOOK}",
+    "recipient": "#alerts",
+    "username": "Grafana Alert",
+    "icon_emoji": ":grafana:"
+  }
+}
+EOF
+fi
 
 
 # create folder
-folder_id=$(curl -X POST    -H "Content-Type: application/json"   -u "admin:newadmin"   -d '{
+folder_id=$(curl -s -X POST    -H "Content-Type: application/json"   -u "admin:newadmin"   -d '{
   "uid": null,
   "title": "Transcendence",
   "parentUid": null
@@ -47,8 +53,8 @@ if [[ -n "$DATASOURCE_ID" && $(grep -q '"uid": "replace"' /gateway_dashboard.jso
     curl -s -H "Content-Type: application/json" -u "admin:newadmin" grafana:3000/api/dashboards/db -d @/gateway_dashboard.json 
 fi
 
-
-curl -X POST \
+if [ -n "$FOLDER_ID" ] && [ -n "$DATASOURCE_ID" ]; then
+curl -s -X POST \
   http://grafana:3000/api/v1/provisioning/alert-rules \
   -H "Content-Type: application/json" \
   -u "admin:newadmin" \
@@ -141,3 +147,4 @@ curl -X POST \
 }
 EOF
 )"
+fi

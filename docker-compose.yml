@@ -7,6 +7,19 @@ networks:
 
 services:
 
+  migrations:
+    container_name: migrations
+    build: ./migrator
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      - DEBUG=${DEBUG}
+    env_file:
+      - .env
+    volumes:
+      - ./chat:/app/chat
+      - ./usermanagement:/app/usermanagement
   db:
     container_name: db
     image: postgres:13
@@ -33,15 +46,15 @@ services:
       - "8000:8000"
     volumes:
       - ${LOGSTASH_FOLDER}${GATEWAY_LOG}:/var/log/${GATEWAY_LOG}
-      - ./gateway/:/app
       - ${DJANGO_SCRIPT}:/start.sh
     env_file:
       - .env
+    environment:
+      - DEBUG=${DEBUG}
 
   usermanagement:
     depends_on:
-      db:
-        condition: service_healthy
+      - migrations
     container_name: usermanagement
     build: ./usermanagement
     volumes:
@@ -50,13 +63,13 @@ services:
       - ./usermanagement:/app
     environment:
       - APP=users
+      - DEBUG=${DEBUG}
     env_file:
       - .env
 
   chat:
     depends_on:
-      db:
-        condition: service_healthy  
+      - migrations
     container_name: chat
     build: ./chat
     volumes:
@@ -65,6 +78,9 @@ services:
       - ./chat:/app
     env_file:
       - .env
+    environment:
+      - APP=chatapp
+      - DEBUG=${DEBUG}
 
   gamestats:
     depends_on:
@@ -75,9 +91,11 @@ services:
     volumes:
       - ${LOGSTASH_FOLDER}${GAMESTATS_LOG}:/var/log/${GAMESTATS_LOG}
       - ${DJANGO_SCRIPT}:/start.sh
-      - ./gamestats:/app
     env_file:
       - .env
+    environment:
+      - APP=gamestats
+      - DEBUG=${DEBUG}
 
   twofactor:
     depends_on:
@@ -88,9 +106,11 @@ services:
     volumes:
       - ${LOGSTASH_FOLDER}${TWOFACTOR_LOG}:/var/log/${TWOFACTOR_LOG}
       - ${DJANGO_SCRIPT}:/start.sh
-      - ./twofactor:/app
     env_file:
       - .env
+    environment:
+      - APP=twofactor
+      - DEBUG=${DEBUG}
 
 
   prometheus:
@@ -122,6 +142,8 @@ services:
       - ./ELK/gateway_dashboard.ndjson:/gateway_dashboard.ndjson
       - ./Grafana/gateway_dashboard.json:/gateway_dashboard.json
     user: "0"
+    environment:
+      - SLACK_HOOK=${SLACK_HOOK}
     env_file:
       - .env
     command: >

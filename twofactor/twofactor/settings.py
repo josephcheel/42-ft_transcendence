@@ -19,6 +19,8 @@ import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 LOG_FILE= os.environ.get("TWOFACTOR_LOG", "twofactor.log")
+DEBUG = os.environ.get('DEBUG', 'True') == 'True'
+
 
 
 # Quick-start development settings - unsuitable for production
@@ -28,40 +30,37 @@ LOG_FILE= os.environ.get("TWOFACTOR_LOG", "twofactor.log")
 SECRET_KEY = 'django-insecure-pqcs)1koomb_@7ksc=1tb&ipc&_%*i7n^l13a!f-yq7z!z31dx'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
 ALLOWED_HOSTS = ['localhost', 'twofactor']
 
 
 # Application definition
-
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'formatters': {
-        'json': {
-            '()': jsonlogger.JsonFormatter,
-            'format': '%(asctime)s %(levelname)s %(name)s %(message)s',
+if not DEBUG:
+    LOGGING = {
+        'version': 1,
+        'disable_existing_loggers': False,
+        'formatters': {
+            'json': {
+                '()': jsonlogger.JsonFormatter,
+                'format': '%(asctime)s %(levelname)s %(name)s %(message)s',
+            },
         },
-    },
-    'handlers': {
-        'file': {
-            'level': 'DEBUG',
-            'class': 'logging.FileHandler',
-            'filename': f'/var/log/{LOG_FILE}',
-            'formatter': 'json',
+        'handlers': {
+            'file': {
+                'level': 'DEBUG',
+                'class': 'logging.FileHandler',
+                'filename': f'/var/log/{LOG_FILE}',
+                'formatter': 'json',
+            },
         },
-    },
-    'loggers': {
-        'django': {
-            'handlers': ['file'],
-            'level': 'DEBUG',
-            'propagate': True,
+        'loggers': {
+            'django': {
+                'handlers': ['file'],
+                'level': 'DEBUG',
+                'propagate': True,
+            },
         },
-    },
-}
-
-logging.config.dictConfig(LOGGING)
+    }
+    logging.config.dictConfig(LOGGING)
 
 # Application definition
 INSTALLED_APPS = [
@@ -126,16 +125,25 @@ WSGI_APPLICATION = 'twofactor.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ.get('DB_NAME'),
-        'USER': os.environ.get('DB_USER'),
-        'PASSWORD': os.environ.get('DB_PASSWORD'),
-        'HOST': os.environ.get('DB_HOST'),
-        'PORT': os.environ.get('DB_PORT', 5432),
+
+if DEBUG:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': os.environ.get('DB_NAME'),
+            'USER': os.environ.get('DB_USER'),
+            'PASSWORD': os.environ.get('DB_PASSWORD'),
+            'HOST': os.environ.get('DB_HOST'),
+            'PORT': os.environ.get('DB_PORT', 5432),
+        }
+    }
 
 
 # Password validation

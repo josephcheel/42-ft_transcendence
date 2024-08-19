@@ -9,7 +9,7 @@ LOG_FILES =  $(addprefix ${LOGSTASH_FOLDER}, ${GATEWAY_LOG} ${USER_LOG} ${CHAT_L
 all: build 
 
 build: 	| volumes
-	$(COMPOSE) -f $(DOCKER_COMPOSE_FILE) up --build
+	$(COMPOSE) -f $(DOCKER_COMPOSE_FILE) up --build -d
 
 down:
 	$(COMPOSE) -f $(DOCKER_COMPOSE_FILE) down
@@ -28,6 +28,9 @@ start :
 
 rebuild:
 	@$(COMPOSE) -f $(DOCKER_COMPOSE_FILE) down --volumes
+	@sudo rm -rf $(VOLUMES)
+	@mkdir -p $(VOLUMES)
+	@touch $(LOG_FILES)
 	@$(COMPOSE) -f $(DOCKER_COMPOSE_FILE) up --build -d
 
 
