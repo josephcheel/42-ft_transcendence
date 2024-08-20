@@ -18,7 +18,6 @@ services:
     env_file:
       - .env
     volumes:
-      - ./chat:/app/chat
       - ./usermanagement:/app/usermanagement
   db:
     container_name: db

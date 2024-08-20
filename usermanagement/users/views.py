@@ -2,8 +2,9 @@ from django.shortcuts import render
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from .models import User
-from django.db import DatabaseError, OperationalError
+from django.db import OperationalError
 from django.conf import settings
+from django.contrib.auth import authenticate, login
 
 import json
 import logging
@@ -19,6 +20,21 @@ def custom_404_view(request, exception=None):
         'data': None
     }
     return JsonResponse(response_data, status=404)
+
+@csrf_exempt
+def login_user(request):
+    if request.method == "POST":
+        try:
+            data = json.loads(request.body) 
+        except json.JSONDecodeError:
+            return JsonResponse({'status': 'error', 'message':'Invalid Json body', 'data' : None}, status=400)
+        user = authenticate(request, username=data.get('username'), password=data.get('password'))
+        if user is not None:
+            login(request, user)
+            return JsonResponse({'status' : 'success',  'message': 'user is loged in', 'data' : None}, status=200)
+        else:
+            return JsonResponse({'status' : 'error',  'message': 'Invalid credentials', 'data' : None}, status=401)
+    return JsonResponse({'status' : 'error',  'message': 'Invalid request method', 'data' : None}, status=400)
 
 
 @csrf_exempt
