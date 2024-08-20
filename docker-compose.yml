@@ -19,6 +19,7 @@ services:
       - .env
     volumes:
       - ./usermanagement:/app/usermanagement
+      - ./chat:/app/chat
   db:
     container_name: db
     image: postgres:13
@@ -77,6 +78,7 @@ services:
       - ${LOGSTASH_FOLDER}${CHAT_LOG}:/var/log/${CHAT_LOG}
       - ${DJANGO_SCRIPT}:/start.sh
       - ./chat:/app
+
     env_file:
       - .env
     environment:

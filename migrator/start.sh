@@ -3,6 +3,10 @@
 set -e
 
 # Loop through each folder in the /app directory
+
+python usermanagement/manage.py makemigrations users
+python usermanagement/manage.py migrate
+
 for dir in /app/*/
 do
     # Check if manage.py exists in the directory
@@ -20,11 +24,12 @@ do
             if [ "$app_name" != "$project_name" ]; then
                 echo "Running makemigrations and migrate for app: $app_name"
                 python manage.py makemigrations "$app_name"
+                python manage.py migrate "$app_name"
+
             else
                 echo "Skipping app: $app_name as it matches the project directory name"
             fi
         done
-        python manage.py migrate
 
     else
         echo "No manage.py found in $dir, skipping..."

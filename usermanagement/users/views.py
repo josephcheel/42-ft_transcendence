@@ -22,6 +22,19 @@ def custom_404_view(request, exception=None):
     return JsonResponse(response_data, status=404)
 
 @csrf_exempt
+def is_logged_in(request):
+    if request.method == "POST":
+        try:
+            data = json.loads(request.body) 
+        except json.JSONDecodeError:
+            return JsonResponse({'status': 'error', 'message':'Invalid Json body', 'data' : None}, status=400)
+        try:
+            user = User.objects.get(username=data.get('username'))
+            return JsonResponse({'status': 'success', 'message':'User is logged in', 'data' : None}, status=200)
+        except User.DoesNotExist:
+            return JsonResponse({'status': 'error', 'message':'User is not logged in', 'data' : None}, status=404)
+
+@csrf_exempt
 def login_user(request):
     if request.method == "POST":
         try:
