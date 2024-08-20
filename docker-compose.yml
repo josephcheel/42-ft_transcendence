@@ -47,6 +47,8 @@ services:
     volumes:
       - ${LOGSTASH_FOLDER}${GATEWAY_LOG}:/var/log/${GATEWAY_LOG}
       - ${DJANGO_SCRIPT}:/start.sh
+      - ./gateway:/app
+
     env_file:
       - .env
     environment:

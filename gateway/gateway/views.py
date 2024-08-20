@@ -3,29 +3,34 @@ from django.http import JsonResponse, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 import logging
 import json
-
+from django.conf import settings 
 
 logger = logging.getLogger('django')
 logger.setLevel(logging.DEBUG)
 
 
 @csrf_exempt
-def create_user(request):
+def user(request, subpath):
+    response = None
     try:
-        try:
-            data = json.loads(request.body) 
-        except json.JSONDecodeError:
-                return JsonResponse({'status': 'error', 'message':'Invalid Json body', 'data' : None}, status=400)
-            
-        response = requests.post("http://usermanagement:8000/users/create_user/", json=data)
+        if request.method == "POST": 
+            try:
+                data = json.loads(request.body) 
+            except json.JSONDecodeError:
+                    return JsonResponse({'status': 'error', 'message':'Invalid Json body', 'data' : None}, status=400)
+            response = requests.post(f'http://usermanagement:8000/users/{subpath}/', json=data)
+        elif request.method == "GET":
+            response = requests.get(f'http://usermanagement:8000/users/{subpath}')
         try:
             response_data = response.json()
             return JsonResponse(response_data, status=response.status_code)
         except ValueError:
-            # This shouldn't happen ever, this is just in case I don't return I forget to return a json response
-            return JsonResponse({{'status' : 'error', 'data' : None, 'message' : '"Invalid response from usermanagement"'}}, status=500)
-    except :
-        return JsonResponse({{'status' : 'error', 'data' : None, 'message' : 'Internal error'}}, status=500)
+            # DJANGO Returns HTMLS if in DEBUG Mode, So I am just returning the HTML as DATA
+            if settings.DEBUG:
+                return HttpResponse(response.text, status=response.status_code, content_type='text/html')
+            return JsonResponse({'status' : 'error', 'data' : None, 'message' : 'Internal error B'}, status=500)
+    except:
+        return JsonResponse({'status' : 'error', 'data' : None, 'message' : 'Internal error C'}, status=500)
  
 
 @csrf_exempt
