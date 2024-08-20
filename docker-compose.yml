@@ -82,19 +82,19 @@ services:
       - APP=chatapp
       - DEBUG=${DEBUG}
 
-  gamestats:
+  matches:
     depends_on:
       db:
         condition: service_healthy
-    container_name: gamestats
-    build: ./gamestats
+    container_name: matches
+    build: ./matches
     volumes:
-      - ${LOGSTASH_FOLDER}${GAMESTATS_LOG}:/var/log/${GAMESTATS_LOG}
+      - ${LOGSTASH_FOLDER}${MATCHES_LOG}:/var/log/${MATCHES_LOG}
       - ${DJANGO_SCRIPT}:/start.sh
     env_file:
       - .env
     environment:
-      - APP=gamestats
+      - APP=matches
       - DEBUG=${DEBUG}
 
   twofactor:
