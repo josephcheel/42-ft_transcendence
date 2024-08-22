@@ -3,7 +3,7 @@ from django.urls import reverse
 from .views import create_user
 import json
 
-class UserModelTests(TestCase):
+class usermodelTests(TestCase):
 
     def setUp(self):
         self.client = Client()

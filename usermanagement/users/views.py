@@ -1,13 +1,16 @@
-from django.shortcuts import render
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.db import OperationalError
 from django.conf import settings
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, get_user_model
 
-if not settings.DEBUG:
-    from UserModel.models import User
+#If testing we dont have usermodel.User so we want to use default
+try:
+    from usermodel.models import User
+except:
+    pass
 
+User = get_user_model()
 
 import json
 import logging
@@ -70,7 +73,8 @@ def create_user(request):
         except User.DoesNotExist:
             user = User(username=username)
             try:
-                user.save_password(password)
+                user.set_password(password)
+                user.save()
             except OperationalError:
                 return JsonResponse({'status' : 'error', 'data' : None, 'message' : 'Internal error'}, status=500)
             return JsonResponse({'status' : 'success', 'data' : {'id': user.id, 'username': user.username}, 'message' : 'User created successfully'}, status=201)

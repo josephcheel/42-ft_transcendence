@@ -1,9 +1,9 @@
 from django.test import TestCase, Client
 from django.urls import reverse
-from .views import create_user
+from .views import propose_match
 import json
 
-class UserModelTests(TestCase):
+class usermodelTests(TestCase):
 
     def setUp(self):
         self.client = Client()
@@ -14,3 +14,5 @@ class UserModelTests(TestCase):
             'message': None,
             'data': None
         }
+    def test_propose_match(self):
+        

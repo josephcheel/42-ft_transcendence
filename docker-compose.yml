@@ -18,7 +18,7 @@ services:
     env_file:
       - .env
     volumes:
-      - ./UserModel:/app/usermanagement/UserModel
+      - ./usermodel:/app/usermanagement/usermodel
       - ./usermanagement:/app/usermanagement
       - ./matches:/app/matches
   db:
@@ -64,7 +64,7 @@ services:
       - ${LOGSTASH_FOLDER}${USER_LOG}:/var/log/${USER_LOG}
       - ${DJANGO_SCRIPT}:/start.sh
       - ./usermanagement:/app
-      - ./UserModel:/app/UserModel
+      - ./usermodel:/app/usermodel
     environment:
       - APP=users
       - DEBUG=${DEBUG}
@@ -97,7 +97,7 @@ services:
       - ${LOGSTASH_FOLDER}${MATCHES_LOG}:/var/log/${MATCHES_LOG}
       - ${DJANGO_SCRIPT}:/start.sh
       - ./matches:/app
-      - ./UserModel:/app/UserModel
+      - ./usermodel:/app/usermodel
     env_file:
       - .env
     environment:

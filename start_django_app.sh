@@ -3,7 +3,7 @@
 
 for dir in /app/*/
 do
-    if [ "$dir" == "UserModel/" ]; then 
+    if [ "$dir" == "usermodel/" ]; then 
         echo "Equal"
         continue 
     fi

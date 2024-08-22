@@ -75,10 +75,10 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django_prometheus',
     'matchapp',
-    'UserModel'
+    'usermodel'
 ]
 if not DEBUG:
-    AUTH_USER_MODEL="UserModel.User"
+    AUTH_USER_MODEL="usermodel.User"
     
 MIDDLEWARE = [
     'django_prometheus.middleware.PrometheusBeforeMiddleware',

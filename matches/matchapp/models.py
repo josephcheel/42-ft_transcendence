@@ -5,4 +5,4 @@ from django.db import models
 
 class Invitation(models.Model):
     start_time = models.TimeField()
-    player_id = models.ForeignKey("UserModel.User",on_delete=models.CASCADE)
+    player_id = models.ForeignKey("usermodel.User",on_delete=models.CASCADE)
