@@ -22,6 +22,8 @@ LOG_FILE= os.environ.get("MATCHES_LOG", "matches.log")
 DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 
 
+
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
@@ -72,9 +74,12 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django_prometheus',
-
+    'matchapp',
+    'UserModel'
 ]
-
+if not DEBUG:
+    AUTH_USER_MODEL="UserModel.User"
+    
 MIDDLEWARE = [
     'django_prometheus.middleware.PrometheusBeforeMiddleware',
 

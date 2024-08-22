@@ -73,9 +73,12 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django_prometheus',
     'users',
-
+    'UserModel'
 ]
-AUTH_USER_MODEL="users.User"
+
+if not DEBUG:
+    AUTH_USER_MODEL="UserModel.User"
+
 MIDDLEWARE = [
     'django_prometheus.middleware.PrometheusBeforeMiddleware',
 

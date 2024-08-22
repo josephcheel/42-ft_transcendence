@@ -1,10 +1,13 @@
 from django.shortcuts import render
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from .models import User
 from django.db import OperationalError
 from django.conf import settings
 from django.contrib.auth import authenticate, login
+
+if not settings.DEBUG:
+    from UserModel.models import User
+
 
 import json
 import logging

@@ -18,8 +18,9 @@ services:
     env_file:
       - .env
     volumes:
+      - ./UserModel:/app/usermanagement/UserModel
       - ./usermanagement:/app/usermanagement
-      - ./chat:/app/chat
+      - ./matches:/app/matches
   db:
     container_name: db
     image: postgres:13
@@ -63,6 +64,7 @@ services:
       - ${LOGSTASH_FOLDER}${USER_LOG}:/var/log/${USER_LOG}
       - ${DJANGO_SCRIPT}:/start.sh
       - ./usermanagement:/app
+      - ./UserModel:/app/UserModel
     environment:
       - APP=users
       - DEBUG=${DEBUG}
@@ -94,6 +96,8 @@ services:
     volumes:
       - ${LOGSTASH_FOLDER}${MATCHES_LOG}:/var/log/${MATCHES_LOG}
       - ${DJANGO_SCRIPT}:/start.sh
+      - ./matches:/app
+      - ./UserModel:/app/UserModel
     env_file:
       - .env
     environment:
