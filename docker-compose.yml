@@ -23,6 +23,7 @@ services:
       - ./matches:/app/matches
   db:
     container_name: db
+    restart: always
     image: postgres:13
     environment:
       POSTGRES_DB: transcendence
@@ -41,6 +42,7 @@ services:
       start_period: 80s 
 
   gateway:
+    restart: always
     container_name: gateway
     build: ./gateway
     ports:
@@ -56,6 +58,7 @@ services:
       - DEBUG=${DEBUG}
 
   usermanagement:
+    restart: always
     depends_on:
       - migrations
     container_name: usermanagement
@@ -72,6 +75,8 @@ services:
       - .env
 
   chat:
+    restart: always
+
     depends_on:
       - migrations
     container_name: chat
@@ -88,6 +93,8 @@ services:
       - DEBUG=${DEBUG}
 
   matches:
+    restart: always
+
     depends_on:
       db:
         condition: service_healthy
@@ -105,6 +112,8 @@ services:
       - DEBUG=${DEBUG}
 
   twofactor:
+    restart: always
+
     depends_on:
       db:
         condition: service_healthy
@@ -121,6 +130,8 @@ services:
 
 
   prometheus:
+    restart: always
+
     image: prom/prometheus:v2.53.1
     container_name: prometheus
     command:
@@ -129,6 +140,8 @@ services:
       - ./Prometheus/prometheus.yaml:/etc/prometheus/prometheus.yaml:ro
       - prometheus-data:/prometheus
   grafana:
+    restart: always
+
     image: grafana/grafana:11.1.1-ubuntu
     container_name: grafana
     ports:
@@ -162,6 +175,8 @@ services:
       retries: 120
 
   es01:
+    restart: always
+
     depends_on:
       setup:
         condition: service_healthy
@@ -205,6 +220,8 @@ services:
       retries: 120
 
   logstash:
+    restart: always
+
     depends_on:
       es01:
         condition: service_healthy
@@ -229,6 +246,8 @@ services:
       - .env
 
   kibana:
+    restart: always
+
     depends_on:
       es01:
         condition: service_healthy

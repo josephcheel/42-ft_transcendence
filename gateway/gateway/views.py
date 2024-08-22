@@ -8,6 +8,12 @@ from django.conf import settings
 logger = logging.getLogger('django')
 logger.setLevel(logging.DEBUG)
 
+@csrf_exempt
+def match(request, subpath):
+    data = json.loads(request.body) 
+    response = requests.post(f'http://matches:8000/match/{subpath}/', json=data)
+    return JsonResponse(response.json(), status=response.status_code)
+
 
 @csrf_exempt
 def user(request, subpath):
