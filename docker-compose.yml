@@ -69,7 +69,6 @@ services:
       - ./usermanagement:/app
       - ./usermodel:/app/usermodel
     environment:
-      - APP=users
       - DEBUG=${DEBUG}
     env_file:
       - .env

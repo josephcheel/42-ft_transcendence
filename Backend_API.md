@@ -1,4 +1,5 @@
 # Table of contents
+## [User](#User)
 [create_user/](#create_user/)
 
 
@@ -12,8 +13,11 @@ json response format:
     'data' : None / 'Data'
 
 }
+## User
 
-## create_user/
+Uses user/[subpath]
+
+### create_user/
 
 Creates User if not in the database.
 

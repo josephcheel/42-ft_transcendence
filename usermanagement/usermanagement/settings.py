@@ -30,7 +30,7 @@ SECRET_KEY = 'django-insecure-1vc7k2#w%hp*8k_lb5^(zsxuqnuy&^&cp)hwxk@skwg3j#-n!4
 
 # SECURITY WARNING: don't run with debug turned on in production!
 
-ALLOWED_HOSTS = ['localhost', 'usermanagement', 'users']
+ALLOWED_HOSTS = ['localhost', 'usermanagement', 'user']
 
 
 # Application definition
@@ -72,7 +72,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django_prometheus',
-    'users',
+    'user',
     'usermodel'
 ]
 
