@@ -20,7 +20,7 @@ import os
 BASE_DIR = Path(__file__).resolve().parent.parent
 LOG_FILE= os.environ.get("MATCHES_LOG", "matches.log")
 DEBUG = os.environ.get('DEBUG', 'True') == 'True'
-
+USE_TZ = True
 
 
 

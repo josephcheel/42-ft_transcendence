@@ -4,6 +4,9 @@
 [login_user/](#login_user/)
 [is_logged_in/](#is_logged_in/)
 
+## [Match] (#Match)
+[propose_match/](#propose_match/)
+[get_pending_matches/](#get_pending_matches/)
 
 All API calls will return a json response and the corresponding code
 
@@ -17,7 +20,7 @@ json response format:
 }
 ## User
 
-Uses user/[subpath]
+user/[subpath]
 
 ### create_user/
 
@@ -30,11 +33,28 @@ Uses user/[subpath]
 
 | Use | Methods | Request Data | Response Data | Return Values|
 | --- | --- | --- | ---| ---|
-| Logs in User| POST | username, password | user is loged in message |200, 400, 401 (invalid credentials), 500|
+| Logs in User| POST | username, password | None |200, 400, 401 (invalid credentials), 500|
 
 
 ### is_logged_in/
 
 | Use | Methods | Request Data | Response Data | Return Values|
 | --- | --- | --- | ---| ---|
-| Checks if user is logged in | GET | username | User is logged in message |  200 (user logged in), 400, 404 (user not logged in), 500|
+| Checks if user is logged in | GET | username | None |  200 (user logged in), 400, 404 (user not logged in), 500|
+
+
+## Match
+
+match/[subpath]
+
+### propose_match/
+
+| Use | Methods | Request Data | Response Data | Return Values|
+| --- | --- | --- | ---| ---|
+| Sends invitation to all players | POST | start_time, players[first player is the owner/creator] | None |  200 (user logged in), 400, 404 (user not in database), 500|
+
+### get_pending_matches/
+
+| Use | Methods | Request Data | Response Data | Return Values|
+| --- | --- | --- | ---| ---|
+| Checks if user has pending matches to accept | GET | player (in query) | List of pending invitations or empty list |  200 , 400, 404 (user not in database), 500|
