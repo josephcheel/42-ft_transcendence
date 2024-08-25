@@ -1,0 +1,23 @@
+FROM ubuntu:20.04
+
+# Instalar dependencias necesarias
+RUN apt-get update && apt-get install -y \
+	wget \ 
+	7z \
+	libfuse2 \
+	&& rm -rf /var/lib/apt/lists/*
+
+# Copiar el archivo AppImage
+WORKDIR /temp/
+RUN wget ganache.AppImage https://github.com/trufflesuite/ganache-ui/releases/download/v2.7.1/ganache-2.7.1-linux-x86_64.AppImage
+
+# Dar permisos de ejecución
+RUN chmod +x /tmp/ganache.AppImage
+COPY /script.sh /tmp/script.sh
+
+# Exponer el puerto 8545 para Ganache
+EXPOSE 8545
+
+# Comando de inicio
+CMD ["/usr/local/bin/ganache.AppImage", "--no-sandbox"]
+# ENTRYPOINT ["bash", "/tmp/script.sh"]

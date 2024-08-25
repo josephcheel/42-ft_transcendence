@@ -6,7 +6,6 @@ networks:
 
 
 services:
-
   migrations:
     container_name: migrations
     build: ./migrator
@@ -254,17 +253,19 @@ services:
       interval: 10s
       timeout: 10s
       retries: 120
+
   blockchain:
-    container_name: blockchain
-    version: 2.7.1
-    files:
-      - url: ganache-2.7.1-linux-x86_64.AppImage
-        sha512: +Z89tJWB0hJXQ0bwOHr4L2ltR5IAqU/8KfT/UnbX1QRf3Cvm+nq40DSfVNzWJcuXfe3TJaK42p6lXeWw0fNbZA==
-        size: 364126009
-        blockMapSize: 376653
-    path: ganache-2.7.1-linux-x86_64.AppImage
-    sha512: +Z89tJWB0hJXQ0bwOHr4L2ltR5IAqU/8KfT/UnbX1QRf3Cvm+nq40DSfVNzWJcuXfe3TJaK42p6lXeWw0fNbZA==
-    releaseDate: '2023-04-18T03:36:41.424Z'
+    depends_on:
+      - migrations
+    build:
+      context: ./blockchain 
+    ports:
+      - "8545:8545"
+    env_file:
+      - .env
+    restart: always
+    volumes:
+      - blockchain_data:usr/local/bin/ganache.AppImage
 
 volumes:
   certs:
