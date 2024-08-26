@@ -34,7 +34,6 @@ services:
     env_file:
       - .env
     healthcheck:
-      # I need to check how to run this using .env
       test: ["CMD-SHELL", "pg_isready -d transcendence -U transcendence"]
       interval: 10s
       timeout: 60s
@@ -127,10 +126,13 @@ services:
       - APP=twofactor
       - DEBUG=${DEBUG}
 
+  # Monitoring Container
+
 
   prometheus:
     restart: always
-
+    ports:
+      - 3000:3000
     image: prom/prometheus:v2.53.1
     container_name: prometheus
     command:
@@ -143,8 +145,7 @@ services:
 
     image: grafana/grafana:11.1.1-ubuntu
     container_name: grafana
-    ports:
-      - 3000:3000
+
     environment:
       - GF_SECURITY_ADMIN_PASSWORD=newadmin
     volumes:
@@ -246,7 +247,8 @@ services:
 
   kibana:
     restart: always
-
+    ports:
+      - ${KIBANA_PORT}:5601
     depends_on:
       es01:
         condition: service_healthy
@@ -267,8 +269,7 @@ services:
       - XPACK_SECURITY_ENCRYPTIONKEY=${ENCRYPTION_KEY}
       - XPACK_ENCRYPTEDSAVEDOBJECTS_ENCRYPTIONKEY=${ENCRYPTION_KEY}
       - XPACK_REPORTING_ENCRYPTIONKEY=${ENCRYPTION_KEY}
-    ports:
-      - ${KIBANA_PORT}:5601
+
     mem_limit: ${KB_MEM_LIMIT}
     healthcheck:
       test:
