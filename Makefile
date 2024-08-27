@@ -1,4 +1,4 @@
-COMPOSE = docker compose
+COMPOSE = docker-compose
 
 DOCKER_COMPOSE_FILE = ./docker-compose.yml
 include .env

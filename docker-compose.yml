@@ -282,7 +282,14 @@ services:
       timeout: 10s
       retries: 120
 
-
+  frontend:
+    container_name: frontend
+    build:
+      context: ./frontend
+    ports:
+      - "8080:80"
+    networks:
+      - default
 
 volumes:
   certs:
