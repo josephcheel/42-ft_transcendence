@@ -45,9 +45,6 @@ folder_id=$(curl -s -X POST    -H "Content-Type: application/json"   -u "admin:n
 export FOLDER_ID="${folder_id}"
 export DATASOURCE_ID="${datasource_id}"
 
-echo folder id $FOLDER_ID
-
-echo data source id $DATASOURCE_ID
 
 if [[ -n "$DATASOURCE_ID" && $(grep -q '"uid": "replace"' /gateway_dashboard.json; echo $?) -eq 0 ]]; then
     curl -s -H "Content-Type: application/json" -u "admin:newadmin" grafana:3000/api/dashboards/db -d @/gateway_dashboard.json 

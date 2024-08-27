@@ -45,7 +45,7 @@ clean: stop
 fclean: clean
 	@$(COMPOSE) -f $(DOCKER_COMPOSE_FILE) down --rmi all --volumes
 
-	@docker system prune -af 
+#@docker system prune -af 
 	@sudo rm -rf $(VOLUMES)
 
 re: fclean all

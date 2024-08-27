@@ -1,7 +1,8 @@
 DOCKER_COMPOSE_FILE=./docker-compose.yml
 VOLUMES=./volumes
 
-sudo docker compose -f $DOCKER_COMPOSE_FILE down --volumes
+docker compose -f $DOCKER_COMPOSE_FILE down --volumes
+
 sudo find . -type d -name 'migrations' -exec rm -r {} +
 sudo find . -type d -name '__pycache__' -exec rm -r {} +
 

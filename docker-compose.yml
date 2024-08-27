@@ -158,6 +158,7 @@ services:
       - certs:/usr/share/elasticsearch/config/certs
       - ./setup/setup_script.sh:/setup_script.sh
       - ./setup/grafana_script.sh:/grafana_script.sh
+      - ./setup/ELK_script.sh:/ELK_script.sh
       - ./ELK/gateway_index.ndjson:/gateway_index.ndjson
       - ./ELK/gateway_dashboard.ndjson:/gateway_dashboard.ndjson
       - ./Grafana/gateway_dashboard.json:/gateway_dashboard.json
