@@ -3,8 +3,6 @@ networks:
     name: transcendence
     external: false
 
-
-
 services:
   migrations:
     container_name: migrations
@@ -63,6 +61,22 @@ services:
     environment:
       - APP=users
       - DEBUG=${DEBUG}
+    env_file:
+      - .env
+
+  tournements:
+    depends_on:
+      - migrations
+    container_name: tournements
+    build: ./tournements
+    volumes:
+      - ${TOURNEMENTS_FOLDER}${USER_LOG}:/var/log/${USER_LOG}
+      - ${DJANGO_SCRIPT}:/start.sh
+      - ./tournements:/app
+    environment:
+      - APP=users
+      - DEBUG=${DEBUG}
+      - TOURNEMENTS_FOLDER = ${TOURNEMENTS_FOLDER}
     env_file:
       - .env
 
@@ -265,7 +279,9 @@ services:
       - .env
     restart: always
     volumes:
-      - blockchain_data:usr/local/bin/ganache.AppImage
+      - ${TOURNEMENTS_FOLDER}${CHAT_LOG}:/var/log/${CHAT_LOG}
+      - ${DJANGO_SCRIPT}:/start.sh
+      - ./blockchain:/app
 
 volumes:
   certs:
