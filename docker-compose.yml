@@ -3,10 +3,7 @@ networks:
     name: transcendence
     external: false
 
-
-
 services:
-
   migrations:
     container_name: migrations
     build: ./migrator
@@ -69,6 +66,22 @@ services:
       - ./usermodel:/app/usermodel
     environment:
       - DEBUG=${DEBUG}
+    env_file:
+      - .env
+
+  tournements:
+    depends_on:
+      - migrations
+    container_name: tournements
+    build: ./tournements
+    volumes:
+      - ${TOURNEMENTS_FOLDER}${USER_LOG}:/var/log/${USER_LOG}
+      - ${DJANGO_SCRIPT}:/start.sh
+      - ./tournements:/app
+    environment:
+      - APP=users
+      - DEBUG=${DEBUG}
+      - TOURNEMENTS_FOLDER = ${TOURNEMENTS_FOLDER}
     env_file:
       - .env
 
@@ -282,7 +295,20 @@ services:
       timeout: 10s
       retries: 120
 
-
+  blockchain:
+    depends_on:
+      - migrations
+    build:
+      context: ./blockchain 
+    ports:
+      - "8545:8545"
+    env_file:
+      - .env
+    restart: always
+    volumes:
+      - ${TOURNEMENTS_FOLDER}${CHAT_LOG}:/var/log/${CHAT_LOG}
+      - ${DJANGO_SCRIPT}:/start.sh
+      - ./blockchain:/app
 
 volumes:
   certs:
@@ -326,4 +352,10 @@ volumes:
     driver_opts:
       type: none
       device: ${GRAFANA_FOLDER}
+      o: bind
+  blockchain_data:
+    driver: local
+    driver_opts:
+      type: none
+      device: ${BLOCKCHAIN_FOLDER}
       o: bind
