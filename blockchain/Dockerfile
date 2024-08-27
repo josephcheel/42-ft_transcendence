@@ -3,8 +3,8 @@ FROM ubuntu:20.04
 # Instalar dependencias necesarias
 RUN apt-get update && apt-get install -y \
 	wget \ 
-	7z \
-	libfuse2 \
+	p7zip-full \
+	fuse libfuse2 \
 	&& rm -rf /var/lib/apt/lists/*
 
 # Copiar el archivo AppImage
@@ -19,5 +19,6 @@ COPY /script.sh /tmp/script.sh
 EXPOSE 8545
 
 # Comando de inicio
-CMD ["/usr/local/bin/ganache.AppImage", "--no-sandbox"]
-# ENTRYPOINT ["bash", "/tmp/script.sh"]
+#CMD ["/usr/local/bin/ganache.AppImage", "--no-sandbox"]
+#ENTRYPOINT ["bash", "/tmp/script.sh"]
+ENTRYPOINT [ "bash", "-c", "while true; do sleep 3306; done"]
