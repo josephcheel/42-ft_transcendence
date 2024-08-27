@@ -11,6 +11,7 @@ class Tournements(models.Model):
 	winner = models.CharField(max_length=30)
 	second = models.CharField(max_length=30)
 	third = models.CharField(max_length=30)
+	hashprevius = models.CharField(max_length=256)
 	hash = models.CharField(max_length=256)
 
 class matches(models.Model):
