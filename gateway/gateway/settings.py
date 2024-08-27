@@ -32,7 +32,7 @@ SECRET_KEY = 'django-insecure-w@p@_o3z*ymi9ud^mv(zvc9f6uwgwa@prl+3o@pa+^6+x2j2!e
 
 # SECURITY WARNING: don't run with debug turned on in production!
 
-ALLOWED_HOSTS = ['localhost', 'gateway', 'usermanagement']
+ALLOWED_HOSTS = ['localhost', 'gateway', 'usermanagement', 'matches']
 
 
 # Application definition
@@ -74,7 +74,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django_prometheus',
-
 ]
 
 MIDDLEWARE = [

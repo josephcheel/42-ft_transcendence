@@ -15,10 +15,12 @@ services:
     env_file:
       - .env
     volumes:
-      - ./chat:/app/chat
+      - ./usermodel:/app/usermanagement/usermodel
       - ./usermanagement:/app/usermanagement
+      - ./matches:/app/matches
   db:
     container_name: db
+    restart: always
     image: postgres:13
     environment:
       POSTGRES_DB: transcendence
@@ -29,7 +31,6 @@ services:
     env_file:
       - .env
     healthcheck:
-      # I need to check how to run this using .env
       test: ["CMD-SHELL", "pg_isready -d transcendence -U transcendence"]
       interval: 10s
       timeout: 60s
@@ -37,6 +38,7 @@ services:
       start_period: 80s 
 
   gateway:
+    restart: always
     container_name: gateway
     build: ./gateway
     ports:
@@ -44,12 +46,15 @@ services:
     volumes:
       - ${LOGSTASH_FOLDER}${GATEWAY_LOG}:/var/log/${GATEWAY_LOG}
       - ${DJANGO_SCRIPT}:/start.sh
+      - ./gateway:/app
+
     env_file:
       - .env
     environment:
       - DEBUG=${DEBUG}
 
   usermanagement:
+    restart: always
     depends_on:
       - migrations
     container_name: usermanagement
@@ -58,8 +63,8 @@ services:
       - ${LOGSTASH_FOLDER}${USER_LOG}:/var/log/${USER_LOG}
       - ${DJANGO_SCRIPT}:/start.sh
       - ./usermanagement:/app
+      - ./usermodel:/app/usermodel
     environment:
-      - APP=users
       - DEBUG=${DEBUG}
     env_file:
       - .env
@@ -81,6 +86,8 @@ services:
       - .env
 
   chat:
+    restart: always
+
     depends_on:
       - migrations
     container_name: chat
@@ -89,28 +96,35 @@ services:
       - ${LOGSTASH_FOLDER}${CHAT_LOG}:/var/log/${CHAT_LOG}
       - ${DJANGO_SCRIPT}:/start.sh
       - ./chat:/app
+
     env_file:
       - .env
     environment:
       - APP=chatapp
       - DEBUG=${DEBUG}
 
-  gamestats:
+  matches:
+    restart: always
+
     depends_on:
       db:
         condition: service_healthy
-    container_name: gamestats
-    build: ./gamestats
+    container_name: matches
+    build: ./matches
     volumes:
-      - ${LOGSTASH_FOLDER}${GAMESTATS_LOG}:/var/log/${GAMESTATS_LOG}
+      - ${LOGSTASH_FOLDER}${MATCHES_LOG}:/var/log/${MATCHES_LOG}
       - ${DJANGO_SCRIPT}:/start.sh
+      - ./matches:/app
+      - ./usermodel:/app/usermodel
     env_file:
       - .env
     environment:
-      - APP=gamestats
+      - APP=matches
       - DEBUG=${DEBUG}
 
   twofactor:
+    restart: always
+
     depends_on:
       db:
         condition: service_healthy
@@ -125,8 +139,13 @@ services:
       - APP=twofactor
       - DEBUG=${DEBUG}
 
+  # Monitoring Container
+
 
   prometheus:
+    restart: always
+    ports:
+      - 3000:3000
     image: prom/prometheus:v2.53.1
     container_name: prometheus
     command:
@@ -135,10 +154,11 @@ services:
       - ./Prometheus/prometheus.yaml:/etc/prometheus/prometheus.yaml:ro
       - prometheus-data:/prometheus
   grafana:
+    restart: always
+
     image: grafana/grafana:11.1.1-ubuntu
     container_name: grafana
-    ports:
-      - 3000:3000
+
     environment:
       - GF_SECURITY_ADMIN_PASSWORD=newadmin
     volumes:
@@ -151,6 +171,7 @@ services:
       - certs:/usr/share/elasticsearch/config/certs
       - ./setup/setup_script.sh:/setup_script.sh
       - ./setup/grafana_script.sh:/grafana_script.sh
+      - ./setup/ELK_script.sh:/ELK_script.sh
       - ./ELK/gateway_index.ndjson:/gateway_index.ndjson
       - ./ELK/gateway_dashboard.ndjson:/gateway_dashboard.ndjson
       - ./Grafana/gateway_dashboard.json:/gateway_dashboard.json
@@ -168,6 +189,8 @@ services:
       retries: 120
 
   es01:
+    restart: always
+
     depends_on:
       setup:
         condition: service_healthy
@@ -211,6 +234,8 @@ services:
       retries: 120
 
   logstash:
+    restart: always
+
     depends_on:
       es01:
         condition: service_healthy
@@ -235,6 +260,9 @@ services:
       - .env
 
   kibana:
+    restart: always
+    ports:
+      - ${KIBANA_PORT}:5601
     depends_on:
       es01:
         condition: service_healthy
@@ -255,8 +283,7 @@ services:
       - XPACK_SECURITY_ENCRYPTIONKEY=${ENCRYPTION_KEY}
       - XPACK_ENCRYPTEDSAVEDOBJECTS_ENCRYPTIONKEY=${ENCRYPTION_KEY}
       - XPACK_REPORTING_ENCRYPTIONKEY=${ENCRYPTION_KEY}
-    ports:
-      - ${KIBANA_PORT}:5601
+
     mem_limit: ${KB_MEM_LIMIT}
     healthcheck:
       test:

@@ -1,5 +1,5 @@
 """
-URL configuration for gamestats project.
+URL configuration for matches project.
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/5.0/topics/http/urls/
@@ -21,5 +21,6 @@ from django.urls import include, path
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('django_prometheus.urls')),
+    path('match/', include('matchapp.urls')),
 
 ]

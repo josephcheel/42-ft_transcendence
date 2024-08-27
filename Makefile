@@ -3,7 +3,7 @@ COMPOSE = docker compose
 DOCKER_COMPOSE_FILE = ./docker-compose.yml
 include .env
 VOLUMES = ${VOLUMES_FOLDER} ${CERTS_FOLDER} ${ESDATA_FOLDER} ${KIBANA_FOLDER} ${LOGSTASH_FOLDER} ${POSTGREE_FOLDER} ${PROMETHEUS_FOLDER} ${GRAFANA_FOLDER} ${BLOCKCHAIN_FOLDER}
-LOG_FILES =  $(addprefix ${LOGSTASH_FOLDER}, ${GATEWAY_LOG} ${USER_LOG} ${CHAT_LOG} ${GAMESTATS_LOG} ${TWOFACTOR_LOG})
+LOG_FILES =  $(addprefix ${LOGSTASH_FOLDER}, ${GATEWAY_LOG} ${USER_LOG} ${CHAT_LOG} ${MATCHES_LOG} ${TWOFACTOR_LOG})
 
 # Define targets
 all: build 
@@ -45,7 +45,7 @@ clean: stop
 fclean: clean
 	@$(COMPOSE) -f $(DOCKER_COMPOSE_FILE) down --rmi all --volumes
 
-	@docker system prune -af 
+#@docker system prune -af 
 	@sudo rm -rf $(VOLUMES)
 
 re: fclean all

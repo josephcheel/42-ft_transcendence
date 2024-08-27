@@ -74,7 +74,6 @@ INSTALLED_APPS = [
     'django_prometheus',
     'chatapp',
 ]
-
 MIDDLEWARE = [
     'django_prometheus.middleware.PrometheusBeforeMiddleware',
 

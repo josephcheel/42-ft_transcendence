@@ -114,7 +114,7 @@ en el archivo .env se encuentran los nombres de cada archivo log para los conten
 GATEWAY_LOG=gateway.log
 USER_LOG=usermanagement.log
 CHAT_LOG=chat.log
-GAMESTATS_LOG=gamestats.log
+MATCHES_LOG=matches.log
 TWOFACTOR_LOG=twofactor.log
 
 importante hacerlo por variables ya que en ELK/logstash/logstash.conf se configuran los archivos que controlara logstash

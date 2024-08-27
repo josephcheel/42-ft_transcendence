@@ -16,9 +16,12 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import include, path
+from .views import custom_404_view
+
+handler404 = custom_404_view
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('users/', include('users.urls')),
+    path('user/', include('user.urls')),
     path('', include('django_prometheus.urls')),
 ]

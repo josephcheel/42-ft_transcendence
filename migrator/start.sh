@@ -2,23 +2,9 @@
 
 set -e
 
-# Run migrations for User project
-echo "Running migrations for User project..."
-cd /app/chat
-python manage.py makemigrations chatapp
-python manage.py migrate chatapp
+# Loop through each folder in the /app directory
 
-# Run migrations for Chat project
-echo "Running migrations for Chat project..."
-cd /app/usermanagement
-python manage.py makemigrations users
-python manage.py migrate users
+python usermanagement/manage.py makemigrations usermodel
+python usermanagement/manage.py migrate
 
-
-# Run migrations for Chat project
-echo "Running migrations for Chat project..."
-cd /app/tournements
-python manage.py makemigrations tournementsapp
-python manage.py migrate tournementsapp
-
-echo "Migrations completed successfully."
+echo "All migrations completed successfully."

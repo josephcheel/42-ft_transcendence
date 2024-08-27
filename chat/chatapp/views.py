@@ -1,9 +1,9 @@
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from .models import Chatsession
 from django.db import DatabaseError, OperationalError
 from django.conf import settings
-
+import requests
 import json
 import logging
 

@@ -1,10 +1,9 @@
 from django.test import TestCase, Client
 from django.urls import reverse
-from .models import User
 from .views import create_user
 import json
 
-class UserModelTests(TestCase):
+class usermodelTests(TestCase):
 
     def setUp(self):
         self.client = Client()
