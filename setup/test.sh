@@ -127,5 +127,7 @@ curl -u "elastic:changeme" -X POST "http://localhost:5601/api/saved_objects/_imp
 curl -u "elastic:changeme" -X POST "http://localhost:5601/api/data_views/data_view" -H "kbn-xsrf: true; Content-Type: application/json" --data-binary @./ELK/matches_data_view.ndjson 
 
 
+curl -u "elastic:changeme" -X GET "http://localhost:5601/api/saved_objects/dashboard/a3ebeba0-4fe4-11ef-a74c-6de6710340ab" -H "kbn-xsrf: true"
 
 DASHBOARD_ID=$(curl  -u "elastic:changeme" -X POST "http://localhost:5601/api/saved_objects/_import" -H "kbn-xsrf: true" --form file=@./ELK/export.ndjson | jq -r '.successResults[0].id')
+a3ebeba0-4fe4-11ef-a74c-6de6710340ab
