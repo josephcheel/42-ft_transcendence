@@ -145,6 +145,8 @@ else if "nuevo" in [tags] {
 [ELK getting started](https://www.elastic.co/blog/getting-started-with-the-elastic-stack-and-docker-compose/)
 [Kibana API](https://www.elastic.co/guide/en/kibana/current/saved-objects-api.html)
 [Elastic Index Policy](https://www.elastic.co/guide/en/elasticsearch/reference/current/index-lifecycle-management.html)
+[Elastic Config FIle](https://opendistro.github.io/for-elasticsearch-docs/docs/elasticsearch/configuration/#:~:text=You%20can%20find%20elasticsearch.,%2Fetc%2Felasticsearch%2Felasticsearch.)
+[Elastic local file system](https://www.elastic.co/guide/en/elasticsearch/reference/current/snapshots-filesystem-repository.html)
 
 [Prometheus Django](https://github.com/korfuri/django-prometheus)
 [Prometheus docker](https://docs.docker.com/config/daemon/prometheus/)
@@ -154,5 +156,4 @@ else if "nuevo" in [tags] {
 [Grafana contact points and rules](https://grafana.com/docs/grafana/latest/developers/http_api/alerting_provisioning/)
 
 
-True
 [Django User Model](https://docs.djangoproject.com/en/5.0/topics/auth/customizing/)

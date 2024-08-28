@@ -131,3 +131,19 @@ curl -u "elastic:changeme" -X GET "http://localhost:5601/api/saved_objects/dashb
 
 DASHBOARD_ID=$(curl  -u "elastic:changeme" -X POST "http://localhost:5601/api/saved_objects/_import" -H "kbn-xsrf: true" --form file=@./ELK/export.ndjson | jq -r '.successResults[0].id')
 a3ebeba0-4fe4-11ef-a74c-6de6710340ab
+
+json_payload="{
+  "type": "fs",
+  "settings": {
+    "location": "my_backup_location"
+  }
+}"
+curl  -u "elastic:changeme" PUT http://localhost:9200/_snapshot/my_repository -H "kbn-xsrf: true" -d  "{
+  "type": "fs",
+  "settings": {
+    "location": "/usr/share/elasticsearch/repo"
+  }
+}"
+
+
+curl -X GET "localhost:9200/_snapshot/_all"
