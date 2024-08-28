@@ -92,3 +92,40 @@ curl --user elastic:changeme -X GET "localhost:5601/api/saved_objects/_find?type
     -H "Content-Type: application/json; Elastic-Api-Version=2023-10-31" \
     -H "kbn-xsrf: true"\
     -d "{\"attributes\": {\"defaultRoute\": \"/app/dashboards#/view/a3ebeba0-4fe4-11ef-a74c-6de6710340ab\"}}"
+
+    curl \
+    --user elastic:changeme \
+    -X POST http://localhost:5601/api/saved_objects/_export \
+    -H "Content-Type: application/json; Elastic-Api-Version=2023-10-31" \
+    -H "kbn-xsrf: true"\
+    -d "{\"objects\": [{
+            \"id\": \"3e4f786e-285a-4171-886d-112c58b9e254\",
+            \"type\": \"dataView\"}],
+        \"excludeExportDetails\": true,
+        \"includeReferencesDeep\": false
+        }"
+
+
+## Get all data views needed for 
+    curl \
+    --user elastic:changeme \
+    -X GET http://localhost:5601/api/data_views/data_view/0de952e4-7d50-4abf-a298-eb742a83f5d2 \
+    -H "Content-Type: application/json; Elastic-Api-Version=2023-10-31" \
+    -H "kbn-xsrf: true" > ./ELK/chat_data_view.ndjson
+
+
+curl -u "elastic:changeme" -X POST "http://localhost:5601/api/saved_objects/_import" -H "kbn-xsrf: true" -H "Content-Type: application/json; Elastic-Api-Version=2023-10-31" --data-binary "@./ELK/matches_data_view.ndjson"
+
+curl -u "elastic:changeme" -X POST "http://localhost:5601/api/saved_objects/_import" -H "kbn-xsrf: true" --form file=@./ELK/gateway_data_view.ndjson
+
+DASHBOARD_ID=$(curl  -u "elastic:changeme" -X POST "http://localhost:5601/api/saved_objects/_import" -H "kbn-xsrf: true" --form file=@./ELK/gateway_dashboard.ndjson | jq -r '.successResults[0].id')
+
+
+curl -u "elastic:changeme" -X POST "http://localhost:5601/api/saved_objects/_import" -H "kbn-xsrf: true" --form file=@./ELK/gateway_data_view.ndjson
+
+
+curl -u "elastic:changeme" -X POST "http://localhost:5601/api/data_views/data_view" -H "kbn-xsrf: true; Content-Type: application/json" --data-binary @./ELK/matches_data_view.ndjson 
+
+
+
+DASHBOARD_ID=$(curl  -u "elastic:changeme" -X POST "http://localhost:5601/api/saved_objects/_import" -H "kbn-xsrf: true" --form file=@./ELK/export.ndjson | jq -r '.successResults[0].id')
