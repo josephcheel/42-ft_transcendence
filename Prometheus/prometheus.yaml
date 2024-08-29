@@ -1,0 +1,37 @@
+global:
+  scrape_interval: 15s
+scrape_configs:
+  - job_name: 'prometheus'
+    scrape_interval: 5s
+    static_configs:
+      - targets: ['gateway:8000']
+
+  - job_name: 'docker'
+    scrape_interval: 5s
+    static_configs:
+      - targets: ["host.docker.internal:9323"]
+  
+  - job_name: 'blockchain'
+    scrape_interval: 5s
+    static_configs:
+      - targets: ['blockchain:8000']
+
+  - job_name: 'chat'
+    scrape_interval: 5s
+    static_configs:
+      - targets: ['chat:8000']
+
+  - job_name: 'matches'
+    scrape_interval: 5s
+    static_configs:
+      - targets: ['matches:8000']
+
+  - job_name: 'twofactor'
+    scrape_interval: 5s
+    static_configs:
+      - targets: ['twofactor:8000']
+
+  - job_name: 'usermanagement'
+    scrape_interval: 5s
+    static_configs:
+      - targets: ['usermanagement:8000']

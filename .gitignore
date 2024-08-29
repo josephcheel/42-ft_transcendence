@@ -1,0 +1,5 @@
+*migrations*
+*pycache*
+volumes*
+db.s*
+.DS_Store
