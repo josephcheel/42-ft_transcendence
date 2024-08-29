@@ -2,3 +2,5 @@
 *pycache*
 volumes*
 db.s*
+*.log
+.vscode
