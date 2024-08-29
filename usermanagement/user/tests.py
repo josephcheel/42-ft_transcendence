@@ -52,6 +52,9 @@ class usermodelTests(TestCase):
         response = self.client.post(reverse(create_user),json.dumps(self.user1),content_type='application/json')
         response = self.client.post(reverse(create_user),json.dumps(self.user1),content_type='application/json')
         self.check_json(response, 409)
+        response = self.client.post(reverse(create_user),json.dumps({'username' : self.user1['username'].upper(), 'password': self.user1['password']}),content_type='application/json')
+        self.check_json(response, 409)
+
 
     def test_invalid_body(self):
         self.base_json['status'] = 'error'

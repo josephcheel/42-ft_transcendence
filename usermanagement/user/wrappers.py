@@ -40,6 +40,7 @@ def validate_credentials(func):
 
         if not request.username or not request.password:
             return JsonResponse({'status': 'error', 'message': 'Empty username or password', 'data': None}, status=400)
+        request.username = request.username.lower()
         return func(request, *args, **kwargs)
     return wrapper
 
