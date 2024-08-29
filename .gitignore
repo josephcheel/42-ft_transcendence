@@ -4,3 +4,6 @@ volumes*
 db.s*
 *.log
 .vscode
+*Snapshots*
+*coverage*
+*html*
