@@ -78,12 +78,28 @@ services:
       - ${TOURNEMENTS_FOLDER}${USER_LOG}:/var/log/${USER_LOG}
       - ${DJANGO_SCRIPT}:/start.sh
       - ./tournements:/app
+      - ./usermodel:/app/usermodel
     environment:
       - APP=users
       - DEBUG=${DEBUG}
       - TOURNEMENTS_FOLDER = ${TOURNEMENTS_FOLDER}
     env_file:
       - .env
+
+  blockchain:
+    depends_on:
+      - migrations
+    build:
+      context: ./blockchain 
+    ports:
+      - "8545:8545"
+    env_file:
+      - .env
+    restart: always
+    volumes:
+      - ${TOURNEMENTS_FOLDER}${CHAT_LOG}:/var/log/${CHAT_LOG}
+      - ${DJANGO_SCRIPT}:/start.sh
+      - ./blockchain:/app
 
   chat:
     restart: always
@@ -295,20 +311,6 @@ services:
       timeout: 10s
       retries: 120
 
-  blockchain:
-    depends_on:
-      - migrations
-    build:
-      context: ./blockchain 
-    ports:
-      - "8545:8545"
-    env_file:
-      - .env
-    restart: always
-    volumes:
-      - ${TOURNEMENTS_FOLDER}${CHAT_LOG}:/var/log/${CHAT_LOG}
-      - ${DJANGO_SCRIPT}:/start.sh
-      - ./blockchain:/app
 
 volumes:
   certs:
