@@ -1,8 +1,8 @@
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
+from .wrappers import validate_credentials, require_post, require_get
 
 try: 
-    from tournementsapp.models import Tournements
     from usermodel.models import User
 except:
     pass
@@ -16,6 +16,7 @@ def custom_404_view(request, exception=None):
     return JsonResponse(response_data, status=404)
 
 @csrf_exempt
+@validate_credentials
 def create_tournements(request):
     if request.method == "GET":
         tournements = Tournements.objects.all()
