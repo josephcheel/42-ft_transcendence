@@ -47,7 +47,7 @@
     import { onMounted, ref } from 'vue';
     import { useRouter } from 'vue-router';
     import { Toast } from 'bootstrap' // Import the Toast class from Bootstrap
-
+    import axios from 'axios'
 
     const user = ref();
     const psw = ref();
@@ -66,8 +66,26 @@
           showErrorToast();
         }
         else{
-          //SE ENVIA AL BACK
-        }
+
+              const response = await axios.post('http://localhost:8000/user/create_user/',{
+                username: user.value,
+                password: psw.value
+              },{ 
+                headers:{
+                'Content-Type': 'application/json',
+              }
+              });
+              console.log(response)
+              if(response.data.status == "OK"){
+                console.error('Authentication CORRECT');
+
+              }
+              else{
+                console.error('Authentication Error:');
+
+              }
+            }
+
     }
     const showErrorToast = () => {
     if (errorToast.value) {

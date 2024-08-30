@@ -3,3 +3,4 @@ requests
 logstash-formatter
 python-json-logger
 django-prometheus
+django-cors-headers
