@@ -79,6 +79,7 @@ services:
       - ${DJANGO_SCRIPT}:/start.sh
       - ./tournements:/app
       - ./usermodel:/app/usermodel
+      - ./usermanagement:/app/usermanagement
     environment:
       - APP=users
       - DEBUG=${DEBUG}
