@@ -1,41 +1,59 @@
 from django.db import models
+from .status_options import StatusTournements, StatusInvitations, StatusMatches, Rounds
+try: 
+	from usermodel.models import User
+except:
+	pass
 
 # Create your models here.
+
+
 class Tournements(models.Model):
-	OPEN_TOURNEMENT = 0
-	CLOSED_TOURNEMENT = 1
-	FINISHED_TOURNEMENT = 2
-
-
-	STATUS_CHOICES = [
-		{OPEN_TOURNEMENT, "open"},
-		{CLOSED_TOURNEMENT, "closed"},
-		{FINISHED_TOURNEMENT, "finished"},
-	]
-	name = models.CharField(max_length=30)
-	date = models.DateTimeField()
+	status_tournements = StatusTournements()
+	
+	id = models.AutoField(primary_key=True)
+	player_id = models.IntegerField()
+	date_start = models.DateTimeField()
+	date_max_end = models.DateTimeField()
 	max_players = models.IntegerField()
+	cost = models.IntegerField()
+	points_collected = models.IntegerField()
 	price_1 = models.IntegerField()
 	price_2 = models.IntegerField()
 	price_3 = models.IntegerField()
-	winner = models.CharField(max_length=30)
-	second = models.CharField(max_length=30)
-	third = models.CharField(max_length=30)
+	id_winner = models.IntegerField()
+	id_second = models.IntegerField()
+	id_third = models.IntegerField()
 	status = models.CharField(
-		max_length=8, choices=STATUS_CHOICES, default=OPEN_TOURNEMENT)
+		max_length=8, choices=status_tournements.choices, default=status_tournements.OPEN_TOURNEMENT)
+	current_round = models.IntegerField()
 	hash_previus = models.CharField(max_length=256)
 	hash = models.CharField(max_length=256)
 
-class matches(models.Model):
-	tournement = models.ForeignKey(Tournements, on_delete=models.CASCADE)
-	player1 = models.CharField(max_length=30)
-	player2 = models.CharField(max_length=30)
-	date = models.DateTimeField()
-	winner = models.CharField(max_length=30)
-	round = models.IntegerField()
+class Invitations(models.Model):
+	status_invitations = StatusInvitations()
+	
+	tournement_id = models.ForeignKey(Tournements, on_delete=models.CASCADE)
+	player_id = models.ForeignKey(User, on_delete=models.CASCADE)
+	status = models.CharField(max_length=8, choices=status_invitations.choices, default=status_invitations.INVITATION_IGNORED)
+
+class Matches(models.Model):
+	status_matches = StatusMatches()
+	rounds = Rounds()
+	
+	match_id = models.AutoField(primary_key=True)
+	tournement_id = models.ForeignKey(Tournements, on_delete=models.CASCADE)
+	player_id_1 = models.IntegerField()
+	player_id_2 = models.IntegerField()
+	date_time = models.DateTimeField()
+	winner_id = models.IntegerField()
+	looser_id = models.IntegerField()
+	round = models.CharField(max_length=11, choices=rounds.choices, default=rounds.QUALIFIED_ROUND)
+	number_round = models.IntegerField()
+	status = models.CharField(max_length=8, choices=status_matches.choices, default=status_matches.NOT_PLAYED)
 
 class T_players(models.Model):
 	tournement = models.ForeignKey(Tournements, on_delete=models.CASCADE)
-	player_id = models.CharField(max_length=30)
-	price = models.IntegerField()
+	player_id = models.IntegerField()
+	price = models.IntegerField()	
 	round = models.IntegerField()

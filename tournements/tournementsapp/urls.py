@@ -16,9 +16,16 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from views import create_tournements
+from .views import list_tournements,open_tournement,accept_invitation,close_tournement,finish_tournement,start_match,finish_match
 
 
 urlpatterns = [
-    path('create/',create_tournements),
+    path('list/',list_tournements),
+    path('open/',open_tournement),
+    path('accept_invitation/',accept_invitation),
+    path('close/',close_tournement),
+    path('finish/',finish_tournement),
+    path('start_match/',start_match),
+    path('finish_match/',finish_match),
+
 ]
