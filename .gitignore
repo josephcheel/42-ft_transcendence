@@ -3,3 +3,4 @@
 volumes*
 db.s*
 .DS_Store
+*coverage*

@@ -73,7 +73,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django_prometheus',
     'user',
-    'usermodel'
+    'usermodel',
+    'corsheaders',
 ]
 
 if not DEBUG:
@@ -127,11 +128,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'usermanagement.wsgi.application'
 
-INSTALLED_APPS = [
-    ...
-    'corsheaders',
-    ...
-]
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
