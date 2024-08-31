@@ -17,7 +17,9 @@
     <p>Don't have an account? <router-link to="/Register">Register</router-link></p>
       <router-link to="/forgotps">Forgot your password?</router-link>
     </div>
-
+    <p style="color: red;">
+      {{ toastMsg }}
+    </p>
   </div>
 </div>
 
@@ -26,52 +28,44 @@
 <script setup>
     import { ref } from 'vue';
     import { useRouter } from 'vue-router';
+    import axios from 'axios'
 
     const user = ref();
 
     const psw = ref();
 
     const router = useRouter();
+    const toastMsg = ref(null)
 
     async function login()
+    
     {
         console.log(user.value);
         console.log(psw.value);
 
-        try
-        {
-            const response = await fetch('localhost:8000/user/login_user/',
-            {
-                method: 'POST',
-                headers:
-                {
-                    'Content-Type' : 'aplication/json',
-                },
-                body: JSON.stringify(
-                    {
-                        user: user.value,
-                        password: psw.value,
-                    }),
-            })
-        if (!response.ok)
-            throw new Error('Request Error');
-        const data = await response.json();
-        if (data.status === 'OK')
-        {
-            console.log('Authentication success');
-            router.push('/about');
+          try {
+          const response = await axios.post('http://localhost:8000/user/login_user/', {
+            username: user.value,
+            password: psw.value
+          }, {
+            headers: {
+              'Content-Type': 'application/json',
+            }
+          });
+
+          console.log(response);
+
+          if (response.status === 200) {
+            router.push('/About');
+
+          } else {
+            toastMsg.value = `ERROR CODE:  ${response.status} \n An unexpected error occurred during the user creation`;
+
+          }
+        } catch (error) {
+          console.log(error)
+          toastMsg.value = `ERROR CODE: ${error.response.status} \n An unexpected error occurred during the user creation `;
         }
-        else 
-        {
-            console.error('Authentication Error:', data.message);
-            alert('Invalid User or Password');
-        }
-        }
-        catch
-        {
-            console.error('Authentication Error:', error);
-            alert('Request error');
-        }
-    }
+  }
     
 </script>

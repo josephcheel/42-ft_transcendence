@@ -23,21 +23,14 @@
         <label for="password" class="form-label">Confirm Password</label>
         <input v-model="psw2" type="password" class="form-control" id="password" placeholder="Confirm your password" required>
       </div>
-      <button id="login" type="submit" class="btn btn-primary w-100">Login</button>
+      <button id="login" type="submit" class="btn btn-primary w-100">Register</button>
     </form>
     <div class="mt-3 text-center">
     <p>Already have an account? <router-link to="/Login">Login</router-link></p>
     </div>
-    <div class="toast-container position-fixed top-0 end-0 p-3">
-      <div ref="errorToast" class="toast align-items-center text-bg-danger border-0" role="alert" aria-live="assertive" aria-atomic="true">
-        <div class="d-flex">
-          <div class="toast-body">
-            Passwords doesn't match
-          </div>
-          <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-        </div>
-      </div>
-    </div>
+    <p style="color: red;">
+      {{ toastMsg }}
+    </p>
   </div>
 </div>
 
@@ -56,41 +49,41 @@
     const email = ref();
     const psw2 = ref();
     const errorToast = ref(null)
+    const toastMsg = ref(null)
 
-    
     async function login()
     {
         console.log(user.value);
         console.log(psw.value);
         if (psw2.value != psw.value) {
-          showErrorToast();
+          toastMsg.value = "The password doesn't match"
         }
         else{
 
-              const response = await axios.post('http://localhost:8000/user/create_user/',{
-                username: user.value,
-                password: psw.value
-              },{ 
-                headers:{
-                'Content-Type': 'application/json',
-              }
-              });
-              console.log(response)
-              if(response.data.status == "OK"){
-                console.error('Authentication CORRECT');
-
-              }
-              else{
-                console.error('Authentication Error:');
-
-              }
+          try {
+          const response = await axios.post('http://localhost:8000/user/create_user/', {
+            username: user.value,
+            password: psw.value
+          }, {
+            headers: {
+              'Content-Type': 'application/json',
             }
+          });
 
-    }
-    const showErrorToast = () => {
-    if (errorToast.value) {
-      const toastInstance = new Toast(errorToast.value)
-      toastInstance.show()
+          console.log(response);
+
+          if (response.status === 201) {
+            //LOGIN
+            router.push('/Login');
+
+          } else {
+            toastMsg.value = `ERROR CODE:  ${response.status} \n An unexpected error occurred during the user creation`;
+
+          }
+        } catch (error) {
+          toastMsg.value = `ERROR CODE: ${error.response.status} \n An unexpected error occurred during the user creation `;
+        }
+
     }
   }
 </script>
@@ -101,5 +94,6 @@
   display: flex;
   font-weight: bold;
 }
+
 
 </style>
