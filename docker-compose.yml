@@ -79,7 +79,7 @@ services:
       - ${DJANGO_SCRIPT}:/start.sh
       - ./tournements:/app
       - ./usermodel:/app/usermodel
-      - ./usermanagement:/app/usermanagement
+      - ./shared:/app/shared
     environment:
       - APP=users
       - DEBUG=${DEBUG}
@@ -118,6 +118,7 @@ services:
       - ${DJANGO_SCRIPT}:/start.sh
       - ./matches:/app
       - ./usermodel:/app/usermodel
+      - ./shared:/app/shared
     env_file:
       - .env
     environment:

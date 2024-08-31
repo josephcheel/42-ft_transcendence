@@ -20,5 +20,5 @@ EXPOSE 8545
 
 # Comando de inicio
 #CMD ["/usr/local/bin/ganache.AppImage", "--no-sandbox"]
-ENTRYPOINT ["bash", "/tmp/script.sh"]
-#ENTRYPOINT [ "bash", "-c", "while true; do sleep 3306; done"]
+#ENTRYPOINT ["bash", "/tmp/script.sh"]
+ENTRYPOINT [ "bash", "-c", "while true; do sleep 3306; done"]
