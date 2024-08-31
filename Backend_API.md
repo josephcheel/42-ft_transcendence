@@ -1,7 +1,7 @@
 # Table of contents
 | Section | Links |
 |---------|-------|
-| [User](#user) | [create_user](#create_user) <br> [login_user](#login_user) <br> [logout_user](#logout_user) <br> [is_logged_in](#is_logged_in) |
+| [User](#user) | [create_user](#create_user) <br> [login_user](#login_user) <br> [logout_user](#logout_user) <br> [is_logged_in](#is_logged_in) <br> [list_users](#list_users) |
 | [Match](#match) | [propose_match](#propose_match) <br> [get_pending_matches](#get_pending_matches) |
 
 
@@ -53,6 +53,12 @@ user/[subpath]
 | Use | Methods | Request Data | Response Data | Return Values|
 | --- | --- | --- | ---| ---|
 | Checks if YOUR user is logged in | GET | username | None |  200 (user logged in), 401 (Unauthorized), 405, 500|
+
+### list_users
+
+| Use | Methods | Request Data | Response Data | Return Values|
+| --- | --- | --- | ---| ---|
+| Returns a list of all users registered | GET | None | List of users. Each element inside the list is a dictionaty with id and username keys |  200 (user logged in), 405, 500|
 
 
 [Back to Top](#table-of-contents)
