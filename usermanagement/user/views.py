@@ -139,3 +139,17 @@ def is_logged_in(request):
                                 'data' : None, 
                                 'message' : 'Internal database error'}, 
                                 status=500)
+
+@require_get
+def list_users(request):
+    try:
+        users = User.objects.all().values('id', 'username')
+        return JsonResponse({'status' : 'success', 
+                                'data' : list(users), 
+                                'message' : 'All registered users'}, 
+                                status=200)
+    except OperationalError:
+        return JsonResponse({'status' : 'error', 
+                        'data' : None, 
+                        'message' : 'Internal database error'}, 
+                        status=500)

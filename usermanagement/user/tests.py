@@ -1,11 +1,13 @@
 from django.test import TestCase, Client
 from django.urls import reverse
-from .views import create_user, login_user, is_logged_in, logout_user
+from .views import create_user, login_user, is_logged_in, logout_user, list_users
 import json
 from django.db import OperationalError
 from django.contrib.auth import get_user_model
 
 User = get_user_model()
+
+
 
 
 class usermodelTests(TestCase):
@@ -78,6 +80,18 @@ class usermodelTests(TestCase):
         self.base_json['data'] = None
         response = self.client.get(reverse(create_user))
         self.check_json(response, 405)
+
+    def test_get_all_users(self):
+        self.base_json['status'] = 'success'
+        self.base_json['message'] = 'All registered users'
+        self.base_json['data'] = []
+
+        response = self.client.get(reverse(list_users))
+        self.check_json(response, 200)
+        self.base_json['data'] = [{'id': 1, 'username': self.user1['username']}]
+        response = self.client.post(reverse(create_user),json.dumps(self.user1),content_type='application/json')
+        response = self.client.get(reverse(list_users))
+        self.check_json(response, 200)
 
 
 class logInTest(TestCase):
