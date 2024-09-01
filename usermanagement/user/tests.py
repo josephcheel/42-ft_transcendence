@@ -19,9 +19,6 @@ class usermodelTests(TestCase):
             'message': None,
             'data': None
         }
-        
-
-
 
     def check_json(self, response, code):
         self.assertJSONEqual(json.dumps(self.base_json), response.content.decode("utf-8"))

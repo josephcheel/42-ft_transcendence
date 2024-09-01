@@ -33,7 +33,6 @@ class CreateInvitationTests(TestCase):
         self.assertEqual(response.status_code, code)        
 
     def test_propose_match(self):
-
         self.base_json['status'] = 'success'
         self.base_json['message'] = 'Sent invitations to all players'
         jsonTest = {

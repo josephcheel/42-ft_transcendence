@@ -14,6 +14,7 @@ class Tournements(models.Model):
 	id = models.AutoField(primary_key=True)
 	player_id = models.IntegerField()
 	date_start = models.DateTimeField()
+	last_match_date = models.DateTimeField()
 	date_max_end = models.DateTimeField()
 	max_players = models.IntegerField()
 	cost = models.IntegerField()

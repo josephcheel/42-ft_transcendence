@@ -9,6 +9,7 @@ import json
 from .models import Tournements, Invitations, Matches
 from .status_options import StatusTournements, StatusInvitations, StatusMatches, Rounds
 from django.db.models import F
+from datetime import datetime, timedelta
 try: 
 	from usermodel.models import User
 except:
@@ -60,20 +61,26 @@ def open_tournement(request):
 			player_reg = User.objects.get(username=player)
 		except User.DoesNotExist:
 			return JsonResponse({'status': 'error', 'message': 'A player does not exist', 'data': None}, status=404)
-	if nr_of_players & 1:
-		return JsonResponse({'status': 'error', 'message': 'The number of players must be even', 'data': None}, status=400)
+#	Can be invited even & odd number of players. Only , when closed the tournement, the number of players must be even
+#	if nr_of_players & 1:
+#		return JsonResponse({'status': 'error', 'message': 'The number of players must be even', 'data': None}, status=400)
 	if nr_of_players != 2 and nr_of_players < 4:
 		return JsonResponse({'status': 'error', 'message': 'The number of players must be 2 or at least 4', 'data': None}, status=400)
 	nr_of_rounds, extra_round = math.modf(math.log2(nr_of_players))
 	if extra_round > 0:
-		nr_of_rounds += 1
+		extra_round = 1
+	nr_of_matches = 0
+	for i in range(0, nr_of_rounds):
+		nr_of_matches += math.power(2, i)
+	nr_of_matches += math.power(2, nr_of_rounds + extra_round) - nr_of_players
 	tournement_created = Tournements.objects.create(
 		player_id = player_owner.id, 
 		date_start = data.get('Date_start'),
-		date_max_end = data.get('Date_max_end'), 
+		last_match_date=data.get('Date_start'),
+		date_max_end = data.get('Date_max_end') + temedelta(minutes=nr_of_matches * 5 + 30),
 		max_players = data.get('max_players'), 
 		cost = data.get('cost'),
-		current_round = nr_of_rounds,
+		current_round = nr_of_rounds + extra_round,
 		price1 = data.get('price_1'), 
 		price2 = data.get('price_2'), 
 		price3 = data.get('price_3'), 
@@ -133,37 +140,75 @@ def close_tournement(request):
 	tournement_players = Invitations.objects.filter(tournement_id=tournement_id, status=StatusInvitations.ACCEPTED)
 	if len(tournement_players) & 1:
 		return JsonResponse({'status': 'error', 'message': 'The number of players accpted must be even', 'data': None}, status=400)
-	if len(tournement_players) != 2 and len(tournement_players) < 4:
+	if len(tournement_players) == 0:
 		return JsonResponse({'status': 'error', 'message': 'The number of players does not permit start tournement', 'data': None}, status=400)
-	tournement.status = 1
+	tournement.status = StatusTournements.CLOSED_TOURNEMENT
+	next_match_date = tournement.last_match_date
+	tournement.last_match_date = F('last_match_date') + timedelta(minutes=5 * len(tournement_players) / 2)
 	tournement.save()
 	player_nr = len(tournement_players)
 	current_round, extra_round = math.modf(math.log2(len(tournement_players)))
 	if extra_round > 0:
 		extra_round = 1
-	for player in tournement_players:
-		if not (player_nr & 1):
-			match len(tournement_players):
-				case 2:
-					typeRound = Rounds.FINAL_ROUND
-				case 4:
-					typeRound = Rounds.SEMIFINAL_ROUND
-				case _:
-					typeRound = Rounds.QUALIFIED_ROUND
-					
-			current_match = Matches.objects.create(
+	match len(tournement_players):
+		case 2:
+			Matches.objects.create(
 				tournement_id = tournement_id, 
-				number_round = current_round + extra_round, 
-				player_id_1 = player.id, 
-				player_id_2 = player.id, 
-				round = typeRound)		
-		else:
-			current_match.player_id_2 = player.id
-			current_match.save()
-		User.objects.filter(id = player.id).update(puntos_reservados= F('puntos_reservados') - tournement.cost)
-		player_nr -= 1
-		if math.power(2, current_round ) == player_nr:
-			extra_round = 0
+				number_round = 1, 
+				date_time = next_match_date,
+				player_id_1 = tournement_players[0].id, 
+				player_id_2 = tournement_players[1].id, 
+				round = Rounds.FINAL_ROUND)
+			User.objects.filter(id=player_id_1).update(
+				puntos_reservados=F('puntos_reservados') - tournement.cost)
+			User.objects.filter(id=player_id_2).update(
+				puntos_reservados=F('puntos_reservados') - tournement.cost)
+		case 4:
+			Matches.objects.create(
+				tournement_id=tournement_id,
+				number_round=2,
+				date_time=next_match_date,
+				player_id_1=tournement_players[0].id,
+				player_id_2=tournement_players[1].id,
+				round=Rounds.SEMIFINAL_ROUND)
+			User.objects.filter(id=tournement_players[0].id).update(
+				puntos_reservados=F('puntos_reservados') - tournement.cost)
+			User.objects.filter(id=tournement_players[1].id).update(
+				puntos_reservados=F('puntos_reservados') - tournement.cost)
+			next_match_date += timedelta(minutes=5)
+			Matches.objects.create(
+				tournement_id=tournement_id,
+				number_round=2,
+				date_time=next_match_date,
+				player_id_1=tournement_players[2].id,
+				player_id_2=tournement_players[3].id,
+				round=Rounds.SEMIFINAL_ROUND)
+			User.objects.filter(id=tournement_players[3].id).update(
+				puntos_reservados=F('puntos_reservados') - tournement.cost)
+			User.objects.filter(id=tournement_players[4].id).update(
+				puntos_reservados=F('puntos_reservados') - tournement.cost)
+		case _:
+			players_round_low = math.power(2, current_round + extra_round) - len(tournement_players)
+			if extra_round:
+				for i in range(players_round_low, len(tournement_players), 2):
+					Matches.objects.create(
+						tournement_id=tournement_id,
+						number_round=current_round + extra_round,
+						date_time=next_match_date,
+						player_id_1=tournement_players[players_round_low].id,
+						player_id_2=tournement_players[players_round_low].id,
+						round=Rounds.QUALIFIED_ROUND)
+				next_match_date += timedelta(minutes=5)
+			for i in range(0, players_round_low, 2):
+				Matches.objects.create(
+					tournement_id=tournement_id,
+					number_round=current_round,
+					player_id_1=tournement_players[i].id,
+					player_id_2=tournement_players[i+1].id,
+					round=Rounds.QUALIFIED_ROUND)
+				next_match_date += timedelta(minutes=5)
+	tournement_players = Invitations.objects.filter(
+		tournement_id=tournement_id)
 	tournement_players.objects.delete()
 	return JsonResponse({'status': 'success', 'message': 'Tournement opened successfully', 'data': None}, status=200)
 
@@ -183,12 +228,10 @@ def finish_tournement(request):
 		return JsonResponse({'status': 'error', 'message': 'A tournement does not exist', 'data': None}, status=404)
 	if tournement.player_id != player_owner.id:
 		return JsonResponse({'status': 'error', 'message': 'You are not the owner of this tournement', 'data': None}, status=403)
-	status_tournements = StatusTournements()
-	if tournement.status != status_tournements.OPEN_TOURNEMENT:
+	if tournement.status != StatusTournements.OPEN_TOURNEMENT:
 		return JsonResponse({'status': 'error', 'message': 'The tournement is not open', 'data': None}, status=400)
-	tournement.status = status_tournements.CLOSED_TOURNEMENT
 	pending_matches = Matches.objects.filter(tournement_id = tournement.id, status = StatusMatches.NOT_PLAYED)
-	if len(pending_matches):
+	if len(pending_matches) and tournement.date_max_end < datetime.now():
 		return JsonResponse({'status': 'error', 'message': 'There are still pending matches', 'data': None}, status=400)
 	list_of_matches = Matches.objects.filter(tournement_id=tournement.id)
 	for match in list_of_matches:
@@ -249,7 +292,7 @@ def finish_match(request):
 	match.status = StatusMatches.PLAYED
 	match.save()
 	try:
-		tournement = Tournements.objects.get(id=match.tournement_id, status=StatusMatches.NOT_PLAYED)
+		tournement = Tournements.objects.get(id=match.tournement_id)
 	except Tournements.DoesNotExist:
 		winner.puntos = F('puntos') + 100
 		return JsonResponse({'status': 'error', 'message': 'Free play finished', 'data': None}, status=200)
@@ -257,27 +300,44 @@ def finish_match(request):
 		tournement = Tournements.objects.get(id=match.tournement_id)
 		tournement.id_winner = match.winner_id
 		tournement.id_second = match.looser_id
+		match.status = StatusMatches.NEXT_ROUND_ASSIGNED
 	elif match.round == Rounds.THIRD_PLACE_ROUND:
 		tournement = Tournements.objects.get(id=match.tournement_id)
 		tournement.id_third = match.winner_id
+		match.status = StatusMatches.NEXT_ROUND_ASSIGNED
 	elif match.round == Rounds.SEMIFINAL_ROUND:
 		next_match = Matches.objects.get(tournement_id=match.tournement_id, round=Rounds.SEMIFINAL_ROUND, status=StatusMatches.PLAYED)
 		if len(next_match)  == 2:
-			Matches.objects.create(tournement_id=match.tournement_id, player_id_1=next_match[0].winner_id, 
-						  player_id_2=next_match[1].winner_id, round=Rounds.FINAL_ROUND)
-			Matches.objects.create(tournement_id=match.tournement_id, player_id_1=next_match[0].looser_id, 
-						  player_id_2=next_match[1].looser_id, round=Rounds.THIRD_PLACE_ROUND)
+			Matches.objects.create(
+							tournement_id=match.tournement_id, 
+							player_id_1=next_match[0].winner_id, 
+							player_id_2=next_match[1].winner_id, 
+							date_time = tournement.last_match_date + timedelta(minutes=10),
+							round=Rounds.FINAL_ROUND)
+			Matches.objects.create(
+							tournement_id=match.tournement_id, 
+							player_id_1=next_match[0].looser_id,
+							player_id_2=next_match[1].looser_id, 
+							date_time=tournement.last_match_date + timedelta(minutes=5),
+							round=Rounds.THIRD_PLACE_ROUND)
+		next_match[0].status = StatusMatches.NEXT_ROUND_ASSIGNED
+		next_match[1].status = StatusMatches.NEXT_ROUND_ASSIGNED
+		tournement.last_match_date = F('last_match_date') + timedelta(minutes=10)
 	elif match.round == Rounds.QUALIFIED_ROUND:
-		if len(Matches.objects.filter(tournement_id=match.tournement_id, round=Rounds.QUALIFIED_ROUND, 
-								number_round = tournement.current_round, status=StatusMatches.NOT_PLAYED)) == 0:
+		next_match = Matches.objects.get(
+						tournement_id=match.tournement_id, 
+						round=Rounds.QUALIFIED_ROUND, 
+						status=StatusMatches.PLAYED)
+		if next_match == 2:
 			tournement.current_round -= 1
 			tournement.save()
 			list_of_matches = Matches.objects.filter(tournement_id=match.tournement_id, round=Rounds.QUALIFIED_ROUND, 
 											number_round = tournement.current_round, status=StatusMatches.PLAYED) == 0
-			for i in range(0, len(list_of_matches), 2):
-				Matches.objects.create(
-					tournement_id=match.tournement_id, 
-					player_id_1=list_of_matches[i].winner_id, 
-					player_id_2=list_of_matches[i+1].winner_id, 
-					round=Rounds.QUALIFIED_ROUND if tournement.current_round == 2 else Rounds.SEMIFINAL_ROUND)
+			Matches.objects.create(
+				tournement_id=match.tournement_id, 
+				player_id_1=list_of_matches[0].winner_id, 
+				player_id_2=list_of_matches[1].winner_id, 
+				date_time=tournement.last_match_date + timedelta(minutes=5),
+				round=Rounds.QUALIFIED_ROUND if tournement.current_round == 2 else Rounds.SEMIFINAL_ROUND)
+			tournement.last_match_date = F('last_match_date') + timedelta(minutes=5)
 	return JsonResponse({'status': 'success', 'message': 'Match finished successfully', 'data': None}, status=200)

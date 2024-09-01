@@ -84,6 +84,8 @@ services:
       - APP=users
       - DEBUG=${DEBUG}
       - TOURNEMENTS_FOLDER = ${TOURNEMENTS_FOLDER}
+      - ./shared:/app/shared
+      - ./usermodel:/app/usermodel
     env_file:
       - .env
 
