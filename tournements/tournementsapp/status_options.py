@@ -21,8 +21,8 @@ class StatusInvitations(Enum):
 class StatusMatches(Enum):
 	NOT_PLAYED = "not played"
 	PLAYED = "played"
-	STARTED = "sttarted"
-	NEXT_ROUND_ASSIGNED = "sttarted"
+	STARTED = "started"
+	NEXT_ROUND_ASSIGNED = "assigned"
 
 	@classmethod
 	def choices(cls):

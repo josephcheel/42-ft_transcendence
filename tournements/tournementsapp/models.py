@@ -1,16 +1,15 @@
 from django.db import models
 from .status_options import StatusTournements, StatusInvitations, StatusMatches, Rounds
+from django.contrib.auth import get_user_model
 try: 
 	from usermodel.models import User
 except:
 	pass
 
 # Create your models here.
-
+User = get_user_model()
 
 class Tournements(models.Model):
-	status_tournements = StatusTournements()
-	
 	id = models.AutoField(primary_key=True)
 	player_id = models.IntegerField()
 	date_start = models.DateTimeField()
@@ -26,22 +25,18 @@ class Tournements(models.Model):
 	id_second = models.IntegerField()
 	id_third = models.IntegerField()
 	status = models.CharField(
-		max_length=8, choices=status_tournements.choices, default=status_tournements.OPEN_TOURNEMENT)
+		max_length=8, choices=StatusTournements.choices, default=StatusTournements.OPEN_TOURNEMENT)
 	current_round = models.IntegerField()
 	hash_previus = models.CharField(max_length=256)
 	hash = models.CharField(max_length=256)
 
 class Invitations(models.Model):
-	status_invitations = StatusInvitations()
-	
 	tournement_id = models.ForeignKey(Tournements, on_delete=models.CASCADE)
 	player_id = models.ForeignKey(User, on_delete=models.CASCADE)
-	status = models.CharField(max_length=8, choices=status_invitations.choices, default=status_invitations.INVITATION_IGNORED)
+	status = models.CharField(max_length=8, choices=StatusInvitations.choices,
+		default=StatusInvitations.INVITATION_IGNORED)
 
 class Matches(models.Model):
-	status_matches = StatusMatches()
-	rounds = Rounds()
-	
 	match_id = models.AutoField(primary_key=True)
 	tournement_id = models.ForeignKey(Tournements, on_delete=models.CASCADE)
 	player_id_1 = models.IntegerField()
@@ -49,9 +44,9 @@ class Matches(models.Model):
 	date_time = models.DateTimeField()
 	winner_id = models.IntegerField()
 	looser_id = models.IntegerField()
-	round = models.CharField(max_length=11, choices=rounds.choices, default=rounds.QUALIFIED_ROUND)
+	round = models.CharField(max_length=11, choices=Rounds.choices, default=Rounds.QUALIFIED_ROUND)
 	number_round = models.IntegerField()
-	status = models.CharField(max_length=8, choices=status_matches.choices, default=status_matches.NOT_PLAYED)
+	status = models.CharField(max_length=10, choices=StatusMatches.choices, default=StatusMatches.NOT_PLAYED)
 
 class T_players(models.Model):
 	tournement = models.ForeignKey(Tournements, on_delete=models.CASCADE)

@@ -1,6 +1,5 @@
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
-from tournements.shared.wrappers import validate_credentials, require_post, require_get
 from django.contrib.auth import get_user_model
 from django.http import JsonResponse
 from django.core.serializers import serialize
@@ -10,6 +9,7 @@ from .models import Tournements, Invitations, Matches
 from .status_options import StatusTournements, StatusInvitations, StatusMatches, Rounds
 from django.db.models import F
 from datetime import datetime, timedelta
+from .wrappers import validate_credentials, require_post, require_get
 try: 
 	from usermodel.models import User
 except:

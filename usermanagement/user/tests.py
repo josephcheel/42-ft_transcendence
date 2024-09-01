@@ -38,6 +38,8 @@ class usermodelTests(TestCase):
         self.base_json['message'] = 'User created successfully'
         self.base_json['data'] = {'id' : 2, 'username' : 'test2'}
 
+
+        print(reverse(create_user))
         response = self.client.post(reverse(create_user),json.dumps(self.user2),content_type='application/json')
         self.check_json(response, 201)
     

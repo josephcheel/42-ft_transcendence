@@ -68,7 +68,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'tournementsapp',
     'usermodel',
-    'matchapp'
+    'shared',
 ]
 
 MIDDLEWARE = [

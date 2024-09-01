@@ -75,17 +75,15 @@ services:
     container_name: tournements
     build: ./tournements
     volumes:
-      - ${TOURNEMENTS_FOLDER}${USER_LOG}:/var/log/${USER_LOG}
+      - ${LOGSTASH_FOLDER}${TOURNEMENT_LOG}:/var/log/${TOURNEMENT_LOG}
       - ${DJANGO_SCRIPT}:/start.sh
       - ./tournements:/app
       - ./usermodel:/app/usermodel
-      - ./shared:/app/shared
+#      - ./shared:/app/shared
     environment:
       - APP=users
       - DEBUG=${DEBUG}
       - TOURNEMENTS_FOLDER = ${TOURNEMENTS_FOLDER}
-      - ./shared:/app/shared
-      - ./usermodel:/app/usermodel
     env_file:
       - .env
 
@@ -120,7 +118,7 @@ services:
       - ${DJANGO_SCRIPT}:/start.sh
       - ./matches:/app
       - ./usermodel:/app/usermodel
-      - ./shared:/app/shared
+      - ./shared:/app/shared/*
     env_file:
       - .env
     environment:
@@ -358,4 +356,10 @@ volumes:
     driver_opts:
       type: none
       device: ${BLOCKCHAIN_FOLDER}
+      o: bind
+  shared:
+    driver: local
+    driver_opts:
+      type: none
+      device: ${SHARED_FOLDER}
       o: bind
