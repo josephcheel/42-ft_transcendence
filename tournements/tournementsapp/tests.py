@@ -14,26 +14,21 @@ class tournementTests(TestCase):
 		self.users_creation_response = []
 		for i in range(1, 22):
 			self.users.append({'username': f"test{i}", 'password': "test"})
-		for i in range(1, 22):
-			self.users_creation_response.append({'id': i, 'username': f"test{i}"})
-		for user in self.users:
-			print(user)
 		self.base_json = {	'status': None, 'message': None, 'data': None }
 	
 	def check_json(self, response, code):
 		self.assertJSONEqual(json.dumps(self.base_json), response.content.decode("utf-8"))
 		self.assertEqual(response.status_code, code)
 
-	def test_user_creation(self):
+	def tournament_creation(self):
 		for i in range(1, 22):
-			user = self.users[i-1]
-			user_cration_response = self.users_creation_response
-			self.base_json['status'] = 'success'
-			self.base_json['message'] = 'User created successfully'
-			self.base_json['data'] = user_cration_response
-			response = self.client.post('user/create_user', json.dumps(user), content_type='application/json')
-			print(response)
-			self.check_json(response, 201)
-		list_of_users = User.objects.all()
-		for user in list_of_users:
-			print("user= ", user.username, "- password= ", user.password)
+			User.objects.create(username=f"test{i}", password="test")
+		self.turnement = Client()
+		self.turnement = {'username': 'test55', 'date_start': '2021-07-01 00:00:00', 'max_players': 16, 'cost': 100, 'price_1': 1000, 'price_2': 500, 'price_3': 250 }
+		self.base_json['status'] = 'error'
+		self.base_json['message'] = 'A user does not exist'
+		self.base_json['data'] = None
+		response = self.client.post(reverse(create_tournament), json.dumps(self.turnement), content_type='application/json')
+		print('respuesta')
+		print(response.content)
+		self.check_json(response, 404)
