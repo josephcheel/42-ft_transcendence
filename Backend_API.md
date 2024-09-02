@@ -52,7 +52,7 @@ user/[subpath]
 
 | Use | Methods | Request Data | Response Data | Return Values|
 | --- | --- | --- | ---| ---|
-| Checks if YOUR user is logged in | GET | username | None |  200 (user logged in), 401 (Unauthorized), 405, 500|
+| Checks if YOUR user is logged in | GET | None | None |  200 (user logged in), 401 (Unauthorized), 405, 500|
 
 ### list_users
 

@@ -159,3 +159,4 @@ else if "nuevo" in [tags] {
 [Django User Model](https://docs.djangoproject.com/en/5.0/topics/auth/customizing/)
 [Django Signals][https://docs.djangoproject.com/en/5.1/ref/signals/]
 [Django Auth Signals](https://docs.djangoproject.com/en/5.1/ref/contrib/auth/)
+[Django Channels](https://channels.readthedocs.io/en/latest/index.html)
