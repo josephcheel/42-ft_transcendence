@@ -58,6 +58,24 @@ user/[subpath]
 [Back to Top](#table-of-contents)
 
 
+## Tournaments
+
+tournements/[subpath]
+
+### open_tournement
+
+| Use | Methods | Request Data | Response Data | Return Values|
+| --- | --- | --- | ---| ---|
+| Creates a tournament and sends invitation to all players  | POST | 'username', 
+			'date_start', 
+			'max_players', 
+			'cost', 
+			'price_1', 
+			'price_2',
+			'price_3',
+			'players':[username1, username2, ...]	 | None |  200 (tournament created), 400 (incorrect data), 404 (user not in database), 500|
+
+
 ## Match
 
 match/[subpath]

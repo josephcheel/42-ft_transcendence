@@ -49,10 +49,12 @@ def open_tournement(request):
 	except User.DoesNotExist:
 		return JsonResponse({'status': 'error', 'message': 'A user does not exist', 'data': None}, status=404)
 	data = request.data
-	if data.get('price_1') < 0 or data.get('price_2') < 0 or data.get('price_3') < 0:
+	if data.get('cost') < 0 or data.get('price_1') < 0 or data.get('price_2') < 0 or data.get('price_3') < 0:
 		return JsonResponse({'status': 'error', 'message': 'Prices must be positive', 'data': None}, status=400)
 	if data.get('price_1') < data.get('price_2') or data.get('price_2') < data.get('price_3'):
 		return JsonResponse({'status': 'error', 'message': 'Invalid prices. Must be Price 1 > Price 2 > Price 3', 'data': None}, status=400)
+	if data.get('Date_start') < datetime.now():
+		return JsonResponse({'status': 'error', 'message': 'Invalid start date', 'data': None}, status=400)
 	data_players = data.get('players')
 	nr_of_players = 0
 	for player in data_players:
@@ -77,7 +79,7 @@ def open_tournement(request):
 		player_id = player_owner.id, 
 		date_start = data.get('Date_start'),
 		last_match_date=data.get('Date_start'),
-		date_max_end = data.get('Date_max_end') + temedelta(minutes=nr_of_matches * 5 + 30),
+		date_max_end = data.get('Date_max_end') + timedelta(minutes=nr_of_matches * 5 + 30),
 		max_players = data.get('max_players'), 
 		cost = data.get('cost'),
 		current_round = nr_of_rounds + extra_round,
@@ -144,10 +146,10 @@ def close_tournement(request):
 		return JsonResponse({'status': 'error', 'message': 'The number of players does not permit start tournement', 'data': None}, status=400)
 	tournement.status = StatusTournements.CLOSED_TOURNEMENT
 	next_match_date = tournement.last_match_date
-	tournement.last_match_date = F('last_match_date') + timedelta(minutes=5 * len(tournement_players) / 2)
-	tournement.save()
 	player_nr = len(tournement_players)
-	current_round, extra_round = math.modf(math.log2(len(tournement_players)))
+	current_round, extra_round = math.modf(math.log2(player_nr))
+	tournement.last_match_date = datetime.now() + timedelta(minutes=7 * pow(2, current_round + 1) / 2)
+	tournement.save()
 	if extra_round > 0:
 		extra_round = 1
 	match len(tournement_players):
@@ -159,9 +161,9 @@ def close_tournement(request):
 				player_id_1 = tournement_players[0].id, 
 				player_id_2 = tournement_players[1].id, 
 				round = Rounds.FINAL_ROUND)
-			User.objects.filter(id=player_id_1).update(
+			User.objects.filter(id=tournement_players[0].id).update(
 				puntos_reservados=F('puntos_reservados') - tournement.cost)
-			User.objects.filter(id=player_id_2).update(
+			User.objects.filter(id=tournement_players[1].id).update(
 				puntos_reservados=F('puntos_reservados') - tournement.cost)
 		case 4:
 			Matches.objects.create(
@@ -243,7 +245,7 @@ def finish_tournement(request):
 		elif match.round == Rounds.THIRD_PLACE_ROUND:
 			tournement.id_third = match.winner_id
 			User.objects.filter(id = tournement.id_third).update(puntos= F('puntos') + tournement.price_3)
-	tournement.status = status_tournements.FINISHED_TOURNEMENT
+	tournement.status = StatusTournements.FINISHED_TOURNEMENT
 	tournement.save()
 	return JsonResponse({'status': 'success', 'message': 'Tournement closed successfully', 'data': None}, status=200)
 
