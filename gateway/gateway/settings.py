@@ -32,7 +32,7 @@ SECRET_KEY = 'django-insecure-w@p@_o3z*ymi9ud^mv(zvc9f6uwgwa@prl+3o@pa+^6+x2j2!e
 
 # SECURITY WARNING: don't run with debug turned on in production!
 
-ALLOWED_HOSTS = ['localhost', 'gateway', 'usermanagement', 'matches']
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'gateway', 'usermanagement', 'matches']
 
 
 # Application definition
@@ -65,8 +65,19 @@ if not DEBUG:
 
     logging.config.dictConfig(LOGGING)
 
+ASGI_APPLICATION = "gateway.asgi.application"
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("127.0.0.1", 6379)],
+        },
+    },
+}
 # Application definition
 INSTALLED_APPS = [
+    'daphne',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

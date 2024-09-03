@@ -16,7 +16,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import include, path
-from .views import test_logging, user, match
+from .views import test_logging, user, match, index
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -25,5 +25,6 @@ urlpatterns = [
     path('match/<path:subpath>/', match, name='match'),
 
     path('', include('django_prometheus.urls')),
+    path('index/', index, name='index'),
 
 ]

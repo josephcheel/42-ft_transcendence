@@ -15,6 +15,8 @@ except:
 
 User = get_user_model()
 
+
+
 if not settings.DEBUG:
     logger = logging.getLogger('django')
     logger.setLevel(logging.DEBUG)
@@ -153,3 +155,6 @@ def list_users(request):
                         'data' : None, 
                         'message' : 'Internal database error'}, 
                         status=500)
+    
+def status(request):
+    return JsonResponse("Hello this is status")

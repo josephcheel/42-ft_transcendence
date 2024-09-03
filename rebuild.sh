@@ -10,6 +10,9 @@ sudo find . -type f -name 'db.sqlite3' -exec rm {} +
 
 sudo rm -rf $VOLUMES
 make volumes
-docker compose -f $DOCKER_COMPOSE_FILE up --build -d db usermanagement matches gateway
+
+DOCKER_COMPOSE_FILE=./docker-compose.yml
+
+docker compose -f $DOCKER_COMPOSE_FILE up --build -d usermanagement  gateway
 
 #psql -U ${DB_USER} -d ${DB_NAME}
