@@ -110,7 +110,6 @@ def open_tournement(request):
 
 @csrf_exempt
 @require_post
-@validate_credentials
 def accept_invitation(request):
 	player = request.username
 	try:

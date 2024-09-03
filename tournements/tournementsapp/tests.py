@@ -1,7 +1,7 @@
 from django.test import TestCase, Client
 from django.contrib.auth import get_user_model
 from django.urls import reverse
-from .views import open_tournement
+from .views import open_tournement, accept_invitation
 from datetime import timedelta
 from django.utils import timezone
 from django.db import OperationalError
@@ -193,4 +193,20 @@ class test_accept_invitation (TestCase):
 			'players': ['test1', 'test2', 'test3', 'test4', 'test5', 'test6', 'test7', 'test8', 'test9', 'test10'], }
 		response = self.client.post(reverse(open_tournement), json.dumps(
 			self.tournament), content_type='application/json')
-		
+
+	def check_json(self, response, code):
+		self.assertJSONEqual(json.dumps(self.base_json),
+		                     response.content.decode("utf-8"))
+		self.assertEqual(response.status_code, code)
+
+	# Accept invitation is ok
+	def test_accept_invitation(self):
+		self.invitation = {
+			'username': 'test11',
+			'tournament': '1'
+		}
+		self.base_json['status'] = 'success'
+		self.base_json['message'] = 'Invitation accepted'
+		self.base_json['data'] = None
+		response = self.client.post(reverse(accept_invitation), json.dumps(self.invitation), content_type='application/json')
+		self.check_json(response, 200)
