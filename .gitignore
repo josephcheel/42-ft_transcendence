@@ -7,3 +7,4 @@ db.s*
 *html*
 .DS_Store
 *coverage*
+*node_modules*
