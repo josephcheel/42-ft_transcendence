@@ -239,3 +239,22 @@ class userStatusTest(TestCase):
         self.check_json(response, 200)
         self.assertFalse(user_status_.is_online)
       
+    def test_post_user_status(self):
+
+        self.base_json['status'] = 'success'
+        self.base_json['message'] = 'Updated status'
+        self.base_json['data'] = None
+
+        self.client.post(reverse(login_user),json.dumps(self.user1),content_type='application/json')
+
+
+        response = self.client.post(reverse(user_status),json.dumps({'status':'online'}),content_type='application/json')
+        user_status_ = UserStatus.objects.get(user=self.user)
+        self.check_json(response, 200)
+        self.assertTrue(user_status_.is_online)
+
+        response = self.client.post(reverse(user_status),json.dumps({'status':'offline'}),content_type='application/json')
+
+        user_status_ = UserStatus.objects.get(user=self.user)
+        self.check_json(response, 200)
+        self.assertFalse(user_status_.is_online)

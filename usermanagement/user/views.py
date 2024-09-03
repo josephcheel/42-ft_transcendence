@@ -46,7 +46,7 @@ def create_user(request):
         try:
             user.set_password(password)
             user.save()
-            user_status, created = UserStatus.objects.get_or_create(user=user)
+            UserStatus.objects.get_or_create(user=user)
         except OperationalError:
             return JsonResponse({'status' : 'error',
                                 'message' : 'Internal database error',
@@ -162,28 +162,64 @@ def list_users(request):
                         status=500)
 
 
-@require_get
 def user_status(request):
-    username = request.GET.get('username')
-    if username is None:
-            return JsonResponse({'status': 'error', 'message': 'No username provided', 'data': None}, status=400)
-    try:
-        user_status = UserStatus.objects.get(user=User.objects.get(username=username))
-        return JsonResponse({'status' : 'success',
-                            'message' : "Retrieved status",
-                            'data' : {'is_online' : user_status.is_online}},
-                            status=200)     
+    if request.method == 'GET':    
+        username = request.GET.get('username')
+        if username is None:
+                return JsonResponse({'status': 'error', 'message': 'No username provided', 'data': None}, status=400)
+        try:
+            user_status = UserStatus.objects.get(user=User.objects.get(username=username))
+            return JsonResponse({'status' : 'success',
+                                'message' : "Retrieved status",
+                                'data' : {'is_online' : user_status.is_online}},
+                                status=200)     
 
-    except User.DoesNotExist:
-        return JsonResponse({'status' : 'error',
-                            'message' : "User does not exists",
-                            'data' : None},
-                            status=404)
-    except OperationalError:
-        return JsonResponse({'status' : 'error', 
-                        'data' : None, 
-                        'message' : 'Internal database error'}, 
-                        status=500)
+        except User.DoesNotExist:
+            return JsonResponse({'status' : 'error',
+                                'message' : "User does not exists",
+                                'data' : None},
+                                status=404)
+        except OperationalError:
+            return JsonResponse({'status' : 'error', 
+                            'data' : None, 
+                            'message' : 'Internal database error'}, 
+                            status=500)
+    elif request.method == 'POST':
+        try:
+            if request.user.is_authenticated:
+                try:
+                    request.data = json.loads(request.body)
+                except json.JSONDecodeError:
+                    return JsonResponse({'status': 'error',
+                                         'message': 'Invalid JSON body',
+                                         'data': None},
+                                         status=400)
+                status = request.data.get('status')
+                if  status not in ['online', 'offline']:
+                    return JsonResponse({'status': 'error',
+                                         'message': 'Invalid JSON body',
+                                         'data': None},
+                                         status=400)
+                status = True if status == 'online' else False
+                UserStatus.objects.get(user=request.user).change_status(status)
+                return JsonResponse({'status': 'success',
+                                     'message': 'Updated status',
+                                     'data': None},
+                                     status=200)
+            else:
+                return JsonResponse({'status': 'error',
+                                     'message': 'No valid user in request',
+                                     'data': None}, status=400)
+        except:
+            return JsonResponse({'status': 'error',
+                                 'message': 'Internal server error',
+                                 'data': None},
+                                 status=500)
+    else:
+        return JsonResponse({
+                'status': 'error',
+                'message': 'Invalid request method, GET or POST required',
+                'data': None
+            }, status=405)
+        
     
-""" @require_post   
-def change_status(request): """

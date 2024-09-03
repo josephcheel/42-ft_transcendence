@@ -64,7 +64,8 @@ user/[subpath]
 
 | Use | Methods | Request Data | Response Data | Return Values|
 | --- | --- | --- | ---| ---|
-| Returns current online status of user | GET | username | is_online: True/False |  200 (user logged in), 404 (user not found), 405, 500|
+| Returns current online status of user | GET | username | is_online: True/False |  200 , 404 (user not found), 405, 500|
+| Changes current user status | POST | status: online/offline | None |  200, 400(invalid json or user not auth), 404 (user not found), 405, 500|
 
 
 [Back to Top](#table-of-contents)
