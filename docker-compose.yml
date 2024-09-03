@@ -69,24 +69,6 @@ services:
     env_file:
       - .env
 
-  tournements:
-    depends_on:
-      - migrations
-    container_name: tournements
-    build: ./tournements
-    volumes:
-      - ${LOGSTASH_FOLDER}${TOURNEMENT_LOG}:/var/log/${TOURNEMENT_LOG}
-      - ${DJANGO_SCRIPT}:/start.sh
-      - ./tournements:/app
-      - ./usermodel:/app/usermodel
-#      - ./shared:/app/shared
-    environment:
-      - APP=users
-      - DEBUG=${DEBUG}
-      - TOURNEMENTS_FOLDER = ${TOURNEMENTS_FOLDER}
-    env_file:
-      - .env
-
   chat:
     restart: always
 
@@ -105,6 +87,25 @@ services:
       - APP=chatapp
       - DEBUG=${DEBUG}
 
+  tournements:
+    depends_on:
+      db:
+        condition: service_healthy
+    container_name: tournements
+    build: ./tournements
+    volumes:
+      - ${LOGSTASH_FOLDER}${TOURNEMENT_LOG}:/var/log/${TOURNEMENT_LOG}
+      - ${DJANGO_SCRIPT}:/start.sh
+      - ./tournements:/app
+      - ./usermodel:/app/usermodel
+      - ./shared/wrappers.py:/app/shared/wrappers.py
+    env_file:
+      - .env
+    environment:
+      - APP=tournements
+      - DEBUG=${DEBUG}
+      - TOURNEMENTS_FOLDER = ${TOURNEMENTS_FOLDER}
+
   matches:
     restart: always
 
@@ -118,7 +119,7 @@ services:
       - ${DJANGO_SCRIPT}:/start.sh
       - ./matches:/app
       - ./usermodel:/app/usermodel
-      - ./shared:/app/shared/*
+      - ./shared/:/app/shared/
     env_file:
       - .env
     environment:
@@ -305,7 +306,6 @@ services:
     #restart: always
     volumes:
       - ${TOURNEMENTS_FOLDER}${CHAT_LOG}:/var/log/${CHAT_LOG}
-      - ${DJANGO_SCRIPT}:/start.sh
       - ./blockchain:/app
 
 volumes:
