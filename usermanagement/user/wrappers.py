@@ -34,12 +34,12 @@ def validate_credentials(func):
             request.data = json.loads(request.body)
         except json.JSONDecodeError:
             return JsonResponse({'status': 'error', 'message': 'Invalid JSON body', 'data': None}, status=400)
-
         request.username = request.data.get('username')
         request.password = request.data.get('password')
 
         if not request.username or not request.password:
             return JsonResponse({'status': 'error', 'message': 'Empty username or password', 'data': None}, status=400)
+        request.original_username = request.username
         request.username = request.username.lower()
         return func(request, *args, **kwargs)
     return wrapper

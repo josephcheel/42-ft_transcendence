@@ -15,8 +15,8 @@ class usermodelTests(TestCase):
 
     def setUp(self):
         self.client = Client()
-        self.user1 = {"username" : "test1", "password" : "test"}
-        self.user2 = {"username" : "test2", "password" : "test"}
+        self.user1 = {"username" : "Test1", "password" : "test"}
+        self.user2 = {"username" : "Test2", "password" : "test"}
         self.base_json = {
             'status': None,
             'message': None,
@@ -33,16 +33,19 @@ class usermodelTests(TestCase):
     def test_user_creation(self):
         self.base_json['status'] = 'success'
         self.base_json['message'] = 'User created successfully'
-        self.base_json['data'] = {'id' : 1, 'username' : 'test1'}
+        self.base_json['data'] = {'id' : 1, 'username' : self.user1['username']}
 
         response = self.client.post(reverse(create_user),json.dumps(self.user1),content_type='application/json')
 
         self.check_json(response, 201)
 
+        user = User.objects.get(username=self.user1['username'].lower())
+        self.assertEqual(user.original_username, self.user1['username'])
+
 
         self.base_json['status'] = 'success'
         self.base_json['message'] = 'User created successfully'
-        self.base_json['data'] = {'id' : 2, 'username' : 'test2'}
+        self.base_json['data'] = {'id' : 2, 'username' : self.user2['username']}
 
         response = self.client.post(reverse(create_user),json.dumps(self.user2),content_type='application/json')
         self.check_json(response, 201)
@@ -89,7 +92,7 @@ class usermodelTests(TestCase):
 
         response = self.client.get(reverse(list_users))
         self.check_json(response, 200)
-        self.base_json['data'] = [{'id': 1, 'username': self.user1['username']}]
+        self.base_json['data'] = [{'id': 1, 'username': self.user1['username'].lower()}]
         response = self.client.post(reverse(create_user),json.dumps(self.user1),content_type='application/json')
         response = self.client.get(reverse(list_users))
         self.check_json(response, 200)

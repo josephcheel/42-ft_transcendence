@@ -1,12 +1,16 @@
-from django.contrib.auth import get_user_model
-
+from django.contrib.auth import get_user_model 
 from django.db import models
-try:
-    from usermodel.models import User
-except:
-    pass
+from django.conf import settings
+from django.contrib.auth.models import AbstractUser
 
-User = get_user_model()
+
+
+
+class User(AbstractUser):
+    original_username =  models.CharField(max_length=100)
+    def save_password(self, password):
+        self.set_password(password)
+        self.save()
 
 class UserStatus(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)

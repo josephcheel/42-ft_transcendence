@@ -79,6 +79,8 @@ INSTALLED_APPS = [
 
 if not DEBUG:
     AUTH_USER_MODEL="usermodel.User"
+else:
+    AUTH_USER_MODEL="user.User"
 
 MIDDLEWARE = [
     'django_prometheus.middleware.PrometheusBeforeMiddleware',

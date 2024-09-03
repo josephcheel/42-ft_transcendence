@@ -8,10 +8,7 @@ import json
 import logging
 
 #If testing we dont have usermodel.User so we want to use default
-try:
-    from usermodel.models import User
-except:
-    pass
+
 from .models import UserStatus
 User = get_user_model()
 
@@ -35,6 +32,7 @@ def custom_404_view(request, exception=None):
 def create_user(request):
     username = request.username
     password = request.password
+    original_username = request.original_username
     try:
         user = User.objects.get(username=username)
         return JsonResponse({'status' : 'error',
@@ -42,7 +40,7 @@ def create_user(request):
                                 'data' : None},
                                 status=409)
     except User.DoesNotExist:
-        user = User(username=username)
+        user = User(username=username, original_username=original_username)
         try:
             user.set_password(password)
             user.save()
@@ -54,7 +52,7 @@ def create_user(request):
                                 status=500)
         return JsonResponse({'status' : 'success',
                                 'message' : 'User created successfully',
-                                'data' : {'id': user.id, 'username': user.username}},
+                                'data' : {'id': user.id, 'username': user.original_username}},
                                 status=201)
     except OperationalError:
         return JsonResponse({'status' : 'error',
