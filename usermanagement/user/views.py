@@ -12,7 +12,7 @@ try:
     from usermodel.models import User
 except:
     pass
-
+from .models import UserStatus
 User = get_user_model()
 
 
@@ -46,6 +46,7 @@ def create_user(request):
         try:
             user.set_password(password)
             user.save()
+            user_status, created = UserStatus.objects.get_or_create(user=user)
         except OperationalError:
             return JsonResponse({'status' : 'error',
                                 'message' : 'Internal database error',
@@ -77,6 +78,8 @@ def login_user(request):
         user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)
+            user_status= UserStatus.objects.get(user=user)
+            user_status.change_status(True) 
             return JsonResponse({'status' : 'success',
                                 'message': 'user is logged in',
                                 'data' : None},
@@ -101,7 +104,9 @@ def login_user(request):
 def logout_user(request):
     try:
         if request.user.is_authenticated:
+            user_status = UserStatus.objects.get(user=request.user)
             logout(request)
+            user_status.change_status(False) 
             return JsonResponse({'status' : 'success',
                                 'message': 'user has been logged out',
                                 'data' : None},
@@ -155,6 +160,30 @@ def list_users(request):
                         'data' : None, 
                         'message' : 'Internal database error'}, 
                         status=500)
+
+
+@require_get
+def user_status(request):
+    username = request.GET.get('username')
+    if username is None:
+            return JsonResponse({'status': 'error', 'message': 'No username provided', 'data': None}, status=400)
+    try:
+        user_status = UserStatus.objects.get(user=User.objects.get(username=username))
+        return JsonResponse({'status' : 'success',
+                            'message' : "Retrieved status",
+                            'data' : {'is_online' : user_status.is_online}},
+                            status=200)     
+
+    except User.DoesNotExist:
+        return JsonResponse({'status' : 'error',
+                            'message' : "User does not exists",
+                            'data' : None},
+                            status=404)
+    except OperationalError:
+        return JsonResponse({'status' : 'error', 
+                        'data' : None, 
+                        'message' : 'Internal database error'}, 
+                        status=500)
     
-def status(request):
-    return JsonResponse("Hello this is status")
+""" @require_post   
+def change_status(request): """

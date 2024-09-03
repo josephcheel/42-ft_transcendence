@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import create_user, custom_404_view, login_user, is_logged_in, logout_user, list_users, status
+from .views import create_user, custom_404_view, login_user, is_logged_in, logout_user, list_users, user_status
 
 handler404 = custom_404_view
 
@@ -9,6 +9,6 @@ urlpatterns = [
     path('is_logged_in/', is_logged_in, name='is_logged_in'),
     path('logout_user/', logout_user, name='logout_user'),
     path('list_users/', list_users, name='list_users'),
-    path('status/', status, name='status')
+    path('user_status/', user_status, name='user_status')
 ]
 

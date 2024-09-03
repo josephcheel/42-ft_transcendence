@@ -1,9 +1,10 @@
 from django.test import TestCase, Client
 from django.urls import reverse
-from .views import create_user, login_user, is_logged_in, logout_user, list_users
+from .views import create_user, login_user, is_logged_in, logout_user, list_users, user_status
 import json
 from django.db import OperationalError
 from django.contrib.auth import get_user_model
+from .models import UserStatus
 
 User = get_user_model()
 
@@ -189,3 +190,52 @@ class logInTest(TestCase):
         self.base_json['data'] = None
 
         self.check_json(response, 403)
+
+
+class userStatusTest(TestCase):
+    def setUp(self):
+        self.client = Client()
+        self.user1 = {"username" : "test1", "password" : "test"}
+        self.base_json = {
+            'status': None,
+            'message': None,
+            'data': None
+        }
+        self.client.post(reverse(create_user),json.dumps(self.user1),content_type='application/json')
+        self.user = User.objects.get(username=self.user1['username'])
+
+    def check_json(self, response, code):
+        self.assertJSONEqual(json.dumps(self.base_json), response.content.decode("utf-8"))
+        self.assertEqual(response.status_code, code)
+
+    def test_is_online_after_login(self):
+        self.client.post(reverse(login_user),json.dumps(self.user1),content_type='application/json')
+        user_status = UserStatus.objects.get(user=self.user)
+        self.assertTrue(user_status.is_online)
+
+    def test_is_offline_after_logout(self):
+        user_status = UserStatus.objects.get(user=self.user)
+        self.client.post(reverse(logout_user),json.dumps(self.user1),content_type='application/json')
+        self.assertFalse(user_status.is_online)
+
+
+    def test_get_user_status(self):
+
+        self.base_json['status'] = 'success'
+        self.base_json['message'] = 'Retrieved status'
+        self.base_json['data'] = {'is_online' : True}
+
+        self.client.post(reverse(login_user),json.dumps(self.user1),content_type='application/json')
+        response = self.client.get(reverse(user_status),{'username': self.user1['username']})
+        user_status_ = UserStatus.objects.get(user=self.user)
+        self.check_json(response, 200)
+        self.assertTrue(user_status_.is_online)
+
+        self.base_json['data'] = {'is_online' : False}
+
+        self.client.post(reverse(logout_user),json.dumps(self.user1),content_type='application/json')
+        response = self.client.get(reverse(user_status),{'username': self.user1['username']})
+        user_status_ = UserStatus.objects.get(user=self.user)
+        self.check_json(response, 200)
+        self.assertFalse(user_status_.is_online)
+      

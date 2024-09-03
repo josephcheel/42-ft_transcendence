@@ -1,7 +1,7 @@
 # Table of contents
 | Section | Links |
 |---------|-------|
-| [User](#user) | [create_user](#create_user) <br> [login_user](#login_user) <br> [logout_user](#logout_user) <br> [is_logged_in](#is_logged_in) <br> [list_users](#list_users) |
+| [User](#user) | [create_user](#create_user) <br> [login_user](#login_user) <br> [logout_user](#logout_user) <br> [is_logged_in](#is_logged_in) <br> [list_users](#list_users) <br> [user_status](#user_status) |
 | [Match](#match) | [propose_match](#propose_match) <br> [get_pending_matches](#get_pending_matches) |
 
 
@@ -59,6 +59,12 @@ user/[subpath]
 | Use | Methods | Request Data | Response Data | Return Values|
 | --- | --- | --- | ---| ---|
 | Returns a list of all users registered | GET | None | List of users. Each element inside the list is a dictionaty with id and username keys |  200 (user logged in), 405, 500|
+
+### user_status
+
+| Use | Methods | Request Data | Response Data | Return Values|
+| --- | --- | --- | ---| ---|
+| Returns current online status of user | GET | username | is_online: True/False |  200 (user logged in), 404 (user not found), 405, 500|
 
 
 [Back to Top](#table-of-contents)
