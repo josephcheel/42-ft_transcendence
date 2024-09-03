@@ -67,10 +67,11 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'tournementsapp',
-    'usermodel',
-    'shared',
 ]
 
+if not DEBUG:
+    AUTH_USER_MODEL = "usermodel.User"
+    
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
