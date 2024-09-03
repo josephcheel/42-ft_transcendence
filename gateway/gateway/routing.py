@@ -1,7 +1,7 @@
-from django.urls import path
+from django.urls import re_path
 
 from . import consumers
 
 websocket_urlpatterns = [
-    path('ws/gateway/', consumers.UserConsumer.as_asgi()),
+    re_path(r'ws/gateway/', consumers.UserConsumer.as_asgi()),
 ]

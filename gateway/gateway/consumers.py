@@ -14,6 +14,8 @@ class UserConsumer(WebsocketConsumer):
         self.accept()
 
     def disconnect(self, close_code):
+        logger.debug("I am about to disconnect")
+
         self.notify_user_management('offline')
     
     def notify_user_management(self, status):
