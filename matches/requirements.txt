@@ -5,3 +5,4 @@ python-json-logger
 django-prometheus
 # needed to intereact with PostGreeSql
 psycopg==3.2.1
+django-cors-headers

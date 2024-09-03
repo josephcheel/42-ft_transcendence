@@ -1,3 +1,11 @@
+ifeq ($(MAKECMDGOALS), debug)
+  DEBUG := True
+else
+  DEBUG := False
+endif
+
+export DEBUG
+
 COMPOSE = docker compose
 
 DOCKER_COMPOSE_FILE = ./docker-compose.yml

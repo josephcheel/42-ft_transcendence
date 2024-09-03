@@ -304,6 +304,12 @@ services:
       - ${TOURNEMENTS_FOLDER}${CHAT_LOG}:/var/log/${CHAT_LOG}
       - ${DJANGO_SCRIPT}:/start.sh
       - ./blockchain:/app
+  frontend:
+    container_name: frontend
+    build:
+      context: ./frontend
+    ports:
+      - "8080:80"
 
 volumes:
   certs:

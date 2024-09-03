@@ -4,3 +4,5 @@ logstash-formatter
 python-json-logger
 django-prometheus
 channels[daphne][channels_redis]
+
+django-cors-headers
