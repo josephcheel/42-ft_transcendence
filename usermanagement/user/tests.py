@@ -1,10 +1,10 @@
 from django.test import TestCase, Client
 from django.urls import reverse
-from .views import create_user, login_user, is_logged_in, logout_user, list_users, user_status
+from .views import create_user, login_user, is_logged_in, logout_user, list_users, user_status, send_friend_request
 import json
 from django.db import OperationalError
-from django.contrib.auth import get_user_model
-from .models import UserStatus
+from django.contrib.auth import get_user_model, login, logout
+from .models import UserStatus, Friendship
 
 User = get_user_model()
 
@@ -261,3 +261,83 @@ class userStatusTest(TestCase):
         user_status_ = UserStatus.objects.get(user=self.user)
         self.check_json(response, 200)
         self.assertFalse(user_status_.is_online)
+
+class friendShipTest(TestCase):
+
+    def setUp(self):
+        self.client = Client()
+        self.user1 = User.objects.create_user(username='test1', password='test')
+        self.user2 = User.objects.create_user(username='test2', password='test')
+
+        self.client.login(username='test1', password='test')
+        self.friend = {'username' : 'test2'}
+        self.base_json = {
+            'status': None,
+            'message': None,
+            'data': None
+        }
+
+        
+    def login_user(self, username, password):
+        # Log in as user1
+        self.client.login(username=username, password=password)
+
+    def logout_user(self):
+        # Log out the currently logged in user
+        self.client.logout()
+
+    def create_friendship(self):
+        friends = Friendship()
+        friends.save()
+        friends.users.add(self.user1, self.user2)
+
+    def check_json(self, response, code):
+        self.assertJSONEqual(json.dumps(self.base_json), response.content.decode("utf-8"))
+        self.assertEqual(response.status_code, code)
+
+    def test_not_auth(self):
+        self.logout_user()
+        self.base_json['status'] = 'error'
+        self.base_json['message'] = 'Invalid credentials'
+        self.base_json['data'] = None
+
+        response = self.client.post(reverse(send_friend_request), json.dumps(self.friend),content_type='application/json' )
+        self.check_json(response, 401)
+
+    def test_no_friend_sent(self):
+        self.base_json['status'] = 'error'
+        self.base_json['message'] = 'Empty username'
+        self.base_json['data'] = None
+
+        response = self.client.post(reverse(send_friend_request), json.dumps({'nothing' : 'nothing'}),content_type='application/json' )
+        self.check_json(response, 400)
+
+    def test_success_create(self):
+        self.login_user('test1', 'test')
+        self.base_json['status'] = 'success'
+        self.base_json['message'] = 'Friendship created'
+        self.base_json['data'] = None
+
+        response = self.client.post(reverse(send_friend_request), json.dumps({'username' : 'Test2'}),content_type='application/json' )
+        self.check_json(response, 201)
+
+
+    def test_already_friends(self):
+        self.create_friendship()
+        self.login_user('test1', 'test')
+        self.base_json['status'] = 'error'
+        self.base_json['message'] = 'Users are already friends'
+        self.base_json['data'] = None
+
+        response = self.client.post(reverse(send_friend_request), json.dumps({'username' : 'Test2'}),content_type='application/json' )
+        self.check_json(response, 400)
+
+
+    def test_friend_doesnot_exist(self):
+        self.login_user('test1', 'test')
+        self.base_json['status'] = 'error'
+        self.base_json['message'] = 'User does not exists'
+        self.base_json['data'] = None
+
+        response = self.client.post(reverse(send_friend_request), json.dumps({'username' : 'no_existo'}),content_type='application/json' )
+        self.check_json(response, 404)

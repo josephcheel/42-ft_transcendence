@@ -1,7 +1,7 @@
 # Table of contents
 | Section | Links |
 |---------|-------|
-| [User](#user) | [create_user](#create_user) <br> [login_user](#login_user) <br> [logout_user](#logout_user) <br> [is_logged_in](#is_logged_in) <br> [list_users](#list_users) <br> [user_status](#user_status) |
+| [User](#user) | [create_user](#create_user) <br> [login_user](#login_user) <br> [logout_user](#logout_user) <br> [is_logged_in](#is_logged_in) <br> [list_users](#list_users) <br> [user_status](#user_status) <br> [send_friend_request](#send_friend_request) |
 | [Match](#match) | [propose_match](#propose_match) <br> [get_pending_matches](#get_pending_matches) |
 
 
@@ -66,6 +66,13 @@ user/[subpath]
 | --- | --- | --- | ---| ---|
 | Returns current online status of user | GET | username | is_online: True/False |  200 , 404 (user not found), 405, 500|
 | Changes current user status | POST | status: online/offline | None |  200, 400(invalid json or user not auth), 404 (user not found), 405, 500|
+
+
+### send_friend_request
+
+| Use | Methods | Request Data | Response Data | Return Values|
+| --- | --- | --- | ---| ---|
+| Sends friend request | POST | username to send request  | None |  201 ,400, 401,404 (user not found), 405, 500|
 
 
 [Back to Top](#table-of-contents)

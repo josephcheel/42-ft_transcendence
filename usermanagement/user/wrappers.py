@@ -44,3 +44,19 @@ def validate_credentials(func):
         return func(request, *args, **kwargs)
     return wrapper
 
+
+
+def get_friend(func):
+    @wraps(func)
+    def wrapper(request, *args, **kwargs):
+        try:
+            request.data = json.loads(request.body)
+        except json.JSONDecodeError:
+            return JsonResponse({'status': 'error', 'message': 'Invalid JSON body', 'data': None}, status=400)
+        request.friend = request.data.get('username')
+
+        if not request.friend:
+            return JsonResponse({'status': 'error', 'message': 'Empty username', 'data': None}, status=400)
+        request.friend = request.friend.lower()
+        return func(request, *args, **kwargs)
+    return wrapper

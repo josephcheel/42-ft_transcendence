@@ -3,13 +3,13 @@ from django.views.decorators.csrf import csrf_exempt
 from django.db import OperationalError
 from django.conf import settings
 from django.contrib.auth import authenticate, login, logout, get_user_model
-from .wrappers import validate_credentials, require_post, require_get
+from .wrappers import validate_credentials, require_post, require_get, get_friend
 import json
 import logging
 
 #If testing we dont have usermodel.User so we want to use default
 
-from .models import UserStatus
+from .models import UserStatus, Friendship
 User = get_user_model()
 
 
@@ -30,11 +30,11 @@ def custom_404_view(request, exception=None):
 @require_post
 @validate_credentials
 def create_user(request):
-    username = request.username
+    username = request.username #og username in lower case
     password = request.password
     original_username = request.original_username
     try:
-        user = User.objects.get(username=username)
+        User.objects.get(username=username)# need to check email too
         return JsonResponse({'status' : 'error',
                                 'message' : "User already Exists",
                                 'data' : None},
@@ -59,18 +59,19 @@ def create_user(request):
                             'message' : 'Internal database error',
                             'data' : None},
                             status=500)
-    except:
-        return JsonResponse({'status' : 'error',
-                        'message' : 'Internal error',
-                        'data' : None,}, 
-                        status=500)    
+    except Exception as e:
+        logger.error(e)
+        return JsonResponse({'status': 'error',
+                                'message': 'Internal server error',
+                                'data': None},
+                                status=500)  
     
 
 
 @require_post
 @validate_credentials
 def login_user(request):
-    username = request.username
+    username = request.original_username
     password = request.password
     try:
         user = authenticate(request, username=username, password=password)
@@ -92,11 +93,12 @@ def login_user(request):
                                 'message' : 'Internal database error',
                                 'data' : None,}, 
                                 status=500)
-    except:
-        return JsonResponse({'status' : 'error',
-                        'message' : 'Internal error',
-                        'data' : None,}, 
-                        status=500)
+    except Exception as e:
+        logger.error(e)
+        return JsonResponse({'status': 'error',
+                                'message': 'Internal server error',
+                                'data': None},
+                                status=500)
     
 @require_post
 def logout_user(request):
@@ -119,11 +121,12 @@ def logout_user(request):
                                 'message' : 'Internal database error',
                                 'data' : None,}, 
                                 status=500)
-    except:
-        return JsonResponse({'status' : 'error',
-                        'message' : 'Internal error',
-                        'data' : None,}, 
-                        status=500)
+    except Exception as e:
+        logger.error(e)
+        return JsonResponse({'status': 'error',
+                                'message': 'Internal server error',
+                                'data': None},
+                                status=500)
     
 
 @require_get
@@ -144,6 +147,12 @@ def is_logged_in(request):
                                 'data' : None, 
                                 'message' : 'Internal database error'}, 
                                 status=500)
+    except Exception as e:
+        logger.error(e)
+        return JsonResponse({'status': 'error',
+                                'message': 'Internal server error',
+                                'data': None},
+                                status=500)
 
 @require_get
 def list_users(request):
@@ -158,6 +167,12 @@ def list_users(request):
                         'data' : None, 
                         'message' : 'Internal database error'}, 
                         status=500)
+    except Exception as e:
+        logger.error(e)
+        return JsonResponse({'status': 'error',
+                                'message': 'Internal server error',
+                                'data': None},
+                                status=500)
 
 
 def user_status(request):
@@ -182,6 +197,12 @@ def user_status(request):
                             'data' : None, 
                             'message' : 'Internal database error'}, 
                             status=500)
+        except Exception as e:
+            logger.error(e)
+            return JsonResponse({'status': 'error',
+                                    'message': 'Internal server error',
+                                    'data': None},
+                                    status=500)
     elif request.method == 'POST':
         try:
             if request.user.is_authenticated:
@@ -208,11 +229,17 @@ def user_status(request):
                 return JsonResponse({'status': 'error',
                                      'message': 'No valid user in request',
                                      'data': None}, status=400)
-        except:
+        except OperationalError:
+            return JsonResponse({'status' : 'error', 
+                            'data' : None, 
+                            'message' : 'Internal database error'}, 
+                            status=500)            
+        except Exception as e:
+            logger.error(e)
             return JsonResponse({'status': 'error',
-                                 'message': 'Internal server error',
-                                 'data': None},
-                                 status=500)
+                                    'message': 'Internal server error',
+                                    'data': None},
+                                    status=500)
     else:
         return JsonResponse({
                 'status': 'error',
@@ -220,4 +247,37 @@ def user_status(request):
                 'data': None
             }, status=405)
         
-    
+@require_post
+@get_friend
+def send_friend_request(request):
+    if not request.user.is_authenticated:
+        return JsonResponse({'status' : 'error',
+                            'message': 'Invalid credentials',
+                            'data' : None},
+                            status=401)
+    try:
+
+        user2 = User.objects.get(username=request.friend)
+        if Friendship.are_friends(request.user, user2):
+            return JsonResponse({'status' : 'error',
+                    'message' : "Users are already friends",
+                    'data' : None}, status=400)
+        Friendship.add_friendship(request.user, user2)
+        return JsonResponse({'status' : 'success',
+                'message' : "Friendship created",
+                'data' : None}, status=201)
+    except User.DoesNotExist:
+        return JsonResponse({'status' : 'error',
+                            'message' : "User does not exists",
+                            'data' : None}, status=404)
+    except OperationalError:
+        return JsonResponse({'status' : 'error', 
+                        'data' : None, 
+                        'message' : 'Internal database error'}, 
+                        status=500)
+    except Exception as e:
+        logger.error(e)
+        return JsonResponse({'status': 'error',
+                                'message': 'Internal server error',
+                                'data': None},
+                                status=500)
