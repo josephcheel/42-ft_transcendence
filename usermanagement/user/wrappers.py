@@ -60,3 +60,28 @@ def get_friend(func):
         request.friend = request.friend.lower()
         return func(request, *args, **kwargs)
     return wrapper
+
+def get_status(func):
+    @wraps(func)
+    def wrapper(request, *args, **kwargs):
+        try:
+            request.data = json.loads(request.body)
+        except json.JSONDecodeError:
+            return JsonResponse({'status': 'error', 'message': 'Invalid JSON body', 'data': None}, status=400)
+        request.status = request.data.get('status')
+
+        if request.status not in ["accepted","pending","declined"]:
+            return JsonResponse({'status': 'error', 'message': 'Invalid status', 'data': None}, status=400)
+        return func(request, *args, **kwargs)
+    return wrapper
+
+def require_auth(func):
+    @wraps(func)
+    def wrapper(request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return JsonResponse({'status' : 'error',
+                                'message': 'Invalid credentials',
+                                'data' : None},
+                                status=401)
+        return func(request, *args, **kwargs)
+    return wrapper
