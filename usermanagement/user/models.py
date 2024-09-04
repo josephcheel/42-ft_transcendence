@@ -22,17 +22,19 @@ class UserStatus(models.Model):
 
 class Friendship(models.Model):
     users = models.ManyToManyField(User)
-    DECLINED_CHOIDE = 0
+    DECLINED_CHOICE = 0
     ACCEPTED_CHOICE = 1
     PENDING_CHOICE = 2
 
 
     STATUS_CHOICES = [
+        {DECLINED_CHOICE, "declined"},
         {ACCEPTED_CHOICE, "accepted"},
         {PENDING_CHOICE, "pending"},
-        {DECLINED_CHOIDE, "declined"},
+
     ]
-    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default=PENDING_CHOICE)
+    STATUS_DICT = {v: k for k, v in STATUS_CHOICES}
+    status = models.PositiveSmallIntegerField(choices=STATUS_CHOICES, default=PENDING_CHOICE)
 
     @staticmethod
     def add_friendship(user1, user2):
@@ -48,7 +50,13 @@ class Friendship(models.Model):
     
     @staticmethod
     def are_friends(user1, user2):
-        return Friendship.objects.filter(users=user1).filter(users=user2).exists()
-
+        return Friendship.objects.filter(users=user1).filter(users=user2).exclude(status=Friendship.DECLINED_CHOICE).exists()
     
+    @staticmethod
+    def get_friendship(user1, user2):
+        return Friendship.objects.filter(users=user1).filter(users=user2)
+
+    @classmethod
+    def get_status_choice(cls, status_string):
+        return cls.STATUS_DICT.get(status_string)    
 

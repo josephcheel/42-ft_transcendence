@@ -70,10 +70,11 @@ def get_status(func):
             return JsonResponse({'status': 'error', 'message': 'Invalid JSON body', 'data': None}, status=400)
         request.status = request.data.get('status')
 
-        if request.status not in ["accepted","pending","declined"]:
+        if request.status not in ["accepted","declined"]:
             return JsonResponse({'status': 'error', 'message': 'Invalid status', 'data': None}, status=400)
         return func(request, *args, **kwargs)
     return wrapper
+
 
 def require_auth(func):
     @wraps(func)

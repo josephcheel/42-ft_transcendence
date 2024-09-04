@@ -1,7 +1,7 @@
 # Table of contents
 | Section | Links |
 |---------|-------|
-| [User](#user) | [create_user](#create_user) <br> [login_user](#login_user) <br> [logout_user](#logout_user) <br> [is_logged_in](#is_logged_in) <br> [list_users](#list_users) <br> [user_status](#user_status) <br> [send_friend_request](#send_friend_request) |
+| [User](#user) | [create_user](#create_user) <br> [login_user](#login_user) <br> [logout_user](#logout_user) <br> [is_logged_in](#is_logged_in) <br> [list_users](#list_users) <br> [user_status](#user_status) <br> [send_friend_request](#send_friend_request)<br> [change_friendship_status](#change_friendship_status) |
 | [Match](#match) | [propose_match](#propose_match) <br> [get_pending_matches](#get_pending_matches) |
 
 
@@ -54,11 +54,17 @@ user/[subpath]
 | --- | --- | --- | ---| ---|
 | Checks if YOUR user is logged in | GET | None | None |  200 (user logged in), 401 (Unauthorized), 405, 500|
 
+[Back to Top](#table-of-contents)
+
+
 ### list_users
 
 | Use | Methods | Request Data | Response Data | Return Values|
 | --- | --- | --- | ---| ---|
 | Returns a list of all users registered | GET | None | List of users. Each element inside the list is a dictionaty with id and username keys |  200 (user logged in), 405, 500|
+
+[Back to Top](#table-of-contents)
+
 
 ### user_status
 
@@ -67,12 +73,22 @@ user/[subpath]
 | Returns current online status of user | GET | username | is_online: True/False |  200 , 404 (user not found), 405, 500|
 | Changes current user status | POST | status: online/offline | None |  200, 400(invalid json or user not auth), 404 (user not found), 405, 500|
 
+[Back to Top](#table-of-contents)
+
 
 ### send_friend_request
 
 | Use | Methods | Request Data | Response Data | Return Values|
 | --- | --- | --- | ---| ---|
 | Sends friend request | POST | username to send request  | None |  201 ,400, 401,404 (user not found), 405, 500|
+
+[Back to Top](#table-of-contents)
+
+### change_friendship_status
+
+| Use | Methods | Request Data | Response Data | Return Values|
+| --- | --- | --- | ---| ---|
+| Updates friendship | POST | username: friend, status: [accepted / declined]  | None |  200 ,400, 401,404 (user not found or no friendship), 405, 500|
 
 
 [Back to Top](#table-of-contents)

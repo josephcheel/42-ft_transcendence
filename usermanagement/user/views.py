@@ -3,7 +3,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.db import OperationalError
 from django.conf import settings
 from django.contrib.auth import authenticate, login, logout, get_user_model
-from .wrappers import validate_credentials, require_post, require_get, get_friend
+from .wrappers import get_status, validate_credentials, require_post, require_get, get_friend, require_auth
 import json
 import logging
 
@@ -246,17 +246,12 @@ def user_status(request):
                 'message': 'Invalid request method, GET or POST required',
                 'data': None
             }, status=405)
-        
+
+@require_auth
 @require_post
 @get_friend
 def send_friend_request(request):
-    if not request.user.is_authenticated:
-        return JsonResponse({'status' : 'error',
-                            'message': 'Invalid credentials',
-                            'data' : None},
-                            status=401)
     try:
-
         user2 = User.objects.get(username=request.friend)
         if Friendship.are_friends(request.user, user2):
             return JsonResponse({'status' : 'error',
@@ -266,6 +261,42 @@ def send_friend_request(request):
         return JsonResponse({'status' : 'success',
                 'message' : "Friendship created",
                 'data' : None}, status=201)
+    except User.DoesNotExist:
+        return JsonResponse({'status' : 'error',
+                            'message' : "User does not exists",
+                            'data' : None}, status=404)
+    except OperationalError:
+        return JsonResponse({'status' : 'error', 
+                        'data' : None, 
+                        'message' : 'Internal database error'}, 
+                        status=500)
+    except Exception as e:
+        logger.error(e)
+        breakpoint()
+        return JsonResponse({'status': 'error',
+                                'message': 'Internal server error',
+                                'data': None},
+                                status=500)
+    
+@require_auth
+@require_post
+@get_friend
+@get_status
+def change_friendship_status(request):
+    try:
+        status = Friendship.get_status_choice(request.status)
+        user2 = User.objects.get(username=request.friend)
+        friendship = Friendship.get_friendship(request.user, user2)
+        if not friendship.exists():
+            return JsonResponse({'status' : 'error',
+                                'message' : "Users have no friendship",
+                                'data' : None}, status= 404)
+        friendship = friendship.first()
+        friendship.status = status
+        friendship.save()
+        return JsonResponse({'status' : 'success',
+                'message' : "Friendship modified",
+                'data' : None}, status=200)
     except User.DoesNotExist:
         return JsonResponse({'status' : 'error',
                             'message' : "User does not exists",

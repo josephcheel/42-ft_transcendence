@@ -1,6 +1,6 @@
 from django.test import TestCase, Client
 from django.urls import reverse
-from .views import create_user, login_user, is_logged_in, logout_user, list_users, user_status, send_friend_request
+from .views import create_user, login_user, is_logged_in, logout_user, list_users, user_status, send_friend_request, change_friendship_status
 import json
 from django.db import OperationalError
 from django.contrib.auth import get_user_model, login, logout
@@ -263,12 +263,10 @@ class userStatusTest(TestCase):
         self.assertFalse(user_status_.is_online)
 
 class friendShipTest(TestCase):
-
     def setUp(self):
         self.client = Client()
         self.user1 = User.objects.create_user(username='test1', password='test')
         self.user2 = User.objects.create_user(username='test2', password='test')
-
         self.client.login(username='test1', password='test')
         self.friend = {'username' : 'test2'}
         self.base_json = {
@@ -341,3 +339,103 @@ class friendShipTest(TestCase):
 
         response = self.client.post(reverse(send_friend_request), json.dumps({'username' : 'no_existo'}),content_type='application/json' )
         self.check_json(response, 404)
+
+class changeFriendShipStatusTest(TestCase):
+
+    def setUp(self):
+        self.client = Client()
+        self.user1 = User.objects.create_user(username='test1', password='test')
+        self.user2 = User.objects.create_user(username='test2', password='test')
+        self.user3 = User.objects.create_user(username='test3', password='test')
+        self.client.login(username='test1', password='test')
+        Friendship.add_friendship(self.user1, self.user2)
+        self.friend = 'test2'
+        self.status = 'accepted'
+        self.base_json = {
+            'status': None,
+            'message': None,
+            'data': None
+        }
+        self.response = None
+        self.code = 200
+
+    def login_user(self, username, password):
+        # Log in as user1
+        self.client.login(username=username, password=password)
+
+    def check_json(self):
+        self.assertJSONEqual(json.dumps(self.base_json), self.response.content.decode("utf-8"))
+        self.assertEqual(self.response.status_code, self.code)
+    
+    def send_request(self):
+        self.response = self.client.post(reverse(change_friendship_status), json.dumps({'username' : self.friend, 'status' : self.status}),content_type='application/json' )
+
+
+    def test_not_valid_status(self):
+        self.base_json['status'] = 'error'
+        self.base_json['message'] = 'Invalid status'
+        self.base_json['data'] = None
+        self.status = 'Invalid' 
+        self.send_request()
+        self.code = 400        
+        self.check_json()
+
+        self.status = 'pending' 
+        self.send_request()
+        self.code = 400        
+        self.check_json()
+
+    def test_not_friendship(self):
+        self.base_json['status'] = 'error'
+        self.base_json['message'] = 'Users have no friendship'
+        self.base_json['data'] = None
+
+        self.friend = 'test3' 
+        self.send_request()
+        self.code = 404        
+        self.check_json()
+    
+    def test_user_not_exists(self):
+        self.base_json['status'] = 'error'
+        self.base_json['message'] = 'User does not exists'
+        self.base_json['data'] = None
+
+        self.friend = 'no_existo' 
+        self.send_request()
+        self.code = 404        
+        self.check_json()
+
+    def test_success(self):
+        self.base_json['status'] = 'success'
+        self.base_json['message'] = 'Friendship modified'
+        self.base_json['data'] = None
+        self.code = 200        
+        self.friend = 'test2' 
+        
+        ## Test change to accepted
+        self.send_request()
+        self.check_json()
+        friendship = Friendship.get_friendship(self.user1, self.user2)
+        self.assertEqual(friendship.first().status, 1)
+        self.assertEqual(friendship.last().status, 1)
+
+
+        friendship = Friendship.get_friendship(self.user2, self.user1)
+        self.assertEqual(friendship.first().status, 1)
+        self.assertEqual(friendship.last().status, 1)
+
+        # Test change to declined
+
+        self.status = 'declined'
+
+
+        self.send_request()
+        self.check_json()
+        friendship = Friendship.get_friendship(self.user1, self.user2)
+        self.assertEqual(friendship.first().status, 0)
+        self.assertEqual(friendship.last().status, 0)
+
+
+        friendship = Friendship.get_friendship(self.user2, self.user1)
+        self.assertEqual(friendship.first().status, 0)
+        self.assertEqual(friendship.last().status, 0)

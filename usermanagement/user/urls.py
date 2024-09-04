@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import create_user, custom_404_view, login_user, is_logged_in, logout_user, list_users, user_status, send_friend_request
+from .views import create_user, custom_404_view, login_user, is_logged_in, logout_user, list_users, user_status, send_friend_request,change_friendship_status
 
 handler404 = custom_404_view
 
@@ -11,5 +11,6 @@ urlpatterns = [
     path('list_users/', list_users, name='list_users'),
     path('user_status/', user_status, name='user_status'),
     path('send_friend_request/', send_friend_request, name='send_friend_request'),
+    path('change_friendship_status/', change_friendship_status, name='change_friendship_status'),
 ]
 
