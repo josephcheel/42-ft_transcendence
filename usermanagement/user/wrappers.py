@@ -2,7 +2,13 @@
 from django.http import JsonResponse
 import json
 from functools import wraps
+from django.db import OperationalError
+import logging
+from django.conf import settings
 
+if not settings.DEBUG:
+    logger = logging.getLogger('django')
+    logger.setLevel(logging.DEBUG)
 
 def require_get(func):
     @wraps(func)
@@ -85,4 +91,24 @@ def require_auth(func):
                                 'data' : None},
                                 status=401)
         return func(request, *args, **kwargs)
+    return wrapper
+
+
+def exception_handler(view_func):
+    def wrapper(*args, **kwargs):
+        try:
+            return view_func(*args, **kwargs)
+        except OperationalError:
+            return JsonResponse({
+                'status': 'error',
+                'data': None,
+                'message': 'Internal database error'
+            }, status=500)
+        except Exception as e:
+            logger.error(e)
+            return JsonResponse({
+                'status': 'error',
+                'message': 'Internal server error',
+                'data': None
+            }, status=500)
     return wrapper

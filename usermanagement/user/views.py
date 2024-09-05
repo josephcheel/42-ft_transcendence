@@ -3,7 +3,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.db import OperationalError
 from django.conf import settings
 from django.contrib.auth import authenticate, login, logout, get_user_model
-from .wrappers import get_status, validate_credentials, require_post, require_get, get_friend, require_auth
+from .wrappers import get_status, validate_credentials, require_post, require_get, get_friend, require_auth, exception_handler
 import json
 import logging
 
@@ -29,6 +29,8 @@ def custom_404_view(request, exception=None):
              
 @require_post
 @validate_credentials
+@exception_handler
+# Need to check email, name, and other infor from front end.
 def create_user(request):
     username = request.username #og username in lower case
     password = request.password
@@ -54,127 +56,73 @@ def create_user(request):
                                 'message' : 'User created successfully',
                                 'data' : {'id': user.id, 'username': user.original_username}},
                                 status=201)
-    except OperationalError:
-        return JsonResponse({'status' : 'error',
-                            'message' : 'Internal database error',
-                            'data' : None},
-                            status=500)
-    except Exception as e:
-        logger.error(e)
-        return JsonResponse({'status': 'error',
-                                'message': 'Internal server error',
-                                'data': None},
-                                status=500)  
     
 
 
 @require_post
 @validate_credentials
+@exception_handler
 def login_user(request):
     username = request.original_username
     password = request.password
-    try:
-        user = authenticate(request, username=username, password=password)
-        if user is not None:
-            login(request, user)
-            user_status= UserStatus.objects.get(user=user)
-            user_status.change_status(True) 
-            return JsonResponse({'status' : 'success',
-                                'message': 'user is logged in',
-                                'data' : None},
-                                status=200)
-        else:
-            return JsonResponse({'status' : 'error',
-                                    'message': 'Invalid credentials',
-                                    'data' : None},
-                                    status=401)
-    except OperationalError:
+    user = authenticate(request, username=username, password=password)
+    if user is not None:
+        login(request, user)
+        user_status= UserStatus.objects.get(user=user)
+        user_status.change_status(True) 
+        return JsonResponse({'status' : 'success',
+                            'message': 'user is logged in',
+                            'data' : None},
+                            status=200)
+    else:
         return JsonResponse({'status' : 'error',
-                                'message' : 'Internal database error',
-                                'data' : None,}, 
-                                status=500)
-    except Exception as e:
-        logger.error(e)
-        return JsonResponse({'status': 'error',
-                                'message': 'Internal server error',
-                                'data': None},
-                                status=500)
+                                'message': 'Invalid credentials',
+                                'data' : None},
+                                status=401)
     
 @require_post
+@exception_handler
 def logout_user(request):
-    try:
-        if request.user.is_authenticated:
-            user_status = UserStatus.objects.get(user=request.user)
-            logout(request)
-            user_status.change_status(False) 
-            return JsonResponse({'status' : 'success',
-                                'message': 'user has been logged out',
-                                'data' : None},
-                                status=200)        
-        else:
-            return JsonResponse({'status' : 'error',
-                                    'message': 'Forbidden',
-                                    'data' : None},
-                                    status=403)
-    except OperationalError:
+    if request.user.is_authenticated:
+        user_status = UserStatus.objects.get(user=request.user)
+        logout(request)
+        user_status.change_status(False) 
+        return JsonResponse({'status' : 'success',
+                            'message': 'user has been logged out',
+                            'data' : None},
+                            status=200)        
+    else:
         return JsonResponse({'status' : 'error',
-                                'message' : 'Internal database error',
-                                'data' : None,}, 
-                                status=500)
-    except Exception as e:
-        logger.error(e)
-        return JsonResponse({'status': 'error',
-                                'message': 'Internal server error',
-                                'data': None},
-                                status=500)
+                                'message': 'Forbidden',
+                                'data' : None},
+                                status=403)
     
 
 @require_get
+@exception_handler
 def is_logged_in(request):
-    try:
-        if request.user.is_authenticated:
-            return JsonResponse({'status': 'success', 
-                                'message':'User is logged in', 
-                                'data' : None}, 
-                                status=200)
-        else:
-            return JsonResponse({'status': 'error', 
-                                'message':'Unauthorized', 
-                                'data' : None}, 
-                                status=401)
-    except OperationalError:
-        return JsonResponse({'status' : 'error', 
-                                'data' : None, 
-                                'message' : 'Internal database error'}, 
-                                status=500)
-    except Exception as e:
-        logger.error(e)
-        return JsonResponse({'status': 'error',
-                                'message': 'Internal server error',
-                                'data': None},
-                                status=500)
+    if request.user.is_authenticated:
+        return JsonResponse({'status': 'success', 
+                            'message':'User is logged in', 
+                            'data' : None}, 
+                            status=200)
+    else:
+        return JsonResponse({'status': 'error', 
+                            'message':'Unauthorized', 
+                            'data' : None}, 
+                            status=401)
 
 @require_get
+@exception_handler
 def list_users(request):
-    try:
-        users = User.objects.all().values('id', 'username')
-        return JsonResponse({'status' : 'success', 
-                                'data' : list(users), 
-                                'message' : 'All registered users'}, 
-                                status=200)
-    except OperationalError:
-        return JsonResponse({'status' : 'error', 
-                        'data' : None, 
-                        'message' : 'Internal database error'}, 
-                        status=500)
-    except Exception as e:
-        logger.error(e)
-        return JsonResponse({'status': 'error',
-                                'message': 'Internal server error',
-                                'data': None},
-                                status=500)
+    users = User.objects.all().values('id', 'username')
+    return JsonResponse({'status' : 'success', 
+                            'data' : list(users), 
+                            'message' : 'All registered users'}, 
+                            status=200)
 
-
+# GET current user status or POST new user status (online/offline)
+@exception_handler
 def user_status(request):
     if request.method == 'GET':    
         username = request.GET.get('username')
@@ -192,54 +140,31 @@ def user_status(request):
                                 'message' : "User does not exists",
                                 'data' : None},
                                 status=404)
-        except OperationalError:
-            return JsonResponse({'status' : 'error', 
-                            'data' : None, 
-                            'message' : 'Internal database error'}, 
-                            status=500)
-        except Exception as e:
-            logger.error(e)
-            return JsonResponse({'status': 'error',
-                                    'message': 'Internal server error',
-                                    'data': None},
-                                    status=500)
     elif request.method == 'POST':
-        try:
-            if request.user.is_authenticated:
-                try:
-                    request.data = json.loads(request.body)
-                except json.JSONDecodeError:
-                    return JsonResponse({'status': 'error',
-                                         'message': 'Invalid JSON body',
-                                         'data': None},
-                                         status=400)
-                status = request.data.get('status')
-                if  status not in ['online', 'offline']:
-                    return JsonResponse({'status': 'error',
-                                         'message': 'Invalid JSON body',
-                                         'data': None},
-                                         status=400)
-                status = True if status == 'online' else False
-                UserStatus.objects.get(user=request.user).change_status(status)
-                return JsonResponse({'status': 'success',
-                                     'message': 'Updated status',
-                                     'data': None},
-                                     status=200)
-            else:
+        if request.user.is_authenticated:
+            try:
+                request.data = json.loads(request.body)
+            except json.JSONDecodeError:
                 return JsonResponse({'status': 'error',
-                                     'message': 'No valid user in request',
-                                     'data': None}, status=400)
-        except OperationalError:
-            return JsonResponse({'status' : 'error', 
-                            'data' : None, 
-                            'message' : 'Internal database error'}, 
-                            status=500)            
-        except Exception as e:
-            logger.error(e)
-            return JsonResponse({'status': 'error',
-                                    'message': 'Internal server error',
+                                        'message': 'Invalid JSON body',
+                                        'data': None},
+                                        status=400)
+            status = request.data.get('status')
+            if  status not in ['online', 'offline']:
+                return JsonResponse({'status': 'error',
+                                        'message': 'Invalid JSON body',
+                                        'data': None},
+                                        status=400)
+            status = True if status == 'online' else False
+            UserStatus.objects.get(user=request.user).change_status(status)
+            return JsonResponse({'status': 'success',
+                                    'message': 'Updated status',
                                     'data': None},
-                                    status=500)
+                                    status=200)
+        else:
+            return JsonResponse({'status': 'error',
+                                    'message': 'No valid user in request',
+                                    'data': None}, status=400)
     else:
         return JsonResponse({
                 'status': 'error',
@@ -250,6 +175,7 @@ def user_status(request):
 @require_auth
 @require_post
 @get_friend
+@exception_handler
 def send_friend_request(request):
     try:
         user2 = User.objects.get(username=request.friend)
@@ -265,23 +191,12 @@ def send_friend_request(request):
         return JsonResponse({'status' : 'error',
                             'message' : "User does not exists",
                             'data' : None}, status=404)
-    except OperationalError:
-        return JsonResponse({'status' : 'error', 
-                        'data' : None, 
-                        'message' : 'Internal database error'}, 
-                        status=500)
-    except Exception as e:
-        logger.error(e)
-        breakpoint()
-        return JsonResponse({'status': 'error',
-                                'message': 'Internal server error',
-                                'data': None},
-                                status=500)
     
 @require_auth
 @require_post
 @get_friend
 @get_status
+@exception_handler
 def change_friendship_status(request):
     try:
         status = Friendship.get_status_choice(request.status)
@@ -301,14 +216,4 @@ def change_friendship_status(request):
         return JsonResponse({'status' : 'error',
                             'message' : "User does not exists",
                             'data' : None}, status=404)
-    except OperationalError:
-        return JsonResponse({'status' : 'error', 
-                        'data' : None, 
-                        'message' : 'Internal database error'}, 
-                        status=500)
-    except Exception as e:
-        logger.error(e)
-        return JsonResponse({'status': 'error',
-                                'message': 'Internal server error',
-                                'data': None},
-                                status=500)
+    
