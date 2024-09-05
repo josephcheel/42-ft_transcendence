@@ -1,6 +1,6 @@
 from django.test import TestCase, Client
 from django.urls import reverse
-from .views import create_user, login_user, is_logged_in, logout_user, list_users, user_status, send_friend_request, change_friendship_status
+from .views import *
 import json
 from django.db import OperationalError
 from django.contrib.auth import get_user_model, login, logout
@@ -439,3 +439,81 @@ class changeFriendShipStatusTest(TestCase):
         friendship = Friendship.get_friendship(self.user2, self.user1)
         self.assertEqual(friendship.first().status, 0)
         self.assertEqual(friendship.last().status, 0)
+
+
+class getAllFriends(TestCase):
+
+    def setUp(self):
+        self.client = Client()
+        self.client2 = Client()
+        self.client3 = Client()
+        self.user1 = User.objects.create_user(username='test1',original_username='Test1', password='test')
+        self.user2 = User.objects.create_user(username='test2',original_username='Test2', password='test')
+        self.user3 = User.objects.create_user(username='test3',original_username='Test3', password='test')
+
+        #Create user Status state
+        UserStatus.objects.create(user=self.user1, is_online=True)
+        UserStatus.objects.create(user=self.user2)
+        UserStatus.objects.create(user=self.user3)
+        self.client.login(username='test1', password='test')
+        self.client2.login(username='test2', password='test')
+        self.client3.login(username='test3', password='test')
+        Friendship.add_friendship(self.user1, self.user2)
+        self.status = 'accepted'
+        self.base_json = {
+            'status': None,
+            'message': None,
+            'data': None
+        }
+        self.response = None
+        self.code = 200
+
+
+    def check_json(self):
+        self.assertJSONEqual(json.dumps(self.base_json), self.response.content.decode("utf-8"))
+        self.assertEqual(self.response.status_code, self.code)
+    
+    def send_request(self, client):
+        self.response = client.get(reverse(get_friends))
+
+
+    def test_valid(self):
+        self.base_json['status'] = 'success'
+        self.base_json['message'] = 'Got all friends'
+        self.base_json['data'] = [{'friendship': 'pending', 'username': 'Test2', 'is_online': False}]
+        self.send_request(self.client)
+        self.code = 200        
+        self.check_json()
+
+        self.send_request(self.client2)
+        self.base_json['data'] = [{'friendship': 'pending', 'username': 'Test1', 'is_online': True}]
+
+        self.check_json()
+
+    def test_valid_multiple_friends(self):
+        Friendship.add_friendship(self.user1, self.user3)
+        self.base_json['status'] = 'success'
+        self.base_json['message'] = 'Got all friends'
+        self.base_json['data'] = [{'friendship': 'pending', 'username': 'Test2', 'is_online': False}, 
+                                  {'friendship': 'pending', 'username': 'Test3', 'is_online': False}]
+        self.send_request(self.client)
+        self.code = 200        
+        self.check_json()
+
+        self.send_request(self.client2)
+        self.base_json['data'] = [{'friendship': 'pending', 'username': 'Test1', 'is_online': True}]
+
+        self.check_json()
+        
+        self.send_request(self.client3)
+        self.base_json['data'] = [{'friendship': 'pending', 'username': 'Test1', 'is_online': True}]
+
+        self.check_json()
+
+    def test_no_friends(self):
+        self.base_json['status'] = 'success'
+        self.base_json['message'] = 'Got all friends'
+        self.base_json['data'] = []
+        self.send_request(self.client3)
+        self.check_json()
+

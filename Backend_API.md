@@ -1,7 +1,7 @@
 # Table of contents
 | Section | Links |
 |---------|-------|
-| [User](#user) | [create_user](#create_user) <br> [login_user](#login_user) <br> [logout_user](#logout_user) <br> [is_logged_in](#is_logged_in) <br> [list_users](#list_users) <br> [user_status](#user_status) <br> [send_friend_request](#send_friend_request)<br> [change_friendship_status](#change_friendship_status) |
+| [User](#user) | [create_user](#create_user) <br> [login_user](#login_user) <br> [logout_user](#logout_user) <br> [is_logged_in](#is_logged_in) <br> [list_users](#list_users) <br> [user_status](#user_status) <br> [send_friend_request](#send_friend_request)<br> [change_friendship_status](#change_friendship_status)<br> [get_friends](#get_friends) |
 | [Match](#match) | [propose_match](#propose_match) <br> [get_pending_matches](#get_pending_matches) |
 
 
@@ -89,6 +89,15 @@ user/[subpath]
 | Use | Methods | Request Data | Response Data | Return Values|
 | --- | --- | --- | ---| ---|
 | Updates friendship | POST | username: friend, status: [accepted / declined]  | None |  200 ,400, 401,404 (user not found or no friendship), 405, 500|
+
+
+[Back to Top](#table-of-contents)
+
+### get_friends
+
+| Use | Methods | Request Data | Response Data | Return Values|
+| --- | --- | --- | ---| ---|
+| Updates friendship | GET | None | lista de diccionarios (puede estar vacia): <br> {username, <br>friendship (accepted/pending/declined),<br> is_online(True,False)}  |  200,401,405,500|
 
 
 [Back to Top](#table-of-contents)

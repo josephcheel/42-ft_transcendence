@@ -172,6 +172,7 @@ def user_status(request):
                 'data': None
             }, status=405)
 
+#Creates a new friendship if it doens't exist
 @require_auth
 @require_post
 @get_friend
@@ -192,6 +193,7 @@ def send_friend_request(request):
                             'message' : "User does not exists",
                             'data' : None}, status=404)
     
+#Changes friendship status, can be use to accept/decline invites or to remove a friendship
 @require_auth
 @require_post
 @get_friend
@@ -217,3 +219,13 @@ def change_friendship_status(request):
                             'message' : "User does not exists",
                             'data' : None}, status=404)
     
+
+#Gets all friends
+@require_auth
+@require_get
+@exception_handler
+def get_friends(request):
+    friends = Friendship.get_friends(request.user)
+    return JsonResponse({'status' : 'success',
+                'message' : "Got all friends",
+                'data' : friends}, status=200)
