@@ -6,6 +6,14 @@ if settings.DEBUG:
     from django.contrib.auth.models import AbstractUser
     class User(AbstractUser):
         original_username =  models.CharField(max_length=100)
+        tournament_name = models.CharField(max_length=100)
+        def update_fields(self, **kwargs):
+            for field in kwargs:
+                if field in ['first_name', 'last_name', 'tournament_name'] and hasattr(self, field):
+                    setattr(self, field, kwargs[field])
+            self.save()
+
+User = get_user_model()
 
 class UserStatus(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)

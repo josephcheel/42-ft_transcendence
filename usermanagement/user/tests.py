@@ -3,10 +3,9 @@ from django.urls import reverse
 from .views import *
 import json
 from django.db import OperationalError
-from django.contrib.auth import get_user_model, login, logout
-from .models import UserStatus, Friendship
+from django.contrib.auth import get_user_model
+from .models import UserStatus, Friendship, User
 
-User = get_user_model()
 
 
 
@@ -515,5 +514,75 @@ class getAllFriends(TestCase):
         self.base_json['message'] = 'Got all friends'
         self.base_json['data'] = []
         self.send_request(self.client3)
+        self.check_json()
+
+class updateUser(TestCase):
+
+    def setUp(self):
+        self.client = Client()
+        self.user1 = User.objects.create_user(username='test1',original_username='Test1', password='test')
+        self.content = {}
+        self.client.login(username='test1', password='test')
+        self.base_json = {
+            'status': None,
+            'message': None,
+            'data': None
+        }
+        self.response = None
+        self.code = 200
+
+
+    def check_json(self):
+        self.assertJSONEqual(json.dumps(self.base_json), self.response.content.decode("utf-8"))
+        self.assertEqual(self.response.status_code, self.code)
+    
+    def send_request(self):
+        self.response = self.client.post(reverse(update_user),json.dumps(self.content),content_type='application/json')
+
+    def test_valid_update(self):
+
+        self.base_json['status'] = 'success'
+        self.base_json['message'] = 'Updated fields'
+        self.base_json['data'] = None
+        self.content['first_name'] = "Luis"
+        self.content['last_name'] = "Soto"
+        self.content['tournament_name'] = "Tournament"
+        self.send_request()
+        self.check_json()
+
+        user = User.objects.get(username=self.user1.username)
+        self.assertEqual(user.first_name, "Luis")
+        self.assertEqual(user.last_name, "Soto")
+        self.assertEqual(user.tournament_name, "Tournament")
+        self.check_json()
+
+    def test_invalid_fields(self):
+        # updates all valid fields, username can't be updated
+        self.base_json['status'] = 'success'
+        self.base_json['message'] = 'Updated fields'
+        self.base_json['data'] = None
+
+        self.content['first_name'] = "Luis"
+        self.content['last_name'] = "Soto"
+        self.content['tournament_name'] = "Tournament"
+        self.content['username'] = "Different"
+        self.send_request()
+
+        user = User.objects.get(username=self.user1.username)
+        self.assertEqual(user.first_name, "Luis")
+        self.assertEqual(user.last_name, "Soto")
+        self.assertEqual(user.tournament_name, "Tournament")
+        #username can't be changed
+        self.assertEqual(user.username, "test1")
+    
+        self.check_json()
+
+
+    def test_empty_data(self):
+        self.base_json['status'] = 'error'
+        self.base_json['message'] = 'Invalid JSON body'
+        self.base_json['data'] = None
+        self.code = 400
+        self.send_request()
         self.check_json()
 

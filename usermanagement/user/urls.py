@@ -13,5 +13,6 @@ urlpatterns = [
     path('send_friend_request/', send_friend_request, name='send_friend_request'),
     path('change_friendship_status/', change_friendship_status, name='change_friendship_status'),
     path('get_friends/', get_friends, name='get_friends'),
+    path('update_user/', update_user, name='update_user'),
 ]
 

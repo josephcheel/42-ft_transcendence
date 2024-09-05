@@ -112,3 +112,15 @@ def exception_handler(view_func):
                 'data': None
             }, status=500)
     return wrapper
+
+def get_data(func):
+    @wraps(func)
+    def wrapper(request, *args, **kwargs):
+        try:
+            request.data = json.loads(request.body)
+        except json.JSONDecodeError:
+            return JsonResponse({'status': 'error', 'message': 'Invalid JSON body', 'data': None}, status=400)
+        if not request.data:
+            return JsonResponse({'status': 'error', 'message': 'Invalid JSON body', 'data': None}, status=400)
+        return func(request, *args, **kwargs)
+    return wrapper

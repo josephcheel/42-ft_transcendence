@@ -3,7 +3,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.db import OperationalError
 from django.conf import settings
 from django.contrib.auth import authenticate, login, logout, get_user_model
-from .wrappers import get_status, validate_credentials, require_post, require_get, get_friend, require_auth, exception_handler
+from .wrappers import *
 import json
 import logging
 
@@ -229,3 +229,15 @@ def get_friends(request):
     return JsonResponse({'status' : 'success',
                 'message' : "Got all friends",
                 'data' : friends}, status=200)
+
+
+@require_auth
+@require_post
+@get_data
+@exception_handler
+def update_user(request):
+    user = User.objects.get(username=request.user)
+    user.update_fields(**request.data)
+    return JsonResponse({'status' : 'success',
+                'message' : "Updated fields",
+                'data' : None}, status=200)
