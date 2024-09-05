@@ -35,6 +35,9 @@ def create_user(request):
     username = request.username #og username in lower case
     password = request.password
     original_username = request.original_username
+    tournament_name= request.data.get('tournament_name')
+    if not tournament_name:
+        return JsonResponse({'status': 'error', 'message': 'Empty tournament_name', 'data': None}, status=400)
     try:
         User.objects.get(username=username)# need to check email too
         return JsonResponse({'status' : 'error',
@@ -54,7 +57,7 @@ def create_user(request):
                                 status=500)
         return JsonResponse({'status' : 'success',
                                 'message' : 'User created successfully',
-                                'data' : {'id': user.id, 'username': user.original_username}},
+                                'data' : {None}},
                                 status=201)
     
 

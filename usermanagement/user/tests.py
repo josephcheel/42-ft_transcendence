@@ -14,8 +14,8 @@ class usermodelTests(TestCase):
 
     def setUp(self):
         self.client = Client()
-        self.user1 = {"username" : "Test1", "password" : "test"}
-        self.user2 = {"username" : "Test2", "password" : "test"}
+        self.user1 = {"username" : "Test1", "password" : "test", 'tournament_name' : 'my_tournament_name'}
+        self.user2 = {"username" : "Test2", "password" : "test", 'tournament_name' : 'my_tournament_name'}
         self.base_json = {
             'status': None,
             'message': None,
@@ -57,7 +57,7 @@ class usermodelTests(TestCase):
         response = self.client.post(reverse(create_user),json.dumps(self.user1),content_type='application/json')
         response = self.client.post(reverse(create_user),json.dumps(self.user1),content_type='application/json')
         self.check_json(response, 409)
-        response = self.client.post(reverse(create_user),json.dumps({'username' : self.user1['username'].upper(), 'password': self.user1['password']}),content_type='application/json')
+        response = self.client.post(reverse(create_user),json.dumps({'username' : self.user1['username'].upper(), 'password': self.user1['password'],'tournament_name' : 'my_tournament_name'}),content_type='application/json')
         self.check_json(response, 409)
 
 
@@ -100,7 +100,7 @@ class usermodelTests(TestCase):
 class logInTest(TestCase):
     def setUp(self):
         self.client = Client()
-        self.user1 = {"username" : "test1", "password" : "test"}
+        self.user1 = {"username" : "test1", "password" : "test", 'tournament_name' : 'my_tournament_name'}
         self.base_json = {
             'status': None,
             'message': None,
@@ -197,7 +197,7 @@ class logInTest(TestCase):
 class userStatusTest(TestCase):
     def setUp(self):
         self.client = Client()
-        self.user1 = {"username" : "test1", "password" : "test"}
+        self.user1 = {"username" : "test1", "password" : "test",'tournament_name' : 'my_tournament_name'}
         self.base_json = {
             'status': None,
             'message': None,

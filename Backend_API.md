@@ -23,7 +23,7 @@ user/[subpath]
 
 | Use | Methods | Request Data | Response Data | Return Values|
 | --- | --- | --- | ---| ---|
-| Creates User if not in the database. | POST | {username, password} | {user id, username (same as in request data)} |  201, 409 (already exists), 400, 405, 500 |
+| Creates User if not in the database. | POST | {username, password, tournament_name} | None |  201, 409 (already exists), 400, 405, 500 |
 
 [Back to Top](#table-of-contents)
 
