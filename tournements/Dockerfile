@@ -2,7 +2,7 @@ FROM python:3.13.0b4-bookworm
 
 WORKDIR /app
 
-RUN apt-get update && apt-get install -y vim
+RUN apt-get update && apt-get install -y vim sqlite3 sudo
 
 COPY requirements.txt requirements.txt
 RUN pip install -r requirements.txt

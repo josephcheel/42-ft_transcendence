@@ -62,11 +62,11 @@ user/[subpath]
 
 tournements/[subpath]
 
-### open_tournement
+### open_tournament
 
 | Use | Methods | Request Data | Response Data | Return Values|
 | --- | --- | --- | ---| ---|
-| Creates a tournament and sends invitation to all players  | POST | 'username', 
+| Creates a tournament and sends invitation to all players  | POST | 'username', 'password'
 			'date_start', 
 			'max_players', 
 			'cost', 
@@ -75,6 +75,25 @@ tournements/[subpath]
 			'price_3',
 			'players':[username1, username2, ...]	 | None |  200 (tournament created), 400 (incorrect data), 404 (user not in database), 500|
 
+### accept invitation to tournament
+| Use | Methods | Request Data | Response Data | Return Values|
+| --- | --- | --- | ---| ---|
+|Payer accepts the invitation to a turnaament| POST | 'username' 'password' 'tournement_id' | None |  200 (invitation accepted), 400 (incorrect data), 404 (user not in database), 500|
+
+### close tournament (to start tournament)
+| Use | Methods | Request Data | Response Data | Return Values|
+| --- | --- | --- | ---| ---|
+|Payer accepts the invitation to a turnaament| POST | 'username' 'password' 'tournement_id' | None |  200 (invitation accepted), 400 (incorrect data), 404 (user not in database), 500|
+
+### start match
+| Use | Methods | Request Data | Response Data | Return Values|
+| --- | --- | --- | ---| ---|
+|When the first player access to the match| POST | 'username' 'password' 'tournement_id' | None |  200 (invitation accepted), 400 (incorrect data), 404 (user not in database), 500|
+
+### finish match
+| Use | Methods | Request Data | Response Data | Return Values|
+| --- | --- | --- | ---| ---|
+|When the match finishes, informs who is the winner| POST | 'match_id' 'winner' 'looser' | None |  200 (Match finished successfully), 400 (he match has already been played), 404 (user not in database), 500|
 
 ## Match
 

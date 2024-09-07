@@ -6,9 +6,11 @@ from django.contrib.auth.models import AbstractUser, Group, Permission
 #try: 
 #	from usermodel.models import User
 #except:
+#	def __str__(self):
+#		return self.username
+#	pass
 
 class User(AbstractUser):
-
 	groups = models.ManyToManyField(
 		Group,
 		# Añade un related_name único para evitar conflictos
@@ -24,14 +26,11 @@ class User(AbstractUser):
 		help_text='Specific permissions for this user.',
 		verbose_name='user permissions',
 	)
-	puntos = models.IntegerField(default=10)
-	puntos_reservados = models.IntegerField(default=10)
+	puntos = models.IntegerField(default=1000)
+	puntos_reservados = models.IntegerField(default=0)
 	def save_password(self, password):
 		self.set_password(password)
 		self.save()
-#	def __str__(self):
-#		return self.username
-#	pass
 
 # Create your models here.
 
@@ -42,14 +41,14 @@ class Tournements(models.Model):
 	last_match_date = models.DateTimeField()
 	date_max_end = models.DateTimeField()
 	max_players = models.IntegerField()
-	cost = models.IntegerField()
+	cost = models.IntegerField(default=0)
 	#points_collected = models.IntegerField()
-	price_1 = models.IntegerField()
-	price_2 = models.IntegerField()
-	price_3 = models.IntegerField()
-	id_winner = models.IntegerField()
-	id_second = models.IntegerField()
-	id_third = models.IntegerField()
+	price_1 = models.IntegerField(default = 0)
+	price_2 = models.IntegerField(default = 0)
+	price_3 = models.IntegerField(default = 0)
+	id_winner = models.IntegerField(default = 0)
+	id_second = models.IntegerField(default = 0)
+	id_third = models.IntegerField(default=0)
 	status = models.CharField(
 		max_length=8, choices=StatusTournements.choices, default=StatusTournements.OPEN_TOURNEMENT)
 	current_round = models.IntegerField()
@@ -65,14 +64,14 @@ class Invitations(models.Model):
 class Matches(models.Model):
 	match_id = models.AutoField(primary_key=True)
 	tournement_id = models.IntegerField()
-	player_id_1 = models.IntegerField()
-	player_id_2 = models.IntegerField()
+	player_id_1 = models.IntegerField(default=0)
+	player_id_2 = models.IntegerField(default=0)
 	date_time = models.DateTimeField()
-	winner_id = models.IntegerField()
-	looser_id = models.IntegerField()
-	round = models.CharField(max_length=11, choices=Rounds.choices, default=Rounds.QUALIFIED_ROUND)
+	winner_id = models.IntegerField(default=0)
+	looser_id = models.IntegerField(default=0)
+	round = models.CharField(max_length=11, choices=Rounds.choices, default=Rounds.QUALIFIED_ROUND.value)
 	number_round = models.IntegerField()
-	status = models.CharField(max_length=10, choices=StatusMatches.choices, default=StatusMatches.NOT_PLAYED)
+	status = models.CharField(max_length=10, choices=StatusMatches.choices, default=StatusMatches.NOT_PLAYED.value)
 
 class T_players(models.Model):
 	tournement = models.IntegerField()
