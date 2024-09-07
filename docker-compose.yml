@@ -37,6 +37,10 @@ services:
       retries: 5
       start_period: 80s 
 
+  redis:
+    image: 'redis:alpine'
+    container_name: redis
+
   gateway:
     restart: always
     container_name: gateway
@@ -52,6 +56,8 @@ services:
       - .env
     environment:
       - DEBUG=${DEBUG}
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
 
   usermanagement:
     restart: always
@@ -307,6 +313,12 @@ services:
     volumes:
       - ${TOURNEMENTS_FOLDER}${CHAT_LOG}:/var/log/${CHAT_LOG}
       - ./blockchain:/app
+  frontend:
+    container_name: frontend
+    build:
+      context: ./frontend
+    ports:
+      - "8080:80"
 
 volumes:
   certs:

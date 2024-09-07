@@ -8,6 +8,15 @@ from django.conf import settings
 logger = logging.getLogger('django')
 logger.setLevel(logging.DEBUG)
 
+
+
+from django.http import HttpResponse
+def index(request):
+    with open("/home/luis/proyects/Transcendence/gateway/gateway/index.html", 'r') as file:
+        file_content = file.read()
+    return HttpResponse(file_content, content_type='text/html')
+
+
 @csrf_exempt
 def match(request, subpath):
     data = json.loads(request.body) 
