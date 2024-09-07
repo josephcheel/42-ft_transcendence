@@ -2,7 +2,7 @@
 | Section | Links |
 |---------|-------|
 | [User](#user) | [create_user](#create_user) <br> [login_user](#login_user) <br> [logout_user](#logout_user) <br> [is_logged_in](#is_logged_in) |
-| [Match](#match) | [propose_match](#propose_match) <br> [get_pending_matches](#get_pending_matches) |
+| [Match](#match) | [propose_match](#propose_match) <br> [get_pending_matches](#get_pending_matches) | [open_tournement] (#open_tournement) | [accept_invitation] (#accept_invitation) | [close_tournement](#close_tournement) | [start_match](#start_match) | [finish_match](#finish_match)
 
 
 All API calls will return a json response and the corresponding code
@@ -62,7 +62,7 @@ user/[subpath]
 
 tournements/[subpath]
 
-### open_tournament
+### open_tournement
 
 | Use | Methods | Request Data | Response Data | Return Values|
 | --- | --- | --- | ---| ---|
@@ -75,7 +75,7 @@ tournements/[subpath]
 			'price_3',
 			'players':[username1, username2, ...]	 | None |  200 (tournament created), 400 (incorrect data), 404 (user not in database), 500|
 
-### accept invitation to tournament
+### accept_invitation
 | Use | Methods | Request Data | Response Data | Return Values|
 | --- | --- | --- | ---| ---|
 |Payer accepts the invitation to a turnaament| POST | 'username' 'password' 'tournement_id' | None |  200 (invitation accepted), 400 (incorrect data), 404 (user not in database), 500|
