@@ -4,3 +4,5 @@ volumes*
 db.s*
 .DS_Store
 *coverage*
+frontend/node_modules/
+node_modules/
