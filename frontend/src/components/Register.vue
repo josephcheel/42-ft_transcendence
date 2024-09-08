@@ -1,5 +1,5 @@
 <template>
-<div class="container-fluid d-flex justify-content-center align-items-center min-vh-100">
+<div class="container-fluid d-flex justify-content-center align-items-center ">
   <div class="card p-4 shadow-sm" style="max-width: 400px; width: 100%;  box-shadow: -5px 5px 55px lightblue;">
     <h3 class="text-center mb-4">Register</h3>
     <form @submit.prevent="login">
