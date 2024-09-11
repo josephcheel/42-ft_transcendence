@@ -85,7 +85,7 @@ services:
     volumes:
       - ${LOGSTASH_FOLDER}${TOURNAMENT_LOG}:/var/log/${TOURNAMENT_LOG}
       - ${DJANGO_SCRIPT}:/start.sh
-      - ./tournament:/app
+      - ./chat:/app
 
     env_file:
       - .env
@@ -100,11 +100,9 @@ services:
     container_name: tournaments
     build: ./tournaments
     volumes:
-      - ${LOGSTASH_FOLDER}${TOURNAMENT_LOG}:/var/log/${Tournament_LOG}
+      - ${LOGSTASH_FOLDER}${TOURNAMENT_LOG}:/var/log/${TOURNAMENT_LOG}
       - ${DJANGO_SCRIPT}:/start.sh
       - ./tournaments:/app
-      - ./usermodel:/app/usermodel
-      - ./shared/wrappers.py:/app/shared/wrappers.py
     env_file:
       - .env
     environment:
@@ -124,8 +122,6 @@ services:
       - ${LOGSTASH_FOLDER}${MATCHES_LOG}:/var/log/${MATCHES_LOG}
       - ${DJANGO_SCRIPT}:/start.sh
       - ./matches:/app
-      - ./usermodel:/app/usermodel
-      - ./shared/:/app/shared/
     env_file:
       - .env
     environment:

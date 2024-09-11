@@ -3,7 +3,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.db import OperationalError
 from django.conf import settings
 from django.contrib.auth import authenticate, login, logout, get_user_model
-from .wrappers import *
+from ..wrappers import *
 import json
 import logging
 
@@ -135,7 +135,7 @@ def user_status(request):
             user_status = UserStatus.objects.get(user=User.objects.get(username=username))
             return JsonResponse({'status' : 'success',
                                 'message' : "Retrieved status",
-                                'data' : {'is_online' : user_status.is_online}},
+                                'data' : {'is_online' : user_status.is_online, 'user_id' : user_status.user.id}},
                                 status=200)     
 
         except User.DoesNotExist:

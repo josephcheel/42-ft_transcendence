@@ -16,7 +16,8 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from .views import list_tournaments,open_tournament,accept_invitation,close_tournament,finish_tournament,start_match,finish_match
+from tournamentsapp.views.views import open_tournament, accept_invitation, close_tournament, finish_tournament, start_match, finish_match
+from tournamentsapp.views.list_tournaments import list_tournaments
 
 
 urlpatterns = [
@@ -26,6 +27,7 @@ urlpatterns = [
     path('close/',close_tournament),
     path('finish/',finish_tournament),
     path('start_match/',start_match),
-    path('finish_match/',finish_match),
+    path('finish_match/', finish_match),
+    path('list_tournaments/', list_tournaments),
 
 ]

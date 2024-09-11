@@ -2,7 +2,8 @@ from tournamentsapp.models import Tournaments, Invitations, Matches, User
 from django.test import TestCase, Client
 from django.contrib.auth import get_user_model
 from django.urls import reverse
-from tournamentsapp.views import open_tournament, accept_invitation, close_tournament, start_match, finish_match
+from tournamentsapp.views.views import open_tournament, accept_invitation, close_tournament, start_match, finish_match
+from tournamentsapp.views.list_tournaments import list_tournaments
 from datetime import timedelta
 from django.utils import timezone
 from django.db import OperationalError
@@ -10,6 +11,7 @@ import json
 from tournamentsapp.status_options import StatusTournaments, StatusInvitations, StatusMatches, Rounds
 import random
 from .printing import print_all_tournaments, print_all_invitations, print_all_matches, print_all_users
+from datetime import datetime
 # Create your tests here.
 #User = get_user_model()
 
@@ -19,20 +21,16 @@ class test_open_tournament(TestCase):
 		self.client = Client()
 		self.users = []
 		for i in range(1, 22):
-			request = self.client.post('https::/localhost/reate_user', json.dumps({'username': f"test{i}", 'password': "test"}), content_type='application/json')
-			#self.users.append({'username': f"test{i}", 'password': "test"})
-		self.base_json = {	'status': None, 'message': None, 'data': None }
+#			request = self.client.post('http://usermanagement:8000/user/create_user/', json.dumps(
+#				{'username': f"test{i}", 'password': "test"}), content_type='application/json')
+			current_user = User.objects.create(username=f"test{i}", password="test")
+		self.base_json = {'status': None, 'message': None, 'data': None}
 	
 	def check_json(self, response, code):
 		self.assertJSONEqual(json.dumps(self.base_json), response.content.decode("utf-8"))
 		self.assertEqual(response.status_code, code)
 
 	def test_tournament_creation(self):
-		for i in range(1, 22):
-			request = self.client.post('http://usermanagement:8000/user/create_user/', json.dumps(
-				{'username': f"test{i}", 'password': "test"}), content_type='application/json')
-			print('request =', request)
-			#User.objects.create(username=f"test{i}", password="test")
 		all_users = User.objects.all()
 		self.tournament = Client()
 
@@ -197,29 +195,6 @@ class test_accept_invitation (TestCase):
 		self.users = []
 		for i in range(1, 22):
 			current_user = User.objects.create(username=f"test{i}", password="test")
-		self.base_json = {'status': None, 'message': None, 'data': None}
-		player_owner = User.objects.get(username='test1')
-		tournament_created = Tournaments.objects.create(
-			player_id=player_owner.id,
-			date_start=(timezone.now() + timedelta(days=1)).isoformat(),
-			last_match_date=(timezone.now() + timedelta(days=1)).isoformat(),
-			date_max_end=timezone.now()+ timedelta(minutes= 20 * 5 + 30),
-			max_players=12,
-			cost=10,
-			current_round=3,
-			price_1=1000,
-			price_2=2000,
-			price_3=3000,
-			id_winner=0,
-			id_second=0,
-			id_third=0,
-			status=StatusTournaments.OPEN_Tournament.value)
-		players = ['test1', 'test2', 'test3', 'test4',
-                    'test5', 'test6', 'test7', 'test8', 'test9', 'test10']
-		for player in players:
-			player_reg = User.objects.get(username=player)
-			Invitations.objects.create(tournament_id=tournament_created.id,
-									player_id=player_reg.id, status=StatusInvitations.INVITATION_IGNORED.value)
 
 	def check_json(self, response, code):
 		self.assertJSONEqual(json.dumps(self.base_json),
@@ -227,6 +202,24 @@ class test_accept_invitation (TestCase):
 		self.assertEqual(response.status_code, code)
 
 	def test_accept_invitation(self):
+		self.base_json = {'status': None, 'message': None, 'data': None}
+		self.tournament = {
+			'username': 'test10',
+			'password': 'test',
+			'date_start': (timezone.now() + timedelta(days=1)).isoformat(),
+			'max_players': 14,
+			'cost': 10,
+			'price_1': 1000,
+			'price_2': 500,
+			'price_3': 250,
+			'players': ['test1', 'test2', 'test3', 'test4', 'test5', 'test6', 'test7', 'test8', 'test9', 'test15', 'test18', 'test19', 'test20'], }
+		self.base_json['status'] = 'success'
+		self.base_json['message'] = 'Tournament created successfully'
+		self.base_json['data'] = None
+		response = self.client.post(reverse(open_tournament), json.dumps(
+			self.tournament), content_type='application/json')
+		self.check_json(response, 200)
+
 		# Username is NOK
 		self.invitation = {
 			'username': 'test122',
@@ -321,7 +314,8 @@ class test_close_tournament (TestCase):
 			'price_1': 1000,
 			'price_2': 500,
 			'price_3': 250,
-			'players': ['test1', 'test2', 'test3', 'test4', 'test5', 'test6', 'test7', 'test8', 'test9', 'test10', 'test11', 'test12'], }
+			'players': ['test20', 'test19', 'test7', 'test4', 'test13', 'test17', 'test15', 'test16',
+                            'test5', 'test6', 'test14', 'test9', 'test11', 'test12'], }
 		self.base_json['status'] = 'success'
 		self.base_json['message'] = 'Tournament created successfully'
 		self.base_json['data'] = None
@@ -329,8 +323,8 @@ class test_close_tournament (TestCase):
 			self.tournament), content_type='application/json')
 
 		self.check_json(response, 200)
-		players = ['test20', 'test19', 'test7', 'test4',
-                    'test5', 'test6', 'test14', 'test9', 'test11']
+		players = ['test20', 'test19', 'test7', 'test4', 'test13', 'test17', 'test15', 'test16',
+                    'test5', 'test6', 'test14', 'test9', 'test11', 'test12']
 		for player in players:
 			self.invitation = {
 				'username': player,
@@ -339,6 +333,8 @@ class test_close_tournament (TestCase):
 			}
 			self.client.post(reverse(accept_invitation), json.dumps(
 				self.invitation), content_type='application/json')
+			print('player =', player, ' invitacion aceptada',
+			      'torneo numero = ', self.invitation['tournament_id'])
 		self.invitation = {
 			'username': 'test10',
 			'password': 'test',
@@ -371,12 +367,12 @@ class test_close_tournament (TestCase):
 		self.check_json(response, 200)
 		players = ['test9', 'test10', 'test11', 'test12']
 		for player in players:
-			print ('player =', player , ' invitacion aceptada')
 			self.invitation = {
 				'username': player,
                 'password': 'test',
 				'tournament_id': '2'
 			}
+			print('player =', player, ' invitacion aceptada', 'torneo numero = ', self.invitation['tournament_id'])
 			self.base_json['status'] = 'success'
 			self.base_json['message'] = 'Invitation accepted successfully'
 			self.base_json['data'] = None
@@ -416,12 +412,12 @@ class test_close_tournament (TestCase):
 		self.check_json(response, 200)
 		players = ['test9', 'test10']
 		for player in players:
-			print('player =', player, ' invitacion aceptada')
 			self.invitation = {
 				'username': player,
 				'password': 'test',
 				'tournament_id': '3'
 			}
+			print('player =', player, ' invitacion aceptada', 'torneo numero = ', self.invitation['tournament_id'])
 			self.base_json['status'] = 'success'
 			self.base_json['message'] = 'Invitation accepted successfully'
 			self.base_json['data'] = None
@@ -442,7 +438,7 @@ class test_close_tournament (TestCase):
 		self.check_json(response, 200)
 
 		# play matches and finish tournament
-		while tournament.status != StatusTournaments.FINISHED_Tournament.value:
+		while tournament.status != StatusTournaments.FINISHED_TOURNAMENT.value:
 			matches = Matches.objects.filter(
 				tournament_id=1, status=StatusMatches.NOT_PLAYED.value, number_round=tournament.current_round)
 			for match in matches:
@@ -476,3 +472,90 @@ class test_close_tournament (TestCase):
 		print_all_invitations()
 		print_all_matches()
 		print_all_users()
+
+class test_list_tournaments(TestCase):
+
+	def setUp(self):
+		self.client = Client()
+		self.users = []
+		for i in range(1, 22):
+			current_user = User.objects.create(username=f"test{i}", password="test")
+		self.base_json = {'status': None, 'message': None, 'data': None}
+	
+	def check_json(self, response, code):
+		self.assertJSONEqual(json.dumps(self.base_json), response.content.decode("utf-8"))
+		self.assertEqual(response.status_code, code)
+
+	def test_list_tournaments(self):
+		self.tournament = {
+			'username': 'test10',
+			'password': 'test',
+			'date_start': (timezone.now() + timedelta(days=1)).isoformat(),
+			'max_players': 14,
+			'cost': 10,
+			'price_1': 1000,
+			'price_2': 500,
+			'price_3': 250,
+			'players': ['test1', 'test2', 'test3', 'test4', 'test5', 'test6', 'test7', 'test8', 'test9', 'test10', 'test11', 'test12'], }
+		self.base_json['status'] = 'success'
+		self.base_json['message'] = 'Tournament created successfully'
+		self.base_json['data'] = None
+		response = self.client.post(reverse(open_tournament), json.dumps(
+			self.tournament), content_type='application/json')
+		self.check_json(response, 200)
+		self.tournament = {
+			'username': 'test10',
+			'password': 'test',
+			'date_start': (timezone.now() + timedelta(days=1)).isoformat(),
+			'max_players': 14,
+			'cost': 10,
+			'price_1': 1000,
+			'price_2': 500,
+			'price_3': 250,
+			'players': ['test1', 'test2', 'test3', 'test4', 'test5', 'test6', 'test7', 'test8', 'test9', 'test10', 'test11', 'test12'], }
+		self.base_json['status'] = 'success'
+		self.base_json['message'] = 'Tournament created successfully'
+		self.base_json['data'] = None
+		response = self.client.post(reverse(open_tournament), json.dumps(
+			self.tournament), content_type='application/json')
+		self.check_json(response, 200)
+
+		self.tournament = {
+			'username': 'test10',
+			'password': 'test',
+			'date_start': (timezone.now() + timedelta(days=1)).isoformat(),
+			'max_players': 14,
+			'cost': 10,
+			'price_1': 1000,
+			'price_2': 500,
+			'price_3': 250,
+			'players': ['test1', 'test2', 'test3', 'test4', 'test5', 'test6', 'test7', 'test8', 'test9', 'test10', 'test11', 'test12'], }
+		self.base_json['status'] = 'success'
+		self.base_json['message'] = 'Tournament created successfully'
+		self.base_json['data'] = None
+		response = self.client.post(reverse(open_tournament), json.dumps(
+			self.tournament), content_type='application/json')
+		self.check_json(response, 200)
+
+		self.list_tournaments = {
+			'username': 'test10',
+			'password': 'test'}
+		owner = User.objects.get(username='test10')
+		tournament_data = Tournaments.objects.filter(player_id=owner.id)
+
+		# Convert any datetime fields to string
+		tournament_list = list(tournament_data.values())
+		for tournament in tournament_list:
+			for key, value in tournament.items():
+				if isinstance(value, datetime):
+					tournament[key] = value.isoformat()
+		self.base_json['status'] = 'success'
+		self.base_json['message'] = 'List of tournaments cereated'
+		self.base_json['data'] = json.dumps(tournament_list)
+		print (self.base_json['data'])
+		url = reverse(list_tournaments)
+		print (url)
+		response = self.client.get(reverse(list_tournaments), json.dumps(
+			self.list_tournaments), content_type='application/json')
+		print(response.content.decode("utf-8"))	
+		self.check_json(response, 200)

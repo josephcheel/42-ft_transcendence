@@ -1,13 +1,12 @@
-from .wrappers import validate_credentials, require_post, require_get, user_is_authenticated
+from ..wrappers import validate_credentials, require_post, require_get, user_is_authenticated
 from django.shortcuts import render
-from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth import get_user_model
 from django.http import JsonResponse
 from django.core.serializers import serialize
 from django.db import OperationalError
 import json
-from .models import Tournaments, Invitations, Matches
-from .status_options import StatusTournaments, StatusInvitations, StatusMatches, Rounds
+from ..models import Tournaments, Invitations, Matches
+from ..status_options import StatusTournaments, StatusInvitations, StatusMatches, Rounds
 from datetime import datetime, timedelta
 from django.utils import timezone
 
@@ -16,25 +15,8 @@ from django.utils import timezone
 try: 
 	from usermodel.models import User
 except:
-	from .models import User
+	from ..models import User
 import math
-
-@require_get
-@user_is_authenticated
-def list_tournaments(request):
-	player = request.username
-	try:
-		try:
-			player = User.objects.get(username=player)
-		except User.DoesNotExist:
-			return JsonResponse({'status': 'error', 'message': 'A user does not exist', 'data': None}, status=404)
-		tournaments = Tournaments.objects.filter(player_id=player)
-		data = serialize('json', tournaments)
-		data = json.loads(data)
-		data = [entry['fields'] for entry in data]
-		return JsonResponse({'status': 'success', 'message': 'List of tournaments', 'data': data}, status=200)
-	except OperationalError:
-		return JsonResponse({'status': 'error', 'message': 'Internal error', 'data': None}, status=500)
 
 def list_of_matches(request):
 	if request.method == 'GET':
@@ -54,7 +36,6 @@ def list_of_matches(request):
 	else:
 		return JsonResponse({'status': 'error', 'message': 'Invalid request method GET for list of tournaments', 'data': None}, status=400)
 
-@csrf_exempt
 @require_post
 @validate_credentials
 def open_tournament(request):
@@ -110,13 +91,12 @@ def open_tournament(request):
 		id_winner = 0,
 		id_second = 0,
 		id_third = 0,
-		status=StatusTournaments.OPEN_Tournament.value)
+		status=StatusTournaments.OPEN_TOURNAMENT.value)
 	for player in data_players:
 		player_reg = User.objects.get(username=player)
 		Invitations.objects.create(tournament_id=tournament_created.id, player_id=player_reg.id, status=StatusInvitations.INVITATION_IGNORED.value)
 	return JsonResponse({'status': 'success', 'message': 'Tournament created successfully', 'data': None}, status=200)
 
-@csrf_exempt
 @require_post
 @validate_credentials
 def accept_invitation(request):
@@ -148,7 +128,6 @@ def accept_invitation(request):
 	invitation.save()
 	return JsonResponse({'status': 'success', 'message': 'Invitation accepted successfully', 'data': None}, status=200)
 
-@csrf_exempt
 @require_post
 @validate_credentials
 def close_tournament(request):
@@ -168,7 +147,7 @@ def close_tournament(request):
 
 	if tournament.player_id != player_owner.id:
 		return JsonResponse({'status': 'error', 'message': 'You are not the owner of this tournament', 'data': None}, status=403)
-	if tournament.status != StatusTournaments.OPEN_Tournament.value:
+	if tournament.status != StatusTournaments.OPEN_TOURNAMENT.value:
 		return JsonResponse({'status': 'error', 'message': 'The tournament is not open', 'data': None}, status=400)
 
 	tournament_players = Invitations.objects.filter(tournament_id=tournament_id, status=StatusInvitations.INVITATION_ACCEPTED.value)
@@ -177,7 +156,7 @@ def close_tournament(request):
 	if len(tournament_players) == 0:
 		return JsonResponse({'status': 'error', 'message': 'The number of players is 0 and does not permit start tournament', 'data': None}, status=400)
 
-	tournament.status = StatusTournaments.CLOSED_Tournament.value
+	tournament.status = StatusTournaments.CLOSED_TOURNAMENT.value
 	next_match_date = tournament.last_match_date
 	player_nr = len(tournament_players)
 	extra_round, current_round = math.modf(math.log2(player_nr))
@@ -227,6 +206,10 @@ def close_tournament(request):
 			tournament.save()
 		case _:
 			players_round_low = int(math.pow(2, current_round + extra_round) - len(tournament_players))
+			print('----------------------------')
+			print('current round = ', current_round, 'extra round = ',
+			      extra_round, 'players_round_low = ', players_round_low, 'tournament players = ' ,len(tournament_players))
+			print('----------------------------')
 			if current_round + extra_round == 3:
 				round_type = Rounds.SEMIFINAL_ROUND.value
 			else:
@@ -288,10 +271,9 @@ def finish_tournament(tournament_id):
 			user = User.objects.get(id=tournament.id_third)
 			user.puntos += tournament.price_3
 			user.save()
-	tournament.status = StatusTournaments.FINISHED_Tournament.value
+	tournament.status = StatusTournaments.FINISHED_TOURNAMENT.value
 	tournament.save()
 
-@csrf_exempt
 @require_post
 def start_match(request):
 	request.data = json.loads(request.body)
@@ -318,7 +300,6 @@ def start_match(request):
 	match.save()
 	return JsonResponse({'status': 'success', 'message': 'Match started successfully', 'data': None}, status=200)
 
-@csrf_exempt
 @require_post
 def finish_match(request):
 	request.data = json.loads(request.body)

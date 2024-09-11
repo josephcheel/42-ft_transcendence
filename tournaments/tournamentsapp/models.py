@@ -50,7 +50,7 @@ class Tournaments(models.Model):
 	id_second = models.IntegerField(default = 0)
 	id_third = models.IntegerField(default=0)
 	status = models.CharField(
-		max_length=8, choices=StatusTournaments.choices, default=StatusTournaments.OPEN_Tournament)
+		max_length=8, choices=StatusTournaments.choices, default=StatusTournaments.OPEN_TOURNAMENT)
 	current_round = models.IntegerField()
 	hash_previus = models.CharField(max_length=256)
 	hash = models.CharField(max_length=256)
