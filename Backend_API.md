@@ -120,8 +120,7 @@ tournaments/[subpath]
 
 | Use | Methods | Request Data | Response Data | Return Values|
 | --- | --- | --- | ---| ---|
-| Creates a tournament and sends invitation to all players  | POST | 'username', <BR>'password'
-			'date_start', <BR> 'max_players', <BR> 'cost', <BR> 'price_1', <BR> 'price_2', <BR> 'price_3', <BR> 'players':[username1, username2, ...]	 | None |  200 (tournament created), 400 (incorrect data), 404 (user not in database), 500|
+| Creates a tournament and sends invitation to all players  | POST | 'username', <BR>'password', <BR> 'date_start', <BR> 'max_players', <BR> 'cost', <BR> 'price_1', <BR> 'price_2', <BR> 'price_3', <BR> 'players':[username1, username2, ...]	 | None |  200 (tournament created), 400 (incorrect data), 404 (user not in database), 500|
 
 ### accept_invitation
 | Use | Methods | Request Data | Response Data | Return Values|
