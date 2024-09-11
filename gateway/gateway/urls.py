@@ -23,7 +23,7 @@ urlpatterns = [
     path('test_logging/', test_logging, name='test_logging'),
     path('user/<path:subpath>/', user, name='user'),
     path('match/<path:subpath>/', match, name='match'),
-    path('tournements/<path:subpath>/', tournements, name='tournements'),
+    path('tournaments/<path:subpath>/', tournaments, name='tournaments'),
 
     path('', include('django_prometheus.urls')),
     path('index/', index, name='index'),

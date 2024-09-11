@@ -1,5 +1,5 @@
 """
-URL configuration for tournements project.
+URL configuration for tournaments project.
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/5.0/topics/http/urls/
@@ -16,15 +16,15 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from .views import list_tournements,open_tournement,accept_invitation,close_tournement,finish_tournement,start_match,finish_match
+from .views import list_tournaments,open_tournament,accept_invitation,close_tournament,finish_tournament,start_match,finish_match
 
 
 urlpatterns = [
-    path('list/',list_tournements),
-    path('open/',open_tournement),
+    path('list/',list_tournaments),
+    path('open/',open_tournament),
     path('accept_invitation/',accept_invitation),
-    path('close/',close_tournement),
-    path('finish/',finish_tournement),
+    path('close/',close_tournament),
+    path('finish/',finish_tournament),
     path('start_match/',start_match),
     path('finish_match/',finish_match),
 

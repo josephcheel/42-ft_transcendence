@@ -1,5 +1,5 @@
 from django.db import models
-from .status_options import StatusTournements, StatusInvitations, StatusMatches, Rounds
+from .status_options import StatusTournaments, StatusInvitations, StatusMatches, Rounds
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AbstractUser, Group, Permission
 
@@ -34,7 +34,7 @@ class User(AbstractUser):
 
 # Create your models here.
 
-class Tournements(models.Model):
+class Tournaments(models.Model):
 	id = models.AutoField(primary_key=True)
 	player_id = models.IntegerField()
 	date_start = models.DateTimeField()
@@ -50,20 +50,20 @@ class Tournements(models.Model):
 	id_second = models.IntegerField(default = 0)
 	id_third = models.IntegerField(default=0)
 	status = models.CharField(
-		max_length=8, choices=StatusTournements.choices, default=StatusTournements.OPEN_TOURNEMENT)
+		max_length=8, choices=StatusTournaments.choices, default=StatusTournaments.OPEN_Tournament)
 	current_round = models.IntegerField()
 	hash_previus = models.CharField(max_length=256)
 	hash = models.CharField(max_length=256)
 
 class Invitations(models.Model):
-	tournement_id = models.IntegerField()
+	tournament_id = models.IntegerField()
 	player_id = models.IntegerField()
 	status = models.CharField(max_length=8, choices=StatusInvitations.choices,
 		default=StatusInvitations.INVITATION_IGNORED)
 
 class Matches(models.Model):
 	match_id = models.AutoField(primary_key=True)
-	tournement_id = models.IntegerField()
+	tournament_id = models.IntegerField()
 	player_id_1 = models.IntegerField(default=0)
 	player_id_2 = models.IntegerField(default=0)
 	date_time = models.DateTimeField()
@@ -74,7 +74,7 @@ class Matches(models.Model):
 	status = models.CharField(max_length=10, choices=StatusMatches.choices, default=StatusMatches.NOT_PLAYED.value)
 
 class T_players(models.Model):
-	tournement = models.IntegerField()
+	tournament = models.IntegerField()
 	player_id = models.IntegerField()
 	price = models.IntegerField()	
 	round = models.IntegerField()

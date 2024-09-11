@@ -83,9 +83,9 @@ services:
     container_name: chat
     build: ./chat
     volumes:
-      - ${LOGSTASH_FOLDER}${CHAT_LOG}:/var/log/${CHAT_LOG}
+      - ${LOGSTASH_FOLDER}${TOURNAMENT_LOG}:/var/log/${TOURNAMENT_LOG}
       - ${DJANGO_SCRIPT}:/start.sh
-      - ./chat:/app
+      - ./tournament:/app
 
     env_file:
       - .env
@@ -93,24 +93,24 @@ services:
       - APP=chatapp
       - DEBUG=${DEBUG}
 
-  tournements:
+  tournaments:
     depends_on:
       db:
         condition: service_healthy
-    container_name: tournements
-    build: ./tournements
+    container_name: tournaments
+    build: ./tournaments
     volumes:
-      - ${LOGSTASH_FOLDER}${TOURNEMENT_LOG}:/var/log/${TOURNEMENT_LOG}
+      - ${LOGSTASH_FOLDER}${TOURNAMENT_LOG}:/var/log/${Tournament_LOG}
       - ${DJANGO_SCRIPT}:/start.sh
-      - ./tournements:/app
+      - ./tournaments:/app
       - ./usermodel:/app/usermodel
       - ./shared/wrappers.py:/app/shared/wrappers.py
     env_file:
       - .env
     environment:
-      - APP=tournements
+      - APP=tournaments
       - DEBUG=${DEBUG}
-      - TOURNEMENTS_FOLDER = ${TOURNEMENTS_FOLDER}
+      - TOURNAMENTS_FOLDER = ${TOURNAMENTS_FOLDER}
 
   matches:
     restart: always
@@ -311,7 +311,7 @@ services:
       - .env
     #restart: always
     volumes:
-      - ${TOURNEMENTS_FOLDER}${CHAT_LOG}:/var/log/${CHAT_LOG}
+      - ${TOURNAMENTS_FOLDER}${TOURNAMENT_LOG}:/var/log/${TOURNAMENT_LOG}
       - ./blockchain:/app
   frontend:
     container_name: frontend

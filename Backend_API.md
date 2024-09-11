@@ -1,7 +1,7 @@
 # Table of contents
 | Section | Links |
 |---------|-------|
-| [User](#user) | [create_user](#create_user) <br> [login_user](#login_user) <br> [logout_user](#logout_user) <br> [is_logged_in](#is_logged_in) <br> [list_users](#list_users) <br> [user_status](#user_status) <br> [send_friend_request](#send_friend_request)<br> [change_friendship_status](#change_friendship_status)<br> [get_friends](#get_friends)<br> [update_user](#update_user) | [Match](#match) | [propose_match](#propose_match) <br> [get_pending_matches](#get_pending_matches) | [open_tournement] (#open_tournement) | [accept_invitation] (#accept_invitation) | [close_tournement](#close_tournement) | [start_match](#start_match) | [finish_match](#finish_match)
+| [User](#user) | [create_user](#create_user) <br> [login_user](#login_user) <br> [logout_user](#logout_user) <br> [is_logged_in](#is_logged_in) <br> [list_users](#list_users) <br> [user_status](#user_status) <br> [send_friend_request](#send_friend_request)<br> [change_friendship_status](#change_friendship_status)<br> [get_friends](#get_friends)<br> [update_user](#update_user) | [Match](#match) | [propose_match](#propose_match) <br> [get_pending_matches](#get_pending_matches) | [open_tournament] (#open_tournament) | [accept_invitation] (#accept_invitation) | [close_tournament](#close_tournament) | [start_match](#start_match) | [finish_match](#finish_match)
 
 
 
@@ -114,35 +114,29 @@ user/[subpath]
 
 ## Tournaments
 
-tournements/[subpath]
+tournaments/[subpath]
 
-### open_tournement
+### open_tournament
 
 | Use | Methods | Request Data | Response Data | Return Values|
 | --- | --- | --- | ---| ---|
-| Creates a tournament and sends invitation to all players  | POST | 'username', 'password'
-			'date_start', 
-			'max_players', 
-			'cost', 
-			'price_1', 
-			'price_2',
-			'price_3',
-			'players':[username1, username2, ...]	 | None |  200 (tournament created), 400 (incorrect data), 404 (user not in database), 500|
+| Creates a tournament and sends invitation to all players  | POST | 'username', <BR>'password'
+			'date_start', <BR> 'max_players', <BR> 'cost', <BR> 'price_1', <BR> 'price_2', <BR> 'price_3', <BR> 'players':[username1, username2, ...]	 | None |  200 (tournament created), 400 (incorrect data), 404 (user not in database), 500|
 
 ### accept_invitation
 | Use | Methods | Request Data | Response Data | Return Values|
 | --- | --- | --- | ---| ---|
-|Payer accepts the invitation to a turnaament| POST | 'username' 'password' 'tournement_id' | None |  200 (invitation accepted), 400 (incorrect data), 404 (user not in database), 500|
+|Payer accepts the invitation to a turnaament| POST | 'username' 'password' 'tournament_id' | None |  200 (invitation accepted), 400 (incorrect data), 404 (user not in database), 500|
 
 ### close tournament (to start tournament)
 | Use | Methods | Request Data | Response Data | Return Values|
 | --- | --- | --- | ---| ---|
-|Payer accepts the invitation to a turnaament| POST | 'username' 'password' 'tournement_id' | None |  200 (invitation accepted), 400 (incorrect data), 404 (user not in database), 500|
+|Payer accepts the invitation to a turnaament| POST | 'username' 'password' 'tournament_id' | None |  200 (invitation accepted), 400 (incorrect data), 404 (user not in database), 500|
 
 ### start match
 | Use | Methods | Request Data | Response Data | Return Values|
 | --- | --- | --- | ---| ---|
-|When the first player access to the match| POST | 'username' 'password' 'tournement_id' | None |  200 (invitation accepted), 400 (incorrect data), 404 (user not in database), 500|
+|When the first player access to the match| POST | 'username' 'password' 'tournament_id' | None |  200 (invitation accepted), 400 (incorrect data), 404 (user not in database), 500|
 
 ### finish match
 | Use | Methods | Request Data | Response Data | Return Values|

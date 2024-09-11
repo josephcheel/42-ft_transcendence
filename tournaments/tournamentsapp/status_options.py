@@ -1,9 +1,9 @@
 from enum import Enum
 
-class StatusTournements(Enum):
-	OPEN_TOURNEMENT = "open"
-	CLOSED_TOURNEMENT = "closed"
-	FINISHED_TOURNEMENT = "finished"
+class StatusTournaments(Enum):
+	OPEN_TOURNAMENT = "open"
+	CLOSED_TOURNAMENT = "closed"
+	FINISHED_TOURNAMENT = "finished"
 
 	@classmethod
 	def choices(cls):

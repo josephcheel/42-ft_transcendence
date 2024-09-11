@@ -4,7 +4,9 @@ from django.views.decorators.csrf import csrf_exempt
 import logging
 import json
 from django.conf import settings 
+import os
 
+home_directory = os.path.expanduser('~')
 logger = logging.getLogger('django')
 logger.setLevel(logging.DEBUG)
 
@@ -12,13 +14,13 @@ logger.setLevel(logging.DEBUG)
 
 from django.http import HttpResponse
 def index(request):
-    with open("/home/luis/proyects/Transcendence/gateway/gateway/index.html", 'r') as file:
+    with open(home_directory + "/proyects/Transcendence/gateway/gateway/index.html", 'r') as file:
         file_content = file.read()
     return HttpResponse(file_content, content_type='text/html')
 
 
 @csrf_exempt
-def match(request, subpath):
+def tournaments(request, subpath):
     data = json.loads(request.body) 
     response = requests.post(f'http://matches:8000/match/{subpath}/', json=data)
     return JsonResponse(response.json(), status=response.status_code)
