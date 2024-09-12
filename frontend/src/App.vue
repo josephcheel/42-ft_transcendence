@@ -64,13 +64,16 @@
             <router-link to="/" class="nav-link1">Home</router-link>
           </li>
           <li class="nav-item">
-            <router-link to="/Login" class="nav-link2">Login</router-link>
+            <router-link to="/Login" class="nav-link1">Login</router-link>
           </li>
           <li class="nav-item">
-            <router-link to="/play" class="nav-link3">Play</router-link>
+            <router-link to="/play" class="nav-link1">Play</router-link>
           </li>
           <li class="nav-item">
-            <router-link to="/Dashboard" class="nav-link4">Dashboard</router-link>
+            <router-link to="/Dashboard" class="nav-link1">Dashboard</router-link>
+          </li>
+          <li class="nav-item">
+            <router-link to="/Chat" class="nav-link1">Chat</router-link>
           </li>
         </ul>
     </nav>
