@@ -2,7 +2,7 @@ from tournamentsapp.models import Tournaments, Invitations, Matches, User
 from django.test import TestCase, Client
 from django.contrib.auth import get_user_model
 from django.urls import reverse
-from tournamentsapp.views.views import open_tournament, accept_invitation, close_tournament, start_match, finish_match
+from tournamentsapp.views import open_tournament, accept_invitation, close_tournament, start_match, finish_match
 from tournamentsapp.views.list_tournaments import list_tournaments
 from datetime import timedelta
 from django.utils import timezone
