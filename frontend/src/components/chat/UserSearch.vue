@@ -25,7 +25,9 @@
 </template>
 
 <script setup>
-    import {ref} from 'vue';
+    import {ref, defineEmits } from 'vue';
+
+    const emit = defineEmits(['chat-selected']);
 
     const nickname = ref('');
     const chats = ref([]);
@@ -41,6 +43,7 @@
     // Función para seleccionar un chat (esto es solo un ejemplo, deberías manejar la lógica real)
     function selectChat(chat) {
       console.log(`Chat seleccionado: ${chat}`);
+      emit('chat-selected', chat);
     }
 
     function searchUser()
