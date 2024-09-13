@@ -4,7 +4,7 @@ import json
 from tournamentsapp.models import Tournaments, Matches
 from tournamentsapp.status_options import  StatusMatches, Rounds
 from datetime import timedelta
-from finish_tournament import finish_tournament
+from .finish_tournament import finish_tournament
 try: 
 	from usermodel.models import User
 except:

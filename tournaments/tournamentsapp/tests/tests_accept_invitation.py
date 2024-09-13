@@ -1,8 +1,8 @@
 from tournamentsapp.models import Tournaments, Invitations, Matches, User
 from django.test import TestCase, Client
 from django.urls import reverse
-from tournamentsapp.views import open_tournament, accept_invitation, close_tournament, start_match, finish_match
-from tournamentsapp.views.list_tournaments import list_tournaments
+from tournamentsapp.views.open_tournament import open_tournament
+from tournamentsapp.views.accept_invitation import accept_invitation
 from datetime import timedelta
 from django.utils import timezone
 from django.db import OperationalError

@@ -7,7 +7,7 @@ from tournamentsapp.status_options import StatusInvitations
 try: 
 	from usermodel.models import User
 except:
-	from ..models import User
+	from tournamentsapp.models import User
 import math
 
 
