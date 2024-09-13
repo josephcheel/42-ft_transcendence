@@ -25,11 +25,13 @@ from tournamentsapp.views.finish_match import finish_match
 from tournamentsapp.views.list_tournaments import list_tournaments
 from tournamentsapp.views.list_matches import list_matches
 from tournamentsapp.views.list_invitations import list_invitations
+from tournamentsapp.views.edit_tournament import edit_tournament
 
 
 urlpatterns = [
     path('list/',list_tournaments),
-    path('open/',open_tournament),
+    path('open_tournament/',open_tournament),
+    path('edit_tournament/',edit_tournament),
     path('accept_invitation/',accept_invitation),
     path('close/',close_tournament),
     path('finish/',finish_tournament),

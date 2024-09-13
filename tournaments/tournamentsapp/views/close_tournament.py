@@ -21,7 +21,7 @@ def close_tournament(request):
 	try:
 		tournament = Tournaments.objects.get(id=tournament_id)
 	except Tournaments.DoesNotExist:
-		return JsonResponse({'status': 'error', 'message': 'A tournament does not exist', 'data': None}, status=404)
+		return JsonResponse({'status': 'error', 'message': 'The tournament does not exist', 'data': None}, status=404)
 
 	player = data.get("username")
 	try:
