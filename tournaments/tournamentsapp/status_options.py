@@ -23,6 +23,7 @@ class StatusMatches(Enum):
 	PLAYED = "played"
 	STARTED = "started"
 	NEXT_ROUND_ASSIGNED = "assigned"
+	WALKOVER = "walkover"
 
 	@classmethod
 	def choices(cls):

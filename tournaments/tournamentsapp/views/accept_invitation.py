@@ -1,4 +1,4 @@
-from tournamentsapp.wrappers import validate_credentials, require_post, user_is_authenticated
+from tournamentsapp.wrappers import require_post, user_is_authenticated, validate_json
 from django.http import JsonResponse
 from tournamentsapp.models import Tournaments, Invitations
 from tournamentsapp.status_options import StatusInvitations
@@ -12,7 +12,8 @@ import math
 
 
 @require_post
-@validate_credentials
+@user_is_authenticated
+@validate_json
 def accept_invitation(request):
 	data = request.data
 	tournament = data.get("tournament_id")
@@ -21,11 +22,11 @@ def accept_invitation(request):
 	except Tournaments.DoesNotExist:
 		return JsonResponse({'status': 'error', 'message': 'The tournament does not exist', 'data': None}, status=400)
 
-	player = data.get("username")
-	try: 
-		player = User.objects.get(username=player)
-	except User.DoesNotExist:
-		return JsonResponse({'status': 'error', 'message': 'The user does not exist', 'data': None}, status=400)
+	player = request.user
+#	try: 
+#		player = User.objects.get(username=player)
+#	except User.DoesNotExist:
+#		return JsonResponse({'status': 'error', 'message': 'The user does not exist', 'data': None}, status=400)
 
 	try:
 		invitation = Invitations.objects.get(tournament_id=tournament.id, player_id=player.id)

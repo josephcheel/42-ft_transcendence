@@ -24,7 +24,7 @@ def start_match(request):
 		return JsonResponse({'status': 'error', 'message': 'A user does not exist', 'data': None}, status=404)
 	match_id = data.get('match_id')
 	try:
-		match = Matches.objects.get(match_id=match_id)
+		match = Matches.objects.get(id=match_id)
 	except Matches.DoesNotExist:
 		return JsonResponse({'status': 'error', 'message': 'A match does not exist', 'data': None}, status=404)
 	if match.player_id_1 != player.id and match.player_id_2 != player.id:

@@ -11,7 +11,8 @@ def user_is_authenticated(function):
 								'message': 'User not authenticated',
 								'data': None},
 							   status=405)
-		return func(request, *args, **kwargs)
+
+		return function(request, *args, **kwargs)
 	return wrapper
 
 def require_get(func):
@@ -51,5 +52,16 @@ def validate_credentials(func):
 		if not request.username or not request.password:
 			return JsonResponse({'status': 'error', 'message': 'Empty username or password', 'data': None}, status=400)
 		request.username = request.username.lower()
+		return func(request, *args, **kwargs)
+	return wrapper
+
+def validate_json(func):
+	@wraps(func)
+	def wrapper(request, *args, **kwargs):
+		try:
+			request.data = json.loads(request.body)
+		except json.JSONDecodeError:
+			return JsonResponse({'status': 'error', 'message': 'Invalid JSON body', 'data': None}, status=400)
+
 		return func(request, *args, **kwargs)
 	return wrapper

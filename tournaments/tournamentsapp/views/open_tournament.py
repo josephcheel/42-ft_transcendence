@@ -1,4 +1,4 @@
-from ..wrappers import require_post, user_is_authenticated, validate_credentials
+from ..wrappers import require_post, user_is_authenticated, validate_json
 from django.http import JsonResponse
 from datetime import datetime, timedelta
 from django.utils import timezone
@@ -12,21 +12,18 @@ except:
 	from ..models import User
  
 @require_post
-@validate_credentials
+@user_is_authenticated
+@validate_json
 def open_tournament(request):
-	player = request.username
-	try:
-		player_owner = User.objects.get(username=player)
-	except User.DoesNotExist:
-		return JsonResponse({'status': 'error', 'message': 'The owner user does not exist', 'data': None}, status=400)
+	player_owner = request.user
 	data = request.data
 
 	received_date_start = datetime.fromisoformat(str(data.get('date_start')))
 	if received_date_start < timezone.now():
 		return JsonResponse({'status': 'error', 'message': 'Invalid start date', 'data': None}, status=400)
 
-	if data.get('max_players') & 1:
-		return JsonResponse({'status': 'error', 'message': 'The max number of players must be even', 'data': None}, status=400)
+#	if data.get('max_players') & 1:
+#		return JsonResponse({'status': 'error', 'message': 'The max number of players must be even', 'data': None}, status=400)
 
 	if data.get('cost') < 0 or data.get('price_1') < 0 or data.get('price_2') < 0 or data.get('price_3') < 0:
 		return JsonResponse({'status': 'error', 'message': 'Prices or cost must be positive', 'data': None}, status=400)
@@ -53,7 +50,7 @@ def open_tournament(request):
 		nr_of_matches += math.pow(2, i)
 	nr_of_matches += int(math.pow(2, nr_of_rounds + extra_round) - nr_of_players)
 	tournament_created = Tournaments.objects.create(
-		player_id = player_owner.id, 
+		player_id = player_owner, 
 		date_start=received_date_start,
 		last_match_date=received_date_start,
 		date_max_end=received_date_start + timedelta(minutes=nr_of_matches * 5 + 30),
@@ -63,11 +60,11 @@ def open_tournament(request):
 		price_1 = data.get('price_1'), 
 		price_2 = data.get('price_2'), 
 		price_3 = data.get('price_3'), 
-		id_winner = 0,
-		id_second = 0,
-		id_third = 0,
+		id_winner = None,
+		id_second = None,
+		id_third = None,
 		status=StatusTournaments.OPEN_TOURNAMENT.value)
 	for player in data_players:
 		player_reg = User.objects.get(username=player)
-		Invitations.objects.create(tournament_id=tournament_created.id, player_id=player_reg.id, status=StatusInvitations.INVITATION_IGNORED.value)
+		Invitations.objects.create(tournament_id=tournament_created, player_id=player_reg, status=StatusInvitations.INVITATION_IGNORED.value)
 	return JsonResponse({'status': 'success', 'message': 'Tournament created successfully', 'data': None}, status=200)

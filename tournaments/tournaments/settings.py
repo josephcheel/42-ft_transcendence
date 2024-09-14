@@ -24,9 +24,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-e5m60_kk8wzj52xpmb69*h9u^kg29b6$uyum19p87(7or7bop9'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 
-ALLOWED_HOSTS = ['localhost', 'tournaments']
+
+ALLOWED_HOSTS = ['localhost', 'tournaments', 'tournamentsapp']
 
 if not DEBUG:
     LOGGING = {
@@ -70,8 +71,10 @@ INSTALLED_APPS = [
 ]
 
 if not DEBUG:
-    AUTH_USER_MODEL = "usermodel.User"
-    
+    AUTH_USER_MODEL="usermodel.User"
+else:
+    AUTH_USER_MODEL="tournamentsapp.User"
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',

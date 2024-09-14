@@ -10,7 +10,7 @@ import math
 
 
 @require_get
-@validate_credentials
+@user_is_authenticated
 #@user_is_authenticated
 def edit_tournament(request):
 	data = request.data

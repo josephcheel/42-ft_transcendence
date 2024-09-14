@@ -1,4 +1,4 @@
-from tournamentsapp.wrappers import validate_credentials, require_post, user_is_authenticated
+from tournamentsapp.wrappers import require_post, user_is_authenticated, validate_json
 from django.http import JsonResponse
 from tournamentsapp.models import Tournaments, Invitations, Matches
 from tournamentsapp.status_options import StatusTournaments, StatusInvitations, Rounds
@@ -13,7 +13,8 @@ import math
 
 
 @require_post
-@validate_credentials
+@user_is_authenticated
+@validate_json
 def close_tournament(request):
 	data = request.data
 
@@ -54,8 +55,8 @@ def close_tournament(request):
 				tournament_id = tournament_id, 
 				number_round = 1, 
 				date_time = next_match_date,
-				player_id_1 = tournament_players[0].player_id, 
-				player_id_2=tournament_players[1].player_id,
+				player_id_1 = tournament_players[0], 
+				player_id_2 = tournament_players[1],
 				round=Rounds.FINAL_ROUND.value)
 			player1 = User.objects.get(id=tournament_players[0].player_id)
 			player1.puntos_reservados -= tournament.cost
@@ -67,8 +68,8 @@ def close_tournament(request):
 				tournament_id=tournament_id,
 				number_round=2,
 				date_time=next_match_date,
-				player_id_1=tournament_players[0].player_id,
-				player_id_2=tournament_players[1].player_id,
+				player_id_1=tournament_players[0],
+				player_id_2=tournament_players[1],
 				round=Rounds.SEMIFINAL_ROUND.value)
 			player1 = User.objects.get(id=tournament_players[0].player_id)
 			player1.puntos_reservados -= tournament.cost
@@ -89,48 +90,33 @@ def close_tournament(request):
 			tournament.current_round = 3
 			tournament.save()
 		case _:
-			players_round_low = int(math.pow(2, current_round + extra_round) - len(tournament_players))
-			print('----------------------------')
-			print('current round = ', current_round, 'extra round = ',
-			      extra_round, 'players_round_low = ', players_round_low, 'tournament players = ' ,len(tournament_players))
-			print('----------------------------')
-			if current_round + extra_round == 3:
-				round_type = Rounds.SEMIFINAL_ROUND.value
-			else:
-				round_type = Rounds.QUALIFIED_ROUND.value
-			tournament.current_round = current_round + extra_round
-			tournament.save()
-			if extra_round:
-				for i in range(players_round_low, len(tournament_players), 2):
+			for i in range (0, int(math.pow(2, current_round + extra_round)), 2):
+				try
+					player1 = User.objects.get(id=tournament_players[i])
+					player1.puntos_reservados -= tournament.cost
+				except User.DoesNotExist:
+					player1 = None
+				try:
+					player2 = User.objects.get(id=tournament_players[i + 1])
+					player2.puntos_reservados -= tournament.cost
+				except User.DoesNotExist:
+					player2 = None
+				if player1 is None or player2 is None:
+					match_status = Rounds.WALKOVER.value
 					Matches.objects.create(
 						tournament_id=tournament_id,
-						number_round=current_round + extra_round,
+						number_round=1,
 						date_time=next_match_date,
-						player_id_1=tournament_players[i].player_id,
-						player_id_2=tournament_players[i + 1].player_id,
-						round=round_type)
-					player1 = User.objects.get(id=tournament_players[i].player_id)
-					player1.puntos_reservados -= tournament.cost
-					player2 = User.objects.get(id=tournament_players[i + 1].player_id)
-					player2.puntos_reservados -= tournament.cost
-			next_match_date += timedelta(minutes=5)
-			if current_round == 3:
-				round_type = Rounds.SEMIFINAL_ROUND.value
-			else:
-				round_type = Rounds.QUALIFIED_ROUND.value
-			for i in range(0, players_round_low, 2):
-				Matches.objects.create(
-					tournament_id=tournament_id,
-					date_time=next_match_date,
-					number_round=current_round,
-					player_id_1=tournament_players[i].player_id,
-					player_id_2=tournament_players[i + 1].player_id,
-					round=round_type)
-				player1 = User.objects.get(id=tournament_players[i].player_id)
-				player1.puntos_reservados -= tournament.cost
-				player2 = User.objects.get(id=tournament_players[i + 1].player_id)
-				player2.puntos_reservados -= tournament.cost
-				next_match_date += timedelta(minutes=5)
+						player_id_1=tournament_players[i],
+						player_id_2=tournament_players[i + 1],
+						round=Rounds.QUALIFIED_ROUND.value,
+						status = match_status)
+					next_match_date += timedelta(minutes=5)
+			print('----------------------------')
+			print('current round = ', current_round, 'players current Round = ', current_round + extra_round, 'tournament players = ' ,len(tournament_players))
+			print('----------------------------')
+			tournament.current_round = current_round + extra_round
+			tournament.save()
 	tournament.last_match_date =  next_match_date
 	tournament.save()
 	tournament_players = Invitations.objects.filter(tournament_id=tournament_id)

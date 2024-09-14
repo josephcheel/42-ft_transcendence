@@ -444,8 +444,8 @@ class test_close_tournament (TestCase):
 			for match in matches:
 				player_1 = User.objects.get(id=match.player_id_1)
 				player_2 = User.objects.get(id=match.player_id_2)
-				print('match =', match.match_id, ' started', player_1.username, ' vs ', player_2.username, ' round = ', match.round, ' number_round = ', match.number_round)
-				self.match_to_play = {'match_id': match.match_id, 'player': player_1.username}
+				print('match =', match.id, ' started', player_1.username, ' vs ', player_2.username, ' round = ', match.round, ' number_round = ', match.number_round)
+				self.match_to_play = {'match_id': match.id, 'player': player_1.username}
 				self.base_json['status'] = 'success'
 				self.base_json['message'] = 'Match started successfully'
 				self.base_json['data'] = None
@@ -458,8 +458,8 @@ class test_close_tournament (TestCase):
 				else:
 					the_winner_id = player_2.username
 					the_looser_id = player_1.username
-				print('match =', match.match_id, ' finished. Won', the_winner_id, ' lost ', the_looser_id)
-				self.match_to_finish = {'match_id': match.match_id,
+				print('match =', match.id, ' finished. Won', the_winner_id, ' lost ', the_looser_id)
+				self.match_to_finish = {'match_id': match.id,
 	                           'winner': the_winner_id, 'looser': the_looser_id}
 				self.base_json['status'] = 'success'
 				self.base_json['message'] = 'Match finished successfully'

@@ -16,7 +16,7 @@ def print_all_matches():
 	print('Matches list')
 	matches = Matches.objects.all()
 	for match in matches:
-		print('match_id: ', match.match_id, 'tournament_id: ', match.tournament_id, 'player_id_1: ', match.player_id_1, 'player_id_2: ', match.player_id_2, 'winner_id: ', match.winner_id, 'loser_id: ', match.looser_id, 'round: ', match.round, 'status: ', match.status, 'nr_round: ', match.number_round)
+		print('match_id: ', match.id, 'tournament_id: ', match.tournament_id, 'player_id_1: ', match.player_id_1, 'player_id_2: ', match.player_id_2, 'winner_id: ', match.winner_id, 'loser_id: ', match.looser_id, 'round: ', match.round, 'status: ', match.status, 'nr_round: ', match.number_round)
 
 def print_all_users():
 	print('Users list')

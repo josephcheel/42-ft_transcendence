@@ -1,4 +1,4 @@
-from tournamentsapp.wrappers import require_post
+from tournamentsapp.wrappers import require_post, validate_json
 from django.http import JsonResponse
 import json
 from tournamentsapp.models import Tournaments, Matches
@@ -11,18 +11,15 @@ except:
 	from ..models import User
 
 @require_post
+@validate_json
 def finish_match(request):
-	request.data = json.loads(request.body)
-	try:
-		request.data = json.loads(request.body)
-	except json.JSONDecodeError:
-		return JsonResponse({'status': 'error', 'message': 'Invalid JSON body', 'data': None}, status=400)
 	data = request.data
 	match_id = request.data.get('match_id')
 	try:
-		match = Matches.objects.get(match_id=match_id)
+		match = Matches.objects.get(id=match_id)
 	except Matches.DoesNotExist:
 		return JsonResponse({'status': 'error', 'message': 'The match does not exist', 'data': None}, status=400)
+
 	winner = request.data.get('winner')
 	looser = request.data.get('looser')
 	try:
@@ -34,8 +31,8 @@ def finish_match(request):
 		return JsonResponse({'status': 'error', 'message': 'One of the players don\'t belong to this match', 'data': None}, status=400)
 	if match.status == StatusMatches.PLAYED.value:
 		return JsonResponse({'status': 'error', 'message': 'The match has already been played', 'data': None}, status=400)
-	match.winner_id = winner.id
-	match.looser_id = looser.id
+	match.winner_id = winner
+	match.looser_id = looser
 	match.status = StatusMatches.PLAYED.value
 	match.save()
 	try:
@@ -56,7 +53,7 @@ def finish_match(request):
 			match.status = StatusMatches.NEXT_ROUND_ASSIGNED.value
 		case Rounds.SEMIFINAL_ROUND.value:
 			next_match = Matches.objects.filter(tournament_id=match.tournament_id,
-		                                 round=Rounds.SEMIFINAL_ROUND.value, status=StatusMatches.PLAYED.value)
+		                                 round=Rounds.SEMIFINAL_ROUND.value, status=StatusMatches.PLAYED.value or StatusMatches.WALKOVER.value)
 			if len(next_match)  == 2:
 				Matches.objects.create(
 								tournament_id=match.tournament_id,
