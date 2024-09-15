@@ -21,7 +21,7 @@ class test_close_tournament (TestCase):
 	def setUp(self):
 		self.client = Client()
 		for i in range(1, 22):
-			current_user = User.objects.create(username=f"test{i}", password="test")
+			User.objects.create_user(username=f"test{i}", password="test")
 		self.base_json = {'status': None, 'message': None, 'data': None}
 
 	def check_json(self, response, code):
@@ -43,15 +43,15 @@ class test_close_tournament (TestCase):
 			'price_2': 500,
 			'price_3': 250,
 			'players': ['test20', 'test19', 'test7', 'test4', 'test13', 'test17', 'test15', 'test16',
-                            'test5', 'test6', 'test14', 'test9', 'test11', 'test12'], }
+						'test5', 'test6', 'test14', 'test9', 'test11', 'test12'], }
 		self.base_json['status'] = 'success'
 		self.base_json['message'] = 'Tournament created successfully'
 		self.base_json['data'] = None
 		response = self.client.post(reverse(open_tournament), json.dumps(
 			self.tournament), content_type='application/json')
 
-		self.client.logout()
 		self.check_json(response, 200)
+		self.client.logout()
 		players = ['test20', 'test19', 'test7', 'test4', 'test13', 'test17', 'test15', 'test16',
                     'test5', 'test6', 'test14', 'test9', 'test11', 'test12']
 		for player in players:
@@ -65,7 +65,8 @@ class test_close_tournament (TestCase):
 			      'torneo numero = ', self.invitation['tournament_id'])
 			self.client.logout()
 
-		self.client.login(username='test10', password='test')
+		successful = self.client.login(username='test10', password='test')
+		print ('login = ', successful)
 		self.invitation = {
 			'tournament_id': '1'
 		}
@@ -170,37 +171,64 @@ class test_close_tournament (TestCase):
 		response = self.client.post(reverse(close_tournament), json.dumps(
 			self.close), content_type='application/json')
 		self.check_json(response, 200)
+		self.client.logout()
 
 		# play matches and finish tournament
+		print_all_matches()
 		while tournament.status != StatusTournaments.FINISHED_TOURNAMENT.value:
 			matches = Matches.objects.filter(
 				tournament_id=1, status=StatusMatches.NOT_PLAYED.value, number_round=tournament.current_round)
 			for match in matches:
-				player_1 = User.objects.get(id=match.player_id_1)
-				player_2 = User.objects.get(id=match.player_id_2)
-				print('match =', match.id, ' started', player_1.username, ' vs ', player_2.username, ' round = ', match.round, ' number_round = ', match.number_round)
-				self.match_to_play = {'match_id': match.id, 'player': player_1.username}
-				self.base_json['status'] = 'success'
-				self.base_json['message'] = 'Match started successfully'
-				self.base_json['data'] = None
-				response = self.client.post(reverse(start_match), json.dumps(
-					self.match_to_play), content_type='application/json')
-				self.check_json(response, 200)
 				if random.choice([True, False]):
-					the_winner_id = player_1.username
-					the_looser_id = player_2.username
+					self.client.login(username=match.player_id_1.username, password='test')
+					self.match_to_play = {'match_id': match.id}
+					self.base_json['status'] = 'success'
+					self.base_json['message'] = 'Waiting for player 2 to start the match'
+					self.base_json['data'] = json.dumps({'status': 'waiting player 2'})
+					response = self.client.post(reverse(start_match), json.dumps(self.match_to_play), content_type='application/json')
+					self.check_json(response, 200)
+					self.client.logout()
+					self.client.login(username=match.player_id_2.username, password='test')
+					self.match_to_play = {'match_id': match.id}
+					self.base_json['status'] = 'success'
+					self.base_json['message'] = 'Match started successfully'
+					self.base_json['data'] = json.dumps({'status': 'started'})
+					response = self.client.post(reverse(start_match), json.dumps(self.match_to_play), content_type='application/json')
+					self.check_json(response, 200)
+					self.client.logout()
 				else:
-					the_winner_id = player_2.username
-					the_looser_id = player_1.username
-				print('match =', match.id, ' finished. Won', the_winner_id, ' lost ', the_looser_id)
-				self.match_to_finish = {'match_id': match.id,
-	                           'winner': the_winner_id, 'looser': the_looser_id}
+					self.client.login(username=match.player_id_2.username, password='test')
+					self.match_to_play = {'match_id': match.id}
+					self.base_json['status'] = 'success'
+					self.base_json['message'] = 'Waiting for player 1 to start the match'
+					self.base_json['data'] = json.dumps({'status': 'waiting player 1'})
+					response = self.client.post(reverse(start_match), json.dumps(self.match_to_play), content_type='application/json')
+					self.check_json(response, 200)
+					self.client.logout()
+					self.client.login(username=match.player_id_1.username, password='test')
+					self.match_to_play = {'match_id': match.id}
+					self.base_json['status'] = 'success'
+					self.base_json['message'] = 'Match started successfully'
+					self.base_json['data'] = json.dumps({'status': 'started'})
+					response = self.client.post(reverse(start_match), json.dumps(self.match_to_play), content_type='application/json')
+					self.check_json(response, 200)
+					self.client.logout()
+
+				print('match =', match.id, ' started', match.player_id_1.username, ' vs ', match.player_id_2.username, ' round = ', match.round, ' number_round = ', match.number_round)
+				if random.choice([True, False]):
+					the_winner_id = match.player_id_2.username
+					the_looser_id = match.player_id_1.username
+				else:
+					the_winner_id = match.player_id_1.username
+					the_looser_id = match.player_id_2.username
+				self.match_to_finish = {'match_id': match.id,'winner': the_winner_id, 'looser': the_looser_id}
 				self.base_json['status'] = 'success'
 				self.base_json['message'] = 'Match finished successfully'
 				self.base_json['data'] = None
 				response = self.client.post(reverse(finish_match), json.dumps(
 					self.match_to_finish), content_type='application/json')
 				self.check_json(response, 200)
+				print('match =', match.id, ' finished. Won', the_winner_id, ' lost ', the_looser_id)
 			tournament = Tournaments.objects.get(id=1)
 		print_all_tournaments()
 		print_all_invitations()

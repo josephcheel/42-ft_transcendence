@@ -27,27 +27,6 @@ if settings.DEBUG:
 
 User = get_user_model()
 
-#	groups = models.ManyToManyField(
-#		Group,
-#		# Añade un related_name único para evitar conflictos
-#		related_name='transcendence',
-#		blank=True,
-#		help_text='The groups this user belongs to.',
-#		verbose_name='groups',
-#	)
-#	user_permissions = models.ManyToManyField(
-#		Permission,
-#		related_name='transcendence',  # Añade un related_name único para evitar conflictos
-#		blank=True,
-#		help_text='Specific permissions for this user.',
-#		verbose_name='user permissions',
-#	)
-#	puntos = models.IntegerField(default=1000)
-#	puntos_reservados = models.IntegerField(default=0)
-#	def save_password(self, password):
-#		self.set_password(password)
-#		self.save()
-
 # Create your models here.
 
 class Tournaments(models.Model):
@@ -80,17 +59,13 @@ class Invitations(models.Model):
 class Matches(models.Model):
 	id = models.AutoField(primary_key=True)
 	tournament_id = models.IntegerField()
-	player_id_1 = models.IntegerField(default=0)
-	player_id_2 = models.IntegerField(default=0)
+	player_id_1 = models.ForeignKey(User, on_delete=models.CASCADE, null=True, related_name='matches_player_1')
+	is_player1_in_room = models.BooleanField(default=False)
+	player_id_2 = models.ForeignKey(User, on_delete=models.CASCADE, null=True, related_name='matches_player_2')
+	is_player2_in_room = models.BooleanField(default=False)
 	date_time = models.DateTimeField()
-	winner_id = models.IntegerField(default=0)
-	looser_id = models.IntegerField(default=0)
+	winner_id = models.ForeignKey(User, on_delete=models.CASCADE, null=True, related_name='matches_winner')
+	looser_id = models.ForeignKey(User, on_delete=models.CASCADE, null=True, related_name='matches_looser')
 	round = models.CharField(max_length=11, choices=Rounds.choices, default=Rounds.QUALIFIED_ROUND.value)
 	number_round = models.IntegerField()
-	status = models.CharField(max_length=10, choices=StatusMatches.choices, default=StatusMatches.NOT_PLAYED.value)
-
-#class T_players(models.Model):
-#	tournament = models.IntegerField()
-#	player_id = models.IntegerField()
-#	price = models.IntegerField()	
-#	round = models.IntegerField()
+	status = models.CharField(max_length=20, choices=StatusMatches.choices, default=StatusMatches.NOT_PLAYED.value)

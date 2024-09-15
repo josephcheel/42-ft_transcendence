@@ -9,13 +9,15 @@ https://docs.djangoproject.com/en/5.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.0/ref/settings/
 """
-
+import logging
+import logging.config
+from pythonjsonlogger import jsonlogger
 from pathlib import Path
 import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
+LOG_FILE = os.environ.get("USER_LOG", "tournament.log")
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
@@ -24,11 +26,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-e5m60_kk8wzj52xpmb69*h9u^kg29b6$uyum19p87(7or7bop9'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get('DEBUG', 'True') == 'True'
-
+DEBUG = os.environ.get('DEBUG', 'true') == 'true'
 
 ALLOWED_HOSTS = ['localhost', 'tournaments', 'tournamentsapp']
 
+# Application definition
 if not DEBUG:
     LOGGING = {
         'version': 1,
@@ -55,7 +57,8 @@ if not DEBUG:
             },
         },
     }
-
+    print ('printing LOGGING')
+    print (LOGGING)
     logging.config.dictConfig(LOGGING)
     
 # Application definition

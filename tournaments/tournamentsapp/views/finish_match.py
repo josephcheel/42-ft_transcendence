@@ -20,14 +20,15 @@ def finish_match(request):
 	except Matches.DoesNotExist:
 		return JsonResponse({'status': 'error', 'message': 'The match does not exist', 'data': None}, status=400)
 
-	winner = request.data.get('winner')
-	looser = request.data.get('looser')
+	winner = data.get('winner')
+	looser = data.get('looser')
 	try:
 		winner = User.objects.get(username=winner)
 		looser = User.objects.get(username=looser)
 	except User.DoesNotExist:
 		return JsonResponse({'status': 'error', 'message': 'A plyer 1 or 2 does not exist', 'data': None}, status=400)
-	if (match.player_id_1 != winner.id and match.player_id_2 != winner.id) or (match.player_id_1 != looser.id and match.player_id_2 != looser.id):
+	print ('winner =', winner.id, ' looser =', looser.id, ' match =', match.player_id_1.id, match.player_id_2.id)
+	if (match.player_id_1.id != winner.id and match.player_id_2.id != winner.id) or (match.player_id_1.id != looser.id and match.player_id_2.id != looser.id):
 		return JsonResponse({'status': 'error', 'message': 'One of the players don\'t belong to this match', 'data': None}, status=400)
 	if match.status == StatusMatches.PLAYED.value:
 		return JsonResponse({'status': 'error', 'message': 'The match has already been played', 'data': None}, status=400)
@@ -76,8 +77,8 @@ def finish_match(request):
 				tournament.save()
 		case _:
 			next_match = Matches.objects.filter(tournament_id=match.tournament_id,
-										round=Rounds.QUALIFIED_ROUND.value, status=StatusMatches.PLAYED.value)
-			if len(next_match) == 2:
+										round=Rounds.QUALIFIED_ROUND.value, status=StatusMatches.PLAYED.value or StatusMatches.WALKOVER.value)
+			while len(next_match) >= 2:
 				if tournament.current_round == 4:
 					ronda_siguiente = Rounds.SEMIFINAL_ROUND.value
 				else:
@@ -96,5 +97,9 @@ def finish_match(request):
 				if len(matches_not_played) == 0:
 					tournament.current_round -= 1
 				tournament.save()
-	matches = Matches.objects.filter(tournament_id=match.tournament_id)
+				next_match = Matches.objects.filter(tournament_id=match.tournament_id,round=Rounds.QUALIFIED_ROUND.value, status=StatusMatches.PLAYED.value or StatusMatches.WALKOVER.value)
+				for match in next_match:
+					print("-----------------")
+					print ('match =', match.id, ' finished. Won', match.winner_id, ' lost ', match.looser_id)
+			print ('match =', match.id, ' finished. Won', winner.username, ' lost ', looser.username)
 	return JsonResponse({'status': 'success', 'message': 'Match finished successfully', 'data': None}, status=200)
