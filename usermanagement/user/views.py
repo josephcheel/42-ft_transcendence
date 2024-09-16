@@ -9,7 +9,7 @@ import logging
 
 #If testing we dont have usermodel.User so we want to use default
 
-from .models import UserStatus, Friendship
+from .models import *
 User = get_user_model()
 
 
@@ -26,7 +26,6 @@ def custom_404_view(request, exception=None):
     }
     return JsonResponse(response_data, status=404)
 
-             
 @require_post
 @validate_credentials
 @exception_handler
@@ -124,6 +123,7 @@ def list_users(request):
                             status=200)
 
 # GET current user status or POST new user status (online/offline)
+@require_auth
 @exception_handler
 def user_status(request):
     if request.method == 'GET':    
@@ -143,30 +143,25 @@ def user_status(request):
                                 'data' : None},
                                 status=404)
     elif request.method == 'POST':
-        if request.user.is_authenticated:
-            try:
-                request.data = json.loads(request.body)
-            except json.JSONDecodeError:
-                return JsonResponse({'status': 'error',
-                                        'message': 'Invalid JSON body',
-                                        'data': None},
-                                        status=400)
-            status = request.data.get('status')
-            if  status not in ['online', 'offline']:
-                return JsonResponse({'status': 'error',
-                                        'message': 'Invalid JSON body',
-                                        'data': None},
-                                        status=400)
-            status = True if status == 'online' else False
-            UserStatus.objects.get(user=request.user).change_status(status)
-            return JsonResponse({'status': 'success',
-                                    'message': 'Updated status',
-                                    'data': None},
-                                    status=200)
-        else:
+        try:
+            request.data = json.loads(request.body)
+        except json.JSONDecodeError:
             return JsonResponse({'status': 'error',
-                                    'message': 'No valid user in request',
-                                    'data': None}, status=400)
+                                    'message': 'Invalid JSON body',
+                                    'data': None},
+                                    status=400)
+        status = request.data.get('status')
+        if  status not in ['online', 'offline']:
+            return JsonResponse({'status': 'error',
+                                    'message': 'Invalid JSON body',
+                                    'data': None},
+                                    status=400)
+        status = True if status == 'online' else False
+        UserStatus.objects.get(user=request.user).change_status(status)
+        return JsonResponse({'status': 'success',
+                                'message': 'Updated status',
+                                'data': None},
+                                status=200)
     else:
         return JsonResponse({
                 'status': 'error',
@@ -243,3 +238,31 @@ def update_user(request):
     return JsonResponse({'status' : 'success',
                 'message' : "Updated fields",
                 'data' : None}, status=200)
+
+@require_auth
+@require_post
+@exception_handler
+def upload_picture(request):
+    picture = request.FILES['picture']
+    user = request.user
+    user_profile_pic= UserProfilePic.objects.get(user=user)
+    user_profile_pic.update_picture(picture)
+    return JsonResponse({'status' : 'success',
+                'message' : "Updated profile picture",
+                'data' : {
+                    'profile_picture_url': request.user.userprofilepic.picture.url
+                    }
+                }, status=200)
+
+@require_auth
+@require_get
+@exception_handler
+def get_profile_picture(request, username):
+    user = User.objects.get(username=username)
+    profile_pic = UserProfilePic.objects.get(user=user)
+    return JsonResponse({'status' : 'success',
+                'message' : "Got profile picture",
+                'data' : {
+                    'profile_picture_url': profile_pic.picture.url
+                    }
+                }, status=200)

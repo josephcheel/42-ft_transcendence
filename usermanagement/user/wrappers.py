@@ -105,6 +105,7 @@ def exception_handler(view_func):
                 'message': 'Internal database error'
             }, status=500)
         except Exception as e:
+            breakpoint()
             logger.error(e)
             return JsonResponse({
                 'status': 'error',

@@ -1,4 +1,5 @@
 from django.urls import path
+from django.conf.urls.static import static
 from .views import *
 
 handler404 = custom_404_view
@@ -14,5 +15,7 @@ urlpatterns = [
     path('change_friendship_status/', change_friendship_status, name='change_friendship_status'),
     path('get_friends/', get_friends, name='get_friends'),
     path('update_user/', update_user, name='update_user'),
-]
+    path('get_profile_picture/<str:username>/', get_profile_picture, name='get_profile_picture'),
+    path('upload_profile_picture_url/', upload_picture, name='upload_picture'),
+]  + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

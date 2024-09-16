@@ -8,3 +8,4 @@ db.s*
 .DS_Store
 *coverage*
 *node_modules*
+*TestUser*

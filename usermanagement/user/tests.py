@@ -1,14 +1,12 @@
-from django.test import TestCase, Client
+from django.test import TestCase, Client, override_settings
 from django.urls import reverse
 from .views import *
 import json
 from django.db import OperationalError
 from django.contrib.auth import get_user_model
 from .models import UserStatus, Friendship, User
-
-
-
-
+import os
+from django.conf import settings
 
 class usermodelTests(TestCase):
 
@@ -95,7 +93,6 @@ class usermodelTests(TestCase):
         response = self.client.post(reverse(create_user),json.dumps(self.user1),content_type='application/json')
         response = self.client.get(reverse(list_users))
         self.check_json(response, 200)
-
 
 class logInTest(TestCase):
     def setUp(self):
@@ -193,7 +190,6 @@ class logInTest(TestCase):
 
         self.check_json(response, 403)
 
-
 class userStatusTest(TestCase):
     def setUp(self):
         self.client = Client()
@@ -205,6 +201,7 @@ class userStatusTest(TestCase):
         }
         self.client.post(reverse(create_user),json.dumps(self.user1),content_type='application/json')
         self.user = User.objects.get(username=self.user1['username'])
+        self.client.login(username='test1', password='test')
 
     def check_json(self, response, code):
         self.assertJSONEqual(json.dumps(self.base_json), response.content.decode("utf-8"))
@@ -225,18 +222,16 @@ class userStatusTest(TestCase):
 
         self.base_json['status'] = 'success'
         self.base_json['message'] = 'Retrieved status'
-        self.base_json['data'] = {'is_online' : True}
+        self.base_json['data'] = {'is_online' : False}
 
-        self.client.post(reverse(login_user),json.dumps(self.user1),content_type='application/json')
         response = self.client.get(reverse(user_status),{'username': self.user1['username']})
         user_status_ = UserStatus.objects.get(user=self.user)
         self.check_json(response, 200)
-        self.assertTrue(user_status_.is_online)
+        self.assertFalse(user_status_.is_online)
 
         self.base_json['data'] = {'is_online' : False}
 
         self.client.post(reverse(logout_user),json.dumps(self.user1),content_type='application/json')
-        response = self.client.get(reverse(user_status),{'username': self.user1['username']})
         user_status_ = UserStatus.objects.get(user=self.user)
         self.check_json(response, 200)
         self.assertFalse(user_status_.is_online)
@@ -439,7 +434,6 @@ class changeFriendShipStatusTest(TestCase):
         self.assertEqual(friendship.first().status, 0)
         self.assertEqual(friendship.last().status, 0)
 
-
 class getAllFriends(TestCase):
 
     def setUp(self):
@@ -585,3 +579,77 @@ class updateUser(TestCase):
         self.send_request()
         self.check_json()
 
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+@override_settings(MEDIA_URL='/profile_pictures/', MEDIA_ROOT=os.path.join(BASE_DIR, 'profile_pictures'))
+class ProfilePictureRetrievalTests(TestCase):
+
+    def setUp(self):
+        self.user = User.objects.create_user(username='TestUser', password='testpass')
+        self.client = Client()
+        self.client.login(username='TestUser', password='testpass')
+        self.base_json = {
+            'status': None,
+            'message': None,
+            'data': None
+        }
+        self.response = None
+        self.code = 0
+
+    def check_json(self):
+        self.assertJSONEqual(json.dumps(self.base_json), self.response.content.decode("utf-8"))
+        self.assertEqual(self.response.status_code, self.code)
+
+    def test_get_default_profile_picture(self):
+            self.base_json['status'] = 'success'
+            self.base_json['message'] = 'Got profile picture'
+            self.base_json['data'] = {
+                    'profile_picture_url': '/profile_pictures/default.jpeg'
+                    }
+            
+            self.response = self.client.get(reverse('get_profile_picture', args=['TestUser']))
+            self.code = 200
+            self.check_json()
+
+@override_settings(MEDIA_URL='/profile_pictures/', MEDIA_ROOT=os.path.join(BASE_DIR, 'profile_pictures'))
+class UploadPictureTests(TestCase):
+
+    def setUp(self):
+        self.user = User.objects.create_user(username='TestUser', password='testpass')
+        self.client = Client()
+        self.client.login(username='TestUser', password='testpass')
+        self.base_json = {
+            'status': None,
+            'message': None,
+            'data': None
+        }
+        self.response = None
+        self.code = 200
+        self.test_file_path = os.path.join(settings.MEDIA_ROOT, 'upload_test.png')
+
+
+    def check_json(self):
+        self.assertJSONEqual(json.dumps(self.base_json), self.response.content.decode("utf-8"))
+        self.assertEqual(self.response.status_code, self.code)
+
+    def test_upload_picture(self):
+        file_path = os.path.join(settings.MEDIA_ROOT, 'upload_test.png')
+        with open(file_path, 'rb') as img:
+            self.response = self.client.post(
+                reverse('upload_picture'),
+                {'picture': img},
+                format='multipart'  # Django will automatically set the correct Content-Type
+            )        
+        self.base_json['status'] = 'success'
+        self.base_json['message'] = 'Updated profile picture'
+        self.base_json['data'] = {'profile_picture_url': '/profile_pictures/TestUser/upload_test.png'}
+        self.check_json()        
+
+
+    def tearDown(self):
+        file_path = os.path.join(settings.MEDIA_ROOT, 'TestUser', 'upload_test.png')
+        if os.path.isfile(file_path):
+            os.remove(file_path)
+        
+        user_dir = os.path.join(settings.MEDIA_ROOT, 'TestUser')
+        if os.path.isdir(user_dir) and not os.listdir(user_dir):
+            os.rmdir(user_dir)

@@ -8,18 +8,14 @@ from .models import UserProfilePic, UserStatus
 User = get_user_model()
 
 @receiver(post_save, sender=User)
-def create_user_profile(sender, instance, created, **kwargs):
+def create_user_status(sender, instance, created, **kwargs):
     if created:
-        UserStatus.objects.get_or_create(user=instance)
+        UserStatus.objects.create(user=instance)
 
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
     if created:
-        # Assign a default profile picture
-        UserProfilePic.objects.create(
-            user=instance,
-            picture='profile_pictures/default.jpeg' 
-        )
+        UserProfilePic.objects.create(user=instance)
 
 @receiver(post_save, sender=User)
 def increment_user_created(sender, instance, created, **kwargs):

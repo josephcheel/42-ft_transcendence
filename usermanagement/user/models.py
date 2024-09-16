@@ -28,20 +28,16 @@ class UserStatus(models.Model):
 
         
 class UserProfilePic(models.Model):
+    @staticmethod
     def get_upload_path(instance, filename):
-        ext = filename.split('.')[-1]
-        return f'profile_pictures/{instance.user.username}.{ext}'
-
-    def save(self, *args, **kwargs):
-        # Save the original name of the picture
-        if not self.original_name:
-            self.original_name = os.path.basename(self.picture.name)
-        super().save(*args, **kwargs)
-
-
+        return f'{instance.user.username}/{filename}'
+        
+    def update_picture(self, picture):
+        self.picture = picture
+        self.save()
+        
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    original_name = models.CharField(max_length=100)
-    picture = models.ImageField(upload_to=get_upload_path)
+    picture = models.ImageField(upload_to=get_upload_path, default='default.jpeg')
 
 
 
