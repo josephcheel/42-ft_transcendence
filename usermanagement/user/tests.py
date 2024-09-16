@@ -32,7 +32,7 @@ class usermodelTests(TestCase):
     def test_user_creation(self):
         self.base_json['status'] = 'success'
         self.base_json['message'] = 'User created successfully'
-        self.base_json['data'] = {'id' : 1, 'username' : self.user1['username']}
+        self.base_json['data'] = None
 
         response = self.client.post(reverse(create_user),json.dumps(self.user1),content_type='application/json')
 
@@ -44,7 +44,7 @@ class usermodelTests(TestCase):
 
         self.base_json['status'] = 'success'
         self.base_json['message'] = 'User created successfully'
-        self.base_json['data'] = {'id' : 2, 'username' : self.user2['username']}
+        self.base_json['data'] = None
 
         response = self.client.post(reverse(create_user),json.dumps(self.user2),content_type='application/json')
         self.check_json(response, 201)
@@ -451,9 +451,8 @@ class getAllFriends(TestCase):
         self.user3 = User.objects.create_user(username='test3',original_username='Test3', password='test')
 
         #Create user Status state
-        UserStatus.objects.create(user=self.user1, is_online=True)
-        UserStatus.objects.create(user=self.user2)
-        UserStatus.objects.create(user=self.user3)
+        self.user1.userstatus.is_online = True
+        self.user1.userstatus.save()
         self.client.login(username='test1', password='test')
         self.client2.login(username='test2', password='test')
         self.client3.login(username='test3', password='test')

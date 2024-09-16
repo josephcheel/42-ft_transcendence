@@ -21,6 +21,11 @@ LOG_FILE= os.environ.get("USER_LOG", "usermanagement.log")
 DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 
 
+# Absolute filesystem path to the profile pictures directory
+MEDIA_ROOT = os.path.join(BASE_DIR, 'profile_pictures')
+
+# URL to access the media (profile pictures)
+MEDIA_URL = '/profile_pictures/'
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/

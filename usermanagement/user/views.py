@@ -49,15 +49,14 @@ def create_user(request):
         try:
             user.set_password(password)
             user.save()
-            UserStatus.objects.get_or_create(user=user)
         except OperationalError:
             return JsonResponse({'status' : 'error',
                                 'message' : 'Internal database error',
                                 'data' : None, },
                                 status=500)
-        return JsonResponse({'status' : 'success',
+        return JsonResponse({   'status' : 'success',
                                 'message' : 'User created successfully',
-                                'data' : {None}},
+                                'data' : None},
                                 status=201)
     
 
