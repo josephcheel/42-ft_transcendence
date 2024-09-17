@@ -1,4 +1,4 @@
-from tournamentsapp.wrappers import require_get, user_is_authenticated, validate_credentials
+from tournamentsapp.wrappers import require_get, user_is_authenticated
 from tournamentsapp.models import Tournaments
 from datetime import datetime
 from django.db import OperationalError
@@ -10,18 +10,10 @@ except:
 	from tournamentsapp.models import User
 
 @require_get
-@validate_credentials
+@user_is_authenticated
 def list_tournaments(request):
-	player = request.user.username
+	player = request.user
 	try:
-		# try:
-		# player = User.objects.get(username=player)
-		# except User.DoesNotExist:
-		# return JsonResponse({'status': 'error', 'message': 'A user does not exist', 'data': None}, status=404)
-		player = User.objects.get(username=request.username)
-		print ('---------------------------------------------------')
-		print('player', player)
-		print('---------------------------------------------------')
 		tournament_data = Tournaments.objects.filter(player_id=player.id)
 		# Convert any datetime fields to string
 		tournament_list = list(tournament_data.values())
@@ -32,4 +24,4 @@ def list_tournaments(request):
 		data = json.dumps(tournament_list)
 		return JsonResponse({'status': 'success', 'message': 'List of tournaments cereated', 'data': data}, status=200)
 	except OperationalError:
-		return JsonResponse({'status': 'error', 'message': 'Internal error', 'data': None}, status=500)
+		return JsonResponse({'status': 'error', 'message': 'Internal error', 'data': data}, status=500)
