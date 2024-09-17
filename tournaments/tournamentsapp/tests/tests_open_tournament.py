@@ -63,7 +63,6 @@ class test_open_tournament(TestCase):
 		self.base_json['message'] = 'Invalid start date'
 		self.base_json['data'] = None
 		response = self.client.post(reverse(open_tournament), json.dumps(self.tournament), content_type='application/json')
-		print("User making the request: ", response.wsgi_request.user)
 		self.check_json(response, 400)
 
 #		#Max players must be even

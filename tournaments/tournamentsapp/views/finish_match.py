@@ -19,7 +19,8 @@ def finish_match(request):
 		match = Matches.objects.get(id=match_id)
 	except Matches.DoesNotExist:
 		return JsonResponse({'status': 'error', 'message': 'The match does not exist', 'data': None}, status=400)
-
+	
+	tournament_id = match.tournament_id
 	winner = data.get('winner')
 	looser = data.get('looser')
 	try:
@@ -27,7 +28,6 @@ def finish_match(request):
 		looser = User.objects.get(username=looser)
 	except User.DoesNotExist:
 		return JsonResponse({'status': 'error', 'message': 'A plyer 1 or 2 does not exist', 'data': None}, status=400)
-	print ('winner =', winner.id, ' looser =', looser.id, ' match =', match.player_id_1.id, match.player_id_2.id)
 	if (match.player_id_1.id != winner.id and match.player_id_2.id != winner.id) or (match.player_id_1.id != looser.id and match.player_id_2.id != looser.id):
 		return JsonResponse({'status': 'error', 'message': 'One of the players don\'t belong to this match', 'data': None}, status=400)
 	if match.status == StatusMatches.PLAYED.value:
@@ -53,8 +53,8 @@ def finish_match(request):
 			tournament.id_third = match.winner_id
 			match.status = StatusMatches.NEXT_ROUND_ASSIGNED.value
 		case Rounds.SEMIFINAL_ROUND.value:
-			next_match = Matches.objects.filter(tournament_id=match.tournament_id,
-		                                 round=Rounds.SEMIFINAL_ROUND.value, status=StatusMatches.PLAYED.value or StatusMatches.WALKOVER.value)
+			next_match = Matches.objects.filter(tournament_id=tournament_id,
+		                                 round=Rounds.SEMIFINAL_ROUND.value, status__in=[StatusMatches.PLAYED.value, StatusMatches.WALKOVER.value])
 			if len(next_match)  == 2:
 				Matches.objects.create(
 								tournament_id=match.tournament_id,
@@ -62,24 +62,24 @@ def finish_match(request):
 								player_id_2=next_match[1].looser_id,
 								date_time=tournament.last_match_date + timedelta(minutes=5),
 								round=Rounds.THIRD_PLACE_ROUND.value,
-                                number_round=2)
+                                number_round=1)
 				Matches.objects.create(
 								tournament_id=match.tournament_id, 
 								player_id_1=next_match[0].winner_id, 
 								player_id_2=next_match[1].winner_id, 
 								date_time = tournament.last_match_date + timedelta(minutes=10),
 								round=Rounds.FINAL_ROUND.value,
-                                number_round=2)
+                                number_round=1)
 				next_match[0].status = StatusMatches.NEXT_ROUND_ASSIGNED.value
 				next_match[1].status = StatusMatches.NEXT_ROUND_ASSIGNED.value
 				tournament.last_match_date += timedelta(minutes=10)
-				tournament.current_round -= 1
+				tournament.current_round = 1
 				tournament.save()
 		case _:
-			next_match = Matches.objects.filter(tournament_id=match.tournament_id,
-										round=Rounds.QUALIFIED_ROUND.value, status=StatusMatches.PLAYED.value or StatusMatches.WALKOVER.value)
+			next_match = Matches.objects.filter(tournament_id=tournament_id,
+                                       number_round=tournament.current_round, status__in=[StatusMatches.PLAYED.value, StatusMatches.WALKOVER.value])
 			while len(next_match) >= 2:
-				if tournament.current_round == 4:
+				if tournament.current_round == 3:
 					ronda_siguiente = Rounds.SEMIFINAL_ROUND.value
 				else:
 					ronda_siguiente = Rounds.QUALIFIED_ROUND.value
@@ -91,15 +91,16 @@ def finish_match(request):
 							timedelta(minutes=5),
 							round=ronda_siguiente,
                             number_round=tournament.current_round - 1)
-				tournament.last_match_date += timedelta(minutes=5)
+				next_match[0].status = StatusMatches.NEXT_ROUND_ASSIGNED.value
+				next_match[0].save()
+				next_match[1].status = StatusMatches.NEXT_ROUND_ASSIGNED.value
+				next_match[1].save()
+				tournament.last_match_date += timedelta(minutes = 5)
 				matches_not_played = Matches.objects.filter(
-					tournament_id=match.tournament_id, round=tournament.current_round, status=StatusMatches.NOT_PLAYED.value)
+					tournament_id=tournament_id, number_round=tournament.current_round, status__in=[StatusMatches.NOT_PLAYED.value, StatusMatches.WALKOVER.value])
 				if len(matches_not_played) == 0:
 					tournament.current_round -= 1
 				tournament.save()
-				next_match = Matches.objects.filter(tournament_id=match.tournament_id,round=Rounds.QUALIFIED_ROUND.value, status=StatusMatches.PLAYED.value or StatusMatches.WALKOVER.value)
-				for match in next_match:
-					print("-----------------")
-					print ('match =', match.id, ' finished. Won', match.winner_id, ' lost ', match.looser_id)
-			print ('match =', match.id, ' finished. Won', winner.username, ' lost ', looser.username)
+				next_match = Matches.objects.filter(tournament_id=tournament_id, round=Rounds.QUALIFIED_ROUND.value, status__in=[
+				                                    StatusMatches.PLAYED.value, StatusMatches.WALKOVER.value])
 	return JsonResponse({'status': 'success', 'message': 'Match finished successfully', 'data': None}, status=200)

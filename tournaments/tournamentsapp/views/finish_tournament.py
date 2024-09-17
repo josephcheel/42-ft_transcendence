@@ -13,16 +13,22 @@ def finish_tournament(tournament_id):
 		if match.round == Rounds.FINAL_ROUND.value:
 			tournament.id_winner = match.winner_id
 			tournament.id_second = match.looser_id
-			user = User.objects.get(id = tournament.id_winner)
-			user.puntos += tournament.price_1
-			user.save()
-			user = User.objects.get(id = tournament.id_second)
-			user.puntos += tournament.price_2
-			user.save()
+			match.winner_id.puntos += tournament.price_1
+			match.winner_id.save()
+			match.looser_id.puntos += tournament.price_2
+			match.looser_id.save()
+#			user = User.objects.get(id = tournament.id_winner.id)
+#			user.puntos += tournament.price_1
+#			user.save()
+#			user = User.objects.get(id = tournament.id_second.id)
+#			user.puntos += tournament.price_2
+#			user.save()
 		elif match.round == Rounds.THIRD_PLACE_ROUND.value:
 			tournament.id_third = match.winner_id
-			user = User.objects.get(id=tournament.id_third)
-			user.puntos += tournament.price_3
-			user.save()
+			match.winner_id.puntos += tournament.price_3
+			match.winner_id.save()
+#			user = User.objects.get(id=tournament.id_third.id)
+#			user.puntos += tournament.price_3
+#			user.save()
 	tournament.status = StatusTournaments.FINISHED_TOURNAMENT.value
 	tournament.save()
