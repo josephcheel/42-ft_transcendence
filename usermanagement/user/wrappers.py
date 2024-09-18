@@ -5,6 +5,9 @@ from functools import wraps
 from django.db import OperationalError
 import logging
 from django.conf import settings
+from django.contrib.auth import get_user_model 
+
+User = get_user_model()
 
 if not settings.DEBUG:
     logger = logging.getLogger('django')
@@ -98,6 +101,11 @@ def exception_handler(view_func):
     def wrapper(*args, **kwargs):
         try:
             return view_func(*args, **kwargs)
+        except User.DoesNotExist:
+            return JsonResponse({'status' : 'error',
+                            'message' : "User does not exists",
+                            'data' : None},
+                            status=404)
         except OperationalError:
             return JsonResponse({
                 'status': 'error',

@@ -58,8 +58,6 @@ def create_user(request):
                                 'data' : None},
                                 status=201)
     
-
-
 @require_post
 @validate_credentials
 @exception_handler
@@ -98,7 +96,6 @@ def logout_user(request):
                                 'data' : None},
                                 status=403)
     
-
 @require_get
 @exception_handler
 def is_logged_in(request):
@@ -130,18 +127,11 @@ def user_status(request):
         username = request.GET.get('username')
         if username is None:
                 return JsonResponse({'status': 'error', 'message': 'No username provided', 'data': None}, status=400)
-        try:
-            user_status = UserStatus.objects.get(user=User.objects.get(username=username))
-            return JsonResponse({'status' : 'success',
-                                'message' : "Retrieved status",
-                                'data' : {'is_online' : user_status.is_online}},
-                                status=200)     
-
-        except User.DoesNotExist:
-            return JsonResponse({'status' : 'error',
-                                'message' : "User does not exists",
-                                'data' : None},
-                                status=404)
+        user_status = UserStatus.objects.get(user=User.objects.get(username=username))
+        return JsonResponse({'status' : 'success',
+                            'message' : "Retrieved status",
+                            'data' : {'is_online' : user_status.is_online}},
+                            status=200)     
     elif request.method == 'POST':
         try:
             request.data = json.loads(request.body)
@@ -175,20 +165,16 @@ def user_status(request):
 @get_friend
 @exception_handler
 def send_friend_request(request):
-    try:
-        user2 = User.objects.get(username=request.friend)
-        if Friendship.are_friends(request.user, user2):
-            return JsonResponse({'status' : 'error',
-                    'message' : "Users are already friends",
-                    'data' : None}, status=400)
-        Friendship.add_friendship(request.user, user2)
-        return JsonResponse({'status' : 'success',
-                'message' : "Friendship created",
-                'data' : None}, status=201)
-    except User.DoesNotExist:
+    user2 = User.objects.get(username=request.friend)
+    if Friendship.are_friends(request.user, user2):
         return JsonResponse({'status' : 'error',
-                            'message' : "User does not exists",
-                            'data' : None}, status=404)
+                'message' : "Users are already friends",
+                'data' : None}, status=400)
+    Friendship.add_friendship(request.user, user2)
+    return JsonResponse({'status' : 'success',
+            'message' : "Friendship created",
+            'data' : None}, status=201)
+
     
 #Changes friendship status, can be use to accept/decline invites or to remove a friendship
 @require_auth
@@ -197,25 +183,19 @@ def send_friend_request(request):
 @get_status
 @exception_handler
 def change_friendship_status(request):
-    try:
-        status = Friendship.get_status_choice(request.status)
-        user2 = User.objects.get(username=request.friend)
-        friendship = Friendship.get_friendship(request.user, user2)
-        if not friendship.exists():
-            return JsonResponse({'status' : 'error',
-                                'message' : "Users have no friendship",
-                                'data' : None}, status= 404)
-        friendship = friendship.first()
-        friendship.status = status
-        friendship.save()
-        return JsonResponse({'status' : 'success',
-                'message' : "Friendship modified",
-                'data' : None}, status=200)
-    except User.DoesNotExist:
+    status = Friendship.get_status_choice(request.status)
+    user2 = User.objects.get(username=request.friend)
+    friendship = Friendship.get_friendship(request.user, user2)
+    if not friendship.exists():
         return JsonResponse({'status' : 'error',
-                            'message' : "User does not exists",
-                            'data' : None}, status=404)
-    
+                            'message' : "Users have no friendship",
+                            'data' : None}, status= 404)
+    friendship = friendship.first()
+    friendship.status = status
+    friendship.save()
+    return JsonResponse({'status' : 'success',
+            'message' : "Friendship modified",
+            'data' : None}, status=200)
 
 #Gets all friends
 @require_auth
@@ -233,8 +213,7 @@ def get_friends(request):
 @get_data
 @exception_handler
 def update_user(request):
-    user = User.objects.get(username=request.user)
-    user.update_fields(**request.data)
+    request.user.update_fields(**request.data)
     return JsonResponse({'status' : 'success',
                 'message' : "Updated fields",
                 'data' : None}, status=200)
@@ -244,8 +223,7 @@ def update_user(request):
 @exception_handler
 def upload_picture(request):
     picture = request.FILES['picture']
-    user = request.user
-    user_profile_pic= UserProfilePic.objects.get(user=user)
+    user_profile_pic= UserProfilePic.objects.get(user=request.user)
     user_profile_pic.update_picture(picture)
     return JsonResponse({'status' : 'success',
                 'message' : "Updated profile picture",
@@ -253,7 +231,7 @@ def upload_picture(request):
                     'profile_picture_url': request.user.userprofilepic.picture.url
                     }
                 }, status=200)
-
+    
 @require_auth
 @require_get
 @exception_handler
@@ -266,3 +244,9 @@ def get_profile_picture(request, username):
                     'profile_picture_url': profile_pic.picture.url
                     }
                 }, status=200)
+
+@require_auth
+@require_get
+@exception_handler
+def get_profile(request, username):
+    pass
