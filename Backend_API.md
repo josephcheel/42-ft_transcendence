@@ -1,7 +1,7 @@
 # Table of contents
 | Section | Links |
 |---------|-------|
-| [User](#user) | [create_user](#create_user) <br> [login_user](#login_user) <br> [logout_user](#logout_user) <br> [is_logged_in](#is_logged_in) <br> [list_users](#list_users) <br> [user_status](#user_status) <br> [send_friend_request](#send_friend_request)<br> [change_friendship_status](#change_friendship_status)<br> [get_friends](#get_friends)<br> [update_user](#update_user)<br> [get_profile_picture_url](#get_profile_picture_url)<br> [upload_profile_picture](#upload_profile_picture) |
+| [User](#user) | [create_user](#create_user) <br> [login_user](#login_user) <br> [logout_user](#logout_user) <br> [is_logged_in](#is_logged_in) <br> [list_users](#list_users) <br> [user_status](#user_status) <br> [send_friend_request](#send_friend_request)<br> [change_friendship_status](#change_friendship_status)<br> [get_friends](#get_friends)<br> [update_user](#update_user)<br> [get_profile_picture_url](#get_profile_picture_url)<br> [upload_profile_picture](#upload_profile_picture) <br> [get_profile](#get_profile) |
 
 
 All API calls will return a json response and the corresponding code
@@ -20,9 +20,11 @@ user/[subpath]
 
 ### create_user
 
+Set tournament name to username by default, user can later change the tournament name
+
 | Use | Methods | Request Data | Response Data | Return Values|
 | --- | --- | --- | ---| ---|
-| Creates User if not in the database. | POST | {username, password, tournament_name} | None |  201, 409 (already exists), 400, 405, 500 |
+| Creates User if not in the database. | POST | {username, password, first_name, last_name} | None |  201, 409 (already exists), 400, 405, 500 |
 
 [Back to Top](#table-of-contents)
 
@@ -135,6 +137,18 @@ You need to call /user/upload_profile_picture/ and upload a a form with a key/va
 | Use | Methods | Request Data | Response Data | Return Values|
 | --- | --- | --- | ---| ---|
 | Updates profile picture of user| POST | form data with picture field| profile_picture_url |  200,400,401,405, 500|
+
+
+[Back to Top](#table-of-contents)
+
+
+### get_profile
+
+
+
+| Use | Methods | Request Data | Response Data | Return Values|
+| --- | --- | --- | ---| ---|
+| Gets a user profile information| GET | username  | first_name, last_name, username, tournament_name, is_online, profile_picture_url |  200,400,401,404, 405, 500|
 
 
 [Back to Top](#table-of-contents)

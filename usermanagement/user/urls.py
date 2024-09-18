@@ -17,5 +17,7 @@ urlpatterns = [
     path('update_user/', update_user, name='update_user'),
     path('get_profile_picture/<str:username>/', get_profile_picture, name='get_profile_picture'),
     path('upload_profile_picture_url/', upload_picture, name='upload_picture'),
+    path('get_profile/<str:username>/', get_profile, name='get_profile'),
+
 ]  + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

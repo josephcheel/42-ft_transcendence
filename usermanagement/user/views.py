@@ -27,16 +27,15 @@ def custom_404_view(request, exception=None):
     return JsonResponse(response_data, status=404)
 
 @require_post
-@validate_credentials
+@validate_creation_fields
 @exception_handler
 # Need to check email, name, and other infor from front end.
 def create_user(request):
     username = request.username #og username in lower case
     password = request.password
+    first_name = request.first_name
+    last_name = request.last_name
     original_username = request.original_username
-    tournament_name= request.data.get('tournament_name')
-    if not tournament_name:
-        return JsonResponse({'status': 'error', 'message': 'Empty tournament_name', 'data': None}, status=400)
     try:
         User.objects.get(username=username)# need to check email too
         return JsonResponse({'status' : 'error',
@@ -44,7 +43,11 @@ def create_user(request):
                                 'data' : None},
                                 status=409)
     except User.DoesNotExist:
-        user = User(username=username, original_username=original_username)
+        user = User(username=username,
+                    original_username=original_username,
+                    tournament_name=original_username,
+                    first_name=first_name,
+                    last_name=last_name)
         try:
             user.set_password(password)
             user.save()
@@ -59,7 +62,7 @@ def create_user(request):
                                 status=201)
     
 @require_post
-@validate_credentials
+@validate_login_credentials
 @exception_handler
 def login_user(request):
     username = request.original_username
@@ -68,7 +71,7 @@ def login_user(request):
     if user is not None:
         login(request, user)
         user_status= UserStatus.objects.get(user=user)
-        user_status.change_status(True) 
+        user_status.change_status(True)
         return JsonResponse({'status' : 'success',
                             'message': 'user is logged in',
                             'data' : None},
@@ -249,4 +252,8 @@ def get_profile_picture(request, username):
 @require_get
 @exception_handler
 def get_profile(request, username):
-    pass
+    user = User.objects.get(username=username)
+    return JsonResponse({'status' : 'success',
+            'message' : "Got user profile",
+            'data' : user.get_all(),
+            }, status=200)
