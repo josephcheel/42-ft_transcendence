@@ -20,11 +20,9 @@ from .views import test_logging, user, match, index
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('test_logging/', test_logging, name='test_logging'),
     path('user/<path:subpath>/', user, name='user'),
     path('match/<path:subpath>/', match, name='match'),
 
     path('', include('django_prometheus.urls')),
-    path('index/', index, name='index'),
 
 ]

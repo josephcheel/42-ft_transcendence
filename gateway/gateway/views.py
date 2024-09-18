@@ -17,14 +17,21 @@ def index(request):
     return HttpResponse(file_content, content_type='text/html')
 
 
-@csrf_exempt
+def custom_404_view(request, exception=None):
+    response_data = {
+        'status': 'error',
+        'message': 'The requested resource was not found',
+        'data': None
+    }
+    return JsonResponse(response_data, status=404)
+
+
 def match(request, subpath):
     data = json.loads(request.body) 
     response = requests.post(f'http://matches:8000/match/{subpath}/', json=data)
     return JsonResponse(response.json(), status=response.status_code)
 
 
-@csrf_exempt
 def user(request, subpath):
     response = None
     try:
@@ -47,12 +54,3 @@ def user(request, subpath):
     except:
         return JsonResponse({'status' : 'error', 'data' : None, 'message' : 'Internal error C'}, status=500)
  
-
-@csrf_exempt
-def test_logging(request):
-    logger.debug('This is a debug message')
-    logger.info('This is an info message')
-    logger.warning('This is a warning message')
-    logger.error('This is an error message')
-    logger.critical('This is a critical message')
-    return HttpResponse("Log messages generated.")
