@@ -21,6 +21,11 @@ LOG_FILE= os.environ.get("USER_LOG", "usermanagement.log")
 DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 
 
+# Absolute filesystem path to the profile pictures directory
+MEDIA_ROOT = os.path.join(BASE_DIR, 'profile_pictures')
+
+# URL to access the media (profile pictures)
+MEDIA_URL = '/profile_pictures/'
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
@@ -30,7 +35,7 @@ SECRET_KEY = 'django-insecure-1vc7k2#w%hp*8k_lb5^(zsxuqnuy&^&cp)hwxk@skwg3j#-n!4
 
 # SECURITY WARNING: don't run with debug turned on in production!
 
-ALLOWED_HOSTS = ['localhost', 'usermanagement', 'user']
+ALLOWED_HOSTS = ['localhost', 'usermanagement', 'user', '127.0.0.1']
 
 
 # Application definition
@@ -79,6 +84,8 @@ INSTALLED_APPS = [
 
 if not DEBUG:
     AUTH_USER_MODEL="usermodel.User"
+else:
+    AUTH_USER_MODEL="user.User"
 
 MIDDLEWARE = [
     'django_prometheus.middleware.PrometheusBeforeMiddleware',
@@ -87,7 +94,6 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',

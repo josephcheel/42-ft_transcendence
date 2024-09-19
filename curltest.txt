@@ -1,11 +1,11 @@
 #Test users
 
-curl -X POST http://localhost:8000/user/create_user/      -H "Content-Type: application/json"      -d '{"username": "testuser1", "password": "testpassword"}'
+curl -X POST http://localhost:8000/user/create_user/      -H "Content-Type: application/json"      -d '{"username": "testuser1", "password": "testpassword", "tournament_name": "test"}'
 curl -X POST http://localhost:8000/user/create_user/      -H "Content-Type: application/json"      -d '{"username": "testuser2", "password": "testpassword"}'
 
 
 curl -X POST http://localhost:8000/user/login_user/      -H "Content-Type: application/json"      -d '{"username": "testuser1", "password": "testpassword"}'
-curl -X POST http://localhost:8000/user/is_logged_in/      -H "Content-Type: application/json"      -d '{"username": "testuser1"}'
+curl -X GET http://localhost:8000/user/is_logged_in/      -H "Content-Type: application/json"      -d '{"username": "testuser1"}'
 
 
 #Test matches 

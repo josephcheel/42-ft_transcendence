@@ -1,5 +1,5 @@
 """
-URL configuration for gateway project.
+URL configuration for tournements project.
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/5.0/topics/http/urls/
@@ -15,14 +15,8 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import include, path
-from .views import test_logging, user, match, index
+from django.urls import path
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('user/<path:subpath>/', user, name='user'),
-    path('match/<path:subpath>/', match, name='match'),
-
-    path('', include('django_prometheus.urls')),
-
 ]

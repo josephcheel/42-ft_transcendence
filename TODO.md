@@ -18,13 +18,15 @@
 
 ## User management
 Login  ✅
-Logout ❌
+Logout ✅
 Tournaments Name ❌
 Update Information ❌
 Upload avatar ❌
 Friends with status ❌
 Profiles stats ❌
 Match History ❌
+Save one username_og and username_internal(lowercase) for verifications ❌
+
 
 
 

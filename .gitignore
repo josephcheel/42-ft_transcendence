@@ -2,7 +2,12 @@
 *pycache*
 volumes*
 db.s*
+*Snapshots*
+*coverage*
+*html*
 .DS_Store
 *coverage*
+*node_modules*
+*TestUser*
 frontend/node_modules/
 node_modules/

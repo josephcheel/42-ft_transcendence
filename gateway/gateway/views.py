@@ -8,14 +8,30 @@ from django.conf import settings
 logger = logging.getLogger('django')
 logger.setLevel(logging.DEBUG)
 
-@csrf_exempt
+
+
+from django.http import HttpResponse
+def index(request):
+    with open("/home/luis/proyects/Transcendence/gateway/gateway/index.html", 'r') as file:
+        file_content = file.read()
+    return HttpResponse(file_content, content_type='text/html')
+
+
+def custom_404_view(request, exception=None):
+    response_data = {
+        'status': 'error',
+        'message': 'The requested resource was not found',
+        'data': None
+    }
+    return JsonResponse(response_data, status=404)
+
+
 def match(request, subpath):
     data = json.loads(request.body) 
     response = requests.post(f'http://matches:8000/match/{subpath}/', json=data)
     return JsonResponse(response.json(), status=response.status_code)
 
 
-@csrf_exempt
 def user(request, subpath):
     response = None
     try:
@@ -38,12 +54,3 @@ def user(request, subpath):
     except:
         return JsonResponse({'status' : 'error', 'data' : None, 'message' : 'Internal error C'}, status=500)
  
-
-@csrf_exempt
-def test_logging(request):
-    logger.debug('This is a debug message')
-    logger.info('This is an info message')
-    logger.warning('This is a warning message')
-    logger.error('This is an error message')
-    logger.critical('This is a critical message')
-    return HttpResponse("Log messages generated.")

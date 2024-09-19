@@ -1,12 +1,8 @@
 # Table of contents
-## [User](#user)
-[create_user/](#create_user)
-[login_user/](#login_user)
-[is_logged_in/](#is_logged_in)
+| Section | Links |
+|---------|-------|
+| [User](#user) | [create_user](#create_user) <br> [login_user](#login_user) <br> [logout_user](#logout_user) <br> [is_logged_in](#is_logged_in) <br> [list_users](#list_users) <br> [user_status](#user_status) <br> [send_friend_request](#send_friend_request)<br> [change_friendship_status](#change_friendship_status)<br> [get_friends](#get_friends)<br> [update_user](#update_user)<br> [get_profile_picture_url](#get_profile_picture_url)<br> [upload_profile_picture](#upload_profile_picture) <br> [get_profile](#get_profile) |
 
-## [Match](#match)
-[propose_match/](#propose_match)
-[get_pending_matches/](#get_pending_matches)
 
 All API calls will return a json response and the corresponding code
 
@@ -24,37 +20,136 @@ user/[subpath]
 
 ### create_user
 
+Set tournament name to username by default, user can later change the tournament name
+
 | Use | Methods | Request Data | Response Data | Return Values|
 | --- | --- | --- | ---| ---|
-| Creates User if not in the database. | POST | {username, password} | {user id, username (same as in request data)} |  201, 409 (already exists), 400, 500 |
+| Creates User if not in the database. | POST | {username, password, first_name, last_name} | None |  201, 409 (already exists), 400, 405, 500 |
+
+[Back to Top](#table-of-contents)
+
 
 
 ### login_user
 
 | Use | Methods | Request Data | Response Data | Return Values|
 | --- | --- | --- | ---| ---|
-| Logs in User| POST | username, password | None |200, 400, 401 (invalid credentials), 500|
+| Logs in User| POST | None (cookies handles it) | None |200, 400, 401 (invalid credentials), 405, 500|
+
+[Back to Top](#table-of-contents)
+
+
+### logout_user
+
+| Use | Methods | Request Data | Response Data | Return Values|
+| --- | --- | --- | ---| ---|
+| Logs out User| POST | None (cookies handles it) | None |200, 403 ( Forbidden), 405, 500|
+
+[Back to Top](#table-of-contents)
 
 
 ### is_logged_in
 
-| Use | Methods | Request Data | Response Data | Return Values|
-| --- | --- | --- | ---| ---|
-| Checks if user is logged in | GET | username | None |  200 (user logged in), 400, 404 (user not logged in), 500|
-
-
-## Match
-
-match/[subpath]
-
-### propose_match
 
 | Use | Methods | Request Data | Response Data | Return Values|
 | --- | --- | --- | ---| ---|
-| Sends invitation to all players | POST | start_time, players[first player is the owner/creator] | None |  200 (user logged in), 400, 404 (user not in database), 500|
+| Checks if YOUR user is logged in | GET | None | None |  200 (user logged in), 401 (Unauthorized), 405, 500|
 
-### get_pending_matches
+[Back to Top](#table-of-contents)
+
+
+### list_users
 
 | Use | Methods | Request Data | Response Data | Return Values|
 | --- | --- | --- | ---| ---|
-| Checks if user has pending matches to accept | GET | player (in query) | List of pending invitations or empty list |  200 , 400, 404 (user not in database), 500|
+| Returns a list of all users registered | GET | None | List of users. Each element inside the list is a dictionaty with id and username keys |  200 (user logged in), 405, 500|
+
+[Back to Top](#table-of-contents)
+
+
+### user_status
+
+| Use | Methods | Request Data | Response Data | Return Values|
+| --- | --- | --- | ---| ---|
+| Returns current online status of user | GET | username | is_online: True/False |  200 , 404 (user not found), 405, 500|
+| Changes current user status | POST | status: online/offline | None |  200, 400(invalid json or user not auth), 404 (user not found), 405, 500|
+
+[Back to Top](#table-of-contents)
+
+
+### send_friend_request
+
+| Use | Methods | Request Data | Response Data | Return Values|
+| --- | --- | --- | ---| ---|
+| Sends friend request | POST | username to send request  | None |  201 ,400, 401,404 (user not found), 405, 500|
+
+[Back to Top](#table-of-contents)
+
+### change_friendship_status
+
+| Use | Methods | Request Data | Response Data | Return Values|
+| --- | --- | --- | ---| ---|
+| Updates friendship | POST | username: friend, status: [accepted / declined]  | None |  200 ,400, 401,404 (user not found or no friendship), 405, 500|
+
+
+[Back to Top](#table-of-contents)
+
+### get_friends
+
+| Use | Methods | Request Data | Response Data | Return Values|
+| --- | --- | --- | ---| ---|
+| gets friends list | GET | None | lista de diccionarios (puede estar vacia): <br> {username, <br>friendship (accepted/pending/declined),<br> is_online(True,False)}  |  200,401,405,500|
+
+
+[Back to Top](#table-of-contents)
+
+
+### update_user
+
+| Use | Methods | Request Data | Response Data | Return Values|
+| --- | --- | --- | ---| ---|
+| Updates user fields: first_name, last_name, tournament_name | POST | first_name, last_name, tournament_name | None |  200,400,401,405, 500|
+
+
+[Back to Top](#table-of-contents)
+
+
+
+
+### get_profile_picture_url
+
+You need to call /user/get_profile_picture_url/{username}/ to get the profile picture url for {username}
+
+| Use | Methods | Request Data | Response Data | Return Values|
+| --- | --- | --- | ---| ---|
+| Gets profile picture url for user| GET | /username | profile_picture_url |  200,401,405, 500|
+
+Then you need to call user/ + profile_picture_url to get the binary. If you already have the profile_picture_url (from a upload_profile_picture call, for example), you can just call user/+profile_picture_url without geting the url first
+
+
+[Back to Top](#table-of-contents)
+
+
+### upload_profile_picture
+
+You need to call /user/upload_profile_picture/ and upload a a form with a key/value pair of picture:{picture_data} to update the picture for the signed in user. Returns profile_picture_url inside data, containing the url for the uploaded file
+
+| Use | Methods | Request Data | Response Data | Return Values|
+| --- | --- | --- | ---| ---|
+| Updates profile picture of user| POST | form data with picture field| profile_picture_url |  200,400,401,405, 500|
+
+
+[Back to Top](#table-of-contents)
+
+
+### get_profile
+
+
+
+| Use | Methods | Request Data | Response Data | Return Values|
+| --- | --- | --- | ---| ---|
+| Gets a user profile information| GET | username  | first_name, last_name, username, tournament_name, is_online, profile_picture_url |  200,400,401,404, 405, 500|
+
+
+[Back to Top](#table-of-contents)
+

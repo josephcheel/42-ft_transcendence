@@ -3,10 +3,7 @@ networks:
     name: transcendence
     external: false
 
-
-
 services:
-
   migrations:
     container_name: migrations
     build: ./migrator
@@ -40,6 +37,10 @@ services:
       retries: 5
       start_period: 80s 
 
+  redis:
+    image: 'redis:alpine'
+    container_name: redis
+
   gateway:
     restart: always
     container_name: gateway
@@ -55,6 +56,8 @@ services:
       - .env
     environment:
       - DEBUG=${DEBUG}
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
 
   usermanagement:
     restart: always
@@ -69,6 +72,22 @@ services:
       - ./usermodel:/app/usermodel
     environment:
       - DEBUG=${DEBUG}
+    env_file:
+      - .env
+
+  tournements:
+    depends_on:
+      - migrations
+    container_name: tournements
+    build: ./tournements
+    volumes:
+      - ${TOURNEMENTS_FOLDER}${USER_LOG}:/var/log/${USER_LOG}
+      - ${DJANGO_SCRIPT}:/start.sh
+      - ./tournements:/app
+    environment:
+      - APP=users
+      - DEBUG=${DEBUG}
+      - TOURNEMENTS_FOLDER = ${TOURNEMENTS_FOLDER}
     env_file:
       - .env
 
@@ -130,9 +149,6 @@ services:
 
 
   prometheus:
-    restart: always
-    ports:
-      - 3000:3000
     image: prom/prometheus:v2.53.1
     container_name: prometheus
     command:
@@ -141,11 +157,10 @@ services:
       - ./Prometheus/prometheus.yaml:/etc/prometheus/prometheus.yaml:ro
       - prometheus-data:/prometheus
   grafana:
-    restart: always
-
     image: grafana/grafana:11.1.1-ubuntu
     container_name: grafana
-
+    ports:
+      - 3000:3000
     environment:
       - GF_SECURITY_ADMIN_PASSWORD=newadmin
     volumes:
@@ -159,8 +174,7 @@ services:
       - ./setup/setup_script.sh:/setup_script.sh
       - ./setup/grafana_script.sh:/grafana_script.sh
       - ./setup/ELK_script.sh:/ELK_script.sh
-      - ./ELK/gateway_index.ndjson:/gateway_index.ndjson
-      - ./ELK/gateway_dashboard.ndjson:/gateway_dashboard.ndjson
+      - ./ELK:/ELK
       - ./Grafana/gateway_dashboard.json:/gateway_dashboard.json
     user: "0"
     environment:
@@ -282,14 +296,26 @@ services:
       timeout: 10s
       retries: 120
 
+  blockchain:
+    depends_on:
+      - migrations
+    build:
+      context: ./blockchain 
+    ports:
+      - "8545:8545"
+    env_file:
+      - .env
+    #restart: always
+    volumes:
+      - ${TOURNEMENTS_FOLDER}${CHAT_LOG}:/var/log/${CHAT_LOG}
+      - ${DJANGO_SCRIPT}:/start.sh
+      - ./blockchain:/app
   frontend:
     container_name: frontend
     build:
       context: ./frontend
     ports:
       - "8080:80"
-    networks:
-      - default
 
 volumes:
   certs:
@@ -333,4 +359,10 @@ volumes:
     driver_opts:
       type: none
       device: ${GRAFANA_FOLDER}
+      o: bind
+  blockchain_data:
+    driver: local
+    driver_opts:
+      type: none
+      device: ${BLOCKCHAIN_FOLDER}
       o: bind
