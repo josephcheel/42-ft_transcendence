@@ -14,6 +14,7 @@ import logging.config
 from pythonjsonlogger import jsonlogger
 from pathlib import Path
 import os
+from celery.schedules import crontab
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -172,3 +173,17 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+#celerly app
+CELERY_BEAT_SCHEDULE = {
+    'check-database-every-10-minutes': {
+        'task': 'tournamentsapp.tasks.check_database_status',
+        'schedule': crontab(minute="*/1",)  # Run minute
+    },
+}
+# Celery settings
+CELERY_BROKER_URL = "redis://localhost:6379"
+CELERY_RESULT_BACKEND = "redis://localhost:6379"
+CELERY_ACCEPT_CONTENT = ['json']
+
+TIME_DELTA = 5
