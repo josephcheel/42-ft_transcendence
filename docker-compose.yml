@@ -18,7 +18,7 @@ services:
       - redis
       - db
     volumes:
-      - ./:/app
+      - ./tournaments:/app
     env_file:
       - .env
 
@@ -33,7 +33,7 @@ services:
       - redis
       - db
     volumes:
-      - ./:/app
+      - ./tournaments:/app
     env_file:
       - .env
 
@@ -50,7 +50,7 @@ services:
     ports:
       - "5557:5555"
     volumes:
-      - ./:/app
+      - ./tournaments:/app
     env_file:
       - .env
 
