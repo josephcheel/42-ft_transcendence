@@ -19,7 +19,7 @@ from django.urls import path
 from tournamentsapp.views.open_tournament import open_tournament
 from tournamentsapp.views.accept_invitation import accept_invitation
 from tournamentsapp.views.close_tournament import close_tournament
-from tournamentsapp.views.finish_tournament import finish_tournament
+from tournamentsapp.tasks.finish_tournament import finish_tournament
 from tournamentsapp.views.start_match import start_match
 from tournamentsapp.views.finish_match import finish_match
 from tournamentsapp.views.list_tournaments import list_tournaments

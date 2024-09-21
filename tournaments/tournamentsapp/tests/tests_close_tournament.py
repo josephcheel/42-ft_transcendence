@@ -224,7 +224,6 @@ class test_close_tournament (TestCase):
 					self.match_to_finish), content_type='application/json')
 				self.check_json(response, 200)
 				print('match =', match.id, ' finished. Won!!!!', the_winner_id, ' lost ', the_looser_id)
-				input("Press enter")
 			tournament = Tournaments.objects.get(id=1)
 		print_all_tournaments()
 		print_all_invitations()
