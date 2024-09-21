@@ -4,6 +4,56 @@ networks:
     external: false
 
 services:
+  redis:
+    image: 'redis:6.2-alpine'
+    
+  celery_worker:
+    build:
+      context: ./
+      dockerfile: ./celery/Dockerfile
+    image: django_celery_example_celery_worker
+    command: /start-celeryworker
+    container_name: celery_worker
+    depends_on:
+      - redis
+      - db
+    volumes:
+      - ./:/app
+    env_file:
+      - .env
+
+  celery_beat:
+    build:
+      context: ./
+      dockerfile: ./celery/Dockerfile
+    image: django_celery_example_celery_beat
+    command: /start-celerybeat
+    container_name: celery_beat
+    depends_on:
+      - redis
+      - db
+    volumes:
+      - ./:/app
+    env_file:
+      - .env
+
+  flower:
+    build:
+      context: ./
+      dockerfile: ./celery/Dockerfile
+    image: django_celery_example_celery_flower
+    command: /start-flower
+    container_name: flower
+    depends_on:
+      - redis
+      - db
+    ports:
+      - "5557:5555"
+    volumes:
+      - ./:/app
+    env_file:
+      - .env
+
   migrations:
     container_name: migrations
     build: ./migrator
@@ -18,6 +68,7 @@ services:
       - ./usermodel:/app/usermanagement/usermodel
       - ./usermanagement:/app/usermanagement
       - ./matches:/app/matches
+
   db:
     container_name: db
     restart: always
@@ -36,10 +87,6 @@ services:
       timeout: 60s
       retries: 5
       start_period: 80s 
-
-  redis:
-    image: 'redis:alpine'
-    container_name: redis
 
   gateway:
     restart: always
@@ -95,8 +142,8 @@ services:
 
   tournaments:
     depends_on:
-      db:
-        condition: service_healthy
+      - redis
+      - db
     container_name: tournaments
     build: ./tournaments
     volumes:
@@ -110,24 +157,6 @@ services:
       - APP=tournaments
       - DEBUG=${DEBUG}
       - TOURNAMENTS_FOLDER = ${TOURNAMENTS_FOLDER}
-
-  matches:
-    restart: always
-
-    depends_on:
-      db:
-        condition: service_healthy
-    container_name: matches
-    build: ./matches
-    volumes:
-      - ${LOGSTASH_FOLDER}${MATCHES_LOG}:/var/log/${MATCHES_LOG}
-      - ${DJANGO_SCRIPT}:/start.sh
-      - ./matches:/app
-    env_file:
-      - .env
-    environment:
-      - APP=matches
-      - DEBUG=${DEBUG}
 
   twofactor:
     restart: always
