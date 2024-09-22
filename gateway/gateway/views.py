@@ -22,7 +22,7 @@ def index(request):
 @csrf_exempt
 def tournaments(request, subpath):
     data = json.loads(request.body) 
-    response = requests.post(f'http://matches:8000/match/{subpath}/', json=data)
+    response = requests.post(f'http://tournaments:8000/tournaments/{subpath}/', json=data)
     return JsonResponse(response.json(), status=response.status_code)
 
 
