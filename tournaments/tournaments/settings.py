@@ -177,7 +177,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 #celerly app
 CELERY_BEAT_SCHEDULE = {
     'check-database-every-10-minutes': {
-        'task': 'tournamentsapp.tasks.check_database_status.check_database_status',
+        'task': 'tournamentsapp.tasks.check_match_db_status.check_match_db_status',
         'schedule': crontab(minute="*/1",)  # Run minute
     },
 }
