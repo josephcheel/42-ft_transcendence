@@ -48,7 +48,7 @@ services:
       - redis
       - db
     ports:
-      - "5557:5555"
+      - 5557:5555
     volumes:
       - ./tournaments:/app
     env_file:
@@ -121,6 +121,8 @@ services:
       - DEBUG=${DEBUG}
     env_file:
       - .env
+    ports:
+      - 8001:8001
 
   chat:
     restart: always
@@ -156,7 +158,9 @@ services:
     environment:
       - APP=tournaments
       - DEBUG=${DEBUG}
-      - TOURNAMENTS_FOLDER = ${TOURNAMENTS_FOLDER}
+      - TOURNAMENTS_FOLDER=${TOURNAMENTS_FOLDER}
+    ports:
+      - 8002:8002
 
   twofactor:
     restart: always
