@@ -6,7 +6,7 @@ from django.conf import settings
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'tournaments.settings')
 
-app = Celery('tournaments')
+app = Celery('tournaments',brocker='redis://localhost:6379/0')
 
 # Load task modules from all registered Django app configs.
 app.config_from_object('django.conf:settings', namespace='CELERY')
