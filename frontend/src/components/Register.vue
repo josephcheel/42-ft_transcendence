@@ -23,6 +23,9 @@
         <label for="password" class="form-label">Confirm Password</label>
         <input v-model="psw2" type="password" class="form-control" id="password" placeholder="Confirm your password" required>
       </div>
+      <div class="d-flex justify-content-center">
+        <a href="http://usermanagement:8000/register" class="btn btn-secondary w-100">Register</a>
+      </div>
       <button id="login" type="submit" class="btn btn-primary w-100">Register</button>
     </form>
     <div class="mt-3 text-center">
