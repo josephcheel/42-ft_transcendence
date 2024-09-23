@@ -15,7 +15,8 @@ RUN apt-get update \
   # cleaning up unused files
   && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
   && rm -rf /var/lib/apt/lists/*
-
+  
+WORKDIR /app
 # Requirements are installed here to ensure they will be cached.
 COPY ./celery/requirements.txt /requirements.txt
 RUN pip install -r /requirements.txt
@@ -35,5 +36,6 @@ RUN chmod +x /start-celerybeat
 COPY ./celery/flower/start /start-flower
 RUN sed -i 's/\r$//g' /start-flower
 RUN chmod +x /start-flower
+
 
 ENTRYPOINT ["/entrypoint"]
