@@ -72,6 +72,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'tournamentsapp',
+    'django_prometheus',
 ]
 
 if not DEBUG:
