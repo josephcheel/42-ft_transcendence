@@ -2,6 +2,7 @@ Django==5.0.7
 logstash-formatter
 python-json-logger
 django-prometheus
+metrics
 web3==5.17.0
 
 # needed to intereact with PostGreeSql
