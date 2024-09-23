@@ -8,7 +8,7 @@ from tournamentsapp.status_options import StatusMatches
 from tournaments.tournamentsapp.tasks.actualise_tournaments import actualise_tournament
 
 @shared_task
-def check_database_status():
+def check_match_db_status():
 	matches_passed = Matches.objects.filter(date_time = timezone.now() + timedelta(minutes = TIME_DELTA))
 	tournament_ids = []
 	for mymatch in matches_passed:
