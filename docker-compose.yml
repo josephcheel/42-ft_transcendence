@@ -6,6 +6,7 @@ networks:
 services:
   redis:
     image: 'redis:6.2-alpine'
+    container_name: redis
     
   celery_worker:
     build:
@@ -150,7 +151,6 @@ services:
     build: ./tournaments
     volumes:
       - ${LOGSTASH_FOLDER}${TOURNAMENT_LOG}:/var/log/${TOURNAMENT_LOG}
-      - ${DJANGO_SCRIPT}:/start.sh
       - ./tournaments:/app
       - ./usermodel:/app/usermodel
     env_file:
