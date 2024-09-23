@@ -208,7 +208,7 @@ services:
       - ./setup/ELK_script.sh:/ELK_script.sh
       - ./ELK:/ELK
       - ./Grafana/gateway_dashboard.json:/gateway_dashboard.json
-    user: "0"
+#    user: "0"
     environment:
       - SLACK_HOOK=${SLACK_HOOK}
     env_file:
@@ -278,7 +278,7 @@ services:
     labels:
       co.elastic.logs/module: logstash
     container_name: logstash
-    user: root
+#    user: root
 
     volumes:
       - certs:/usr/share/logstash/certs
@@ -355,51 +355,60 @@ volumes:
       type: none
       device: ${CERTS_FOLDER}
       o: bind
+      user: $UID:$GID
   esdata01:
     driver: local
     driver_opts:
       type: none
       device: ${ESDATA_FOLDER}
       o: bind
+      user: $UID:$GID
   kibanadata:
     driver: local
     driver_opts:
       type: none
       device: ${KIBANA_FOLDER}
       o: bind
+      user: $UID:$GID
   logstashdata01:
     driver: local
     driver_opts:
       type: none
       device: ${LOGSTASH_FOLDER}
       o: bind
+      user: $UID:$GID
   postgres-data:
     driver: local
     driver_opts:
       type: none
       device: ${POSTGREE_FOLDER}
       o: bind
+      user: $UID:$GID
   prometheus-data:
     driver: local
     driver_opts:
       type: none
       device: ${PROMETHEUS_FOLDER}
       o: bind
+      user: $UID:$GID
   grafana-data:
     driver: local
     driver_opts:
       type: none
       device: ${GRAFANA_FOLDER}
       o: bind
+      user: $UID:$GID
   blockchain_data:
     driver: local
     driver_opts:
       type: none
       device: ${BLOCKCHAIN_FOLDER}
       o: bind
+      user: $UID:$GID
   shared:
     driver: local
     driver_opts:
       type: none
       device: ${SHARED_FOLDER}
       o: bind
+      user: $UID:$GID
