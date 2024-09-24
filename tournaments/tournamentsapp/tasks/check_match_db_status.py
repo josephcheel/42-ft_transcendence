@@ -5,10 +5,11 @@ from datetime import timedelta
 from django.utils import timezone
 from tournaments.settings import TIME_DELTA
 from tournamentsapp.status_options import StatusMatches
-from tournaments.tournamentsapp.tasks.actualise_tournaments import actualise_tournament
+from tournamentsapp.tasks.actualise_tournaments import actualise_tournament
 
 @shared_task
 def check_match_db_status():
+	print("Running periodic task")
 	matches_passed = Matches.objects.filter(date_time = timezone.now() + timedelta(minutes = TIME_DELTA))
 	tournament_ids = []
 	for mymatch in matches_passed:
@@ -26,6 +27,5 @@ def check_match_db_status():
 		mymatches = Matches.objects.filter(tournament_id__in=tournament_ids, status__in=[
 	                                   StatusMatches.PLAYED.value, StatusMatches.WALKOVER.value])
 
-	print("Running periodic task")
 
 	return None

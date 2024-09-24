@@ -224,7 +224,7 @@ class test_close_tournament (TestCase):
 				self.check_json(response, 200)
 				print('match =', match.id, ' finished. Won!!!!', the_winner_id, ' lost ', the_looser_id)
 				input('Press enter to continue')
-				check_match_db_status()
+				check_match_db_status.delayed()
 			tournament = Tournaments.objects.get(id=1)
 		print_all_tournaments()
 		print_all_invitations()
