@@ -18,6 +18,7 @@ services:
     depends_on:
       - redis
       - db
+      - tournaments
     volumes:
       - ./tournaments:/app
     env_file:
@@ -33,6 +34,7 @@ services:
     depends_on:
       - redis
       - db
+      - tournaments
     volumes:
       - ./tournaments:/app
     env_file:
@@ -48,6 +50,7 @@ services:
     depends_on:
       - redis
       - db
+      - tournaments
     ports:
       - 5557:5555
     volumes:
