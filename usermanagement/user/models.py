@@ -34,7 +34,6 @@ class UserStatus(models.Model):
 
         
 class UserProfilePic(models.Model):
-    @staticmethod
     def get_upload_path(instance, filename):
         return f'{instance.user.username}/{filename}'
         
