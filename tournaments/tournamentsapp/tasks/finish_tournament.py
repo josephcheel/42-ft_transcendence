@@ -1,11 +1,14 @@
+from __future__ import absolute_import, unicode_literals
 from tournamentsapp.status_options import StatusTournaments, Rounds
 from tournamentsapp.models import Tournaments, Matches
+from celery import shared_task
 
 try: 
 	from usermodel.models import User
 except:
 	from ..models import User
 
+@shared_task
 def finish_tournament(tournament_id):
 	tournament = Tournaments.objects.get(id=tournament_id)
 	list_of_matches = Matches.objects.filter(tournament_id=tournament.id)

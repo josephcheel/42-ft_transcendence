@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 from datetime import timedelta
 from tournamentsapp.models import Tournaments, Matches
 from tournamentsapp.status_options import StatusMatches, Rounds
@@ -13,7 +14,7 @@ def actualise_tournament(match):
 			tournament.id_winner = match.winner_id
 			tournament.id_second = match.looser_id
 			match.status = StatusMatches.NEXT_ROUND_ASSIGNED.value
-			finish_tournament(tournament.id)
+			finish_tournament.delay(tournament.id)
 		case Rounds.THIRD_PLACE_ROUND.value:
 			tournament.id_third = match.winner_id
 			match.status = StatusMatches.NEXT_ROUND_ASSIGNED.value
