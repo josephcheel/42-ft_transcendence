@@ -1,20 +1,13 @@
 import requests
 from django.http import JsonResponse, HttpResponse
-from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.csrf import  ensure_csrf_cookie, csrf_exempt
 import logging
 import json
 from django.conf import settings 
+from django.middleware.csrf import get_token
 
 logger = logging.getLogger('django')
 logger.setLevel(logging.DEBUG)
-
-
-
-from django.http import HttpResponse
-def index(request):
-    with open("/home/luis/proyects/Transcendence/gateway/gateway/index.html", 'r') as file:
-        file_content = file.read()
-    return HttpResponse(file_content, content_type='text/html')
 
 
 def custom_404_view(request, exception=None):
@@ -25,11 +18,9 @@ def custom_404_view(request, exception=None):
     }
     return JsonResponse(response_data, status=404)
 
-
-def match(request, subpath):
-    data = json.loads(request.body) 
-    response = requests.post(f'http://matches:8000/match/{subpath}/', json=data)
-    return JsonResponse(response.json(), status=response.status_code)
+@ensure_csrf_cookie
+def get_cookie(request):
+    return JsonResponse({'status' : 'success', 'data' : None, 'message' : 'You got your cookie now'}, status=200)
 
 
 def user(request, subpath):

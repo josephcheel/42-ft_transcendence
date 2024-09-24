@@ -15,7 +15,7 @@ import logging
 import logging.config
 from pythonjsonlogger import jsonlogger
 import os
-
+from corsheaders.defaults import default_headers
 
 LOG_FILE= os.environ.get("GATEWAY_LOG", "gateway.log")
 DEBUG = os.environ.get('DEBUG', 'True') == 'True'
@@ -33,6 +33,37 @@ SECRET_KEY = 'django-insecure-w@p@_o3z*ymi9ud^mv(zvc9f6uwgwa@prl+3o@pa+^6+x2j2!e
 # SECURITY WARNING: don't run with debug turned on in production!
 
 ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'gateway', 'usermanagement', 'matches']
+# Specify trusted origins
+CSRF_TRUSTED_ORIGINS = [
+    'http://localhost:8080',  # Your frontend origin
+]
+
+CORS_ALLOWED_ORIGINS = [
+    'http://localhost:8080',  # URL del frontend
+]
+
+CORS_ALLOW_METHODS = [
+    'GET',
+    'POST',
+    'PUT',
+    'PATCH',
+    'DELETE',
+    'OPTIONS',
+]
+
+CORS_ALLOW_HEADERS = list(default_headers) + [
+    'content-type',
+    'authorization',
+    'X-CSRFToken',
+]
+
+
+CORS_ALLOW_CREDENTIALS = True
+
+# Optionally, specify your allowed hosts (if applicable)
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '[::1]', 'gateway', 'usermanagement', 'matches']  # Adjust as necessary
+
+
 
 
 # Application definition
@@ -91,15 +122,14 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django_prometheus.middleware.PrometheusBeforeMiddleware',
-    'corsheaders.middleware.CorsMiddleware',  # Asegúrate de que esté antes de CsrfViewMiddleware
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    "django.middleware.security.SecurityMiddleware",
+    "django.contrib.sessions.middleware.SessionMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
+    "django.middleware.common.CommonMiddleware",
+    "django.middleware.csrf.CsrfViewMiddleware",
+    "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "django.contrib.messages.middleware.MessageMiddleware",
+    "django.middleware.clickjacking.XFrameOptionsMiddleware",
 
     'django_prometheus.middleware.PrometheusAfterMiddleware',
 ]
@@ -193,22 +223,3 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 
-CORS_ALLOW_ALL_ORIGINS = True
-
-CORS_ALLOWED_ORIGINS = [
-    'http://localhost:8080',  # URL del frontend
-]
-
-CORS_ALLOW_METHODS = [
-    'GET',
-    'POST',
-    'PUT',
-    'PATCH',
-    'DELETE',
-    'OPTIONS',
-]
-
-CORS_ALLOW_HEADERS = [
-    'content-type',
-    'authorization',
-]
