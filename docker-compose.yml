@@ -122,8 +122,6 @@ services:
       - DEBUG=${DEBUG}
     env_file:
       - .env
-    ports:
-      - 8001:8001
 
   chat:
     restart: always
