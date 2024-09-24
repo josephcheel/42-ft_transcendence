@@ -9,11 +9,11 @@
       </div>
       <div class="mb-3">
         <label for="user" class="form-label">Username</label>
-        <input v-model="user" type="text" class="form-control" id="user" placeholder="Enter your Username" required>
+        <input v-model="user" type="text" class="form-control" id="username" placeholder="Enter your Username" required>
       </div>
       <div class="mb-3">
         <label for="user" class="form-label">Email</label>
-        <input v-model="email" type="text" class="form-control" id="user" placeholder="Enter your Email" required>
+        <input v-model="email" type="text" class="form-control" id="mail" placeholder="Enter your Email" required>
       </div>
       <div class="mb-3">
         <label for="password" class="form-label">Password</label>
@@ -21,7 +21,7 @@
       </div>
       <div class="mb-3">
         <label for="password" class="form-label">Confirm Password</label>
-        <input v-model="psw2" type="password" class="form-control" id="password" placeholder="Confirm your password" required>
+        <input v-model="psw2" type="password" class="form-control" id="password2" placeholder="Confirm your password" required>
       </div>
       <button id="login" type="submit" class="btn btn-primary w-100">Register</button>
     </form>
