@@ -1,4 +1,4 @@
-from tournamentsapp.models import Tournaments, Invitations, Matches, User
+from tournamentsapp.models import Tournaments, Matches, User
 from django.test import TestCase, Client
 from django.urls import reverse
 from tournamentsapp.views.open_tournament import open_tournament
@@ -8,12 +8,11 @@ from tournamentsapp.views.start_match import start_match
 from tournamentsapp.views.finish_match import finish_match
 from datetime import timedelta
 from django.utils import timezone
-from django.db import OperationalError
 import json
-from tournamentsapp.status_options import StatusTournaments, StatusInvitations, StatusMatches, Rounds
+from tournamentsapp.status_options import StatusTournaments, StatusMatches
 import random
 from .printing import print_all_tournaments, print_all_invitations, print_all_matches, print_all_users
-from datetime import datetime
+from tournamentsapp.tasks.check_match_db_status import check_match_db_status
 # Create your tests here.
 #User = get_user_model()
 
@@ -224,6 +223,8 @@ class test_close_tournament (TestCase):
 					self.match_to_finish), content_type='application/json')
 				self.check_json(response, 200)
 				print('match =', match.id, ' finished. Won!!!!', the_winner_id, ' lost ', the_looser_id)
+				input('Press enter to continue')
+				check_match_db_status()
 			tournament = Tournaments.objects.get(id=1)
 		print_all_tournaments()
 		print_all_invitations()
