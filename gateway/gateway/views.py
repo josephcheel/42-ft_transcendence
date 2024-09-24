@@ -11,10 +11,9 @@ logger = logging.getLogger('django')
 logger.setLevel(logging.DEBUG)
 
 
-
 from django.http import HttpResponse
 def index(request):
-    with open(home_directory + "/proyects/Transcendence/gateway/gateway/index.html", 'r') as file:
+    with open("/frontend/index.html", 'r') as file:
         file_content = file.read()
     return HttpResponse(file_content, content_type='text/html')
 
