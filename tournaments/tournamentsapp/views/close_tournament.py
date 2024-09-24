@@ -4,6 +4,7 @@ from tournamentsapp.models import Tournaments, Invitations, Matches
 from tournamentsapp.status_options import StatusTournaments, StatusInvitations, Rounds, StatusMatches
 from datetime import timedelta
 from django.utils import timezone
+from tournaments.settings import TIME_DELTA
 
 try: 
 	from usermodel.models import User
@@ -39,7 +40,7 @@ def close_tournament(request):
 	next_match_date = tournament.last_match_date
 	player_nr = len(tournament_players)
 	extra_round, current_round = math.modf(math.log2(player_nr))
-	tournament.last_match_date = timezone.now() + timedelta(minutes=7 * pow(2, current_round + 1) / 2)
+	tournament.last_match_date = timezone.now() + timedelta(minutes=TIME_DELTA * 1.5 * pow(2, current_round + 1) / 2)
 	tournament.save()
 	if extra_round > 0:
 		extra_round = 1
@@ -69,7 +70,7 @@ def close_tournament(request):
 			tournament_players[0].player_id.save()
 			tournament_players[1].player_id.puntos_reservados -= tournament.cost
 			tournament_players[1].player_id.save()
-			next_match_date += timedelta(minutes=5)
+			next_match_date += timedelta(minutes=TIME_DELTA)
 			Matches.objects.create(
 				tournament_id=tournament_id,
 				number_round=2,
@@ -107,7 +108,7 @@ def close_tournament(request):
 					round = Rounds.QUALIFIED_ROUND.value,
 					number_round = current_round + extra_round,
 					status=status)
-				next_match_date += timedelta(minutes=5)
+				next_match_date += timedelta(minutes=TIME_DELTA)
 			tournament.current_round = current_round + extra_round
 	tournament.last_match_date =  next_match_date
 	tournament.save()

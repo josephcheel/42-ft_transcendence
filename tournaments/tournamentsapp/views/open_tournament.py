@@ -5,6 +5,7 @@ from django.utils import timezone
 import math
 from tournamentsapp.models import Tournaments, Invitations
 from tournamentsapp.status_options import StatusTournaments, StatusInvitations
+from tournaments.settings import TIME_DELTA
 
 try: 
 	from usermodel.models import User
@@ -53,7 +54,7 @@ def open_tournament(request):
 		player_id = player_owner, 
 		date_start=received_date_start,
 		last_match_date=received_date_start,
-		date_max_end=received_date_start + timedelta(minutes=nr_of_matches * 5 + 30),
+		date_max_end=received_date_start + timedelta(minutes=nr_of_matches * TIME_DELTA + 30),
 		max_players = data.get('max_players'), 
 		cost = data.get('cost'),
 		current_round = nr_of_rounds + extra_round,
