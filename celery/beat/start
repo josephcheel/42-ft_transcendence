@@ -4,4 +4,7 @@ set -o errexit
 set -o nounset
 
 rm -f './celerybeat.pid'
-celery -A app/tournaments beat -l INFO
+
+cd app
+
+celery -A tournaments beat -l INFO

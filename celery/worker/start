@@ -3,4 +3,6 @@
 set -o errexit
 set -o nounset
 
-celery -A app/tournaments worker -l INFO
+cd app
+
+celery -A tournaments worker -l INFO

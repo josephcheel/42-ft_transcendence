@@ -3,8 +3,10 @@
 set -o errexit
 set -o nounset
 
+cd app
+
 worker_ready() {
-    celery -A app/tournaments inspect ping
+    celery -A tournaments inspect ping
 }
 
 until worker_ready; do
@@ -13,6 +15,6 @@ until worker_ready; do
 done
 >&2 echo 'Celery workers is available'
 
-celery -A app/tournaments  \
+celery -A tournaments  \
     --broker="${CELERY_BROKER}" \
     flower
