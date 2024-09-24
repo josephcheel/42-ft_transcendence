@@ -3,6 +3,7 @@ FROM ubuntu:20.04
 # Instalar dependencias necesarias
 RUN apt-get update && apt-get install -y \
 	wget \ 
+	sudo \ 
 	p7zip-full \
 	fuse libfuse2 \
 	&& rm -rf /var/lib/apt/lists/*
@@ -24,5 +25,5 @@ EXPOSE 8545
 
 # Comando de inicio
 #CMD ["/usr/local/bin/ganache.AppImage", "--no-sandbox"]
-ENTRYPOINT ["/script.sh"]
-#ENTRYPOINT [ "bash", "-c", "while true; do sleep 3306; done"]
+#ENTRYPOINT ["/script.sh"]
+ENTRYPOINT [ "bash", "-c", "while true; do sleep 3306; done"]
