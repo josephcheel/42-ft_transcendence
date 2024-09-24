@@ -6,6 +6,7 @@ import Forgotps from '../components/Forgotps.vue'
 import Register from '../components/Register.vue'
 import Chat from '../components/chat/chatLayout.vue'
 import Dashboard from '../components/Dashboard.vue'
+import Play from '../components/Play.vue'
 
 const routes = [
   {
@@ -43,8 +44,11 @@ const routes = [
     name: 'Dashboard',
     component: Dashboard
   },
-
-
+  {
+    path: '/play',
+    name: 'Play',
+    component: Play
+  },
 ]
 
 const router = createRouter({
