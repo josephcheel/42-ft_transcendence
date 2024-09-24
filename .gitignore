@@ -10,3 +10,4 @@ db.s*
 .DS_Store
 *coverage*
 *node_modules*
+celery-beat-schedule
