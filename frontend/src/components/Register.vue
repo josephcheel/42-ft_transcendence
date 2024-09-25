@@ -51,8 +51,36 @@
     const psw2 = ref();
     const errorToast = ref(null)
     const toastMsg = ref(null)
+
+    async function fetchCSRFToken() {
+    await fetch('http://localhost:8000/get_cookie/', {
+      credentials: 'include'
+    });
+}
+
+    function getCSRFToken() {
+        // Split the document.cookie string into individual cookies
+        const cookies = document.cookie.split('; ');
+
+        // Look for the CSRF token in the cookies
+        const csrftoken = cookies.find(cookie => cookie.startsWith('csrftoken='));
+
+        // If found, return the value of the CSRF token
+        if (csrftoken) {
+            return csrftoken.split('=')[1]; // Get the token value after the '='
+        }
+
+        // If the CSRF token is not found, return null or undefined
+        return null;
+    }
+
     async function login()
     {
+        const response1  = await fetchCSRFToken();
+        const csrftoken = getCSRFToken();
+        //axios.defaults.headers.common['X-CSRFToken'] = csrftoken;
+
+        console.log(csrftoken);
         console.log(user.value);
         console.log(psw.value);
         if (psw2.value != psw.value) {
@@ -67,6 +95,7 @@
           }, {
             headers: {
               'Content-Type': 'application/json',
+              'X-CSRFToken' : csrftoken,
             },
           });
 

@@ -32,6 +32,9 @@ def custom_404_view(request, exception=None):
 @exception_handler
 # Need to check email, name, and other infor from front end.
 def create_user(request):
+    logger.info(request.headers)
+    logger.info(request.COOKIES)
+    logger.info(request.META)
     username = request.username #og username in lower case
     password = request.password
     first_name = request.first_name

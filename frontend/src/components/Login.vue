@@ -74,6 +74,10 @@
     async function login()
     
     {
+        const response1  = await fetchCSRFToken();
+        const csrftoken = getCSRFToken();  // This retrieves the CSRF token
+
+        console.log(csrftoken);
         console.log(user.value);
         console.log(psw.value);
 
@@ -84,6 +88,7 @@
           }, {
             headers: {
               'Content-Type': 'application/json',
+              'X-CSRFToken' : csrftoken,
             }
           });
 

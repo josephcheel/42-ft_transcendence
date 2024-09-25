@@ -38,26 +38,19 @@ SECRET_KEY = 'django-insecure-1vc7k2#w%hp*8k_lb5^(zsxuqnuy&^&cp)hwxk@skwg3j#-n!4
 # SECURITY WARNING: don't run with debug turned on in production!
 
 ALLOWED_HOSTS = ['localhost', 'usermanagement', 'user', '127.0.0.1']
-CORS_ORIGIN_ALLOW_ALL = True
 
-CORS_ALLOW_METHODS = [
-    'GET',
-    'POST',
-    'PUT',
-    'PATCH',
-    'DELETE',
-    'OPTIONS',
+
+CSRF_TRUSTED_ORIGINS = [
+    'http://localhost:8080',  # Your frontend origin
 ]
 
-CORS_ALLOW_HEADERS = list(default_headers) + [
-    'content-type',
-    'authorization',
-    'X-CSRFToken',
-    'credentials',
-]
 
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:8080",
+]
 
 CORS_ALLOW_CREDENTIALS = True
+
 
 # Application definition
 if not DEBUG:
@@ -110,17 +103,18 @@ else:
 
 MIDDLEWARE = [
     'django_prometheus.middleware.PrometheusBeforeMiddleware',
-    'corsheaders.middleware.CorsMiddleware',  # Asegúrate de que esté antes de CsrfViewMiddleware
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    "django.middleware.security.SecurityMiddleware",
+    "django.contrib.sessions.middleware.SessionMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
+    "django.middleware.csrf.CsrfViewMiddleware",
+    "django.middleware.common.CommonMiddleware",
+    "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "django.contrib.messages.middleware.MessageMiddleware",
+    "django.middleware.clickjacking.XFrameOptionsMiddleware",
 
     'django_prometheus.middleware.PrometheusAfterMiddleware',
 ]
+
 
 PROMETHEUS_LATENCY_BUCKETS = (0.01, 0.025, 0.05, 0.075, 0.1, 0.25, 0.5, 0.75, 1.0, 2.5, 5.0, 7.5, 10.0, 25.0, 50.0, 75.0, float("inf"),)
 PROMETHEUS_EXPORT_MIGRATIONS = True
