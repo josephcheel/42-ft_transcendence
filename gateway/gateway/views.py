@@ -32,7 +32,7 @@ def user(request, subpath):
                 data = json.loads(request.body) 
             except json.JSONDecodeError:
                     return JsonResponse({'status': 'error', 'message':'Invalid Json body', 'data' : None}, status=400)
-            response = requests.post(f'http://usermanagement:8000/user/{subpath}/', json=data, cookies=request.COOKIES, headers=request.headers)
+            response = requests.post(f'http://usermanagement:8000/user/{subpath}/', json=data)
         elif request.method == "GET": 
             response = requests.get(f'http://usermanagement:8000/user/{subpath}')
         try:
