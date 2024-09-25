@@ -22,23 +22,26 @@ def custom_404_view(request, exception=None):
 def get_cookie(request):
     return JsonResponse({'status' : 'success', 'data' : None, 'message' : 'You got your cookie now'}, status=200)
 
-
-
+@ensure_csrf_cookie
 def user(request, subpath):
     response = None
     try:
+        logger.info(request.headers)
+        x_csrf_token = request.headers.get('X-CSRFToken')
+        headers = {
+            'X-CSRFToken': x_csrf_token,  
+            'Content-Type': 'application/json', 
+        }
         if request.method == "POST": 
             try:
                 data = json.loads(request.body) 
             except json.JSONDecodeError:
                     return JsonResponse({'status': 'error', 'message':'Invalid Json body', 'data' : None}, status=400)
-            response = requests.post(f'http://usermanagement:8000/user/{subpath}/', json=data)
-        elif request.method == "GET":
-            return JsonResponse({'status' : 'success', 'data' : None, 'message' : 'You got your cookie'}, status=200)
- 
+            response = requests.post(f'http://usermanagement:8000/user/{subpath}/', json=data, cookies=request.COOKIES, headers=request.headers)
+        elif request.method == "GET": 
             response = requests.get(f'http://usermanagement:8000/user/{subpath}')
         try:
-            logger.warning(response.json())
+            print(response)
             response_data = response.json()
             return JsonResponse(response_data, status=response.status_code)
         except ValueError as e:

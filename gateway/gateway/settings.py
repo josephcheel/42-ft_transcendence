@@ -31,37 +31,23 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-w@p@_o3z*ymi9ud^mv(zvc9f6uwgwa@prl+3o@pa+^6+x2j2!e'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'gateway', 'usermanagement', 'matches']
 # Specify trusted origins
+
+
+#CSRF_HEADER_NAME='csrftoken1'
 CSRF_TRUSTED_ORIGINS = [
     'http://localhost:8080',  # Your frontend origin
 ]
 
-CORS_ORIGIN_ALLOW_ALL = True
 
-CORS_ALLOW_METHODS = [
-    'GET',
-    'POST',
-    'PUT',
-    'PATCH',
-    'DELETE',
-    'OPTIONS',
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:8080",
 ]
-
-CORS_ALLOW_HEADERS = list(default_headers) + [
-    'content-type',
-    'authorization',
-]
-
-CSRF_HEADER_NAME='csrftoken1'
-
 
 CORS_ALLOW_CREDENTIALS = True
 
-# Optionally, specify your allowed hosts (if applicable)
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '[::1]', 'gateway', 'usermanagement', 'matches']  # Adjust as necessary
 
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '[::1]', 'gateway', 'usermanagement']
 
 
 
@@ -124,8 +110,8 @@ MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "corsheaders.middleware.CorsMiddleware",
-    "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
+    "django.middleware.common.CommonMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",

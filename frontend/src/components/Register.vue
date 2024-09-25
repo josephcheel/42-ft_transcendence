@@ -53,7 +53,7 @@
     const toastMsg = ref(null)
 
     async function fetchCSRFToken() {
-    await fetch('http://localhost:8000/user/create_user/', {
+    await fetch('http://localhost:8000/get_cookie/', {
       credentials: 'include'
     });
 }
@@ -78,6 +78,7 @@
     {
         const response1  = await fetchCSRFToken();
         const csrftoken = getCSRFToken();
+        //axios.defaults.headers.common['X-CSRFToken'] = csrftoken;
 
         console.log(csrftoken);
         console.log(user.value);
@@ -96,6 +97,7 @@
           }, {
             headers: {
               'Content-Type': 'application/json',
+              'X-CSRFToken' : csrftoken,
             },
             withCredentials: true,
           });
