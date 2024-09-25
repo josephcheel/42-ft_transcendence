@@ -51,35 +51,8 @@
     const psw2 = ref();
     const errorToast = ref(null)
     const toastMsg = ref(null)
-
-    async function fetchCSRFToken() {
-    await fetch('http://localhost:8000/user/create_user/', {
-      credentials: 'include'
-    });
-}
-
-    function getCSRFToken() {
-        // Split the document.cookie string into individual cookies
-        const cookies = document.cookie.split('; ');
-
-        // Look for the CSRF token in the cookies
-        const csrftoken = cookies.find(cookie => cookie.startsWith('csrftoken='));
-
-        // If found, return the value of the CSRF token
-        if (csrftoken) {
-            return csrftoken.split('=')[1]; // Get the token value after the '='
-        }
-
-        // If the CSRF token is not found, return null or undefined
-        return null;
-    }
-
     async function login()
     {
-        const response1  = await fetchCSRFToken();
-        const csrftoken = getCSRFToken();
-
-        console.log(csrftoken);
         console.log(user.value);
         console.log(psw.value);
         if (psw2.value != psw.value) {
@@ -91,13 +64,10 @@
           const response = await axios.post('http://localhost:8000/user/create_user/', {
             username: user.value,
             password: psw.value,
-            first_name : "Luis",
-            last_name : "Soto",
           }, {
             headers: {
               'Content-Type': 'application/json',
             },
-            withCredentials: true,
           });
 
           console.log(response);

@@ -18,12 +18,7 @@ def custom_404_view(request, exception=None):
     }
     return JsonResponse(response_data, status=404)
 
-@ensure_csrf_cookie
-def get_cookie(request):
-    return JsonResponse({'status' : 'success', 'data' : None, 'message' : 'You got your cookie now'}, status=200)
-
-
-
+@csrf_exempt
 def user(request, subpath):
     response = None
     try:
