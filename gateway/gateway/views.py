@@ -28,9 +28,7 @@ def user(request, subpath):
             except json.JSONDecodeError:
                     return JsonResponse({'status': 'error', 'message':'Invalid Json body', 'data' : None}, status=400)
             response = requests.post(f'http://usermanagement:8000/user/{subpath}/', json=data)
-        elif request.method == "GET":
-            return JsonResponse({'status' : 'success', 'data' : None, 'message' : 'You got your cookie'}, status=200)
- 
+        elif request.method == "GET": 
             response = requests.get(f'http://usermanagement:8000/user/{subpath}')
         try:
             logger.warning(response.json())
