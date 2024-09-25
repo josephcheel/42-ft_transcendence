@@ -38,9 +38,7 @@ CSRF_TRUSTED_ORIGINS = [
     'http://localhost:8080',  # Your frontend origin
 ]
 
-CORS_ALLOWED_ORIGINS = [
-    'http://localhost:8080',  # URL del frontend
-]
+CORS_ORIGIN_ALLOW_ALL = True
 
 CORS_ALLOW_METHODS = [
     'GET',
@@ -54,8 +52,9 @@ CORS_ALLOW_METHODS = [
 CORS_ALLOW_HEADERS = list(default_headers) + [
     'content-type',
     'authorization',
-    'X-CSRFToken',
 ]
+
+CSRF_HEADER_NAME='csrftoken1'
 
 
 CORS_ALLOW_CREDENTIALS = True

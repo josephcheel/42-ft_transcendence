@@ -15,6 +15,8 @@ import logging
 import logging.config
 from pythonjsonlogger import jsonlogger
 import os
+from corsheaders.defaults import default_headers
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 LOG_FILE= os.environ.get("USER_LOG", "usermanagement.log")
@@ -36,7 +38,26 @@ SECRET_KEY = 'django-insecure-1vc7k2#w%hp*8k_lb5^(zsxuqnuy&^&cp)hwxk@skwg3j#-n!4
 # SECURITY WARNING: don't run with debug turned on in production!
 
 ALLOWED_HOSTS = ['localhost', 'usermanagement', 'user', '127.0.0.1']
+CORS_ORIGIN_ALLOW_ALL = True
 
+CORS_ALLOW_METHODS = [
+    'GET',
+    'POST',
+    'PUT',
+    'PATCH',
+    'DELETE',
+    'OPTIONS',
+]
+
+CORS_ALLOW_HEADERS = list(default_headers) + [
+    'content-type',
+    'authorization',
+    'X-CSRFToken',
+    'credentials',
+]
+
+
+CORS_ALLOW_CREDENTIALS = True
 
 # Application definition
 if not DEBUG:
@@ -197,24 +218,3 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-
-CORS_ALLOW_ALL_ORIGINS = True
-
-CORS_ALLOWED_ORIGINS = [
-    'http://localhost:8080',  # URL del frontend
-]
-
-CORS_ALLOW_METHODS = [
-    'GET',
-    'POST',
-    'PUT',
-    'PATCH',
-    'DELETE',
-    'OPTIONS',
-]
-
-CORS_ALLOW_HEADERS = [
-    'content-type',
-    'authorization',
-]

@@ -44,6 +44,8 @@ services:
   gateway:
     restart: always
     container_name: gateway
+    depends_on:
+      - redis
     build: ./gateway
     ports:
       - "8000:8000"

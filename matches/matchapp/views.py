@@ -56,7 +56,7 @@ def get_pending_matches(request):
                             'data' : data},
                             status=400)
 
-@csrf_exempt
+
 def propose_match(request):
     if request.method == 'POST':
         try:

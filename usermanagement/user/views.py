@@ -26,7 +26,7 @@ def custom_404_view(request, exception=None):
     }
     return JsonResponse(response_data, status=404)
 
-@csrf_exempt
+    
 @require_post
 @validate_creation_fields
 @exception_handler
@@ -61,6 +61,7 @@ def create_user(request):
                                 'message' : 'User created successfully',
                                 'data' : None},
                                 status=201)
+
     
 @require_post
 @validate_login_credentials
@@ -82,6 +83,7 @@ def login_user(request):
                                 'message': 'Invalid credentials',
                                 'data' : None},
                                 status=401)
+    
     
 @require_post
 @exception_handler
