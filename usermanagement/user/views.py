@@ -26,15 +26,11 @@ def custom_404_view(request, exception=None):
     }
     return JsonResponse(response_data, status=404)
 
-@csrf_exempt   
 @require_post
 @validate_creation_fields
 @exception_handler
 # Need to check email, name, and other infor from front end.
 def create_user(request):
-    logger.info(request.headers)
-    logger.info(request.COOKIES)
-    logger.info(request.META)
     username = request.username #og username in lower case
     password = request.password
     first_name = request.first_name
@@ -66,7 +62,6 @@ def create_user(request):
                                 status=201)
 
     
-@csrf_exempt
 @require_post
 @validate_login_credentials
 @exception_handler
@@ -89,7 +84,6 @@ def login_user(request):
                                 status=401)
     
     
-@csrf_exempt
 @require_post
 @exception_handler
 def logout_user(request):
@@ -171,7 +165,6 @@ def user_status(request):
             }, status=405)
 
 #Creates a new friendship if it doens't exist
-@csrf_exempt
 @require_auth
 @require_post
 @get_friend
@@ -189,7 +182,6 @@ def send_friend_request(request):
 
     
 #Changes friendship status, can be use to accept/decline invites or to remove a friendship
-@csrf_exempt
 @require_auth
 @require_post
 @get_friend
@@ -221,7 +213,6 @@ def get_friends(request):
                 'data' : friends}, status=200)
 
 
-@csrf_exempt
 @require_auth
 @require_post
 @get_data
@@ -232,7 +223,6 @@ def update_user(request):
                 'message' : "Updated fields",
                 'data' : None}, status=200)
 
-@csrf_exempt
 @require_auth
 @require_post
 @exception_handler
