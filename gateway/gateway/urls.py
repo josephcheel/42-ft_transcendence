@@ -21,6 +21,7 @@ from .views import *
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('user/<path:subpath>/', user, name='user'),
+    path('get_cookie/', get_cookie, name='get_cookie'),
     path('', include('django_prometheus.urls')),
 
 ]
