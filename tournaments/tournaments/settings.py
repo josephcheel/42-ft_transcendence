@@ -71,8 +71,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'tournamentsapp',
     'django_prometheus',
+    'tournamentsapp',
+    'usermodel',
 ]
 
 if not DEBUG:
@@ -188,6 +189,6 @@ CELERY_RESULT_BACKEND = os.environ.get("CELERY_BACKEND", "redis://redis:6379/0")
 CELERY_ACCEPT_CONTENT = ['json']
 
 CELERY_TASK_SERIALIZER = 'json'
-CELERY_IMPORTS = ('tournamentsapp.tasks.check_match_db_status', 'tournamentsapp.tasks.actualise_tournaments','tournamentsapp.tasks.finish_tournament', 'tournamentsapp.models')
+CELERY_IMPORTS = ('tournamentsapp.tasks.check_match_db_status', 'tournamentsapp.tasks.actualise_tournaments','tournamentsapp.tasks.finish_tournament')
 
 TIME_DELTA = 5
