@@ -5,6 +5,6 @@ set -o nounset
 
 rm -f './celerybeat.pid'
 
-cd app
+cd app/tournaments
 
 celery -A tournaments beat -l INFO

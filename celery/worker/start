@@ -3,6 +3,6 @@
 set -o errexit
 set -o nounset
 
-cd app
+cd app/tournaments
 python manage.py migrate
 celery -A tournaments worker -l INFO
