@@ -26,12 +26,6 @@ def get_cookie(request):
 def user(request, subpath):
     response = None
     try:
-        logger.info(request.headers)
-        x_csrf_token = request.headers.get('X-CSRFToken')
-        headers = {
-            'X-CSRFToken': x_csrf_token,  
-            'Content-Type': 'application/json', 
-        }
         if request.method == "POST": 
             try:
                 data = json.loads(request.body) 
@@ -41,7 +35,6 @@ def user(request, subpath):
         elif request.method == "GET": 
             response = requests.get(f'http://usermanagement:8000/user/{subpath}')
         try:
-            print(response)
             response_data = response.json()
             return JsonResponse(response_data, status=response.status_code)
         except ValueError as e:
