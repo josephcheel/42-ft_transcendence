@@ -26,17 +26,15 @@ def get_cookie(request):
 def user(request, subpath):
     response = None
     try:
-        logger.info(request.headers)
         if request.method == "POST": 
             try:
                 data = json.loads(request.body) 
             except json.JSONDecodeError:
                     return JsonResponse({'status': 'error', 'message':'Invalid Json body', 'data' : None}, status=400)
-            response = requests.post(f'http://usermanagement:8000/user/{subpath}/', json=data)
+            response = requests.post(f'http://usermanagement:8000/user/{subpath}/', json=data, cookies=request.COOKIES, headers=request.headers)
         elif request.method == "GET": 
             response = requests.get(f'http://usermanagement:8000/user/{subpath}')
         try:
-            print(response)
             response_data = response.json()
             return JsonResponse(response_data, status=response.status_code)
         except ValueError as e:
