@@ -20,7 +20,8 @@ services:
       - db
       - tournaments
     volumes:
-      - ./tournaments:/app
+      - ./tournaments:/app/tournaments
+      - ./usermodel:/app/tournaments/usermodel
     env_file:
       - .env
 
@@ -36,7 +37,8 @@ services:
       - db
       - tournaments
     volumes:
-      - ./tournaments:/app
+      - ./tournaments:/app/tournaments
+      - ./usermodel:/app/tournaments/usermodel
     env_file:
       - .env
 
@@ -54,7 +56,8 @@ services:
     ports:
       - 5557:5555
     volumes:
-      - ./tournaments:/app
+      - ./tournaments:/app/tournaments
+      - ./usermodel:/app/tournaments/usermodel
     env_file:
       - .env
 
