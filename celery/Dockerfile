@@ -38,3 +38,4 @@ RUN chmod +x /start-flower
 
 
 ENTRYPOINT ["/entrypoint"]
+#ENTRYPOINT [ "bash", "-c", "while true; do sleep 3306; done"]
