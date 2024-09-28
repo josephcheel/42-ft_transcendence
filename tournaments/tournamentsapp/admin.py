@@ -1,11 +1,11 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.conf import settings
+from django.contrib.auth import get_user_model
 
-if not settings.DEBUG:
-	from usermanagement.user.models import User
-else:
-	from tournamentsapp.models import User
+
+User = get_user_model()
+
 # Register your models here.
 
 admin.site.register(User, UserAdmin)
