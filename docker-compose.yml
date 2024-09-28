@@ -18,6 +18,7 @@ services:
     depends_on:
       - redis
       - db
+      - migrations
       - tournaments
     volumes:
       - ./tournaments:/app/tournaments
@@ -35,6 +36,7 @@ services:
     depends_on:
       - redis
       - db
+      - migrations
       - tournaments
     volumes:
       - ./tournaments:/app/tournaments
@@ -52,6 +54,7 @@ services:
     depends_on:
       - redis
       - db
+      - migrations
       - tournaments
     ports:
       - 5557:5555
@@ -74,7 +77,6 @@ services:
     volumes:
       - ./usermodel:/app/usermanagement/usermodel
       - ./usermanagement:/app/usermanagement
-      - ./matches:/app/matches
 
   db:
     container_name: db
@@ -152,6 +154,7 @@ services:
     depends_on:
       - redis
       - db
+      - migrations
     container_name: tournaments
     build: ./tournaments
     volumes:
@@ -338,6 +341,7 @@ services:
   blockchain:
     depends_on:
       - migrations
+      - tournaments
     build:
       context: ./blockchain
     container_name: blockchain
