@@ -41,7 +41,8 @@ rebuild:
 	@touch $(LOG_FILES)
 	@$(COMPOSE) -f $(DOCKER_COMPOSE_FILE) up --build -d
 
-
+migrat:
+	docker exec -it migrations /bin/bash
 
 volumes: 
 	@echo Creating Volumes DIR
