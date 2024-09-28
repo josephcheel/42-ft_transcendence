@@ -72,9 +72,9 @@ services:
     env_file:
       - .env
     volumes:
-      - ./usermodel:/app/usermanagement/usermodel
+#      - ./usermodel:/app/usermanagement/usermodel
       - ./usermanagement:/app/usermanagement
-      - ./matches:/app/matches
+      - ./tournaments:/app/tournaments
 
   db:
     container_name: db
@@ -157,7 +157,7 @@ services:
     volumes:
       - ${LOGSTASH_FOLDER}${TOURNAMENT_LOG}:/var/log/${TOURNAMENT_LOG}
       - ./tournaments:/app
-      - ./usermodel:/app/usermodel
+      - ./usermanagement/user:/app/tournaments
     env_file:
       - .env
     environment:
