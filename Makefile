@@ -44,6 +44,12 @@ rebuild:
 migrat:
 	docker exec -it migrations /bin/bash
 
+tour:
+	docker exec -it tournaments /bin/bash
+
+user:
+	docker exec -it usermanagement /bin/bash
+
 volumes: 
 	@echo Creating Volumes DIR
 	@mkdir -p $(VOLUMES)
