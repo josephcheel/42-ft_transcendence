@@ -75,8 +75,8 @@ services:
     env_file:
       - .env
     volumes:
-      - ./usermodel:/app/usermanagement/usermodel
       - ./usermanagement:/app/usermanagement
+      - ./tournaments:/app/tournaments
 
   db:
     container_name: db
