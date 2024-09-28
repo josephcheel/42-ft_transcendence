@@ -22,7 +22,7 @@ services:
       - tournaments
     volumes:
       - ./tournaments:/app/tournaments
-      - ./usermodel:/app/tournaments/usermodel
+      - ./usermanagement/user:/app/tournaments/user
     env_file:
       - .env
 
@@ -40,7 +40,7 @@ services:
       - tournaments
     volumes:
       - ./tournaments:/app/tournaments
-      - ./usermodel:/app/tournaments/usermodel
+      - ./usermanagement/user:/app/tournaments/user
     env_file:
       - .env
 
@@ -60,7 +60,7 @@ services:
       - 5557:5555
     volumes:
       - ./tournaments:/app/tournaments
-      - ./usermodel:/app/tournaments/usermodel
+      - ./usermanagement/user:/app/tournaments/user
     env_file:
       - .env
 
@@ -126,7 +126,7 @@ services:
       - ${LOGSTASH_FOLDER}${USER_LOG}:/var/log/${USER_LOG}
       - ${DJANGO_SCRIPT}:/start.sh
       - ./usermanagement:/app
-      - ./usermodel:/app/usermodel
+#      - ./usermodel:/app/usermodel
     environment:
       - DEBUG=${DEBUG}
     env_file:

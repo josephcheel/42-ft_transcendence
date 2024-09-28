@@ -8,9 +8,9 @@ from tournamentsapp.status_options import StatusTournaments, StatusInvitations
 from tournaments.settings import TIME_DELTA
 
 try: 
-	from usermodel.models import User
+	from user.models import User
 except:
-	from ..models import User
+	from tournamentsapp.models import User
  
 @require_post
 @user_is_authenticated

@@ -73,11 +73,11 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django_prometheus',
     'tournamentsapp',
-    'usermodel',
+    'user',
 ]
 
 if not DEBUG:
-    AUTH_USER_MODEL="usermodel.User"
+    AUTH_USER_MODEL="user.User"
 else:
     AUTH_USER_MODEL="tournamentsapp.User"
 
