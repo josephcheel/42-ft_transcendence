@@ -1,4 +1,4 @@
-from ..wrappers import require_post, user_is_authenticated, validate_json
+from tournamentsapp.wrappers import require_post, user_is_authenticated, validate_json
 from django.http import JsonResponse
 from datetime import datetime, timedelta
 from django.utils import timezone
