@@ -8,5 +8,5 @@ RUN apt-get update -y && apt-get install -y postgresql-client
 
 COPY . .
 
-#CMD ["./start.sh"]
-ENTRYPOINT [ "bash", "-c", "while true; do sleep 3306; done"]
+CMD ["./start.sh"]
+#ENTRYPOINT [ "bash", "-c", "while true; do sleep 3306; done"]

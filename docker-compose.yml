@@ -126,7 +126,6 @@ services:
       - ${LOGSTASH_FOLDER}${USER_LOG}:/var/log/${USER_LOG}
       - ${DJANGO_SCRIPT}:/start.sh
       - ./usermanagement:/app
-#      - ./usermodel:/app/usermodel
     environment:
       - DEBUG=${DEBUG}
     env_file:
@@ -160,7 +159,7 @@ services:
     volumes:
       - ${LOGSTASH_FOLDER}${TOURNAMENT_LOG}:/var/log/${TOURNAMENT_LOG}
       - ./tournaments:/app
-      - ./usermanagement/user:/app/tournaments
+      - ./usermodel:/app/user
     env_file:
       - .env
     environment:
