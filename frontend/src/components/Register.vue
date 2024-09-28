@@ -92,6 +92,8 @@
           const response = await axios.post('http://localhost:8000/user/create_user/', {
             username: user.value,
             password: psw.value,
+            first_name: user.value,
+            last_name: user.value,
           }, {
             headers: {
               'Content-Type': 'application/json',
