@@ -9,11 +9,6 @@ if settings.DEBUG:
         tournament_name = models.CharField(max_length=100, null = True)
         puntos = models.IntegerField(default=1000)
         puntos_reservados = models.IntegerField(default=0)
-        # Specify a unique related_name for the groups field
-        groups = models.ManyToManyField(
-                'auth.Group', related_name='users_db_Group', blank=True)
-        user_permissions = models.ManyToManyField(
-                'auth.Permission', related_name='users_db_Permission', blank=True)
         def update_fields(self, **kwargs):
             for field in kwargs:
                 if field in ['first_name', 'last_name', 'tournament_name'] and hasattr(self, field):
@@ -23,7 +18,8 @@ if settings.DEBUG:
 User = get_user_model()
 
 class UserStatus(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     is_online = models.BooleanField(default=False)
 
     def change_status(self, status):
@@ -44,7 +40,7 @@ class Friendship(models.Model):
     STATUS_STRING = {v: k for k, v in STATUS_CHOICES}
 
     status = models.PositiveSmallIntegerField(choices=STATUS_CHOICES, default=PENDING_CHOICE)
-    users = models.ManyToManyField(User)
+    users = models.ManyToManyField(settings.AUTH_USER_MODEL)
 
     @staticmethod
     def add_friendship(user1, user2):
