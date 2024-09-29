@@ -50,6 +50,9 @@ tour:
 user:
 	docker exec -it usermanagement /bin/bash
 
+bch:
+	docker exec -it blockchain /bin/bash
+
 volumes: 
 	@echo Creating Volumes DIR
 	@mkdir -p $(VOLUMES)
