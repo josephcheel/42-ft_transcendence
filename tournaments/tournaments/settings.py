@@ -27,7 +27,7 @@ LOG_FILE = os.environ.get("TOURNAMENT_LOG", "tournament.log")
 SECRET_KEY = 'django-insecure-e5m60_kk8wzj52xpmb69*h9u^kg29b6$uyum19p87(7or7bop9'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get('DEBUG', 'true') == 'true'
+DEBUG = os.environ.get('DEBUG', 'true') == 'True'
 
 ALLOWED_HOSTS = ['localhost', 'tournaments', 'tournamentsapp']
 

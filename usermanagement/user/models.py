@@ -16,6 +16,9 @@ class User(AbstractUser):
             if field in ['first_name', 'last_name', 'tournament_name'] and hasattr(self, field):
                 setattr(self, field, kwargs[field])
         self.save()
+    def get_all(self):
+        return {'first_name': self.first_name, 'last_name': self.last_name, 'username' : self.original_username ,"tournament_name" : self.tournament_name, 'is_online' : self.userstatus.is_online, 'profile_picture_url' : self.userprofilepic.picture.url}
+
 
 User = get_user_model()
 
