@@ -4,27 +4,24 @@ from django.conf import settings
 import os
 
 
-if settings.DEBUG:
-    from django.contrib.auth.models import AbstractUser
-    class User(AbstractUser):
-        original_username =  models.CharField(max_length=100)
-        tournament_name = models.CharField(max_length=100)
-
-
-        def update_fields(self, **kwargs):
-            for field in kwargs:
-                if field in ['first_name', 'last_name', 'tournament_name'] and hasattr(self, field):
-                    setattr(self, field, kwargs[field])
-            self.save()
-            
-        def get_all(self):
-            return {'first_name': self.first_name, 'last_name': self.last_name, 'username' : self.original_username ,"tournament_name" : self.tournament_name, 'is_online' : self.userstatus.is_online, 'profile_picture_url' : self.userprofilepic.picture.url}
-
+#if settings.DEBUG:
+from django.contrib.auth.models import AbstractUser
+class User(AbstractUser):
+    original_username =  models.CharField(max_length=100, null=True)
+    tournament_name = models.CharField(max_length=100, null = True)
+    puntos = models.IntegerField(default=1000)
+    puntos_reservados = models.IntegerField(default=0)
+    def update_fields(self, **kwargs):
+        for field in kwargs:
+            if field in ['first_name', 'last_name', 'tournament_name'] and hasattr(self, field):
+                setattr(self, field, kwargs[field])
+        self.save()
 
 User = get_user_model()
 
 class UserStatus(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     is_online = models.BooleanField(default=False)
 
     def change_status(self, status):
@@ -61,7 +58,7 @@ class Friendship(models.Model):
     STATUS_STRING = {v: k for k, v in STATUS_CHOICES}
 
     status = models.PositiveSmallIntegerField(choices=STATUS_CHOICES, default=PENDING_CHOICE)
-    users = models.ManyToManyField(User)
+    users = models.ManyToManyField(settings.AUTH_USER_MODEL)
 
     @staticmethod
     def add_friendship(user1, user2):

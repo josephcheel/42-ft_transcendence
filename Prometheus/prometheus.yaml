@@ -21,10 +21,10 @@ scrape_configs:
     static_configs:
       - targets: ['chat:8000']
 
-  - job_name: 'matches'
+  - job_name: 'tournaments'
     scrape_interval: 30s
     static_configs:
-      - targets: ['matches:8000']
+      - targets: ['tournaments:8000']
 
   - job_name: 'twofactor'
     scrape_interval: 30s

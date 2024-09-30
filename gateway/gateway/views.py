@@ -5,10 +5,11 @@ import logging
 import json
 from django.conf import settings 
 from django.middleware.csrf import get_token
+import os
 
+home_directory = os.path.expanduser('~')
 logger = logging.getLogger('django')
 logger.setLevel(logging.DEBUG)
-
 
 def custom_404_view(request, exception=None):
     response_data = {
@@ -17,6 +18,13 @@ def custom_404_view(request, exception=None):
         'data': None
     }
     return JsonResponse(response_data, status=404)
+
+def tournaments(request, subpath):
+    data = json.loads(request.body) 
+    response = requests.post(f'http://tournaments:8000/tournaments/{subpath}/', json=data)
+    return JsonResponse(response.json(), status=response.status_code)
+
+
 
 @ensure_csrf_cookie
 def get_cookie(request):

@@ -8,3 +8,4 @@ django-prometheus
 psycopg==3.2.1
 django-cors-headers
 Pillow
+celery

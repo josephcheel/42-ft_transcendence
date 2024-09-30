@@ -20,7 +20,7 @@ from corsheaders.defaults import default_headers
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 LOG_FILE= os.environ.get("USER_LOG", "usermanagement.log")
-DEBUG = os.environ.get('DEBUG', 'True') == 'True'
+DEBUG = os.environ.get('DEBUG', 'True') == 'true'
 
 
 # Absolute filesystem path to the profile pictures directory
@@ -92,14 +92,14 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django_prometheus',
     'user',
-    'usermodel',
     'corsheaders',
 ]
+#    'usermodel',
 
-if not DEBUG:
-    AUTH_USER_MODEL="usermodel.User"
-else:
-    AUTH_USER_MODEL="user.User"
+#if not DEBUG:
+#    AUTH_USER_MODEL="usermodel.User"
+#else:
+AUTH_USER_MODEL="user.User"
 
 MIDDLEWARE = [
     'django_prometheus.middleware.PrometheusBeforeMiddleware',
