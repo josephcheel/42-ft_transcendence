@@ -1,5 +1,9 @@
-Django==5.0.7
+#Django==5.0.7
+Django==4.2.16
 requests
 logstash-formatter
 python-json-logger
 django-prometheus
+channels[daphne]
+channels_redis
+django-cors-headers

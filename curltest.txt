@@ -1,13 +1,15 @@
 #Test users
 
-curl -X POST http://localhost:8000/user/create_user/      -H "Content-Type: application/json"      -d '{"username": "testuser1", "password": "testpassword"}'
+curl -X POST http://localhost:8000/user/create_user/      -H "Content-Type: application/json"      -d '{"username": "testuser1", "password": "testpassword", "tournament_name": "test"}'
 curl -X POST http://localhost:8000/user/create_user/      -H "Content-Type: application/json"      -d '{"username": "testuser2", "password": "testpassword"}'
 
 
 curl -X POST http://localhost:8000/user/login_user/      -H "Content-Type: application/json"      -d '{"username": "testuser1", "password": "testpassword"}'
-curl -X POST http://localhost:8000/user/is_logged_in/      -H "Content-Type: application/json"      -d '{"username": "testuser1"}'
+curl -X GET http://localhost:8000/user/is_logged_in/      -H "Content-Type: application/json"      -d '{"username": "testuser1"}'
 
 
 #Test matches 
 
-curl -X POST http://localhost:8000/match/propose_match/      -H "Content-Type: application/json"      -d '{"start_time": "2024-08-22 11:35:16.239649", "players": ["testuser1", "testuser2"]}'
+curl -X POST http://localhost:8000/tournaments/open_tournament/      -H "Content-Type: application/json"      -d '{"start_time": "2024-08-22 11:35:16.239649", "players": ["testuser1", "testuser2"]}'
+
+curl http://tournaments:8000/tournaments/list_tournaments/

@@ -15,7 +15,7 @@ import logging
 import logging.config
 from pythonjsonlogger import jsonlogger
 import os
-
+from corsheaders.defaults import default_headers
 
 LOG_FILE= os.environ.get("GATEWAY_LOG", "gateway.log")
 DEBUG = os.environ.get('DEBUG', 'True') == 'True'
@@ -31,8 +31,24 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-w@p@_o3z*ymi9ud^mv(zvc9f6uwgwa@prl+3o@pa+^6+x2j2!e'
 
 # SECURITY WARNING: don't run with debug turned on in production!
+# Specify trusted origins
 
-ALLOWED_HOSTS = ['localhost', 'gateway', 'usermanagement', 'matches']
+
+#CSRF_HEADER_NAME='csrftoken1'
+CSRF_TRUSTED_ORIGINS = [
+    'http://localhost:8080',  # Your frontend origin
+]
+
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:8080",
+]
+
+CORS_ALLOW_CREDENTIALS = True
+
+
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '[::1]', 'gateway', 'usermanagement']
+
 
 
 # Application definition
@@ -65,8 +81,19 @@ if not DEBUG:
 
     logging.config.dictConfig(LOGGING)
 
+ASGI_APPLICATION = "gateway.asgi.application"
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [(os.getenv('REDIS_HOST', 'redis'), int(os.getenv('REDIS_PORT', 6379)))],
+        },
+    },
+}
 # Application definition
 INSTALLED_APPS = [
+    "daphne",
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -74,18 +101,20 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django_prometheus',
+    'corsheaders',
+
 ]
 
 MIDDLEWARE = [
     'django_prometheus.middleware.PrometheusBeforeMiddleware',
-
-    'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    "django.middleware.security.SecurityMiddleware",
+    "django.contrib.sessions.middleware.SessionMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
+    "django.middleware.csrf.CsrfViewMiddleware",
+    "django.middleware.common.CommonMiddleware",
+    "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "django.contrib.messages.middleware.MessageMiddleware",
+    "django.middleware.clickjacking.XFrameOptionsMiddleware",
 
     'django_prometheus.middleware.PrometheusAfterMiddleware',
 ]
@@ -175,3 +204,7 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+
+

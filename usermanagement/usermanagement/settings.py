@@ -15,12 +15,19 @@ import logging
 import logging.config
 from pythonjsonlogger import jsonlogger
 import os
+from corsheaders.defaults import default_headers
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 LOG_FILE= os.environ.get("USER_LOG", "usermanagement.log")
-DEBUG = os.environ.get('DEBUG', 'True') == 'True'
+DEBUG = os.environ.get('DEBUG', 'True') == 'true'
 
 
+# Absolute filesystem path to the profile pictures directory
+MEDIA_ROOT = os.path.join(BASE_DIR, 'profile_pictures')
+
+# URL to access the media (profile pictures)
+MEDIA_URL = '/profile_pictures/'
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
@@ -30,7 +37,19 @@ SECRET_KEY = 'django-insecure-1vc7k2#w%hp*8k_lb5^(zsxuqnuy&^&cp)hwxk@skwg3j#-n!4
 
 # SECURITY WARNING: don't run with debug turned on in production!
 
-ALLOWED_HOSTS = ['localhost', 'usermanagement', 'user']
+ALLOWED_HOSTS = ['localhost', 'usermanagement', 'user', '127.0.0.1']
+
+
+CSRF_TRUSTED_ORIGINS = [
+    'http://localhost:8080',  # Your frontend origin
+]
+
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:8080",
+]
+
+CORS_ALLOW_CREDENTIALS = True
 
 
 # Application definition
@@ -73,25 +92,29 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django_prometheus',
     'user',
-    'usermodel'
+    'corsheaders',
 ]
+#    'usermodel',
 
-if not DEBUG:
-    AUTH_USER_MODEL="usermodel.User"
+#if not DEBUG:
+#    AUTH_USER_MODEL="usermodel.User"
+#else:
+AUTH_USER_MODEL="user.User"
 
 MIDDLEWARE = [
     'django_prometheus.middleware.PrometheusBeforeMiddleware',
-
-    'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    "django.middleware.security.SecurityMiddleware",
+    "django.contrib.sessions.middleware.SessionMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
+    "django.middleware.csrf.CsrfViewMiddleware",
+    "django.middleware.common.CommonMiddleware",
+    "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "django.contrib.messages.middleware.MessageMiddleware",
+    "django.middleware.clickjacking.XFrameOptionsMiddleware",
 
     'django_prometheus.middleware.PrometheusAfterMiddleware',
 ]
+
 
 PROMETHEUS_LATENCY_BUCKETS = (0.01, 0.025, 0.05, 0.075, 0.1, 0.25, 0.5, 0.75, 1.0, 2.5, 5.0, 7.5, 10.0, 25.0, 50.0, 75.0, float("inf"),)
 PROMETHEUS_EXPORT_MIGRATIONS = True
@@ -125,7 +148,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'usermanagement.wsgi.application'
-
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases

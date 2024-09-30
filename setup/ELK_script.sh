@@ -6,19 +6,18 @@ echo "Waiting for Kibana to start..."
 until curl -s -u "elastic:${ELASTIC_PASSWORD}" -s -XGET "http://kibana:5601/api/status" | grep -q "\"level\":\"available\""; do sleep 1; done
 echo "Exporting dashboards to Kibana"
 
-INDX=$(curl -u "elastic:${ELASTIC_PASSWORD}" -X POST "http://kibana:5601/api/saved_objects/_import" -H "kbn-xsrf: true" --form file=@/gateway_index.ndjson | jq -r '.successResults[0].id')
 
 
+curl  -u "elastic:${ELASTIC_PASSWORD}" -X POST "http://kibana:5601/api/saved_objects/_import" -H "kbn-xsrf: true" --form file=@/ELK/data_views.ndjson
 
-DASHBOARD_ID=$(curl  -u "elastic:${ELASTIC_PASSWORD}" -X POST "http://kibana:5601/api/saved_objects/_import" -H "kbn-xsrf: true" --form file=@/gateway_dashboard.ndjson | jq -r '.successResults[0].id')
+DASHBOARD_ID=$(curl  -u "elastic:${ELASTIC_PASSWORD}" -X POST "http://kibana:5601/api/saved_objects/_import" -H "kbn-xsrf: true" --form file=@/ELK/gateway_dashboard.ndjson | jq -r '.successResults[0].id')
 
-echo  index ${INDX}
 echo  dahboard ${DASHBOARD_ID}
 
 
 if [ -n "$DASHBOARD_ID" ]; then
     echo exporting settings
-    until curl --user elastic:${ELASTIC_PASSWORD} -X GET "http://kibana:5601/api/saved_objects/_find?type=config" -H "kbn-xsrf: true" -H "Content-Type: application/json"  | grep \"id\":\"8.7.1\"; do sleep 1; done;
+    until curl --user elastic:${ELASTIC_PASSWORD} -X GET "http://kibana:5601/api/saved_objects/_find?type=config" -H "kbn-xsrf: true" | grep \"id\":\"8.7.1\"; do sleep 1; done;
     curl \
     --user elastic:${ELASTIC_PASSWORD} \
     -X PUT http://kibana:5601/api/saved_objects/config/8.7.1 \

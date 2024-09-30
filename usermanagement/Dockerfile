@@ -6,6 +6,4 @@ COPY requirements.txt requirements.txt
 RUN pip install -r requirements.txt
 RUN apt-get update -y && apt-get install -y postgresql-client
 
-#COPY . .
-
-CMD ["/start.sh"]
+CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]

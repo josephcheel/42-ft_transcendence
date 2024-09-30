@@ -1,9 +1,100 @@
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth import get_user_model 
 from django.db import models
+from django.conf import settings
+import os
 
 
-#
-"""class User(AbstractUser):
-    def save_password(self, password):
-        self.set_password(password)
-        self.save()"""
+#if settings.DEBUG:
+from django.contrib.auth.models import AbstractUser
+class User(AbstractUser):
+    original_username =  models.CharField(max_length=100, null=True)
+    tournament_name = models.CharField(max_length=100, null = True)
+    puntos = models.IntegerField(default=1000)
+    puntos_reservados = models.IntegerField(default=0)
+    def update_fields(self, **kwargs):
+        for field in kwargs:
+            if field in ['first_name', 'last_name', 'tournament_name'] and hasattr(self, field):
+                setattr(self, field, kwargs[field])
+        self.save()
+
+User = get_user_model()
+
+class UserStatus(models.Model):
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    is_online = models.BooleanField(default=False)
+
+    def change_status(self, status):
+        self.is_online = status
+        self.save()
+
+
+        
+class UserProfilePic(models.Model):
+    def get_upload_path(instance, filename):
+        return f'{instance.user.username}/{filename}'
+        
+    def update_picture(self, picture):
+        self.picture = picture
+        self.save()
+        
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    picture = models.ImageField(upload_to=get_upload_path, default='default.jpeg')
+
+
+
+
+class Friendship(models.Model):
+    DECLINED_CHOICE = 0
+    ACCEPTED_CHOICE = 1
+    PENDING_CHOICE = 2
+    STATUS_CHOICES = [
+        (DECLINED_CHOICE, "declined"),
+        (ACCEPTED_CHOICE, "accepted"),
+        (PENDING_CHOICE, "pending"),
+
+    ]
+    STATUS_DICT = {v: k for k, v in STATUS_CHOICES}
+    STATUS_STRING = {v: k for k, v in STATUS_CHOICES}
+
+    status = models.PositiveSmallIntegerField(choices=STATUS_CHOICES, default=PENDING_CHOICE)
+    users = models.ManyToManyField(settings.AUTH_USER_MODEL)
+
+    @staticmethod
+    def add_friendship(user1, user2):
+        friends = Friendship()
+        friends.save()
+        friends.users.add(user1, user2)
+
+    @staticmethod
+    def remove_friendship(user1, user2):
+        friendship = Friendship.objects.filter(users=user1).filter(users=user2).first()
+        if friendship:
+            friendship.delete()
+    
+    @staticmethod
+    def are_friends(user1, user2):
+        return Friendship.objects.filter(users=user1).filter(users=user2).exclude(status=Friendship.DECLINED_CHOICE).exists()
+    
+    @staticmethod
+    def get_friendship(user1, user2):
+        return Friendship.objects.filter(users=user1).filter(users=user2)
+    
+    @staticmethod
+    def get_friends(user):
+        friendships =Friendship.objects.filter(users=user) 
+        friends_list = []
+        for friendship in friendships:
+            friend = friendship.users.exclude(id=user.id).first()
+            if friend:
+                friends_list.append({
+                    'username': friend.original_username,
+                    'friendship': friendship.get_status_display(),
+                    'is_online' : friend.userstatus.is_online
+
+                }) 
+        return friends_list
+    
+    @classmethod
+    def get_status_choice(cls, status_string):
+        return cls.STATUS_DICT.get(status_string) 
