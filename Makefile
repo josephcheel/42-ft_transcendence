@@ -4,6 +4,7 @@ else
   DEBUG := False
 endif
 
+
 export DEBUG
 
 COMPOSE = docker compose
@@ -16,7 +17,7 @@ LOG_FILES =  $(addprefix ${LOGSTASH_FOLDER}, ${GATEWAY_LOG} ${USER_LOG} ${CHAT_L
 # Define targets
 all: build 
 
-build: 	| volumes
+build: 	| volumes	
 	$(COMPOSE) -f $(DOCKER_COMPOSE_FILE) up --build -d
 
 down:
@@ -53,10 +54,17 @@ user:
 bch:
 	docker exec -it blockchain /bin/bash
 
+gate:
+	docker exec -it gateway /bin/bash
+
 volumes: 
 	@echo Creating Volumes DIR
 	@mkdir -p $(VOLUMES)
 	@touch $(LOG_FILES)
+
+del_vol:
+	@echo Deleting Volumes DIR
+	@sudo rm -rf $(VOLUMES_FOLDER)
 
 clean: stop
 	
