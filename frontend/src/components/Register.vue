@@ -59,6 +59,7 @@
     await fetch('http://localhost:8000/get_cookie/', {
       credentials: 'include'
     });
+    
 }
 
     function getCSRFToken() {
@@ -79,7 +80,7 @@
 
     async function login()
     {
-        const response1  = await fetchCSRFToken();
+        await fetchCSRFToken();
         const csrftoken = getCSRFToken();
         //axios.defaults.headers.common['X-CSRFToken'] = csrftoken;
 

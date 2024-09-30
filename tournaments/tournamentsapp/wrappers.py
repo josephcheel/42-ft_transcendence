@@ -10,7 +10,7 @@ def user_is_authenticated(function):
 			return JsonResponse({'status': 'error',
 								'message': 'User not authenticated',
 								'data': None},
-							   status=405)
+							   status=401)
 
 		return function(request, *args, **kwargs)
 	return wrapper

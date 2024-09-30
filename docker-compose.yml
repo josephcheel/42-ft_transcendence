@@ -109,7 +109,6 @@ services:
       - ${LOGSTASH_FOLDER}${GATEWAY_LOG}:/var/log/${GATEWAY_LOG}
       - ${DJANGO_SCRIPT}:/start.sh
       - ./gateway:/app
-      - ./frontend:/app/frontend
 
     env_file:
       - .env
@@ -126,7 +125,6 @@ services:
     build: ./usermanagement
     volumes:
       - ${LOGSTASH_FOLDER}${USER_LOG}:/var/log/${USER_LOG}
-      - ${DJANGO_SCRIPT}:/start.sh
       - ./usermanagement:/app
     environment:
       - DEBUG=${DEBUG}
@@ -341,6 +339,8 @@ services:
     container_name: frontend
     build:
       context: ./frontend
+    ports:
+      - "8080:80"
 
 volumes:
   certs:

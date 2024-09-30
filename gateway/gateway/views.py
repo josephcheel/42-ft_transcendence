@@ -19,19 +19,7 @@ def custom_404_view(request, exception=None):
     }
     return JsonResponse(response_data, status=404)
 
-def tournaments(request, subpath):
-    data = json.loads(request.body) 
-    response = requests.post(f'http://tournaments:8000/tournaments/{subpath}/', json=data)
-    return JsonResponse(response.json(), status=response.status_code)
-
-
-
-@ensure_csrf_cookie
-def get_cookie(request):
-    return JsonResponse({'status' : 'success', 'data' : None, 'message' : 'You got your cookie now'}, status=200)
-
-@ensure_csrf_cookie
-def user(request, subpath):
+def handle_request(request, internal_url, subpath):
     response = None
     try:
         if request.method == "POST": 
@@ -39,9 +27,9 @@ def user(request, subpath):
                 data = json.loads(request.body) 
             except json.JSONDecodeError:
                     return JsonResponse({'status': 'error', 'message':'Invalid Json body', 'data' : None}, status=400)
-            response = requests.post(f'http://usermanagement:8000/user/{subpath}/', json=data, cookies=request.COOKIES, headers=request.headers)
+            response = requests.post(f'http://{internal_url}{subpath}/', json=data, cookies=request.COOKIES, headers=request.headers)
         elif request.method == "GET": 
-            response = requests.get(f'http://usermanagement:8000/user/{subpath}')
+            response = requests.get(f'http://{internal_url}{subpath}')
         try:
             response_data = response.json()
             return JsonResponse(response_data, status=response.status_code)
@@ -50,8 +38,20 @@ def user(request, subpath):
             if settings.DEBUG:
                 return HttpResponse(response.text, status=response.status_code, content_type='text/html')
             logger.exception(e)
-            return JsonResponse({'status' : 'error', 'data' : None, 'message' : 'Internal error B'}, status=500)
+            return JsonResponse({'status' : 'error', 'data' : None, 'message' : 'Internal error'}, status=500)
     except Exception as e:
         logger.exception(e)
-        return JsonResponse({'status' : 'error', 'data' : None, 'message' : 'Internal error C'}, status=500)
- 
+        return JsonResponse({'status' : 'error', 'data' : None, 'message' : 'Internal error'}, status=500)
+
+@ensure_csrf_cookie
+def tournaments(request, subpath):
+    return handle_request(request, "tournaments:8000/tournaments/", subpath)
+
+@ensure_csrf_cookie
+def user(request, subpath):
+    return handle_request(request, "usermanagement:8000/user/", subpath)
+
+@ensure_csrf_cookie
+def get_cookie(request):
+    return JsonResponse({'status' : 'success', 'data' : None, 'message' : 'You got your cookie now'}, status=200)
+

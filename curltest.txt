@@ -11,3 +11,5 @@ curl -X GET http://localhost:8000/user/is_logged_in/      -H "Content-Type: appl
 #Test matches 
 
 curl -X POST http://localhost:8000/tournaments/open_tournament/      -H "Content-Type: application/json"      -d '{"start_time": "2024-08-22 11:35:16.239649", "players": ["testuser1", "testuser2"]}'
+
+curl http://tournaments:8000/tournaments/list_tournaments/
