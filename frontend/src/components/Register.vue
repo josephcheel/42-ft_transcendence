@@ -5,15 +5,15 @@
     <form @submit.prevent="login">
       <div class="mb-3">
         <label for="user" class="form-label">Name</label>
-        <input v-model="name" type="text" class="form-control" id="user" placeholder="Enter your Name" required>
+        <input v-model="name" type="text" class="form-control" id="name" placeholder="Enter your Name" required>
+      </div>
+      <div class="mb-3">
+        <label for="user" class="form-label">Lastname</label>
+        <input v-model="lastname" type="text" class="form-control" id="lastname" placeholder="Enter your Lastname" required>
       </div>
       <div class="mb-3">
         <label for="user" class="form-label">Username</label>
-        <input v-model="user" type="text" class="form-control" id="username" placeholder="Enter your Username" required>
-      </div>
-      <div class="mb-3">
-        <label for="user" class="form-label">Email</label>
-        <input v-model="email" type="text" class="form-control" id="mail" placeholder="Enter your Email" required>
+        <input v-model="user" type="text" class="form-control" id="user" placeholder="Enter your Username" required>
       </div>
       <div class="mb-3">
         <label for="password" class="form-label">Password</label>
@@ -47,7 +47,7 @@
     const psw = ref();
     const router = useRouter();
     const name = ref();
-    const email = ref();
+    const lastname = ref();
     const psw2 = ref();
     const errorToast = ref(null)
     const toastMsg = ref(null)
@@ -92,8 +92,8 @@
           const response = await axios.post('http://localhost:8000/user/create_user/', {
             username: user.value,
             password: psw.value,
-            first_name: user.value,
-            last_name: user.value,
+            first_name: name.value,
+            last_name: lastname.value,
           }, {
             headers: {
               'Content-Type': 'application/json',
