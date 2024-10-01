@@ -58,9 +58,6 @@ if not DEBUG:
             },
         },
     }
-    print ('printing LOGGING')
-    print (LOGGING)
-    logging.config.dictConfig(LOGGING)
     
 # Application definition
 
