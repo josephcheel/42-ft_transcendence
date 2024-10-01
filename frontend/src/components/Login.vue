@@ -28,7 +28,7 @@
 <script setup>
     import { ref,onMounted, onBeforeUnmount } from 'vue';
     import { useRouter } from 'vue-router';
-    import axios from 'axios'
+    import axios from '../utils/axiosConfig';
 
     const user = ref();
 
@@ -37,47 +37,9 @@
     const router = useRouter();
     const toastMsg = ref(null)
 
-    // const socket = ref(null);
-    // function connectWebSocket() 
-    // {
-    //   // Crear una nueva instancia de WebSocket y conectar al servidor
-    //   const socket = new WebSocket('ws://localhost:8000/ws/userstatus/'); // Reemplaza con la URL de tu servidor WebSocket
-
-    //   // Manejador de evento para cuando la conexión WebSocket se abre exitosamente
-    //   socket.onopen = () => {
-    //     console.log('WebSocket connection established.');
-    //      Aquí puedes enviar un mensaje inicial al servidor, como un token de autenticación o un mensaje de saludo
-    //   };
-
-    //   // Manejador de evento para cuando se recibe un mensaje del servidor
-    //   socket.onmessage = (event) => {
-    //     const data = JSON.parse(event.data); // Parsear el mensaje como JSON
-    //     console.log('Message received from server:', data);
-    //   //   Aquí puedes manejar el mensaje recibido, por ejemplo, actualizar el estado de la aplicación o la interfaz de usuario
-    //   };
-
-    //   // Manejador de evento para cuando la conexión WebSocket se cierra
-    //   socket.onclose = () => {
-    //     console.log('WebSocket connection closed.');
-    //   //   Aquí puedes intentar reconectar o manejar la desconexión de alguna otra manera
-    //   };
-
-    //   // Manejador de evento para errores en la conexión WebSocket
-    //   socket.onerror = (error) => {
-    //     console.error('WebSocket error:', error);
-    //   //   Aquí puedes manejar el error, como mostrar un mensaje de error en la interfaz de usuario
-    //   };
-
-    //   return socket; // Retornar el socket para que se pueda utilizar más tarde
-    // }
-
     async function login()
     
     {
-        const response1  = await fetchCSRFToken();
-        const csrftoken = getCSRFToken();  // This retrieves the CSRF token
-
-        console.log(csrftoken);
         console.log(user.value);
         console.log(psw.value);
 
@@ -88,7 +50,6 @@
           }, {
             headers: {
               'Content-Type': 'application/json',
-              'X-CSRFToken' : csrftoken,
             }
           });
 

@@ -91,7 +91,7 @@
 </template>
 
 
-<script>
+<script setup>
 
 </script>
 
