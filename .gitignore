@@ -2,6 +2,8 @@
 *pycache*
 volumes*
 db.s*
+*.log
+.vscode
 *Snapshots*
 *coverage*
 *html*
@@ -11,3 +13,6 @@ db.s*
 *TestUser*
 frontend/node_modules/
 node_modules/
+
+celery-beat-schedule
+celerybeat-schedule

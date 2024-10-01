@@ -4,6 +4,66 @@ networks:
     external: false
 
 services:
+  redis:
+    image: 'redis:6.2-alpine'
+    container_name: redis
+    
+  celery_worker:
+    build:
+      context: ./
+      dockerfile: ./celery/Dockerfile
+    image: django_celery_example_celery_worker
+    command: /start-celeryworker
+    container_name: celery_worker
+    depends_on:
+      - redis
+      - db
+      - migrations
+      - tournaments
+    volumes:
+      - ./tournaments:/app/tournaments
+      - ./usermodel:/app/tournaments/user
+    env_file:
+      - .env
+
+  celery_beat:
+    build:
+      context: ./
+      dockerfile: ./celery/Dockerfile
+    image: django_celery_example_celery_beat
+    command: /start-celerybeat
+    container_name: celery_beat
+    depends_on:
+      - redis
+      - db
+      - migrations
+      - tournaments
+    volumes:
+      - ./tournaments:/app/tournaments
+      - ./usermodel:/app/tournaments/user
+    env_file:
+      - .env
+
+  flower:
+    build:
+      context: ./
+      dockerfile: ./celery/Dockerfile
+    image: django_celery_example_celery_flower
+    command: /start-flower
+    container_name: flower
+    depends_on:
+      - redis
+      - db
+      - migrations
+      - tournaments
+    ports:
+      - 5557:5555
+    volumes:
+      - ./tournaments:/app/tournaments
+      - ./usermodel:/app/tournaments/user
+    env_file:
+      - .env
+
   migrations:
     container_name: migrations
     build: ./migrator
@@ -15,9 +75,9 @@ services:
     env_file:
       - .env
     volumes:
-      - ./usermodel:/app/usermanagement/usermodel
       - ./usermanagement:/app/usermanagement
-      - ./matches:/app/matches
+#      - ./tournaments:/app/tournaments
+
   db:
     container_name: db
     restart: always
@@ -36,10 +96,6 @@ services:
       timeout: 60s
       retries: 5
       start_period: 80s 
-
-  redis:
-    image: 'redis:alpine'
-    container_name: redis
 
   gateway:
     restart: always
@@ -69,27 +125,9 @@ services:
     build: ./usermanagement
     volumes:
       - ${LOGSTASH_FOLDER}${USER_LOG}:/var/log/${USER_LOG}
-      - ${DJANGO_SCRIPT}:/start.sh
       - ./usermanagement:/app
-      - ./usermodel:/app/usermodel
     environment:
       - DEBUG=${DEBUG}
-    env_file:
-      - .env
-
-  tournements:
-    depends_on:
-      - migrations
-    container_name: tournements
-    build: ./tournements
-    volumes:
-      - ${TOURNEMENTS_FOLDER}${USER_LOG}:/var/log/${USER_LOG}
-      - ${DJANGO_SCRIPT}:/start.sh
-      - ./tournements:/app
-    environment:
-      - APP=users
-      - DEBUG=${DEBUG}
-      - TOURNEMENTS_FOLDER = ${TOURNEMENTS_FOLDER}
     env_file:
       - .env
 
@@ -101,7 +139,7 @@ services:
     container_name: chat
     build: ./chat
     volumes:
-      - ${LOGSTASH_FOLDER}${CHAT_LOG}:/var/log/${CHAT_LOG}
+      - ${LOGSTASH_FOLDER}${TOURNAMENT_LOG}:/var/log/${TOURNAMENT_LOG}
       - ${DJANGO_SCRIPT}:/start.sh
       - ./chat:/app
 
@@ -111,41 +149,25 @@ services:
       - APP=chatapp
       - DEBUG=${DEBUG}
 
-  matches:
-    restart: always
-
+  tournaments:
     depends_on:
-      db:
-        condition: service_healthy
-    container_name: matches
-    build: ./matches
+      - redis
+      - db
+      - migrations
+    container_name: tournaments
+    build: ./tournaments
     volumes:
-      - ${LOGSTASH_FOLDER}${MATCHES_LOG}:/var/log/${MATCHES_LOG}
-      - ${DJANGO_SCRIPT}:/start.sh
-      - ./matches:/app
-      - ./usermodel:/app/usermodel
+      - ${LOGSTASH_FOLDER}${TOURNAMENT_LOG}:/var/log/${TOURNAMENT_LOG}
+      - ./tournaments:/app
+      - ./usermodel:/app/user
     env_file:
       - .env
     environment:
-      - APP=matches
+      - APP=tournaments
       - DEBUG=${DEBUG}
-
-  twofactor:
-    restart: always
-
-    depends_on:
-      db:
-        condition: service_healthy
-    container_name: twofactor
-    build: ./twofactor
-    volumes:
-      - ${LOGSTASH_FOLDER}${TWOFACTOR_LOG}:/var/log/${TWOFACTOR_LOG}
-      - ${DJANGO_SCRIPT}:/start.sh
-    env_file:
-      - .env
-    environment:
-      - APP=twofactor
-      - DEBUG=${DEBUG}
+      - TOURNAMENTS_FOLDER=${TOURNAMENTS_FOLDER}
+    ports:
+      - 8001:8001
 
   # Monitoring Container
 
@@ -178,7 +200,7 @@ services:
       - ./setup/ELK_script.sh:/ELK_script.sh
       - ./ELK:/ELK
       - ./Grafana/gateway_dashboard.json:/gateway_dashboard.json
-    user: "0"
+#    user: "0"
     environment:
       - SLACK_HOOK=${SLACK_HOOK}
     env_file:
@@ -248,7 +270,7 @@ services:
     labels:
       co.elastic.logs/module: logstash
     container_name: logstash
-    user: root
+#    user: root
 
     volumes:
       - certs:/usr/share/logstash/certs
@@ -301,16 +323,17 @@ services:
   blockchain:
     depends_on:
       - migrations
+      - tournaments
     build:
-      context: ./blockchain 
+      context: ./blockchain
+    container_name: blockchain
     ports:
       - "8545:8545"
     env_file:
       - .env
     #restart: always
     volumes:
-      - ${TOURNEMENTS_FOLDER}${CHAT_LOG}:/var/log/${CHAT_LOG}
-      - ${DJANGO_SCRIPT}:/start.sh
+      - ${TOURNAMENTS_FOLDER}${TOURNAMENT_LOG}:/var/log/${TOURNAMENT_LOG}
       - ./blockchain:/app
   frontend:
     container_name: frontend
@@ -368,3 +391,10 @@ volumes:
       type: none
       device: ${BLOCKCHAIN_FOLDER}
       o: bind
+  shared:
+    driver: local
+    driver_opts:
+      type: none
+      device: ${SHARED_FOLDER}
+      o: bind
+  

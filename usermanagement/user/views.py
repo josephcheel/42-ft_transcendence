@@ -3,7 +3,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.db import OperationalError
 from django.conf import settings
 from django.contrib.auth import authenticate, login, logout, get_user_model
-from .wrappers import *
+from user.wrappers import *
 import json
 import logging
 
@@ -66,7 +66,7 @@ def create_user(request):
 @validate_login_credentials
 @exception_handler
 def login_user(request):
-    username = request.original_username
+    username = request.username
     password = request.password
     user = authenticate(request, username=username, password=password)
     if user is not None:

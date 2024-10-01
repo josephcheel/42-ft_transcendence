@@ -22,7 +22,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 LOG_FILE= os.environ.get("USER_LOG", "usermanagement.log")
 DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 
-
 # Absolute filesystem path to the profile pictures directory
 MEDIA_ROOT = os.path.join(BASE_DIR, 'profile_pictures')
 
@@ -80,8 +79,6 @@ if not DEBUG:
         },
     }
 
-    logging.config.dictConfig(LOGGING)
-
 # Application definition
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -92,14 +89,14 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django_prometheus',
     'user',
-    'usermodel',
     'corsheaders',
 ]
+#    'usermodel',
 
-if not DEBUG:
-    AUTH_USER_MODEL="usermodel.User"
-else:
-    AUTH_USER_MODEL="user.User"
+#if not DEBUG:
+#    AUTH_USER_MODEL="usermodel.User"
+#else:
+AUTH_USER_MODEL="user.User"
 
 MIDDLEWARE = [
     'django_prometheus.middleware.PrometheusBeforeMiddleware',
