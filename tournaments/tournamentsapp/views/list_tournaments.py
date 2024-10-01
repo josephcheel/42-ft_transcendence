@@ -4,10 +4,8 @@ from datetime import datetime
 from django.db import OperationalError
 from django.http import JsonResponse
 import json
-try:
-	from usermodel.models import User
-except:
-	from tournamentsapp.models import User
+
+from user.models import User
 
 @require_get
 @user_is_authenticated

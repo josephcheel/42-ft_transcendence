@@ -1,12 +1,7 @@
 from tournamentsapp.wrappers import validate_credentials, require_get, user_is_authenticated
 from django.http import JsonResponse
 from tournamentsapp.models import Tournaments
-
-try:
-	from usermodel.models import User
-except:
-	from tournamentsapp.models import User
-import math
+from user.models import User
 
 
 @require_get
