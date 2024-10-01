@@ -35,17 +35,17 @@ def create_user(request):
     password = request.password
     first_name = request.first_name
     last_name = request.last_name
-    original_username = request.original_username
+    lowercase_username = request.lowercase_username
     try:
-        User.objects.get(username=username)# need to check email too
+        User.objects.get(lowercase_username=lowercase_username)# need to check email too
         return JsonResponse({'status' : 'error',
                                 'message' : "User already Exists",
                                 'data' : None},
                                 status=409)
     except User.DoesNotExist:
         user = User(username=username,
-                    original_username=original_username,
-                    tournament_name=original_username,
+                    lowercase_username=lowercase_username,
+                    tournament_name=username,
                     first_name=first_name,
                     last_name=last_name)
         try:

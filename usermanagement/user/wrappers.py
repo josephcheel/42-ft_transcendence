@@ -50,8 +50,7 @@ def validate_creation_fields(func):
 
         if not request.username or not request.password or not request.first_name or not request.last_name:
             return JsonResponse({'status': 'error', 'message': 'Missing required fields', 'data': None}, status=400)
-        request.original_username = request.username
-        request.username = request.username.lower()
+        request.lowercase_username = request.username.lower()
         return func(request, *args, **kwargs)
     return wrapper
 
@@ -68,8 +67,8 @@ def validate_login_credentials(func):
 
         if not request.username or not request.password:
             return JsonResponse({'status': 'error', 'message': 'Missing required fields', 'data': None}, status=400)
-        request.original_username = request.username
-        request.username = request.username.lower()
+        request.lowercase_username = request.data.get('username').lower()
+        logger.info(request.username)
         return func(request, *args, **kwargs)
     return wrapper
 
