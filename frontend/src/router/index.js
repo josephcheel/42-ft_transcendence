@@ -4,6 +4,9 @@ import About from '../components/About.vue'
 import Login from '../components/Login.vue'
 import Forgotps from '../components/Forgotps.vue'
 import Register from '../components/Register.vue'
+import Chat from '../components/chat/chatLayout.vue'
+import Dashboard from '../components/Dashboard.vue'
+import Play from '../components/Play.vue'
 
 const routes = [
   {
@@ -31,7 +34,21 @@ const routes = [
     name: 'Register',
     component: Register
   },
-
+  {
+    path: '/chat',
+    name: 'Chat',
+    component: Chat
+  },
+  {
+    path: '/Dashboard',
+    name: 'Dashboard',
+    component: Dashboard
+  },
+  {
+    path: '/play',
+    name: 'Play',
+    component: Play
+  },
 ]
 
 const router = createRouter({

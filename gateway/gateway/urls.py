@@ -16,15 +16,13 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import include, path
-from .views import test_logging, user, tournaments, index
+from .views import *
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('test_logging/', test_logging, name='test_logging'),
     path('user/<path:subpath>/', user, name='user'),
     path('tournaments/<path:subpath>/', tournaments, name='tournaments'),
-
     path('', include('django_prometheus.urls')),
-    path('index/', index, name='index'),
+    path('get_cookie/', get_cookie, name='get_cookie'),
 
 ]

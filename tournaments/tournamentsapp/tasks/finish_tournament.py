@@ -4,7 +4,7 @@ from tournamentsapp.models import Tournaments, Matches
 from celery import shared_task
 
 try: 
-	from user.models import User
+	from usermodel.models import User
 except:
 	from tournamentsapp.models import User
 

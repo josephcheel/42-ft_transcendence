@@ -1,10 +1,8 @@
 # Table of contents
 | Section | Links |
 |---------|-------|
-| [User](#user) | [create_user](#create_user) <br> [login_user](#login_user) <br> [logout_user](#logout_user) <br> [is_logged_in](#is_logged_in) <br> [list_users](#list_users) <br> [user_status](#user_status) <br> [send_friend_request](#send_friend_request)<br> [change_friendship_status](#change_friendship_status)<br> [get_friends](#get_friends)<br> [update_user](#update_user) |
-| [Tournaments](#tournaments)| [open_tournament](#open_tournament) <br> [accept_invitation](#accept_invitation) <br> [close_tournament](#close_tournament) <br> [start_match](#start_match) <br>[finish_match](#finish_match) <br> [get_pending_matches](#get_pending_matches)
-
-
+| [User](#user) | [create_user](#create_user) <br> [login_user](#login_user) <br> [logout_user](#logout_user) <br> [is_logged_in](#is_logged_in) <br> [list_users](#list_users) <br> [user_status](#user_status) <br> [send_friend_request](#send_friend_request)<br> [change_friendship_status](#change_friendship_status)<br> [get_friends](#get_friends)<br> [update_user](#update_user) <br> [get_profile_picture_url](#get_profile_picture_url)<br> [upload_profile_picture](#upload_profile_picture) <br> [get_profile](#get_profile)|
+|[Tournaments](#tournaments)| [open_tournament](#open_tournament) <br> [accept_invitation](#accept_invitation) <br> [close_tournament](#close_tournament) <br> [start_match](#start_match) <br>[finish_match](#finish_match)|
 
 All API calls will return a json response and the corresponding code
 
@@ -22,9 +20,11 @@ user/[subpath]
 
 ### create_user
 
+Set tournament name to username by default, user can later change the tournament name
+
 | Use | Methods | Request Data | Response Data | Return Values|
 | --- | --- | --- | ---| ---|
-| Creates User if not in the database. | POST | {username, password, tournament_name} | None |  201, 409 (already exists), 400, 405, 500 |
+| Creates User if not in the database. | POST | {username, password, first_name, last_name} | None |  201, 409 (already exists), 400, 405, 500 |
 
 [Back to Top](#table-of-contents)
 
@@ -113,6 +113,45 @@ user/[subpath]
 
 [Back to Top](#table-of-contents)
 
+### get_profile_picture_url
+
+You need to call /user/get_profile_picture_url/{username}/ to get the profile picture url for {username}
+
+| Use | Methods | Request Data | Response Data | Return Values|
+| --- | --- | --- | ---| ---|
+| Gets profile picture url for user| GET | /username | profile_picture_url |  200,401,405, 500|
+
+Then you need to call user/ + profile_picture_url to get the binary. If you already have the profile_picture_url (from a upload_profile_picture call, for example), you can just call user/+profile_picture_url without geting the url first
+
+
+[Back to Top](#table-of-contents)
+
+
+### upload_profile_picture
+
+You need to call /user/upload_profile_picture/ and upload a a form with a key/value pair of picture:{picture_data} to update the picture for the signed in user. Returns profile_picture_url inside data, containing the url for the uploaded file
+
+| Use | Methods | Request Data | Response Data | Return Values|
+| --- | --- | --- | ---| ---|
+| Updates profile picture of user| POST | form data with picture field| profile_picture_url |  200,400,401,405, 500|
+
+
+[Back to Top](#table-of-contents)
+
+
+### get_profile
+
+
+
+| Use | Methods | Request Data | Response Data | Return Values|
+| --- | --- | --- | ---| ---|
+| Gets a user profile information| GET | username  | first_name, last_name, username, tournament_name, is_online, profile_picture_url |  200,400,401,404, 405, 500|
+
+
+[Back to Top](#table-of-contents)
+
+
+
 ## Tournaments
 
 ### open_tournament
@@ -131,32 +170,22 @@ user/[subpath]
 
 [Back to Top](#table-of-contents)
 
-### close tournament (to start tournament)
+### close_tournament
 | Use | Methods | Request Data | Response Data | Return Values|
 | --- | --- | --- | ---| ---|
-|Payer accepts the invitation to a turnaament| POST | 'tournament_id' | None |  200 (invitation accepted), 400 (incorrect data), 404 (user not in database), 500|
+|Closes tournament open invites, starts tournament. Payer accepts the invitation to a turnaament| POST | 'tournament_id' | None |  200 (invitation accepted), 400 (incorrect data), 404 (user not in database), 500|
 
 [Back to Top](#table-of-contents)
 
-### start match
+### start_match
 | Use | Methods | Request Data | Response Data | Return Values|
 | --- | --- | --- | ---| ---|
 |When the first player access to the match| POST | 'tournament_id' | None |  200 (invitation accepted), 400 (incorrect data), 404 (user not in database), 500|
 
 [Back to Top](#table-of-contents)
 
-### finish match
+### finish_match
 | Use | Methods | Request Data | Response Data | Return Values|
 | --- | --- | --- | ---| ---|
 |When the match finishes, informs who is the winner| POST | 'match_id' 'winner' 'looser' | None |  200 (Match finished successfully), 400 (he match has already been played), 404 (user not in database), 500|
 
-## Match
-
-
-### get_pending_matches
-
-| Use | Methods | Request Data | Response Data | Return Values|
-| --- | --- | --- | ---| ---|
-| Checks if user has pending matches to accept | GET | player (in query) | List of pending invitations or empty list |  200 , 400, 404 (user not in database), 500|
-
-[Back to Top](#table-of-contents)

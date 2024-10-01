@@ -1,5 +1,4 @@
-#FROM python:3.13.0b4-bookworm
-FROM ubuntu:20.04
+FROM python:3.13.0b4-bookworm
 
 WORKDIR /app
 RUN apt-get update && apt-get install -y python3-pip vim curl iputils-ping

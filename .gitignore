@@ -10,5 +10,9 @@ db.s*
 .DS_Store
 *coverage*
 *node_modules*
+*TestUser*
+frontend/node_modules/
+node_modules/
+
 celery-beat-schedule
 celerybeat-schedule

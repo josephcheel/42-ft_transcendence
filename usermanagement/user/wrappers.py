@@ -5,6 +5,9 @@ from functools import wraps
 from django.db import OperationalError
 import logging
 from django.conf import settings
+from django.contrib.auth import get_user_model 
+
+User = get_user_model()
 
 if not settings.DEBUG:
     logger = logging.getLogger('django')
@@ -33,7 +36,27 @@ def require_post(func):
         return func(request, *args, **kwargs)
     return wrapper
 
-def validate_credentials(func):
+def validate_creation_fields(func):
+    @wraps(func)
+    def wrapper(request, *args, **kwargs):
+        try:
+            request.data = json.loads(request.body)
+        except json.JSONDecodeError:
+            return JsonResponse({'status': 'error', 'message': 'Invalid JSON body', 'data': None}, status=400)
+        request.username = request.data.get('username')
+        request.password = request.data.get('password')
+        request.first_name = request.data.get('first_name')
+        request.last_name = request.data.get('last_name')
+
+        if not request.username or not request.password or not request.first_name or not request.last_name:
+            return JsonResponse({'status': 'error', 'message': 'Missing required fields', 'data': None}, status=400)
+        request.original_username = request.username
+        request.username = request.username.lower()
+        return func(request, *args, **kwargs)
+    return wrapper
+
+
+def validate_login_credentials(func):
     @wraps(func)
     def wrapper(request, *args, **kwargs):
         try:
@@ -44,7 +67,7 @@ def validate_credentials(func):
         request.password = request.data.get('password')
 
         if not request.username or not request.password:
-            return JsonResponse({'status': 'error', 'message': 'Empty username or password', 'data': None}, status=400)
+            return JsonResponse({'status': 'error', 'message': 'Missing required fields', 'data': None}, status=400)
         request.original_username = request.username
         request.username = request.username.lower()
         return func(request, *args, **kwargs)
@@ -98,6 +121,11 @@ def exception_handler(view_func):
     def wrapper(*args, **kwargs):
         try:
             return view_func(*args, **kwargs)
+        except User.DoesNotExist:
+            return JsonResponse({'status' : 'error',
+                            'message' : "User does not exists",
+                            'data' : None},
+                            status=404)
         except OperationalError:
             return JsonResponse({
                 'status': 'error',

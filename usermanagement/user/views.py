@@ -9,7 +9,7 @@ import logging
 
 #If testing we dont have usermodel.User so we want to use default
 
-from .models import UserStatus, Friendship
+from .models import *
 User = get_user_model()
 
 
@@ -26,18 +26,16 @@ def custom_404_view(request, exception=None):
     }
     return JsonResponse(response_data, status=404)
 
-             
 @require_post
-@validate_credentials
+@validate_creation_fields
 @exception_handler
 # Need to check email, name, and other infor from front end.
 def create_user(request):
     username = request.username #og username in lower case
     password = request.password
+    first_name = request.first_name
+    last_name = request.last_name
     original_username = request.original_username
-    tournament_name= request.data.get('tournament_name')
-    if not tournament_name:
-        return JsonResponse({'status': 'error', 'message': 'Empty tournament_name', 'data': None}, status=400)
     try:
         User.objects.get(username=username)# need to check email too
         return JsonResponse({'status' : 'error',
@@ -45,25 +43,27 @@ def create_user(request):
                                 'data' : None},
                                 status=409)
     except User.DoesNotExist:
-        user = User(username=username, original_username=original_username)
+        user = User(username=username,
+                    original_username=original_username,
+                    tournament_name=original_username,
+                    first_name=first_name,
+                    last_name=last_name)
         try:
             user.set_password(password)
             user.save()
-            UserStatus.objects.get_or_create(user=user)
         except OperationalError:
             return JsonResponse({'status' : 'error',
                                 'message' : 'Internal database error',
                                 'data' : None, },
                                 status=500)
-        return JsonResponse({'status' : 'success',
+        return JsonResponse({   'status' : 'success',
                                 'message' : 'User created successfully',
-                                'data' : {None}},
+                                'data' : None},
                                 status=201)
+
     
-
-
 @require_post
-@validate_credentials
+@validate_login_credentials
 @exception_handler
 def login_user(request):
     username = request.original_username
@@ -72,7 +72,7 @@ def login_user(request):
     if user is not None:
         login(request, user)
         user_status= UserStatus.objects.get(user=user)
-        user_status.change_status(True) 
+        user_status.change_status(True)
         return JsonResponse({'status' : 'success',
                             'message': 'user is logged in',
                             'data' : None},
@@ -82,6 +82,7 @@ def login_user(request):
                                 'message': 'Invalid credentials',
                                 'data' : None},
                                 status=401)
+    
     
 @require_post
 @exception_handler
@@ -100,7 +101,6 @@ def logout_user(request):
                                 'data' : None},
                                 status=403)
     
-
 @require_get
 @exception_handler
 def is_logged_in(request):
@@ -125,49 +125,38 @@ def list_users(request):
                             status=200)
 
 # GET current user status or POST new user status (online/offline)
+@require_auth
 @exception_handler
 def user_status(request):
     if request.method == 'GET':    
         username = request.GET.get('username')
         if username is None:
                 return JsonResponse({'status': 'error', 'message': 'No username provided', 'data': None}, status=400)
-        try:
-            user_status = UserStatus.objects.get(user=User.objects.get(username=username))
-            return JsonResponse({'status' : 'success',
-                                'message' : "Retrieved status",
-                                'data' : {'is_online' : user_status.is_online, 'user_id' : user_status.user.id}},
-                                status=200)     
-
-        except User.DoesNotExist:
-            return JsonResponse({'status' : 'error',
-                                'message' : "User does not exists",
-                                'data' : None},
-                                status=404)
+        user_status = UserStatus.objects.get(user=User.objects.get(username=username))
+        return JsonResponse({'status' : 'success',
+                            'message' : "Retrieved status",
+                            'data' : {'is_online' : user_status.is_online}},
+                            status=200)     
     elif request.method == 'POST':
-        if request.user.is_authenticated:
-            try:
-                request.data = json.loads(request.body)
-            except json.JSONDecodeError:
-                return JsonResponse({'status': 'error',
-                                        'message': 'Invalid JSON body',
-                                        'data': None},
-                                        status=400)
-            status = request.data.get('status')
-            if  status not in ['online', 'offline']:
-                return JsonResponse({'status': 'error',
-                                        'message': 'Invalid JSON body',
-                                        'data': None},
-                                        status=400)
-            status = True if status == 'online' else False
-            UserStatus.objects.get(user=request.user).change_status(status)
-            return JsonResponse({'status': 'success',
-                                    'message': 'Updated status',
-                                    'data': None},
-                                    status=200)
-        else:
+        try:
+            request.data = json.loads(request.body)
+        except json.JSONDecodeError:
             return JsonResponse({'status': 'error',
-                                    'message': 'No valid user in request',
-                                    'data': None}, status=400)
+                                    'message': 'Invalid JSON body',
+                                    'data': None},
+                                    status=400)
+        status = request.data.get('status')
+        if  status not in ['online', 'offline']:
+            return JsonResponse({'status': 'error',
+                                    'message': 'Invalid JSON body',
+                                    'data': None},
+                                    status=400)
+        status = True if status == 'online' else False
+        UserStatus.objects.get(user=request.user).change_status(status)
+        return JsonResponse({'status': 'success',
+                                'message': 'Updated status',
+                                'data': None},
+                                status=200)
     else:
         return JsonResponse({
                 'status': 'error',
@@ -181,20 +170,16 @@ def user_status(request):
 @get_friend
 @exception_handler
 def send_friend_request(request):
-    try:
-        user2 = User.objects.get(username=request.friend)
-        if Friendship.are_friends(request.user, user2):
-            return JsonResponse({'status' : 'error',
-                    'message' : "Users are already friends",
-                    'data' : None}, status=400)
-        Friendship.add_friendship(request.user, user2)
-        return JsonResponse({'status' : 'success',
-                'message' : "Friendship created",
-                'data' : None}, status=201)
-    except User.DoesNotExist:
+    user2 = User.objects.get(username=request.friend)
+    if Friendship.are_friends(request.user, user2):
         return JsonResponse({'status' : 'error',
-                            'message' : "User does not exists",
-                            'data' : None}, status=404)
+                'message' : "Users are already friends",
+                'data' : None}, status=400)
+    Friendship.add_friendship(request.user, user2)
+    return JsonResponse({'status' : 'success',
+            'message' : "Friendship created",
+            'data' : None}, status=201)
+
     
 #Changes friendship status, can be use to accept/decline invites or to remove a friendship
 @require_auth
@@ -203,25 +188,19 @@ def send_friend_request(request):
 @get_status
 @exception_handler
 def change_friendship_status(request):
-    try:
-        status = Friendship.get_status_choice(request.status)
-        user2 = User.objects.get(username=request.friend)
-        friendship = Friendship.get_friendship(request.user, user2)
-        if not friendship.exists():
-            return JsonResponse({'status' : 'error',
-                                'message' : "Users have no friendship",
-                                'data' : None}, status= 404)
-        friendship = friendship.first()
-        friendship.status = status
-        friendship.save()
-        return JsonResponse({'status' : 'success',
-                'message' : "Friendship modified",
-                'data' : None}, status=200)
-    except User.DoesNotExist:
+    status = Friendship.get_status_choice(request.status)
+    user2 = User.objects.get(username=request.friend)
+    friendship = Friendship.get_friendship(request.user, user2)
+    if not friendship.exists():
         return JsonResponse({'status' : 'error',
-                            'message' : "User does not exists",
-                            'data' : None}, status=404)
-    
+                            'message' : "Users have no friendship",
+                            'data' : None}, status= 404)
+    friendship = friendship.first()
+    friendship.status = status
+    friendship.save()
+    return JsonResponse({'status' : 'success',
+            'message' : "Friendship modified",
+            'data' : None}, status=200)
 
 #Gets all friends
 @require_auth
@@ -239,8 +218,44 @@ def get_friends(request):
 @get_data
 @exception_handler
 def update_user(request):
-    user = User.objects.get(username=request.user)
-    user.update_fields(**request.data)
+    request.user.update_fields(**request.data)
     return JsonResponse({'status' : 'success',
                 'message' : "Updated fields",
                 'data' : None}, status=200)
+
+@require_auth
+@require_post
+@exception_handler
+def upload_picture(request):
+    picture = request.FILES['picture']
+    user_profile_pic= UserProfilePic.objects.get(user=request.user)
+    user_profile_pic.update_picture(picture)
+    return JsonResponse({'status' : 'success',
+                'message' : "Updated profile picture",
+                'data' : {
+                    'profile_picture_url': request.user.userprofilepic.picture.url
+                    }
+                }, status=200)
+    
+@require_auth
+@require_get
+@exception_handler
+def get_profile_picture(request, username):
+    user = User.objects.get(username=username)
+    profile_pic = UserProfilePic.objects.get(user=user)
+    return JsonResponse({'status' : 'success',
+                'message' : "Got profile picture",
+                'data' : {
+                    'profile_picture_url': profile_pic.picture.url
+                    }
+                }, status=200)
+
+@require_auth
+@require_get
+@exception_handler
+def get_profile(request, username):
+    user = User.objects.get(username=username)
+    return JsonResponse({'status' : 'success',
+            'message' : "Got user profile",
+            'data' : user.get_all(),
+            }, status=200)

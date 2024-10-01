@@ -1,6 +1,8 @@
 from django.contrib.auth import get_user_model 
 from django.db import models
 from django.conf import settings
+import os
+
 
 #if settings.DEBUG:
 from django.contrib.auth.models import AbstractUser
@@ -9,16 +11,14 @@ class User(AbstractUser):
     tournament_name = models.CharField(max_length=100, null = True)
     puntos = models.IntegerField(default=1000)
     puntos_reservados = models.IntegerField(default=0)
-    # Specify a unique related_name for the groups field
-    """     groups = models.ManyToManyField(
-            'auth.Group', related_name='users_db_Group', blank=True)
-    user_permissions = models.ManyToManyField(
-            'auth.Permission', related_name='users_db_Permission', blank=True) """
     def update_fields(self, **kwargs):
         for field in kwargs:
             if field in ['first_name', 'last_name', 'tournament_name'] and hasattr(self, field):
                 setattr(self, field, kwargs[field])
         self.save()
+    def get_all(self):
+        return {'first_name': self.first_name, 'last_name': self.last_name, 'username' : self.original_username ,"tournament_name" : self.tournament_name, 'is_online' : self.userstatus.is_online, 'profile_picture_url' : self.userprofilepic.picture.url}
+
 
 User = get_user_model()
 
@@ -30,6 +30,22 @@ class UserStatus(models.Model):
     def change_status(self, status):
         self.is_online = status
         self.save()
+
+
+        
+class UserProfilePic(models.Model):
+    def get_upload_path(instance, filename):
+        return f'{instance.user.username}/{filename}'
+        
+    def update_picture(self, picture):
+        self.picture = picture
+        self.save()
+        
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    picture = models.ImageField(upload_to=get_upload_path, default='default.jpeg')
+
+
+
 
 class Friendship(models.Model):
     DECLINED_CHOICE = 0

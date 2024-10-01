@@ -18,7 +18,7 @@ from celery.schedules import crontab
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-LOG_FILE = os.environ.get("USER_LOG", "tournament.log")
+LOG_FILE = os.environ.get("TOURNAMENT_LOG", "tournament.log")
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
@@ -27,7 +27,7 @@ LOG_FILE = os.environ.get("USER_LOG", "tournament.log")
 SECRET_KEY = 'django-insecure-e5m60_kk8wzj52xpmb69*h9u^kg29b6$uyum19p87(7or7bop9'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get('DEBUG', 'true') == 'true'
+DEBUG = os.environ.get('DEBUG', 'true') == 'True'
 
 ALLOWED_HOSTS = ['localhost', 'tournaments', 'tournamentsapp']
 

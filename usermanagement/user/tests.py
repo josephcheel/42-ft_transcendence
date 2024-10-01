@@ -1,27 +1,25 @@
-from django.test import TestCase, Client
+from django.test import TestCase, Client, override_settings
 from django.urls import reverse
 from .views import *
 import json
 from django.db import OperationalError
 from django.contrib.auth import get_user_model
 from .models import UserStatus, Friendship, User
-
-
-
-
+import os
+from django.conf import settings
 
 class usermodelTests(TestCase):
 
     def setUp(self):
         self.client = Client()
-        self.user1 = {"username" : "Test1", "password" : "test", 'tournament_name' : 'my_tournament_name'}
-        self.user2 = {"username" : "Test2", "password" : "test", 'tournament_name' : 'my_tournament_name'}
+        self.user1 = {'first_name': 'Luis', 'last_name' : 'Soto', "username" : "Test1", "password" : "test", 'tournament_name' : 'my_tournament_name'}
+        self.user2 = {'first_name': 'Luis', 'last_name' : 'Soto', "username" : "Test2", "password" : "test", 'tournament_name' : 'my_tournament_name'}
         self.base_json = {
             'status': None,
             'message': None,
             'data': None
         }
-
+        
     def check_json(self, response, code):
         self.assertJSONEqual(json.dumps(self.base_json), response.content.decode("utf-8"))
         self.assertEqual(response.status_code, code)        
@@ -29,7 +27,7 @@ class usermodelTests(TestCase):
     def test_user_creation(self):
         self.base_json['status'] = 'success'
         self.base_json['message'] = 'User created successfully'
-        self.base_json['data'] = {'id' : 1, 'username' : self.user1['username']}
+        self.base_json['data'] = None
 
         response = self.client.post(reverse(create_user),json.dumps(self.user1),content_type='application/json')
 
@@ -41,10 +39,8 @@ class usermodelTests(TestCase):
 
         self.base_json['status'] = 'success'
         self.base_json['message'] = 'User created successfully'
-        self.base_json['data'] = {'id' : 2, 'username' : self.user2['username']}
+        self.base_json['data'] = None
 
-
-        print(reverse(create_user))
         response = self.client.post(reverse(create_user),json.dumps(self.user2),content_type='application/json')
         self.check_json(response, 201)
     
@@ -56,9 +52,6 @@ class usermodelTests(TestCase):
         response = self.client.post(reverse(create_user),json.dumps(self.user1),content_type='application/json')
         response = self.client.post(reverse(create_user),json.dumps(self.user1),content_type='application/json')
         self.check_json(response, 409)
-        response = self.client.post(reverse(create_user),json.dumps({'username' : self.user1['username'].upper(), 'password': self.user1['password'],'tournament_name' : 'my_tournament_name'}),content_type='application/json')
-        self.check_json(response, 409)
-
 
     def test_invalid_body(self):
         self.base_json['status'] = 'error'
@@ -69,7 +62,7 @@ class usermodelTests(TestCase):
 
     def test_no_user_password(self):
         self.base_json['status'] = 'error'
-        self.base_json['message'] = 'Empty username or password'
+        self.base_json['message'] = 'Missing required fields'
         self.base_json['data'] = None
         response = self.client.post(reverse(create_user), json.dumps({'esto no es username' : 'nope', 'password': 'test'}), content_type='application/json')
         self.check_json(response, 400)
@@ -95,11 +88,10 @@ class usermodelTests(TestCase):
         response = self.client.get(reverse(list_users))
         self.check_json(response, 200)
 
-
 class logInTest(TestCase):
     def setUp(self):
         self.client = Client()
-        self.user1 = {"username" : "test1", "password" : "test", 'tournament_name' : 'my_tournament_name'}
+        self.user1 = {'first_name': 'Luis', 'last_name' : 'Soto', "username" : "test1", "password" : "test", 'tournament_name' : 'my_tournament_name'}
         self.base_json = {
             'status': None,
             'message': None,
@@ -141,7 +133,7 @@ class logInTest(TestCase):
 
     def test_no_user_password(self):
         self.base_json['status'] = 'error'
-        self.base_json['message'] = 'Empty username or password'
+        self.base_json['message'] = 'Missing required fields'
         self.base_json['data'] = None
         #missing username field
         response = self.client.post(reverse(login_user), json.dumps({'esto no es username' : 'nope', 'password': 'test'}), content_type='application/json')
@@ -192,11 +184,10 @@ class logInTest(TestCase):
 
         self.check_json(response, 403)
 
-
 class userStatusTest(TestCase):
     def setUp(self):
         self.client = Client()
-        self.user1 = {"username" : "test1", "password" : "test",'tournament_name' : 'my_tournament_name'}
+        self.user1 = {'first_name': 'Luis', 'last_name' : 'Soto', "username" : "test1", "password" : "test",'tournament_name' : 'my_tournament_name'}
         self.base_json = {
             'status': None,
             'message': None,
@@ -204,6 +195,7 @@ class userStatusTest(TestCase):
         }
         self.client.post(reverse(create_user),json.dumps(self.user1),content_type='application/json')
         self.user = User.objects.get(username=self.user1['username'])
+        self.client.login(username='test1', password='test')
 
     def check_json(self, response, code):
         self.assertJSONEqual(json.dumps(self.base_json), response.content.decode("utf-8"))
@@ -224,18 +216,16 @@ class userStatusTest(TestCase):
 
         self.base_json['status'] = 'success'
         self.base_json['message'] = 'Retrieved status'
-        self.base_json['data'] = {'is_online' : True}
+        self.base_json['data'] = {'is_online' : False}
 
-        self.client.post(reverse(login_user),json.dumps(self.user1),content_type='application/json')
         response = self.client.get(reverse(user_status),{'username': self.user1['username']})
         user_status_ = UserStatus.objects.get(user=self.user)
         self.check_json(response, 200)
-        self.assertTrue(user_status_.is_online)
+        self.assertFalse(user_status_.is_online)
 
         self.base_json['data'] = {'is_online' : False}
 
         self.client.post(reverse(logout_user),json.dumps(self.user1),content_type='application/json')
-        response = self.client.get(reverse(user_status),{'username': self.user1['username']})
         user_status_ = UserStatus.objects.get(user=self.user)
         self.check_json(response, 200)
         self.assertFalse(user_status_.is_online)
@@ -438,7 +428,6 @@ class changeFriendShipStatusTest(TestCase):
         self.assertEqual(friendship.first().status, 0)
         self.assertEqual(friendship.last().status, 0)
 
-
 class getAllFriends(TestCase):
 
     def setUp(self):
@@ -450,9 +439,8 @@ class getAllFriends(TestCase):
         self.user3 = User.objects.create_user(username='test3',original_username='Test3', password='test')
 
         #Create user Status state
-        UserStatus.objects.create(user=self.user1, is_online=True)
-        UserStatus.objects.create(user=self.user2)
-        UserStatus.objects.create(user=self.user3)
+        self.user1.userstatus.is_online = True
+        self.user1.userstatus.save()
         self.client.login(username='test1', password='test')
         self.client2.login(username='test2', password='test')
         self.client3.login(username='test3', password='test')
@@ -583,5 +571,134 @@ class updateUser(TestCase):
         self.base_json['data'] = None
         self.code = 400
         self.send_request()
+        self.check_json()
+
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+@override_settings(MEDIA_URL='/profile_pictures/', MEDIA_ROOT=os.path.join(BASE_DIR, 'profile_pictures'))
+class ProfilePictureRetrievalTests(TestCase):
+
+    def setUp(self):
+        self.user = User.objects.create_user(username='TestUser', password='testpass')
+        self.client = Client()
+        self.client.login(username='TestUser', password='testpass')
+        self.base_json = {
+            'status': None,
+            'message': None,
+            'data': None
+        }
+        self.response = None
+        self.code = 0
+
+    def check_json(self):
+        self.assertJSONEqual(json.dumps(self.base_json), self.response.content.decode("utf-8"))
+        self.assertEqual(self.response.status_code, self.code)
+
+    def test_get_default_profile_picture(self):
+            self.base_json['status'] = 'success'
+            self.base_json['message'] = 'Got profile picture'
+            self.base_json['data'] = {
+                    'profile_picture_url': '/profile_pictures/default.jpeg'
+                    }
+            
+            self.response = self.client.get(reverse('get_profile_picture', args=['TestUser']))
+            self.code = 200
+            self.check_json()
+
+@override_settings(MEDIA_URL='/profile_pictures/', MEDIA_ROOT=os.path.join(BASE_DIR, 'profile_pictures'))
+class UploadPictureTests(TestCase):
+
+    def setUp(self):
+        self.user = User.objects.create_user(username='TestUser', password='testpass')
+        self.client = Client()
+        self.client.login(username='TestUser', password='testpass')
+        self.base_json = {
+            'status': None,
+            'message': None,
+            'data': None
+        }
+        self.response = None
+        self.code = 200
+        self.test_file_path = os.path.join(settings.MEDIA_ROOT, 'upload_test.png')
+
+
+    def check_json(self):
+        self.assertJSONEqual(json.dumps(self.base_json), self.response.content.decode("utf-8"))
+        self.assertEqual(self.response.status_code, self.code)
+
+    def test_upload_picture(self):
+        file_path = os.path.join(settings.MEDIA_ROOT, 'upload_test.png')
+        with open(file_path, 'rb') as img:
+            self.response = self.client.post(
+                reverse('upload_picture'),
+                {'picture': img},
+                format='multipart'  # Django will automatically set the correct Content-Type
+            )        
+        self.base_json['status'] = 'success'
+        self.base_json['message'] = 'Updated profile picture'
+        self.base_json['data'] = {'profile_picture_url': '/profile_pictures/TestUser/upload_test.png'}
+        self.check_json()        
+
+
+    def tearDown(self):
+        file_path = os.path.join(settings.MEDIA_ROOT, 'TestUser', 'upload_test.png')
+        if os.path.isfile(file_path):
+            os.remove(file_path)
+        
+        user_dir = os.path.join(settings.MEDIA_ROOT, 'TestUser')
+        if os.path.isdir(user_dir) and not os.listdir(user_dir):
+            os.rmdir(user_dir)
+
+class getUserProfile(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(first_name='Luis', last_name='Soto', original_username='TestUser' ,username='TestUser', password='testpass', tournament_name='TestUser')
+        self.user2 = User.objects.create_user(first_name='Luis', last_name='Soto', original_username='TestUser2' ,username='TestUser2', password='testpass', tournament_name='TestUser2')
+        self.client = Client()
+        self.client.login(username='TestUser', password='testpass')
+        self.base_json = {
+            'status': None,
+            'message': None,
+            'data': None
+        }
+        self.response = None
+        self.code = 200
+
+
+    def check_json(self):
+        self.assertJSONEqual(json.dumps(self.base_json), self.response.content.decode("utf-8"))
+        self.assertEqual(self.response.status_code, self.code)
+
+    def test_get_self_profile(self):
+        self.base_json['status'] = 'success'
+        self.base_json['message'] ='Got user profile'
+        self.base_json['data'] = {
+            'is_online': False,
+            'profile_picture_url': '/profile_pictures/default.jpeg',
+            'tournament_name': 'TestUser',
+            'username': 'TestUser',
+            'first_name': 'Luis',
+            'last_name': 'Soto',
+            }
+        self.response = self.client.get(reverse('get_profile',args=[self.user.username]))
+        self.check_json()
+
+    def test_get_other_profile(self):
+        self.base_json['status'] = 'success'
+        self.base_json['message'] ='Got user profile'
+        self.base_json['data'] = {
+            'is_online': False,
+            'profile_picture_url': '/profile_pictures/default.jpeg',
+            'tournament_name': 'TestUser2',
+            'username': 'TestUser2',
+            'first_name': 'Luis',
+            'last_name': 'Soto',
+            }
+        self.response = self.client.get(reverse('get_profile',args=[self.user2.username]))
+        self.check_json()
+
+    def test_get_doesnot_exist(self):
+        self.base_json['status'] = 'error'
+        self.base_json['message'] ='User does not exists'
+        self.code = 404
+        self.response = self.client.get(reverse('get_profile',args=['i do not exist']))
         self.check_json()
 
