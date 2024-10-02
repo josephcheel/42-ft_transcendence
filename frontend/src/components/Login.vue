@@ -44,7 +44,7 @@
         console.log(psw.value);
 
           try {
-          const response = await axios.post('http://localhost:8000/user/login_user/', {
+          const response = await axios.post('https://localhost:8000/user/login_user/', {
             username: user.value,
             password: psw.value
           }, {

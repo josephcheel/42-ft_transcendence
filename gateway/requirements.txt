@@ -7,3 +7,5 @@ django-prometheus
 channels[daphne]
 channels_redis
 django-cors-headers
+django-extensions 
+Werkzeug
