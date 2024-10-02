@@ -43,32 +43,43 @@
   </div>
 </template>
 
-<script>
-export default {
-  data() {
-    return {
-      showFriendInput: false,
-      friendName: '',
-    };
-  },
-  methods: {
-    startLocalMatch() {
-      // Lógica para LOCAL MATCH
-      alert('Starting a local match...');
-    },
-    startSimpleMatch() {
-      // Lógica para SIMPLE MATCH
-      alert('Starting a simple match...');
-    },
-    showFriendMatchInput() {
-      this.showFriendInput = true;
-    },
-    sendInvitation() {
-      alert(`Invitation sent to ${this.friendName}`);
-    },
-    goToTournament() {
-      alert('Navigating to tournament creation...');
-    }
+
+<script setup>
+import { ref, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
+
+const username = ref('');
+const router = useRouter();
+
+const showFriendInput = ref(false);
+const friendName = ref('');
+
+onMounted(() =>{
+  const user = localStorage.getItem('user');
+  if(user) {
+    username.value = user;
+  } else {
+    router.push({name: 'Login'})
   }
-};
+})
+
+function startLocalMatch() {
+  alert('Starting a local match...');
+}
+
+function startSimpleMatch() {
+  alert('Starting a simple match...');
+}
+
+function showFriendMatchInput() {
+  showFriendInput.value = true;
+}
+
+function sendInvitation() {
+  alert(`Invitation sent to ${friendName.value}`);
+}
+
+function goToTournament() {
+  alert('Navigating to tournament creation...');
+}
 </script>

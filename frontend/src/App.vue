@@ -61,7 +61,7 @@
         <h2 style="margin-left: 180px;">TRANSCENDENCE</h2>
         <ul class="navbar-nav">
           <li class="nav-item">
-            <router-link to="/" class="nav-link1">Home</router-link>
+            <router-link to="/" class="nav-link1">{{ $t('message.home')}}</router-link>
           </li>
           <li class="nav-item">
             <router-link to="/Login" class="nav-link1">Login</router-link>
@@ -75,6 +75,10 @@
           <li class="nav-item">
             <router-link to="/Chat" class="nav-link1">Chat</router-link>
           </li>
+          <select class="form-select form-select-sm" v-model="selectedLang" @change="changeLang">
+            <option value="en">English</option>
+            <option value="es">Español</option>
+          </select>
         </ul>
     </nav>
 
@@ -91,8 +95,19 @@
 </template>
 
 
-<script setup>
-
+<script>
+export default {
+  data(){
+    return {
+      selectedLang: 'en'
+    };
+  },
+  methods: {
+    changeLang() {
+      this.$i18n.locale = this.selectedLang;
+    }
+  }
+}
 </script>
 
 <style scoped>
