@@ -18,6 +18,9 @@ LOG_FILES =  $(addprefix ${LOGSTASH_FOLDER}, ${GATEWAY_LOG} ${USER_LOG} ${CHAT_L
 all: build 
 
 build: 	| volumes	
+	sudo find . -type d -name 'migrations' -exec rm -r {} +
+	sudo find . -type d -name '_pycache_' -exec rm -r {} +
+	sudo find . -type f -name 'db.sqlite3' -exec rm {} +
 	$(COMPOSE) -f $(DOCKER_COMPOSE_FILE) up --build -d
 
 down:
