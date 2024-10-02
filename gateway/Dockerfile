@@ -4,6 +4,7 @@ WORKDIR /app
 RUN apt-get update && apt-get install -y python3-pip vim curl iputils-ping
 
 COPY /start.sh /start.sh
+COPY /test.sh /test.sh
 COPY requirements.txt requirements.txt
 RUN pip install -r requirements.txt
 
