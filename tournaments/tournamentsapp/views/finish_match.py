@@ -5,10 +5,7 @@ from tournamentsapp.models import Tournaments, Matches
 from tournamentsapp.status_options import  StatusMatches, Rounds
 from tournamentsapp.tasks.actualise_tournaments import actualise_tournament
 
-try: 
-	from usermodel.models import User
-except:
-	from ..models import User
+from user.models import User
 
 @require_post
 @validate_json
