@@ -301,7 +301,8 @@ services:
 
     container_name: kibana
     environment:
-      - SERVERNAME=kibana
+      - SERVER_REWRITE_BASE_PATH=true
+      - SERVER_BASEPATH=/kibana 
       - ELASTICSEARCH_HOSTS=https://es01:9200
       - ELASTICSEARCH_USERNAME=kibana_system
       - ELASTICSEARCH_PASSWORD=${KIBANA_PASSWORD}
