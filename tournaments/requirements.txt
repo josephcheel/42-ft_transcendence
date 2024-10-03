@@ -3,8 +3,8 @@ logstash-formatter
 python-json-logger
 django-prometheus
 metrics
-web3==5.17.0
-
+web3==7.3.0
+eth_account
 # needed to intereact with PostGreeSql
 psycopg==3.2.1
 
