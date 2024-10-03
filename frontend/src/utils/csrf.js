@@ -1,6 +1,6 @@
 export async function fetchCSRFToken() {
     try {
-        const response = await fetch('https://localhost:8000/get_cookie/', {
+        const response = await fetch('https://localhost:8000/api/get_cookie/', {
             credentials: 'include',
         });
 

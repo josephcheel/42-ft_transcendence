@@ -53,5 +53,6 @@ def user(request, subpath):
 
 @ensure_csrf_cookie
 def get_cookie(request):
+    logger.info("I am returning a cookie")
     return JsonResponse({'status' : 'success', 'data' : None, 'message' : 'You got your cookie now'}, status=200)
 

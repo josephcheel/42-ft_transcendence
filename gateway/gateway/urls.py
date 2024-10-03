@@ -18,11 +18,15 @@ from django.contrib import admin
 from django.urls import include, path
 from .views import *
 
-urlpatterns = [
-    path('admin/', admin.site.urls),
+internal_url=[
     path('user/<path:subpath>/', user, name='user'),
     path('tournaments/<path:subpath>/', tournaments, name='tournaments'),
-    path('', include('django_prometheus.urls')),
     path('get_cookie/', get_cookie, name='get_cookie'),
+]
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('api/', include((internal_url, 'api'))),
+    path('', include('django_prometheus.urls')),
 
 ]

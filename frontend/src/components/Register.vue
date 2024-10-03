@@ -64,7 +64,7 @@
         else{
 
           try {
-          const response = await axios.post('https://localhost:8000/user/create_user/', {
+          const response = await axios.post('https://localhost:8000/api/user/create_user/', {
             username: user.value,
             password: psw.value,
             first_name: name.value,

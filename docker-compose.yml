@@ -103,8 +103,8 @@ services:
     depends_on:
       - redis
     build: ./gateway
-    ports:
-      - "8000:8000"
+    #ports:
+      #- "8000:8000"
     volumes:
       - ${LOGSTASH_FOLDER}${GATEWAY_LOG}:/var/log/${GATEWAY_LOG}
       - ${DJANGO_SCRIPT}:/start.sh
@@ -337,10 +337,12 @@ services:
       - ./blockchain:/app
   frontend:
     container_name: frontend
+    depends_on:
+      - gateway
     build:
       context: ./frontend
     ports:
-      - "8080:80"
+      - "8000:80"
 
 volumes:
   certs:

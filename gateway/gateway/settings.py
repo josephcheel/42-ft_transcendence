@@ -20,19 +20,14 @@ SECRET_KEY = 'django-insecure-w@p@_o3z*ymi9ud^mv(zvc9f6uwgwa@prl+3o@pa+^6+x2j2!e
 
 # SECURITY WARNING: don't run with debug turned on in production!
 # Specify trusted origins
-
-SECURE_SSL_REDIRECT=True
-
-SESSION_COOKIE_SECURE=True
-CSRF_COOKIE_SECURE=True
 #CSRF_HEADER_NAME='csrftoken1'
 CSRF_TRUSTED_ORIGINS = [
-    'https://localhost:8080',  # Your frontend origin
+    'https://localhost:8000',  # Your frontend origin
 ]
 
 
 CORS_ALLOWED_ORIGINS = [
-    "https://localhost:8080",
+    "https://localhost:8000",
 ]
 
 CORS_ALLOW_CREDENTIALS = True
@@ -62,11 +57,6 @@ if not DEBUG:
             },
         },
         'loggers': {
-            'werkzeug': {
-                'handlers': ['file'],
-                'level': 'DEBUG',
-                'propagate': True,
-            },
             'django': {
                 'handlers': ['file'],
                 'level': 'DEBUG',
@@ -89,7 +79,6 @@ CHANNEL_LAYERS = {
 }
 # Application definition
 INSTALLED_APPS = [
-    "django_extensions",
     "daphne",
     'django.contrib.admin',
     'django.contrib.auth',

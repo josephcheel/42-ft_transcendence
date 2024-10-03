@@ -40,12 +40,12 @@ ALLOWED_HOSTS = ['localhost', 'usermanagement', 'user', '127.0.0.1']
 
 
 CSRF_TRUSTED_ORIGINS = [
-    'https://localhost:8080',  # Your frontend origin
+    'https://localhost:8000',  # Your frontend origin
 ]
 
 
 CORS_ALLOWED_ORIGINS = [
-    "https://localhost:8080",
+    "https://localhost:8000",
 ]
 
 CORS_ALLOW_CREDENTIALS = True
