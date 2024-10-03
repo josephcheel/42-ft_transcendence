@@ -57,7 +57,8 @@
 
           if (response.status === 200) {
             // connectWebSocket();
-            router.push('/About');
+            localStorage.setItem('user', user.value)
+            router.push('/play');
 
           } else {
             toastMsg.value = `ERROR CODE:  ${response.status} \n An unexpected error occurred during the user creation`;
