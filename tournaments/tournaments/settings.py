@@ -71,6 +71,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django_prometheus',
     'tournamentsapp',
+    'blockchainapp',
     'user',
 ]
 
