@@ -76,7 +76,6 @@ services:
       - .env
     volumes:
       - ./usermanagement:/app/usermanagement
-#      - ./tournaments:/app/tournaments
 
   db:
     container_name: db
@@ -166,8 +165,6 @@ services:
       - APP=tournaments
       - DEBUG=${DEBUG}
       - TOURNAMENTS_FOLDER=${TOURNAMENTS_FOLDER}
-    ports:
-      - 8001:8001
 
   # Monitoring Container
 
@@ -287,8 +284,6 @@ services:
 
   kibana:
     restart: always
-    ports:
-      - ${KIBANA_PORT}:5601
     depends_on:
       es01:
         condition: service_healthy
@@ -341,6 +336,8 @@ services:
     container_name: frontend
     depends_on:
       - gateway
+      - kibana
+      - grafana
     build:
       context: ./frontend
     ports:
