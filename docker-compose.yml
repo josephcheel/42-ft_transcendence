@@ -183,10 +183,11 @@ services:
   grafana:
     image: grafana/grafana:11.1.1-ubuntu
     container_name: grafana
-    ports:
-      - 3000:3000
     environment:
       - GF_SECURITY_ADMIN_PASSWORD=newadmin
+      - GF_SERVER_ROOT_URL=%(protocol)s://%(domain)s:%(http_port)s/grafana # Set to the internal URL
+      - GF_SERVER_SERVE_FROM_SUB_PATH=true
+      - GF_SERVER_HTTP_PORT=3000
     volumes:
       - grafana-data:/var/lib/grafana
 
@@ -331,7 +332,7 @@ services:
       - "8545:8545"
     env_file:
       - .env
-    #restart: always
+    restart: always
     volumes:
       - ${TOURNAMENTS_FOLDER}${TOURNAMENT_LOG}:/var/log/${TOURNAMENT_LOG}
       - ./blockchain:/app
@@ -342,7 +343,7 @@ services:
     build:
       context: ./frontend
     ports:
-      - "8000:80"
+      - "8000:8000"
 
 volumes:
   certs:
