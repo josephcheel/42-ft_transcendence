@@ -5,4 +5,4 @@ WORKDIR /app
 # Install ganache-cli globally
 RUN npm install -g ganache-cli
 # Set the default command for the image
-CMD ["ganache-cli", "-h", "0.0.0.0"]
+CMD ["ganache-cli", "-a 1", "-e 1000000", "-h", "0.0.0.0"]
