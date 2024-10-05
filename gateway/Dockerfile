@@ -10,6 +10,9 @@ RUN pip install -r requirements.txt
 
 COPY . .
 
+RUN chmod +x start.sh
+RUN chown root:root test.sh
+
 EXPOSE 8000
 
 #ENTRYPOINT [ "bash", "-c", "while true; do sleep 3306; done"]
