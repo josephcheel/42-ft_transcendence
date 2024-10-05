@@ -191,3 +191,5 @@ CELERY_TASK_SERIALIZER = 'json'
 CELERY_IMPORTS = ('tournamentsapp.tasks.check_match_db_status', 'tournamentsapp.tasks.actualise_tournaments','tournamentsapp.tasks.finish_tournament')
 
 TIME_DELTA = 5
+
+GANACHE_URL = os.environ.get("GANACHE_URL", "http://ganache:8545")
