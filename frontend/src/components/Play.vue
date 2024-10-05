@@ -55,7 +55,7 @@ const showFriendInput = ref(false);
 const friendName = ref('');
 
 onMounted(() =>{
-  const user = localStorage.getItem('user');
+  const user = localStorage.getItem('username');
   if(user) {
     username.value = user;
   } else {
