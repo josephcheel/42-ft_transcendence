@@ -1,7 +1,9 @@
 import { createApp } from 'vue';
 import './style.css';
 import App from './App.vue';
+import axios from './utils/axiosConfig';
 import router from './router'; // Import the router
+
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { createI18n } from 'vue-i18n';
