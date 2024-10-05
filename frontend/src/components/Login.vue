@@ -57,7 +57,7 @@
 
           if (response.status === 200) {
             // connectWebSocket();
-            localStorage.setItem('user', user.value)
+            localStorage.setItem('username', user.value)
             router.push('/play');
 
           } else {

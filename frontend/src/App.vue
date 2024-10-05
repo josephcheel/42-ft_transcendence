@@ -73,6 +73,9 @@
             <router-link to="/Dashboard" class="nav-link1">Dashboard</router-link>
           </li>
           <li class="nav-item">
+            <router-link to="/profile" class="nav-link1">Profile</router-link>
+          </li>
+          <li class="nav-item">
             <router-link to="/Chat" class="nav-link1">Chat</router-link>
           </li>
           <select class="form-select form-select-sm" v-model="selectedLang" @change="changeLang">

@@ -7,6 +7,7 @@ import Register from '../components/Register.vue'
 import Chat from '../components/chat/chatLayout.vue'
 import Dashboard from '../components/Dashboard.vue'
 import Play from '../components/Play.vue'
+import Profile from '../components/Profile.vue'
 
 const routes = [
   {
@@ -48,6 +49,11 @@ const routes = [
     path: '/play',
     name: 'Play',
     component: Play
+  },
+  {
+    path: '/profile/',
+    name: 'Profile',
+    component: Profile
   },
 ]
 
