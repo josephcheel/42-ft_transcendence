@@ -53,10 +53,21 @@ user:
 bch:
 	docker exec -it blockchain /bin/bash
 
-volumes: 
+volumes: rm_vol
 	@echo Creating Volumes DIR
 	@mkdir -p $(VOLUMES)
 	@touch $(LOG_FILES)
+
+rm_vol:
+	@if [ -n "$(LIST_CURRENT_VOLUMES)" ]; then \
+        echo "Removing Docker volumes: $(LIST_CURRENT_VOLUMES)"; \
+        docker volume rm $(LIST_CURRENT_VOLUMES); \
+    else \
+        echo "No Docker volumes to remove"; \
+    fi
+	sudo find . -type d -name 'migrations' -exec find {} -type f -delete \;
+	sudo find . -type d -name '_pycache_' -exec rm -r {} +
+	sudo find . -type f -name 'db.sqlite3' -exec rm {} +
 
 clean: stop
 	
