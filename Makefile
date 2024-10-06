@@ -62,6 +62,9 @@ bch:
 gate:
 	docker exec -it gateway /bin/bash
 
+work:
+	docker exec -it celery_worker /bin/bash
+
 volumes: rm_vol
 	@echo Creating Volumes DIR
 	@mkdir -p $(VOLUMES)
