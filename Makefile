@@ -53,6 +53,9 @@ user:
 bch:
 	docker exec -it blockchain /bin/bash
 
+gate:
+	docker exec -it gateway /bin/bash
+
 volumes: rm_vol
 	@echo Creating Volumes DIR
 	@mkdir -p $(VOLUMES)
