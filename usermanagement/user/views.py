@@ -6,6 +6,7 @@ from django.contrib.auth import authenticate, login, logout, get_user_model
 from user.wrappers import *
 import json
 import logging
+from web3 import Web3
 
 #If testing we dont have usermodel.User so we want to use default
 
@@ -13,6 +14,30 @@ from .models import *
 User = get_user_model()
 
 
+def transfer_first_founds(user):
+    web3 = Web3(Web3.HTTPProvider(settings.GANACHE_URL))
+    ganache_url = settings.GANACHE_URL
+    web3 = Web3(Web3.HTTPProvider(ganache_url))
+    if not web3.isConnected():
+        return False
+    new_account = web3.eth.account.create()
+    user.ethereum_address = new_account.address
+    user.ethereum_private_key = new_account.privateKey.hex()
+    user.saave()
+    if not web3.isConnected():
+        return False
+
+    ganache_bank_account = web3.eth.accounts[0]
+    tx = {'from': ganache_bank_account,
+          'to': user.ethereum_address,
+          'value': web3.toWei(10, 'ether'),
+          'gas': 21000,
+          'gasPrice': Web3.toWei('1', 'gwei'),
+          'nonce': web3.eth.getTransactionCount(ganache_bank_account)}
+    signed_tx = Web3.eth.account.signTransaction(tx, ganache_bank_account)
+    tx_hash = web3.eth.sendRawTransaction(signed_tx.rawTransaction)
+    web3.eth.waitForTransactionReceipt(tx_hash)
+    return True
 
 if not settings.DEBUG:
     logger = logging.getLogger('django')
@@ -51,6 +76,10 @@ def create_user(request):
         try:
             user.set_password(password)
             user.save()
+            if not transfer_first_founds(user):
+                return JsonResponse({'status': 'error',
+                                     'message': 'Could not connect to blockchain',
+                                     'data': None}, status=500)
         except OperationalError:
             return JsonResponse({'status' : 'error',
                                 'message' : 'Internal database error',

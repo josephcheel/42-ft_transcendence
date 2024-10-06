@@ -29,7 +29,7 @@ SECRET_KEY = 'django-insecure-e5m60_kk8wzj52xpmb69*h9u^kg29b6$uyum19p87(7or7bop9
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG', 'true') == 'True'
 
-ALLOWED_HOSTS = ['localhost', 'tournaments', 'tournamentsapp']
+ALLOWED_HOSTS = ['localhost', 'tournaments', 'tournamentsapp','blockchain']
 
 # Application definition
 if not DEBUG:
@@ -70,6 +70,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django_prometheus',
     'tournamentsapp',
+    'blockchainapp',
     'user',
 ]
 
@@ -189,3 +190,5 @@ CELERY_TASK_SERIALIZER = 'json'
 CELERY_IMPORTS = ('tournamentsapp.tasks.check_match_db_status', 'tournamentsapp.tasks.actualise_tournaments','tournamentsapp.tasks.finish_tournament')
 
 TIME_DELTA = 5
+
+GANACHE_URL = os.environ.get("GANACHE_URL", "http://ganache:8545")
