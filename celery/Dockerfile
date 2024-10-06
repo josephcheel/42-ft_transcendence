@@ -1,4 +1,4 @@
-FROM python:3.11-slim-buster
+FROM python:3.13.0b4-bookworm
 
 ENV PYTHONUNBUFFERED=1
 ENV PYTHONDONTWRITEBYTECODE=1
@@ -19,6 +19,10 @@ RUN apt-get update \
 # Requirements are installed here to ensure they will be cached.
 COPY ./celery/requirements.txt /requirements.txt
 RUN pip install -r /requirements.txt
+
+COPY ./celery/wait_for_it.sh /wait_for_it.sh 
+RUN sed -i 's/\r$//g' /wait_for_it.sh 
+RUN chmod +x /wait_for_it.sh 
 
 COPY ./celery/entrypoint /entrypoint
 RUN sed -i 's/\r$//g' /entrypoint
