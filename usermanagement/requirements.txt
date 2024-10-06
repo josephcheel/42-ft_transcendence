@@ -8,4 +8,5 @@ django-cors-headers
 # needed to intereact with PostGreeSql
 psycopg==3.2.1
 pillow==10.4.0
-
+Web3==7.3.0
+eth_account==0.13.4
