@@ -4,7 +4,7 @@ python-json-logger
 django-prometheus
 metrics
 web3==7.3.0
-eth_account
+eth_account==0.13.4
 # needed to intereact with PostGreeSql
 psycopg==3.2.1
 
