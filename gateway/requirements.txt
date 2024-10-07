@@ -1,11 +1,10 @@
-Django==5.0.7
+Django==5.1.1
 #Django==4.2.16
 requests
+httpx
 logstash-formatter
 python-json-logger
 django-prometheus
 channels[daphne]
 channels_redis
 django-cors-headers
-#django-extensions 
-#Werkzeug
