@@ -51,6 +51,7 @@ def custom_404_view(request, exception=None):
     }
     return JsonResponse(response_data, status=404)
 
+@csrf_exempt
 @require_post
 @validate_creation_fields
 @exception_handler
