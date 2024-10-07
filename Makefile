@@ -6,6 +6,8 @@ endif
 
 export DEBUG
 
+VOLUME_IN_COMPOSE = $(shell docker volume ls -q)
+
 COMPOSE = docker compose
 
 DOCKER_COMPOSE_FILE = ./docker-compose.yml
@@ -71,6 +73,7 @@ rm_vol:
 	sudo find . -type d -name 'migrations' -exec find {} -type f -delete \;
 	sudo find . -type d -name '_pycache_' -exec rm -r {} +
 	sudo find . -type f -name 'db.sqlite3' -exec rm {} +
+	docker volume rm ${VOLUME_IN_COMPOSE}
 
 clean: stop
 	
