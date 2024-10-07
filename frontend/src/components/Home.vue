@@ -18,7 +18,7 @@
 		methods: {
 			connect() {
 				const ws_scheme = window.location.protocol === "https:" ? "wss" : "ws";
-				const ws_path = ws_scheme + '://localhost:8000/api/ws/gateway/';
+				const ws_path = ws_scheme + '://localhost:8000/ws/gateway/';
 
 				this.socket = new WebSocket(ws_path);
 
