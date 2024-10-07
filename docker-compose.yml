@@ -166,8 +166,6 @@ services:
       - APP=tournaments
       - DEBUG=${DEBUG}
       - TOURNAMENTS_FOLDER=${TOURNAMENTS_FOLDER}
-    ports:
-      - 8001:8001
 
   # Monitoring Container
 
