@@ -16,7 +16,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-w@p@_o3z*ymi9ud^mv(zvc9f6uwgwa@prl+3o@pa+^6+x2j2!e'
+SECRET_KEY = 'django-insecure-1vc7k2#w%hp*8k_lb5^(zsxuqnuy&^&cp)hwxk@skwg3j#-n!4'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 # Specify trusted origins
@@ -31,11 +31,17 @@ CORS_ALLOWED_ORIGINS = [
 ]
 
 CORS_ALLOW_CREDENTIALS = True
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SAMESITE = 'None'
 
+#SESSION_COOKIE_DOMAIN="localhost"
+
+
+USE_X_FORWARDED_HOST = True
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', '[::1]', 'gateway', 'usermanagement']
-
-
 
 # Application definition
 if not DEBUG:
@@ -77,6 +83,9 @@ CHANNEL_LAYERS = {
         },
     },
 }
+AUTH_USER_MODEL="user.User"
+
+
 # Application definition
 INSTALLED_APPS = [
     "daphne",
@@ -88,6 +97,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django_prometheus',
     'corsheaders',
+    'user',
 
 ]
 
@@ -142,13 +152,24 @@ WSGI_APPLICATION = 'gateway.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+if DEBUG:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
     }
-}
-
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': os.environ.get('DB_NAME'),
+            'USER': os.environ.get('DB_USER'),
+            'PASSWORD': os.environ.get('DB_PASSWORD'),
+            'HOST': os.environ.get('DB_HOST'),
+            'PORT': os.environ.get('DB_PORT', 5432),
+        }
+    }
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators

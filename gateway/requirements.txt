@@ -1,10 +1,12 @@
 Django==5.1.1
 #Django==4.2.16
 requests
-httpx
 logstash-formatter
 python-json-logger
 django-prometheus
 channels[daphne]
 channels_redis
 django-cors-headers
+
+psycopg==3.2.1
+pillow==10.4.0

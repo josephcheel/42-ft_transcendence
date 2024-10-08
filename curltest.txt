@@ -13,3 +13,14 @@ curl -X GET http://localhost:8000/user/is_logged_in/      -H "Content-Type: appl
 curl -X POST http://localhost:8000/tournaments/open_tournament/      -H "Content-Type: application/json"      -d '{"start_time": "2024-08-22 11:35:16.239649", "players": ["testuser1", "testuser2"]}'
 
 curl http://tournaments:8000/tournaments/list_tournaments/
+
+curl -X POST http://localhost:8000/api/user/login_user/      -H "Content-Type: application/json"      -d '{"username": "1", "password": "1"}'
+
+
+
+curl -i -X GET http://localhost:8000/api/user/get_profile/ \
+     -H "Content-Type: application/json" \
+     -b "sessionid=qo2l7g6zibhcs4ospar4fqsz4tianfar"
+
+
+curl -i -X GET http://usermanagement:8000/user/get_profile/1/ -H "Content-Type: application/json" -b "sessionid=sgod13niyhin0thidk7l0n8nh97s3tpw" -v

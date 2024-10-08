@@ -61,7 +61,6 @@ def create_user(request):
                                 'data' : None},
                                 status=201)
 
-    
 @require_post
 @validate_login_credentials
 @exception_handler
@@ -253,7 +252,7 @@ def get_profile_picture(request, username):
 @require_auth
 @require_get
 @exception_handler
-def get_profile(request, username):
+def get_profile(request, username):   
     user = User.objects.get(username=username)
     return JsonResponse({'status' : 'success',
             'message' : "Got user profile",

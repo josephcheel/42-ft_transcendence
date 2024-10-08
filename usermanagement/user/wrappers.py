@@ -68,7 +68,6 @@ def validate_login_credentials(func):
         if not request.username or not request.password:
             return JsonResponse({'status': 'error', 'message': 'Missing required fields', 'data': None}, status=400)
         request.lowercase_username = request.data.get('username').lower()
-        logger.info(request.username)
         return func(request, *args, **kwargs)
     return wrapper
 
@@ -106,7 +105,7 @@ def get_status(func):
 
 def require_auth(func):
     @wraps(func)
-    def wrapper(request, *args, **kwargs):
+    def wrapper(request, *args, **kwargs):       
         if not request.user.is_authenticated:
             return JsonResponse({'status' : 'error',
                                 'message': 'Invalid credentials',

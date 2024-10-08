@@ -108,6 +108,8 @@ services:
       - ${LOGSTASH_FOLDER}${GATEWAY_LOG}:/var/log/${GATEWAY_LOG}
       - ${DJANGO_SCRIPT}:/start.sh
       - ./gateway:/app
+      - ./usermodel:/app/user
+
 
     env_file:
       - .env
@@ -336,8 +338,8 @@ services:
     container_name: frontend
     depends_on:
       - gateway
-      - kibana
-      - grafana
+      #- kibana
+      #- grafana
     build:
       context: ./frontend
     ports:
