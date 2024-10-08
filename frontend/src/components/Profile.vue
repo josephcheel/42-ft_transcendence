@@ -100,9 +100,7 @@ export default {
         return; // Salir si no hay nombre de usuario
       }
       axios
-        .get(`https://localhost:8000/api/user/get_profile/${username}/`, {
-            withCredentials: true 
-          }
+        .get(`https://localhost:8000/api/user/get_profile/${username}/`
         )
         .then((response) => {
           const data = response.data;
