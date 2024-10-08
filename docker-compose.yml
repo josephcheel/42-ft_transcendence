@@ -102,8 +102,6 @@ services:
     depends_on:
       - redis
     build: ./gateway
-    #ports:
-      #- "8000:8000"
     volumes:
       - ${LOGSTASH_FOLDER}${GATEWAY_LOG}:/var/log/${GATEWAY_LOG}
       - ${DJANGO_SCRIPT}:/start.sh
@@ -173,12 +171,17 @@ services:
 
   prometheus:
     image: prom/prometheus:v2.53.1
+    depends_on:
+      - gateway
+      - usermanagement
+      - tournaments
     container_name: prometheus
     command:
-      - '--config.file=/etc/prometheus/prometheus.yaml'
+      - '--config.file=/etc/prometheus/prometheus.yml'
     volumes:
-      - ./Prometheus/prometheus.yaml:/etc/prometheus/prometheus.yaml:ro
+      - ./Prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
       - prometheus-data:/prometheus
+
   grafana:
     image: grafana/grafana:11.1.1-ubuntu
     container_name: grafana
@@ -200,7 +203,7 @@ services:
       - ./setup/ELK_script.sh:/ELK_script.sh
       - ./ELK:/ELK
       - ./Grafana/gateway_dashboard.json:/gateway_dashboard.json
-#    user: "0"
+    user: "0"
     environment:
       - SLACK_HOOK=${SLACK_HOOK}
     env_file:
@@ -215,7 +218,6 @@ services:
 
   es01:
     restart: always
-
     depends_on:
       setup:
         condition: service_healthy
@@ -338,8 +340,8 @@ services:
     container_name: frontend
     depends_on:
       - gateway
-      #- kibana
-      #- grafana
+      - kibana
+      - grafana
     build:
       context: ./frontend
     ports:
