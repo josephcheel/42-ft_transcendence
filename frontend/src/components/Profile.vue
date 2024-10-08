@@ -53,19 +53,6 @@
 <script>
 import axios from '../utils/axiosConfig';
 
-function getsessionIDToken() {
-    const cookies = document.cookie.split('; ');
-    console.log(cookies);
-    const sessionid = cookies.find(cookie => cookie.startsWith('sessionid='));
-
-    if (sessionid) {
-        return sessionid.split('=')[1];
-    }
-
-    return null;
-}
-
-
 export default {
   data() {
     return {
@@ -112,9 +99,6 @@ export default {
         console.error("No username found in localStorage");
         return; // Salir si no hay nombre de usuario
       }
-      console.log("getting idtoken")
-      const sessionid = getsessionIDToken();
-      console.log(getsessionIDToken());
       axios
         .get(`https://localhost:8000/api/user/get_profile/${username}/`, {
             withCredentials: true 
