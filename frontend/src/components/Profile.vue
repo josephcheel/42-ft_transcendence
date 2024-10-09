@@ -113,8 +113,8 @@ export default {
               .get(`https://localhost:8000/api/user/get_profile_picture/${username}/`)
               .then((response)=>{
                 const pict = response.data.data;
-                if (data){
-                  this.user.profile_picture = data.profile_picture_url || '';
+                if (pict){
+                  this.user.profile_picture = pict.profile_picture_url || '';
                 }
               })
           } else {
