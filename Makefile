@@ -58,7 +58,13 @@ bch:
 gate:
 	docker exec -it gateway /bin/bash
 
-volumes: rm_vol
+cele:
+	docker exec -it celery_worker /bin/bash
+	
+bloc:
+	docker exec -it blockchain /bin/bash
+
+volumes: 
 	@echo Creating Volumes DIR
 	@mkdir -p $(VOLUMES)
 	@touch $(LOG_FILES)
@@ -70,8 +76,8 @@ rm_vol:
     else \
         echo "No Docker volumes to remove"; \
     fi
-	sudo find . -type d -name 'migrations' -exec find {} -type f -delete \;
-	sudo find . -type d -name '_pycache_' -exec rm -r {} +
+	sudo find . -type d -name 'migrations' -exec rm -r {} +
+	sudo find . -type d -name '__pycache__' -exec rm -r {} +
 	sudo find . -type f -name 'db.sqlite3' -exec rm {} +
 	docker volume rm ${VOLUME_IN_COMPOSE}
 
