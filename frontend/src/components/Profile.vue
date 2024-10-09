@@ -2,7 +2,7 @@
   <div class="card mx-auto" style="width: 18rem;">
     <!-- Mostrar la imagen o el campo de carga de archivo según el modo -->
     <div class="text-center mt-3" v-if="!isEditing">
-      <img :src="user.profile_picture_url" class="rounded-circle img-fluid" alt="User Image">
+      <img :src="user.profile_picture" class="rounded-circle img-fluid" alt="User Image">
     </div>
     <div class="mb-3" v-else>
       <label for="imageUpload" class="form-label">Profile Image</label>
@@ -100,18 +100,23 @@ export default {
         return; // Salir si no hay nombre de usuario
       }
       axios
-        .get(`https://localhost:8000/api/user/get_profile/${username}/`
-        )
+        .get(`https://localhost:8000/api/user/get_profile/${username}/`)
         .then((response) => {
-          const data = response.data;
-          
+          const data = response.data.data;
           // Asegurarse de que 'data' tenga las propiedades necesarias
           if (data) {
             this.user.first_name = data.first_name || '';
             this.user.last_name = data.last_name || '';
             this.user.username = data.username || '';
             this.user.tournament_name = data.tournament_name || '';
-            this.user.profile_picture_url = data.profile_picture_url || '';
+            axios
+              .get(`https://localhost:8000/api/user/get_profile_picture/${username}/`)
+              .then((response)=>{
+                const pict = response.data.data;
+                if (data){
+                  this.user.profile_picture = data.profile_picture_url || '';
+                }
+              })
           } else {
             console.error("No user profile data received");
           }
