@@ -210,4 +210,4 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-GANACHE_URL = 'http://localhost:8545'
+GANACHE_URL = 'http://blockchain:8545'
