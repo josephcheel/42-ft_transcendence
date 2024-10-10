@@ -18,13 +18,13 @@ def transfer_first_founds(user):
     web3 = Web3(Web3.HTTPProvider(settings.GANACHE_URL))
     ganache_url = settings.GANACHE_URL
     web3 = Web3(Web3.HTTPProvider(ganache_url))
-    if not web3.isConnected():
+    if not web3.is_Connected():
         return False
     new_account = web3.eth.account.create()
     user.ethereum_address = new_account.address
     user.ethereum_private_key = new_account.privateKey.hex()
     user.saave()
-    if not web3.isConnected():
+    if not web3.is_Connected():
         return False
 
     ganache_bank_account = web3.eth.accounts[0]
