@@ -8,7 +8,6 @@ from tournaments.settings import TIME_DELTA
 from tournamentsapp.status_options import StatusMatches
 from tournamentsapp.tasks.actualise_tournaments import actualise_tournament
 
-
 @shared_task
 def check_match_db_status():
 	matches_passed = Matches.objects.filter(date_time = timezone.now() + timedelta(minutes = TIME_DELTA))
@@ -25,7 +24,7 @@ def check_match_db_status():
 	mymatches = Matches.objects.filter(tournament_id__in=tournament_ids, status__in=[
 	                                   StatusMatches.PLAYED.value, StatusMatches.WALKOVER.value])
 	while len(mymatches) > 0:
-		actualise_tournament.delay(mymatches[0])
+		actualise_tournament(mymatches[0].id)
 		mymatches = Matches.objects.filter(tournament_id__in=tournament_ids, status__in=[
 	                                   StatusMatches.PLAYED.value, StatusMatches.WALKOVER.value])
 
