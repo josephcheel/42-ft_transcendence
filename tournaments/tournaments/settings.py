@@ -191,4 +191,5 @@ CELERY_IMPORTS = ('tournamentsapp.tasks.check_match_db_status', 'tournamentsapp.
 
 TIME_DELTA = 5
 
-GANACHE_URL = os.environ.get("GANACHE_URL", "http://ganache:8545")
+GANACHE_URL = os.environ.get("GANACHE_URL", "http://blockchain:8545")
+#GANACHE_URL = 'http://localhost:8545'
