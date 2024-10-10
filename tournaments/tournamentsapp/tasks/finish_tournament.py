@@ -3,10 +3,6 @@ from tournamentsapp.status_options import StatusTournaments, Rounds
 from tournamentsapp.models import Tournaments, Matches
 from celery import shared_task
 
-try: 
-	from usermodel.models import User
-except:
-	from tournamentsapp.models import User
 
 @shared_task
 def finish_tournament(tournament_id):
