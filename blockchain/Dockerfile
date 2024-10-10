@@ -4,5 +4,6 @@ FROM node:alpine
 WORKDIR /app
 # Install ganache-cli globally
 RUN npm install -g ganache-cli
+RUN npm install -g punycode
 # Set the default command for the image
 CMD ["ganache-cli", "-a 1", "-e 1000000", "-h", "0.0.0.0"]
