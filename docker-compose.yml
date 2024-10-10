@@ -333,6 +333,7 @@ services:
     volumes:
       - ${TOURNAMENTS_FOLDER}${TOURNAMENT_LOG}:/var/log/${TOURNAMENT_LOG}
       - ./blockchain:/app
+      
   frontend:
     container_name: frontend
     build:
