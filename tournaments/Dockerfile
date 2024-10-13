@@ -27,11 +27,8 @@ WORKDIR /app
 # Requirements are installed here to ensure they will be cached.
 COPY ./start.sh /start.sh
 COPY ./requirements.txt /requirements.txt
-COPY ./wait_for_it.sh /wait_for_it.sh
 RUN pip install -r /requirements.txt
 
-RUN sed -i 's/\r$//g' /wait_for_it.sh 
-RUN chmod +x /wait_for_it.sh 
 RUN chmod +x /start.sh
 
 CMD ["/start.sh"]

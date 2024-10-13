@@ -20,10 +20,6 @@ RUN apt-get update \
 COPY ./celery/requirements.txt /requirements.txt
 RUN pip install -r /requirements.txt
 
-COPY ./celery/wait_for_it.sh /wait_for_it.sh 
-RUN sed -i 's/\r$//g' /wait_for_it.sh 
-RUN chmod +x /wait_for_it.sh 
-
 COPY ./celery/entrypoint /entrypoint
 RUN sed -i 's/\r$//g' /entrypoint
 RUN chmod +x /entrypoint

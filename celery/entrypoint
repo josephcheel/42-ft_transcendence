@@ -7,8 +7,6 @@ set -o pipefail
 # exits if any of your variables is not set
 set -o nounset
 
-./wait_for_it.sh ${DB_HOST}:${DB_PORT} --timeout=0
-
 postgres_ready() {
 python << END
 import sys
