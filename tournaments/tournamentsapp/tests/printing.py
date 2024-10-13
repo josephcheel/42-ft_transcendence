@@ -1,4 +1,5 @@
 from tournamentsapp.models import Tournaments, Invitations, Matches, User
+from user.models import User
 from blockchainapp.views import get_balance_from_web3
 
 def print_all_tournaments():
