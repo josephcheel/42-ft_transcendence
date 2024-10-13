@@ -159,7 +159,7 @@ services:
     volumes:
       - ${LOGSTASH_FOLDER}${TOURNAMENT_LOG}:/var/log/${TOURNAMENT_LOG}
       - ./tournaments:/app
-      - ./usermanagement/user:/app/user
+      - ./usermodel:/app/user
     env_file:
       - .env
     environment:
