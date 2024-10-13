@@ -1,4 +1,4 @@
-from tournamentsapp.models import Tournaments, Matches, User
+from tournamentsapp.models import Tournaments, Matches
 from django.test import TestCase, Client
 from django.urls import reverse
 from tournamentsapp.views.open_tournament import open_tournament
@@ -9,6 +9,7 @@ from tournamentsapp.views.finish_match import finish_match
 from datetime import timedelta
 from django.utils import timezone
 import json
+import requests
 from tournamentsapp.status_options import StatusTournaments, StatusMatches
 import random
 from .printing import print_all_tournaments, print_all_invitations, print_all_matches, print_all_users
@@ -19,8 +20,6 @@ from tournamentsapp.tasks.check_match_db_status import check_match_db_status
 class test_close_tournament (TestCase):
 	def setUp(self):
 		self.client = Client()
-		for i in range(1, 22):
-			User.objects.create_user(username=f"test{i}", password="test")
 		self.base_json = {'status': None, 'message': None, 'data': None}
 
 	def check_json(self, response, code):
@@ -29,10 +28,25 @@ class test_close_tournament (TestCase):
 		self.assertEqual(response.status_code, code)
 
 	def test_complete_process(self):
-		
+		self.cookies = {}
+		is_json_header = {'Content-Type': 'application/json'}
+		for i in range(1, 22):
+			print('Creating user test', i)
+			my_data = json.dumps({'username': f"test{i}", 'password': "test", 'first_name': f"test{i}", 'last_name': f"Apellido{i}"})
+			my_response = requests.post('http://usermanagement:8000/user/create_user/',data = my_data , headers = is_json_header )
+			print(my_response.cookies)
+			self.cookies[f'test{i}'] = my_response.cookies
+			# User.objects.create_user(username=f"test{i}", password="test")
 		# Everithing is OK with 12 players
-		self.client.login(username='test10', password='test')
+#		self.client.logout()
+#		self.client.login(username='test10', password='test')
+		print_all_users()
+		my_response = requests.post('http://usermanagement:8000/user/logout_user/')
+		my_data = json.dumps({'username': "test10", 'password': "test"})
+		my_response = requests.post('http://usermanagement:8000/user/login_user/', data=my_data, headers=is_json_header)
+		response = requests.get ('http://usermanagement:8000/user/list_users/', cookies=self.cookies['test10'])
 		self.tournament = {
+#		self.client.login(username='test10', password='test')
 			'username': 'test10',
 			'password': 'test',
 			'date_start': (timezone.now() + timedelta(days=1)).isoformat(),
@@ -48,9 +62,10 @@ class test_close_tournament (TestCase):
 		self.base_json['data'] = None
 		response = self.client.post(reverse(open_tournament), json.dumps(
 			self.tournament), content_type='application/json')
-
 		self.check_json(response, 200)
-		self.client.logout()
+		my_response = requests.post('http://usermanagement:8000/user/logout_user/', data=my_data, headers=is_json_header)
+#		self.client.logout()
+		input('Press enter to continue')
 		players = ['test20', 'test19', 'test7', 'test4', 'test13', 'test17', 'test15', 'test16',
                     'test5', 'test6', 'test14', 'test9', 'test11', 'test12']
 		for player in players:
@@ -76,6 +91,7 @@ class test_close_tournament (TestCase):
 		self.check_json(response, 200)
 
 		# Everithing is OK with 4 players
+		my_data = json.dumps({'username': "test10", 'password': "test"})
 		self.client.logout()
 		self.client.login(username='test10', password='test')
 		self.tournament = {
