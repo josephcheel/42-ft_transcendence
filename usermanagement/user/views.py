@@ -18,23 +18,22 @@ def transfer_first_founds(user):
     web3 = Web3(Web3.HTTPProvider(settings.GANACHE_URL))
     ganache_url = settings.GANACHE_URL
     web3 = Web3(Web3.HTTPProvider(ganache_url))
-    if not web3.isConnected():
+    if not web3.is_Connected():
+        print("Could not connect to blockchain")
         return False
+    print("Connected to blockchain")
     new_account = web3.eth.account.create()
     user.ethereum_address = new_account.address
     user.ethereum_private_key = new_account.privateKey.hex()
-    user.saave()
-    if not web3.isConnected():
-        return False
-    
-    ganache_bank_account=web3.eth.accounts[0]
-    tx={'from': ganache_bank_account, 
-        'to': user.ethereum_address,
-        'value': web3.toWei(10, 'ether'),
-        'gas': 21000, 
-        'gasPrice': Web3.toWei('1', 'gwei'),
-        'nonce': web3.eth.getTransactionCount(ganache_bank_account)}
-    signed_tx=Web3.eth.account.signTransaction(tx, ganache_bank_account)
+    user.save()
+    ganache_bank_account = web3.eth.accounts[0]
+    tx = {'from': ganache_bank_account,
+          'to': user.ethereum_address,
+          'value': web3.toWei(10, 'ether'),
+          'gas': 21000,
+          'gasPrice': Web3.toWei('1', 'gwei'),
+          'nonce': web3.eth.getTransactionCount(ganache_bank_account)}
+    signed_tx = Web3.eth.account.signTransaction(tx, ganache_bank_account)
     tx_hash = web3.eth.sendRawTransaction(signed_tx.rawTransaction)
     web3.eth.waitForTransactionReceipt(tx_hash)
     return True
@@ -51,23 +50,27 @@ def custom_404_view(request, exception=None):
     }
     return JsonResponse(response_data, status=404)
 
+@csrf_exempt
 @require_post
 @validate_creation_fields
 @exception_handler
 # Need to check email, name, and other infor from front end.
 def create_user(request):
+    print("Creating user")
     username = request.username #og username in lower case
     password = request.password
     first_name = request.first_name
     last_name = request.last_name
     original_username = request.original_username
     try:
+        print("Checking if user exists")
         User.objects.get(username=username)# need to check email too
         return JsonResponse({'status' : 'error',
                                 'message' : "User already Exists",
                                 'data' : None},
                                 status=409)
     except User.DoesNotExist:
+        print("Creating user")
         user = User(username=username,
                     original_username=original_username,
                     tournament_name=original_username,
@@ -76,11 +79,11 @@ def create_user(request):
         try:
             user.set_password(password)
             user.save()
+            print("User created. Transferring funds")
             if not transfer_first_founds(user):
                 return JsonResponse({'status': 'error',
                                      'message': 'Could not connect to blockchain',
                                      'data': None}, status=500)
-
         except OperationalError:
             return JsonResponse({'status' : 'error',
                                 'message' : 'Internal database error',

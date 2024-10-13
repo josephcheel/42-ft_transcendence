@@ -19,7 +19,7 @@ def execute_contract(request):
 		return JsonResponse({'status': 'error', 'message': 'User not authenticated', 'data': None}, status=405)
 	tournament = Tournaments.object.get(id = tournament_id)
 	try:
-		web3 = Web3(Web3.HTTPProvider(settings.BLOCKCHAIN_URL))
+		web3 = Web3(Web3.HTTPProvider(settings.GANACHE_URL))
 	except:
 		return JsonResponse({'status': 'error', 'message': 'Error connecting to the blockchain', 'data': None}, status=500)
 	# Leer el contrato
@@ -48,20 +48,25 @@ def execute_contract(request):
 	tournament.save()
 	return JsonResponse({'status': 'success', 'message': 'Contract executed', 'data': tx_hash}, status=200)
 
+def get_balance_from_web3(wallet):
+	print('Red blockchain:', settings.GANACHE_URL)
+	try:
+		web3 = Web3(Web3.HTTPProvider(settings.GANACHE_URL))
+	except:
+		raise Exception('Error connecting to the blockchain')
+	balance = web3.eth.get_balance(wallet)
+	return balance
+
 @require_post
 @user_is_authenticated
 def get_balance(request):
 	user = User.objects.get(username = request.data("user"))
 	try:
-		try:
-			web3 = Web3(Web3.HTTPProvider(settings.BLOCKCHAIN_URL))
-		except:
-			return JsonResponse({'status': 'error', 'message': 'Error connecting to the blockchain', 'data': None}, status=500)
 		account = user.ethereum_address
-		balance = web3.eth.getBalance(account)
+		balance = get_balance_from_web3(account)
 		return JsonResponse({'status': 'success', 'message': 'Balance obtained', 'data': balance}, status=200)
 	except:
-		return JsonResponse({'status': 'error', 'message': 'Error obtaining balance', 'data': None}, status=405)
+		return JsonResponse({'status': 'error', 'message': 'Error obtaining balance', 'data': None}, status=500)
 
 @require_post
 @user_is_authenticated
@@ -72,7 +77,7 @@ def make_transaction(request):
 	receiver = User.objects.get(username = receiver_id)
 	try:
 		try:
-			web3 = Web3(Web3.HTTPProvider(settings.BLOCKCHAIN_URL))
+			web3 = Web3(Web3.HTTPProvider(settings.GANACHE_URL))
 		except:
 			return JsonResponse({'status': 'error', 'message': 'Error connecting to the blockchain', 'data': None}, status=500)
 		account = user.ethereum_address

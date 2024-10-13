@@ -3,7 +3,7 @@
 set -o errexit
 set -o nounset
 
-cd app/tournaments
+cd app
 
 worker_ready() {
     celery -A tournaments inspect ping

@@ -1,4 +1,6 @@
 from tournamentsapp.models import Tournaments, Invitations, Matches, User
+from user.models import User
+from blockchainapp.views import get_balance_from_web3
 
 def print_all_tournaments():
 	print('Tournaments list')
@@ -22,4 +24,5 @@ def print_all_users():
 	print('Users list')
 	users = User.objects.all()
 	for user in users:
-		print('user_id: ', user.id, 'username: ', user.username, 'email: ', user.email, 'puntos: ', user.puntos, 'puntos_reservados: ', user.puntos_reservados)
+		print('user_id: ', user.id, 'username: ', user.username, 'email: ', user.email, 'puntos: ', user.puntos, 'puntos_reservados: ', user.puntos_reservados
+                    , 'wallet balance = ',  get_balance_from_web3(user.ethereum_address))

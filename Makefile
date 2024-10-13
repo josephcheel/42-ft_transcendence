@@ -7,6 +7,8 @@ endif
 
 export DEBUG
 
+VOLUME_IN_COMPOSE = $(shell docker volume ls -q)
+
 COMPOSE = docker compose
 
 LIST_CURRENT_VOLUMES=$(shell docker volume ls -q)
