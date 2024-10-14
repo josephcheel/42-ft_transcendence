@@ -13,18 +13,68 @@ const messages = {
     en: {
         message: {
             home: 'Home',
+            login: 'Login',
+            play: 'Play',
+            dashboard: 'Dashboard',
+            profile: 'Profile',
+            chat: 'Chat',
+            register: 'Register',
+            name: 'Name',
+            lastname: 'Lastname',
+            username: 'Username',
+            password: 'Password',
+            confirm_pass: 'Confirm password',
+            alreadyAcc: 'You already have an account?',
+            no_account: 'You don\'t have account?',
+            forget_pass: 'You forget your password?',
+            local_match: 'Local Match',
+            explain_local_match: 'Play vs guest player on the same keyboard',
+            simple_match: 'Simple Match',
+            explain_simple_match: 'Play on-line vs a random player',
+            friend_match: 'Friend Match',
+            explain_friend_match: 'Send an invitation to play vs friends',
+            send: 'Send',
+            tournament: 'Tournament',
+            explain_tournament: 'Create a tournament for 16 players',
+            email: 'Email',
+            reset_pass: 'Restore your password'
         },
     },
     es: {
         message: {
             home: 'Inicio',
+            login: 'Inicio Sesión',
+            play: 'Jugar',
+            dashboard: 'Resultados',
+            profile: 'Perfil',
+            chat: 'Chat',
+            register: 'Registro',
+            name: 'Nombre',
+            lastname: 'Apellido',
+            username: 'Usuario',
+            password: 'Contraseña',
+            confirm_pass: 'Confirmar Contraseña',
+            alreadyAcc: 'Ya tienes una cuenta?',
+            no_account: 'Todavia no tienes cuenta?',
+            forget_pass: 'Has olvidado la contraseña?',
+            local_match: 'Partido Local',
+            explain_local_match: 'Juega con invitado en el mismo teclado',
+            simple_match: 'Partido simple',
+            explain_simple_match: 'Juega online contra un usuario aleatorio',
+            friend_match: 'Partido con amigos',
+            explain_friend_match: 'Envía una invitación para jugar contra un amigo',
+            send: 'Enviar',
+            tournament: 'Torneo',
+            explain_tournament: 'Crea un torneo para 16 personas',
+            email: 'Correo',
+            reset_pass: 'Restablece tu contraseña'
         },
     },
 };
 
 // Create the i18n instance
 const i18n = createI18n({
-    locale: 'es', // Set locale
+    locale: 'en', // Set locale
     fallbackLocale: 'en', // Set fallback locale
     messages, // Provide messages
 });
