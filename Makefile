@@ -10,7 +10,7 @@ COMPOSE = docker compose
 
 DOCKER_COMPOSE_FILE = ./docker-compose.yml
 include .env
-VOLUMES = ${VOLUMES_FOLDER} ${CERTS_FOLDER} ${ESDATA_FOLDER} ${KIBANA_FOLDER} ${LOGSTASH_FOLDER} ${POSTGREE_FOLDER} ${PROMETHEUS_FOLDER} ${GRAFANA_FOLDER} ${BLOCKCHAIN_FOLDER} ${Tournament_FOLDER}
+VOLUMES = ${VOLUMES_FOLDER} ${CERTS_FOLDER} ${ESDATA_FOLDER} ${KIBANA_FOLDER} ${LOGSTASH_FOLDER} ${POSTGREE_FOLDER} ${PROMETHEUS_FOLDER} ${GRAFANA_FOLDER} ${BLOCKCHAIN_FOLDER} ${TOURNAMENTS_FOLDER}
 LOG_FILES =  $(addprefix ${LOGSTASH_FOLDER}, ${GATEWAY_LOG} ${USER_LOG} ${CHAT_LOG} ${MATCHES_LOG} ${TWOFACTOR_LOG} ${TOURNAMENT_LOG})
 
 # Define targets
@@ -35,13 +35,13 @@ start :
 	@$(COMPOSE) -f $(DOCKER_COMPOSE_FILE) start
 
 rebuild:
-	@$(COMPOSE) -f $(DOCKER_COMPOSE_FILE) down --volumes
+# @$(COMPOSE) -f $(DOCKER_COMPOSE_FILE) down --volumes
 	@sudo find . -type d -name 'migrations' -exec rm -r {} +
 	@sudo find . -type d -name '__pycache__' -exec rm -r {} +
 	@sudo find . -type f -name 'db.sqlite3' -exec rm {} +
-	@sudo rm -rf $(VOLUMES)
-	@mkdir -p $(VOLUMES)
-	@touch $(LOG_FILES)
+# @sudo rm -rf $(VOLUMES)
+# @mkdir -p $(VOLUMES)
+# @touch $(LOG_FILES)
 	@$(COMPOSE) -f $(DOCKER_COMPOSE_FILE) up --build -d
 
 migrat:
