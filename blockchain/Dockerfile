@@ -8,4 +8,4 @@ RUN npm install -g truffle
 RUN npm install -g punycode
 # Set the default command for the image
 #CMD ["ganache", "-a 1", "-e 1000000", "-h", "0.0.0.0"]
-CMD ["ganache", "-a 1", "-e 1000000", "--host", "0.0.0.0", "--port", "8545"]
+CMD ["ganache", "-a 1", "-e 1000000", "--host", "0.0.0.0", "--port", "8545", "-d"]
