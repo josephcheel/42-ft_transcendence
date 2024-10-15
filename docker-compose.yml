@@ -129,6 +129,7 @@ services:
       - ${LOGSTASH_FOLDER}${GATEWAY_LOG}:/var/log/${GATEWAY_LOG}
       - ${DJANGO_SCRIPT}:/start.sh
       - ./gateway:/app
+      - ./usermodel:/app/user
 
     env_file:
       - .env
@@ -194,9 +195,9 @@ services:
     image: prom/prometheus:v2.53.1
     container_name: prometheus
     command:
-      - '--config.file=/etc/prometheus/prometheus.yaml'
+      - '--config.file=/etc/prometheus/prometheus.yml'
     volumes:
-      - ./Prometheus/prometheus.yaml:/etc/prometheus/prometheus.yaml:ro
+      - ./Prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
       - prometheus-data:/prometheus
   grafana:
     image: grafana/grafana:11.1.1-ubuntu
