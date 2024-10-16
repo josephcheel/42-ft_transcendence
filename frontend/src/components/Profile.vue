@@ -2,7 +2,7 @@
   <div class="card mx-auto" style="width: 18rem;">
     <!-- Mostrar la imagen o el campo de carga de archivo según el modo -->
     <div class="text-center mt-3" v-if="!isEditing">
-      <img :src="user.profile_picture" class="rounded-circle img-fluid" alt="User Image">
+      <img :src="user.profile_picture_url" class="rounded-circle img-fluid" alt="User Image" />
     </div>
     <div class="mb-3" v-else>
       <label for="imageUpload" class="form-label">Profile Image</label>
@@ -92,7 +92,7 @@ export default {
         reader.readAsDataURL(file);
       }
     },
-    fetchUserProfile() {
+    async fetchUserProfile() {
       const username = localStorage.getItem('username');
     
       if (!username) {
@@ -109,16 +109,25 @@ export default {
             this.user.last_name = data.last_name || '';
             this.user.username = data.username || '';
             this.user.tournament_name = data.tournament_name || '';
-            axios
-              .get(`https://localhost:8000/api/user/get_profile_picture/${username}/`)
-              .then((response)=>{
-                const pict = response.data.data;
-                if (pict){
-                  this.user.profile_picture = pict.profile_picture_url || '';
-                }
-              })
           } else {
             console.error("No user profile data received");
+          }
+        })
+      axios
+        .get(`https://localhost:8000/api/user/get_profile_picture_url/${username}/`)
+        .then((response)=>{
+          const pict = response.data.data;
+          if (pict){
+            url = pict.profile_picture_url || '';
+            console.log(this.user.profile_picture_url)
+          }
+        })
+      axios
+        .get(`https://localhost:8000/api/user${this.user.profile_picture_url}`)
+        .then((response)=>{
+          const img = response;
+          if (img){
+            this.user.profile_picture_url = img;
           }
         })
         .catch((error) => {

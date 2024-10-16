@@ -239,7 +239,7 @@ def upload_picture(request):
 @require_auth
 @require_get
 @exception_handler
-def get_profile_picture(request, username):
+def get_profile_picture_url(request, username):
     user = User.objects.get(username=username)
     profile_pic = UserProfilePic.objects.get(user=user)
     return JsonResponse({'status' : 'success',
