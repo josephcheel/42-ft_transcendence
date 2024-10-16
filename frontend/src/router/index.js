@@ -8,7 +8,7 @@ import Chat from '../components/chat/chatLayout.vue'
 import Dashboard from '../components/Dashboard.vue'
 import Play from '../components/Play.vue'
 import Profile from '../components/Profile.vue'
-
+import Game from '../components/game/Game.vue'
 const routes = [
   {
     path: '/',
@@ -55,6 +55,11 @@ const routes = [
     name: 'Profile',
     component: Profile
   },
+  {
+    path: '/game',
+    name: 'Game',
+    component: Game
+  }
 ]
 
 const router = createRouter({
