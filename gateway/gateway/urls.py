@@ -26,7 +26,7 @@ internal_url=[
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/', include((internal_url, 'api'))),
     path('', include('django_prometheus.urls')),
+    path('api/', include((internal_url, 'api'))),
 
 ]
