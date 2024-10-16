@@ -1,32 +1,32 @@
 <template>
 <div class="container-fluid d-flex justify-content-center align-items-center ">
   <div class="card p-4 shadow-sm" style="max-width: 400px; width: 100%;  box-shadow: -5px 5px 55px lightblue;">
-    <h3 class="text-center mb-4">Register</h3>
+    <h3 class="text-center mb-4">{{ $t('message.register')}}</h3>
     <form @submit.prevent="login">
       <div class="mb-3">
-        <label for="user" class="form-label">Name</label>
+        <label for="user" class="form-label">{{ $t('message.name')}}</label>
         <input v-model="name" type="text" class="form-control" id="name" placeholder="Enter your Name" required>
       </div>
       <div class="mb-3">
-        <label for="user" class="form-label">Lastname</label>
+        <label for="user" class="form-label">{{ $t('message.lastname')}}</label>
         <input v-model="lastname" type="text" class="form-control" id="lastname" placeholder="Enter your Lastname" required>
       </div>
       <div class="mb-3">
-        <label for="user" class="form-label">Username</label>
+        <label for="user" class="form-label">{{ $t('message.username')}}</label>
         <input v-model="user" type="text" class="form-control" id="user" placeholder="Enter your Username" required>
       </div>
       <div class="mb-3">
-        <label for="password" class="form-label">Password</label>
+        <label for="password" class="form-label">{{ $t('message.password')}}</label>
         <input v-model="psw" type="password" class="form-control" id="password" placeholder="Enter your Password" required>
       </div>
       <div class="mb-3">
-        <label for="password" class="form-label">Confirm Password</label>
+        <label for="password" class="form-label">{{ $t('message.confirm_pass')}}</label>
         <input v-model="psw2" type="password" class="form-control" id="password2" placeholder="Confirm your password" required>
       </div>
-      <button id="login" type="submit" class="btn btn-primary w-100">Register</button>
+      <button id="login" type="submit" class="btn btn-primary w-100">{{ $t('message.register')}}</button>
     </form>
     <div class="mt-3 text-center">
-    <p>Already have an account? <router-link to="/Login">Login</router-link></p>
+    <p>{{ $t('message.alreadyAcc')}} <router-link to="/Login">{{ $t('message.login')}}</router-link></p>
     </div>
     <p style="color: red;">
       {{ toastMsg }}
