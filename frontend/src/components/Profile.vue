@@ -117,13 +117,21 @@ export default {
         .get(`https://localhost:8000/api/user/get_profile_picture_url/${username}/`)
         .then((response)=>{
           const pict = response.data.data;
-          if (pict){
-            url = pict.profile_picture_url || '';
-            console.log(this.user.profile_picture_url)
-          }
+          console.log(pict);
+          let url = pict.profile_picture_url;
         })
-      axios
-        .get(`https://localhost:8000/api/user${this.user.profile_picture_url}`)
+
+      console.log("HOLA");
+      axios.get('https://localhost:8000/api/user/profile_pictures/default.jpeg').then((response)=>{
+        const img = response;
+        console.log(img);
+        if (img){
+          this.user.profile_picture_url = img;
+        }
+      })
+
+/*       axios
+        .get(`https://localhost:8000/api/user${url}`)
         .then((response)=>{
           const img = response;
           if (img){
@@ -132,7 +140,7 @@ export default {
         })
         .catch((error) => {
           console.error("Error fetching user profile:", error.response ? error.response.data : error);
-        });
+        }); */
     }
 
   }
