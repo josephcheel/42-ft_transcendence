@@ -1,21 +1,21 @@
 <template>
 <div class="container-fluid d-flex justify-content-center align-items-center ">
   <div class="card p-4 shadow-sm" style="max-width: 400px; width: 100%;     box-shadow: -5px 5px 55px lightblue;">
-    <h3 class="text-center mb-4">Login</h3>
+    <h3 class="text-center mb-4">{{ $t('message.login')}}</h3>
     <form @submit.prevent="login">
       <div class="mb-3">
-        <label for="user" class="form-label">User</label>
+        <label for="user" class="form-label">{{ $t('message.username')}}</label>
         <input v-model="user" type="text" class="form-control" id="user" placeholder="Enter your username" required>
       </div>
       <div class="mb-3">
-        <label for="password" class="form-label">Password</label>
+        <label for="password" class="form-label">{{ $t('message.password')}}</label>
         <input v-model="psw" type="password" class="form-control" id="password" placeholder="Enter your password" required>
       </div>
-      <button type="submit" class="btn btn-primary w-100">Login</button>
+      <button type="submit" class="btn btn-primary w-100">{{ $t('message.login')}}</button>
     </form>
     <div class="mt-3 text-center">
-    <p>Don't have an account? <router-link to="/Register">Register</router-link></p>
-      <router-link to="/forgotps">Forgot your password?</router-link>
+    <p>{{ $t('message.no_account')}} <router-link to="/Register">{{ $t('message.register')}}</router-link></p>
+      <router-link to="/forgotps">{{ $t('message.forget_pass')}}</router-link>
     </div>
     <p style="color: red;">
       {{ toastMsg }}

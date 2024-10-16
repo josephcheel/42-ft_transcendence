@@ -21,9 +21,18 @@ export default {
   },
   data() {
     return {
-      selectedChat: null
+      selectedChat: null,
+      username: null
     };
   },
+  mounted() {
+  const user = localStorage.getItem('username');
+  if(user) {
+    username.value = user;
+  } else {
+    router.push({name: 'Login'})
+  }
+},
   methods: {
     handleChatSelected(chat) {
       this.selectedChat = chat;

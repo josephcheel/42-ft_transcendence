@@ -64,19 +64,19 @@
             <router-link to="/" class="nav-link1">{{ $t('message.home')}}</router-link>
           </li>
           <li class="nav-item">
-            <router-link to="/Login" class="nav-link1">Login</router-link>
+            <router-link to="/Login" class="nav-link1">{{ $t('message.login')}}</router-link>
           </li>
           <li class="nav-item">
-            <router-link to="/play" class="nav-link1">Play</router-link>
+            <router-link to="/play" class="nav-link1">{{ $t('message.play')}}</router-link>
           </li>
           <li class="nav-item">
-            <router-link to="/Dashboard" class="nav-link1">Dashboard</router-link>
+            <router-link to="/Dashboard" class="nav-link1">{{ $t('message.dashboard')}}</router-link>
           </li>
           <li class="nav-item">
-            <router-link to="/profile" class="nav-link1">Profile</router-link>
+            <router-link to="/profile" class="nav-link1">{{ $t('message.profile')}}</router-link>
           </li>
           <li class="nav-item">
-            <router-link to="/Chat" class="nav-link1">Chat</router-link>
+            <router-link to="/Chat" class="nav-link1">{{ $t('message.chat')}}</router-link>
           </li>
           <select class="form-select form-select-sm" v-model="selectedLang" @change="changeLang">
             <option value="en">English</option>
