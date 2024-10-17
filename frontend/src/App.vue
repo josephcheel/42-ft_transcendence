@@ -1,7 +1,7 @@
 
 <template>
   <div id="app">
-    <nav class="navbar navbar-expand-lg " v-if="!isGame()">
+    <nav class="navbar navbar-expand-lg " v-if="!isNav()">
       <img src="/src/images/Logo.png" alt="Logo" style="margin-left:15px; width: 65px; height: auto;">
         <h2 style="margin-left: 180px;">TRANSCENDENCE</h2>
         <ul class="navbar-nav">
@@ -29,11 +29,11 @@
           </select>
         </ul>
     </nav>
-    <div :class="{ 'content-wrapper': !isGame() }">
+    <div :class="{ 'content-wrapper': !isNav() }">
       <RouterView />
     </div>
 
-    <footer class="footer mt-auto py-3">
+    <footer v-if="!isNav()" class="footer mt-auto py-3">
       <div class="container">
         <span class="text-muted">© 2024 Ft_Transcendence. 42Barcelona.</span>
       </div>
@@ -57,13 +57,17 @@ export default {
       return this.$route.path === '/game';
     },
     isNav() {
-      return (this.$route.path === '/game' || this.$route.path === '/login');
+      return (this.$route.path === '/game' ||  this.$route.path === '/main');
     }
   }
 }
 </script>
 
 <style scoped>
+html{
+  overflow: hidden;
+}
+
 #app {
   display: flex;
   flex-direction: column;

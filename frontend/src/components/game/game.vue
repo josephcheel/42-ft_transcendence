@@ -19,8 +19,8 @@
 		<header>
 			<h1 id="score">Score 0 - 0 </h1>
 			<input type="checkbox" id="volume">
-			<img src="/src/assets/icons/mute.svg" alt="volume mute" id="mute" >
-			<img src="/src/assets/icons/unmute.svg" alt="volume unmute" id="unmute" >
+			<img src="/public/assets/icons/mute.svg" alt="volume mute" id="mute" >
+			<img src="/public/assets/icons/unmute.svg" alt="volume unmute" id="unmute" >
 		</header>
 
 		<section> 
@@ -188,9 +188,9 @@ import SoundEffect from './SoundEffect.js';
 import Stadium from './Stadium.js';
 import Clouds from './Clouds.js';
 import { markRaw } from 'vue';
-import endsoundFile from '@/assets/audio/end.wav';
-import goalSoundFile from '@/assets/audio/goal4.wav';
-import beepSoundFile from '@/assets/audio/beep2.mp3';
+import endsoundFile from '/assets/audio/end.wav';
+import goalSoundFile from '/assets/audio/goal4.wav';
+import beepSoundFile from '/assets/audio/beep2.mp3';
 
 export default {
 	name: 'threeCanvas',
@@ -285,7 +285,7 @@ export default {
 			
 			this.startGame();
 			
-			const fontPath = 'src/assets/fonts/kenney_rocket_regular.json';
+			const fontPath = '/assets/fonts/kenney_rocket_regular.json';
 			this.text = new Text(this.scene, 'GOAL!', fontPath, 5, 1, 0xFFF68F, 'goalText', new Vector3(2, 0, 0), this.camera.position);
 			this.endText = new Text(this.scene, 'END', fontPath, 5, 1, 0xFFF68F, 'goalText', new Vector3(5, 0, 0), this.camera.position);
 			this.endSound = new SoundEffect(this.listener, endsoundFile, 0.5);

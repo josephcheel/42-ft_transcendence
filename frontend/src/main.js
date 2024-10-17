@@ -13,7 +13,8 @@ const messages = {
     en: {
         message: {
             home: 'Home',
-            login: 'Login',
+            login: 'Log in',
+            enter: 'Enter',
             play: 'Play',
             dashboard: 'Dashboard',
             profile: 'Profile',
@@ -25,8 +26,8 @@ const messages = {
             password: 'Password',
             confirm_pass: 'Confirm password',
             alreadyAcc: 'You already have an account?',
-            no_account: 'You don\'t have account?',
-            forget_pass: 'You forget your password?',
+            no_account: 'Don\’t have an account?',
+            forget_pass: 'Forgot password',
             local_match: 'Local Match',
             explain_local_match: 'Play vs guest player on the same keyboard',
             simple_match: 'Simple Match',
@@ -44,6 +45,7 @@ const messages = {
         message: {
             home: 'Inicio',
             login: 'Inicio Sesión',
+            enter: 'Entrar',
             play: 'Jugar',
             dashboard: 'Resultados',
             profile: 'Perfil',

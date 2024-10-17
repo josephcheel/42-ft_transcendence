@@ -9,6 +9,7 @@ import Dashboard from '../components/Dashboard.vue'
 import Play from '../components/Play.vue'
 import Profile from '../components/Profile.vue'
 import Game from '../components/game/Game.vue'
+import Main from '../components/Main.vue'
 const routes = [
   {
     path: '/',
@@ -59,6 +60,11 @@ const routes = [
     path: '/game',
     name: 'Game',
     component: Game
+  },
+  {
+    path: '/main',
+    name: 'Main',
+    component: Main
   }
 ]
 

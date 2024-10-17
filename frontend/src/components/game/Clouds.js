@@ -1,7 +1,6 @@
 import { Vector3 } from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
-import model from '@/assets/models/model.gltf';
-import sound from '@/assets/audio/beep.mp3';
+import model from '/assets/models/model.gltf';
 export default class Clouds {
   constructor(scene) {
 	this.loader = new GLTFLoader();
