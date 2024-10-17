@@ -137,6 +137,12 @@ services:
       - DEBUG=${DEBUG}
       - REDIS_HOST=redis
       - REDIS_PORT=6379
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/metrics"]
+      interval: 10s
+      timeout: 10s
+      start_period: 10s
+      retries: 3
 
   usermanagement:
     restart: always
@@ -151,6 +157,12 @@ services:
       - DEBUG=${DEBUG}
     env_file:
       - .env
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/metrics"]
+      interval: 10s
+      timeout: 10s
+      start_period: 10s
+      retries: 3
 
   chat:
     restart: always
@@ -187,6 +199,12 @@ services:
       - APP=tournaments
       - DEBUG=${DEBUG}
       - TOURNAMENTS_FOLDER=${TOURNAMENTS_FOLDER}
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/metrics"]
+      interval: 10s
+      timeout: 10s
+      start_period: 10s
+      retries: 3
 
   # Monitoring Container
 
@@ -199,6 +217,14 @@ services:
     volumes:
       - ./Prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
       - prometheus-data:/prometheus
+    depends_on:
+      gateway:
+        condition: service_healthy
+      usermanagement:
+        condition: service_healthy
+      tournaments:
+        condition: service_healthy
+
   grafana:
     image: grafana/grafana:11.1.1-ubuntu
     container_name: grafana
@@ -209,7 +235,12 @@ services:
       - GF_SERVER_HTTP_PORT=3000
     volumes:
       - grafana-data:/var/lib/grafana
-
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
+      interval: 10s    
+      timeout: 10s       
+      retries: 3
+      start_period: 10s            
 
 
 
@@ -337,9 +368,13 @@ services:
   frontend:
     container_name: frontend
     depends_on:
-      - gateway
-      - kibana
-      - grafana
+      gateway:
+        condition: service_healthy
+      kibana:
+        condition: service_healthy
+      grafana:
+        condition: service_healthy
+
     build:
       context: ./frontend
     ports:

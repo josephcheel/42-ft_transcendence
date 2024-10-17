@@ -10,22 +10,10 @@ scrape_configs:
     scrape_interval: 30s
     static_configs:
       - targets: ["host.docker.internal:9323"]
-  
-  - job_name: 'blockchain'
-    scrape_interval: 30s
-    static_configs:
-      - targets: ['blockchain:8000']
-
-  - job_name: 'chat'
-    scrape_interval: 30s
-    static_configs:
-      - targets: ['chat:8000']
-
   - job_name: 'tournaments'
     scrape_interval: 30s
     static_configs:
       - targets: ['tournaments:8000']
-
   - job_name: 'usermanagement'
     scrape_interval: 30s
     static_configs:
