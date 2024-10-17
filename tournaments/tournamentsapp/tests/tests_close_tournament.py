@@ -1,4 +1,4 @@
-from tournamentsapp.models import Tournaments, Matches
+from tournamentsapp.models import Tournaments, Matches, User
 from django.test import TestCase, Client
 from django.urls import reverse
 from tournamentsapp.views.open_tournament import open_tournament
@@ -14,8 +14,41 @@ from tournamentsapp.status_options import StatusTournaments, StatusMatches
 import random
 from .printing import print_all_tournaments, print_all_invitations, print_all_matches, print_all_users
 from tournamentsapp.tasks.check_match_db_status import check_match_db_status
+from web3 import Web3
+from django.conf import settings
+
 # Create your tests here.
-#User = get_user_model()
+
+def transfer_first_founds(user):
+	web3 = Web3(Web3.HTTPProvider(settings.GANACHE_URL))
+	ganache_url = settings.GANACHE_URL
+	web3 = Web3(Web3.HTTPProvider(ganache_url))
+	if not web3.is_connected():
+		print("Could not connect to blockchain")
+		return False
+	print("Connected to blockchain")
+	new_account = web3.eth.account.create()
+	user.ethereum_address = new_account.address
+	user.ethereum_private_key = '0x' + new_account._private_key.hex()
+	user.save()
+	print('New account created', user.username, "  wallet  ", user.ethereum_address)
+	print('private key', user.ethereum_private_key)
+	print('Transfering 10 ethers to ', user.ethereum_address)
+	print('Transfering 10 ethers from ', web3.eth.accounts[0])
+	ganache_bank_account = web3.eth.accounts[0]
+	tx = {'from': ganache_bank_account,
+		  'to': user.ethereum_address,
+		  'value': web3.to_wei(10, 'ether'),
+		  'gas': 21000,
+		  'gasPrice': Web3.to_wei('1', 'gwei'),
+		  'nonce': web3.eth.get_transaction_count(ganache_bank_account)}
+	signed_tx = web3.eth.account.sign_transaction(
+		tx, settings.GANACHE_BANK)
+	tx_hash = web3.eth.send_raw_transaction(signed_tx.raw_transaction)
+	web3.eth.wait_for_transaction_receipt(tx_hash)
+	print('Balance after transfer', web3.eth.get_balance(user.ethereum_address))
+	return True
+
 
 class test_close_tournament (TestCase):
 	def setUp(self):
@@ -24,7 +57,7 @@ class test_close_tournament (TestCase):
 
 	def check_json(self, response, code):
 		self.assertJSONEqual(json.dumps(self.base_json),
-		                     response.content.decode("utf-8"))
+							 response.content.decode("utf-8"))
 		self.assertEqual(response.status_code, code)
 
 	def test_complete_process(self):
@@ -32,21 +65,11 @@ class test_close_tournament (TestCase):
 		is_json_header = {'Content-Type': 'application/json'}
 		for i in range(1, 22):
 			print('Creating user test', i)
-			my_data = json.dumps({'username': f"test{i}", 'password': "test", 'first_name': f"test{i}", 'last_name': f"Apellido{i}"})
-			my_response = requests.post('http://usermanagement:8000/user/create_user/',data = my_data , headers = is_json_header )
-			print(my_response.cookies)
-			self.cookies[f'test{i}'] = my_response.cookies
-			# User.objects.create_user(username=f"test{i}", password="test")
+			user = User.objects.create_user(username=f"test{i}", password="test", tournament_name=f"test{i}")
+			transfer_first_founds(user)
 		# Everithing is OK with 12 players
-#		self.client.logout()
-#		self.client.login(username='test10', password='test')
-		print_all_users()
-		my_response = requests.post('http://usermanagement:8000/user/logout_user/')
-		my_data = json.dumps({'username': "test10", 'password': "test"})
-		my_response = requests.post('http://usermanagement:8000/user/login_user/', data=my_data, headers=is_json_header)
-		response = requests.get ('http://usermanagement:8000/user/list_users/', cookies=self.cookies['test10'])
+		self.client.login(username='test10', password='test')
 		self.tournament = {
-#		self.client.login(username='test10', password='test')
 			'username': 'test10',
 			'password': 'test',
 			'date_start': (timezone.now() + timedelta(days=1)).isoformat(),
@@ -63,11 +86,9 @@ class test_close_tournament (TestCase):
 		response = self.client.post(reverse(open_tournament), json.dumps(
 			self.tournament), content_type='application/json')
 		self.check_json(response, 200)
-		my_response = requests.post('http://usermanagement:8000/user/logout_user/', data=my_data, headers=is_json_header)
-#		self.client.logout()
-		input('Press enter to continue')
+		self.client.logout()
 		players = ['test20', 'test19', 'test7', 'test4', 'test13', 'test17', 'test15', 'test16',
-                    'test5', 'test6', 'test14', 'test9', 'test11', 'test12']
+					'test5', 'test6', 'test14', 'test9', 'test11', 'test12']
 		for player in players:
 			self.client.login(username=player, password='test')
 			self.invitation = {
@@ -239,7 +260,6 @@ class test_close_tournament (TestCase):
 					self.match_to_finish), content_type='application/json')
 				self.check_json(response, 200)
 				print('match =', match.id, ' finished. Won!!!!', the_winner_id, ' lost ', the_looser_id)
-				input('Press enter to continue')
 				check_match_db_status.delay()
 			tournament = Tournaments.objects.get(id=1)
 		print_all_tournaments()
