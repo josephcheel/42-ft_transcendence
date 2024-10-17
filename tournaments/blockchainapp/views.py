@@ -7,49 +7,45 @@ from user.models import User
 from tournamentsapp.models import Tournaments
 from tournamentsapp.wrappers import require_post, user_is_authenticated
 import tournaments.settings as settings
+import time
 # Create your views here.
 
-@require_post
-@user_is_authenticated
-def execute_contract(request):
+def execute_contract(tournament_id):
 	# Conectar a la red (puede ser Ganache o cualquier otro nodo)
-	tournament_id = request.data("tournament_id")
-	user = User.objects.get(username = request.data("user"))
-	if user != tournament.player_id:
-		return JsonResponse({'status': 'error', 'message': 'User not authenticated', 'data': None}, status=405)
-	tournament = Tournaments.object.get(id = tournament_id)
+	tournament = Tournaments.objects.get(id=tournament_id)
+	user = tournament.player_id
 	try:
 		web3 = Web3(Web3.HTTPProvider(settings.GANACHE_URL))
 	except:
 		return JsonResponse({'status': 'error', 'message': 'Error connecting to the blockchain', 'data': None}, status=500)
 	# Leer el contrato
-	account = web3.eth.accounts[0]
-	contract = web3.eth.contract(address=bytecode, abi=abi)
+	account =user.ethereum_address
+	contract = web3.eth.contract(address=account, abi=abi)
 	first_place = tournament.id_winner.tournament_name
 	second_place = tournament.id_second.tournament_name
 	third_place = tournament.id_third.tournament_name
 	organizer = tournament.player_id.tournament_name
 	start_date = tournament.date_start
-	transaction = contract.functions.setTournamentResults(first_place,second_place, third_place, organizer,start_date).call()
+	print ('arguments: ', first_place, second_place, third_place, organizer, start_date)
+	transaction = contract.functions.setTournamentResults(
+		first_place, second_place, third_place, organizer, int(time.mktime(start_date.timetuple()))).call()
 	# Ejecutar la función del contrato
-	contract.functions.setGreeting
-
-	tx = contract.functions.setTournamentResults(first_place, second_place, third_place, start_date).buildTransaction({
+#	contract.functions.setGreeting
+	tx = contract.functions.setTournamentResults(first_place, second_place, third_place, organizer, int(time.mktime(start_date.timetuple()))).build_transaction({
 				'from': account,
-				'nonce': web3.eth.getTransactionCount(account),
+				'nonce': web3.eth.get_transaction_count(account),
 				'gas': 2000000,  # Límite de gas
-				'gasPrice': web3.toWei('20', 'gwei')  # Precio del gas
+				'gasPrice': web3.to_wei('20', 'gwei')  # Precio del gas
 			})
-	key = tournament.player_id.private_key
-	signed_tx = web3.eth.account.signTransaction(tx, private_key=key)
-	tx_hash = web3.eth.sendRawTransaction(signed_tx.rawTransaction)
-	reception = web3.eth.waitForTransactionReceipt(tx_hash)
+	key = user.ethereum_private_key
+	signed_tx = web3.eth.account.sign_transaction(tx, private_key=key)
+	tx_hash = web3.eth.send_raw_transaction(signed_tx.raw_transaction)
+	web3.eth.wait_for_transaction_receipt(tx_hash)
 	tournament.hash = tx_hash
 	tournament.save()
-	return JsonResponse({'status': 'success', 'message': 'Contract executed', 'data': tx_hash}, status=200)
+    #return JsonResponse({'status': 'success', 'message': 'Contract executed', 'data': tx_hash}, status=200)
 
 def get_balance_from_web3(wallet):
-	print('Red blockchain:', settings.GANACHE_URL)
 	try:
 		web3 = Web3(Web3.HTTPProvider(settings.GANACHE_URL))
 	except:
@@ -68,8 +64,6 @@ def get_balance(request):
 	except:
 		return JsonResponse({'status': 'error', 'message': 'Error obtaining balance', 'data': None}, status=500)
 
-@require_post
-@user_is_authenticated
 def make_transaction(request):
 	user = User.objects.get(username = request.data("user"))
 	amount = request.data("amount")
@@ -77,6 +71,7 @@ def make_transaction(request):
 	receiver = User.objects.get(username = receiver_id)
 	try:
 		try:
+			print ('paso Red blockchain:', settings.GANACHE_URL)
 			web3 = Web3(Web3.HTTPProvider(settings.GANACHE_URL))
 		except:
 			return JsonResponse({'status': 'error', 'message': 'Error connecting to the blockchain', 'data': None}, status=500)
@@ -89,9 +84,9 @@ def make_transaction(request):
 			'gas': 2000000,
 			'gasPrice': web3.toWei('20', 'gwei')
 		}
-		signed_tx = web3.eth.account.signTransaction(tx, private_key=key)
-		tx_hash = web3.eth.sendRawTransaction(signed_tx.rawTransaction)
-		reception = web3.eth.waitForTransactionReceipt(tx_hash)
+		signed_tx = web3.eth.account.sign_transaction(tx, private_key=key)
+		tx_hash = web3.eth.send_raw_transaction(signed_tx.raw_transaction)
+		web3.eth.wait_for_transaction_receipt(tx_hash)
 		return JsonResponse({'status': 'success', 'message': 'Transaction made', 'data': tx_hash}, status=200)
 	except:
 		return JsonResponse({'status': 'error', 'message': 'Error making transaction', 'data': None}, status=405)

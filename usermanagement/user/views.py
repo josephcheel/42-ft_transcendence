@@ -8,6 +8,7 @@ import json
 import logging
 from web3 import Web3
 
+
 #If testing we dont have usermodel.User so we want to use default
 
 from .models import *
@@ -15,28 +16,34 @@ User = get_user_model()
 
 
 def transfer_first_founds(user):
-    web3 = Web3(Web3.HTTPProvider(settings.GANACHE_URL))
-    ganache_url = settings.GANACHE_URL
-    web3 = Web3(Web3.HTTPProvider(ganache_url))
-    if not web3.is_Connected():
-        print("Could not connect to blockchain")
-        return False
-    print("Connected to blockchain")
-    new_account = web3.eth.account.create()
-    user.ethereum_address = new_account.address
-    user.ethereum_private_key = new_account.privateKey.hex()
-    user.save()
-    ganache_bank_account = web3.eth.accounts[0]
-    tx = {'from': ganache_bank_account,
-          'to': user.ethereum_address,
-          'value': web3.toWei(10, 'ether'),
-          'gas': 21000,
-          'gasPrice': Web3.toWei('1', 'gwei'),
-          'nonce': web3.eth.getTransactionCount(ganache_bank_account)}
-    signed_tx = Web3.eth.account.signTransaction(tx, ganache_bank_account)
-    tx_hash = web3.eth.sendRawTransaction(signed_tx.rawTransaction)
-    web3.eth.waitForTransactionReceipt(tx_hash)
-    return True
+	web3 = Web3(Web3.HTTPProvider(settings.GANACHE_URL))
+	ganache_url = settings.GANACHE_URL
+	web3 = Web3(Web3.HTTPProvider(ganache_url))
+	if not web3.is_connected():
+		print("Could not connect to blockchain")
+		return False
+	print("Connected to blockchain")
+	new_account = web3.eth.account.create()
+	user.ethereum_address = new_account.address
+	user.ethereum_private_key = '0x' + new_account._private_key.hex()
+	user.save()
+	print('New account created', user.username, "  wallet  ", user.ethereum_address)
+	print('private key', user.ethereum_private_key)
+	print('Transfering 10 ethers to ', user.ethereum_address)
+	print('Transfering 10 ethers from ', web3.eth.accounts[0])
+	ganache_bank_account = web3.eth.accounts[0]
+	tx = {'from': ganache_bank_account,
+		  'to': user.ethereum_address,
+		  'value': web3.to_wei(10, 'ether'),
+		  'gas': 21000,
+		  'gasPrice': Web3.to_wei('1', 'gwei'),
+		  'nonce': web3.eth.get_transaction_count(ganache_bank_account)}
+	signed_tx = web3.eth.account.sign_transaction(
+		tx, settings.GANACHE_BANK)
+	tx_hash = web3.eth.send_raw_transaction(signed_tx.raw_transaction)
+	web3.eth.wait_for_transaction_receipt(tx_hash)
+	print('Balance after transfer', web3.eth.get_balance(user.ethereum_address))
+	return True
 
 if not settings.DEBUG:
     logger = logging.getLogger('django')
@@ -95,6 +102,7 @@ def create_user(request):
                                 status=201)
 
     
+@csrf_exempt
 @require_post
 @validate_login_credentials
 @exception_handler
@@ -117,6 +125,7 @@ def login_user(request):
                                 status=401)
     
     
+@csrf_exempt
 @require_post
 @exception_handler
 def logout_user(request):
@@ -134,9 +143,12 @@ def logout_user(request):
                                 'data' : None},
                                 status=403)
     
+
+@csrf_exempt
 @require_get
 @exception_handler
 def is_logged_in(request):
+    print("Checking if user is logged in", request)
     if request.user.is_authenticated:
         return JsonResponse({'status': 'success', 
                             'message':'User is logged in', 
@@ -158,6 +170,9 @@ def list_users(request):
                             status=200)
 
 # GET current user status or POST new user status (online/offline)
+
+
+@csrf_exempt
 @require_auth
 @exception_handler
 def user_status(request):
@@ -198,6 +213,9 @@ def user_status(request):
             }, status=405)
 
 #Creates a new friendship if it doens't exist
+
+
+@csrf_exempt
 @require_auth
 @require_post
 @get_friend
@@ -215,6 +233,7 @@ def send_friend_request(request):
 
     
 #Changes friendship status, can be use to accept/decline invites or to remove a friendship
+@csrf_exempt
 @require_auth
 @require_post
 @get_friend
@@ -236,6 +255,9 @@ def change_friendship_status(request):
             'data' : None}, status=200)
 
 #Gets all friends
+
+
+@csrf_exempt
 @require_auth
 @require_get
 @exception_handler
@@ -246,6 +268,7 @@ def get_friends(request):
                 'data' : friends}, status=200)
 
 
+@csrf_exempt
 @require_auth
 @require_post
 @get_data
@@ -256,6 +279,8 @@ def update_user(request):
                 'message' : "Updated fields",
                 'data' : None}, status=200)
 
+
+@csrf_exempt
 @require_auth
 @require_post
 @exception_handler
@@ -269,7 +294,9 @@ def upload_picture(request):
                     'profile_picture_url': request.user.userprofilepic.picture.url
                     }
                 }, status=200)
-    
+
+
+@csrf_exempt
 @require_auth
 @require_get
 @exception_handler
@@ -283,6 +310,8 @@ def get_profile_picture(request, username):
                     }
                 }, status=200)
 
+
+@csrf_exempt
 @require_auth
 @require_get
 @exception_handler
