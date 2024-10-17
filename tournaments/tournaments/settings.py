@@ -74,10 +74,10 @@ INSTALLED_APPS = [
     'user',
 ]
 
-if not DEBUG:
-    AUTH_USER_MODEL="user.User"
-else:
-    AUTH_USER_MODEL="tournamentsapp.User"
+#if not DEBUG:
+AUTH_USER_MODEL="user.User"
+#else:
+#    AUTH_USER_MODEL="tournamentsapp.User"
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -87,7 +87,22 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
+    'django_prometheus.middleware.PrometheusAfterMiddleware',
 ]
+PROMETHEUS_LATENCY_BUCKETS = (0.01, 0.025, 0.05, 0.075, 0.1, 0.25, 0.5,
+                              0.75, 1.0, 2.5, 5.0, 7.5, 10.0, 25.0, 50.0, 75.0, float("inf"),)
+PROMETHEUS_EXPORT_MIGRATIONS = True
+PROMETHEUS_METRIC_NAMESPACE = "usermanagement"
+
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django_prometheus.cache.backends.filebased.FileBasedCache',
+        'LOCATION': '/var/tmp/django_cache',
+    }
+}
+
 
 ROOT_URLCONF = 'tournaments.urls'
 
@@ -191,4 +206,5 @@ CELERY_IMPORTS = ('tournamentsapp.tasks.check_match_db_status', 'tournamentsapp.
 
 TIME_DELTA = 5
 
-GANACHE_URL = os.environ.get("GANACHE_URL", "http://blockchain:8545")
+GANACHE_URL = "http://blockchain:8545"
+GANACHE_BANK = "0x4f3edf983ac636a65a842ce7c78d9aa706d3b113bce9c46f30d7d21715b23b1d"
