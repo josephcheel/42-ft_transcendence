@@ -113,34 +113,18 @@ export default {
             console.error("No user profile data received");
           }
         })
-      axios
-        .get(`https://localhost:8000/api/user/get_profile_picture_url/${username}/`)
-        .then((response)=>{
-          const pict = response.data.data;
-          console.log(pict);
-          let url = pict.profile_picture_url;
-        })
 
-      console.log("HOLA");
-      axios.get('https://localhost:8000/api/user/profile_pictures/default.jpeg').then((response)=>{
-        const img = response;
-        console.log(img);
-        if (img){
-          this.user.profile_picture_url = img;
-        }
+    axios
+      .get(`https://localhost:8000/api/user/get_profile_picture_url/${username}/`)
+      .then((response) => {
+        const pict = response.data.data;
+        const url = pict.profile_picture_url;
+        console.log("URL: " + url);
+        this.user.profile_picture_url = url;
       })
-
-/*       axios
-        .get(`https://localhost:8000/api/user${url}`)
-        .then((response)=>{
-          const img = response;
-          if (img){
-            this.user.profile_picture_url = img;
-          }
-        })
-        .catch((error) => {
-          console.error("Error fetching user profile:", error.response ? error.response.data : error);
-        }); */
+      .catch((error) => {
+        console.error("Error fetching user profile:", error.response ? error.response.data : error);
+      });
     }
 
   }
