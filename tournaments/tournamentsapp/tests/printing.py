@@ -25,4 +25,4 @@ def print_all_users():
 	users = User.objects.all()
 	for user in users:
 		print('user_id: ', user.id, 'username: ', user.username, 'email: ', user.email, 'puntos: ', user.puntos, 'puntos_reservados: ', user.puntos_reservados
-                    , 'wallet balance = ',  get_balance_from_web3(user.ethereum_address))
+                    , 'wallet = ',  user.ethereum_address, 'wallet balance = ',  get_balance_from_web3(user.ethereum_address))
