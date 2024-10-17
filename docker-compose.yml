@@ -344,6 +344,8 @@ services:
       context: ./frontend
     ports:
       - "8000:8000"
+    volumes:
+      - ./usermanagement/profile_pictures/:/usr/share/nginx/html/profile_pictures 
 
 volumes:
   certs:

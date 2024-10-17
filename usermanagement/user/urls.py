@@ -19,5 +19,5 @@ urlpatterns = [
     path('upload_profile_picture_url/', upload_picture, name='upload_picture'),
     path('get_profile/<str:username>/', get_profile, name='get_profile'),
 
-]  + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+]
 
