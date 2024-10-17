@@ -12,20 +12,20 @@ from django.contrib.auth.models import AbstractUser, Group, Permission
 
 
 if settings.DEBUG:
+
 	from django.contrib.auth.models import AbstractUser
 	class User(AbstractUser):
-		original_username =  models.CharField(max_length=100, null=True)
-		tournament_name = models.CharField(max_length=100, null = True)
+		original_username = models.CharField(max_length=100, null=True)
+		tournament_name = models.CharField(max_length=100, null=True)
 		puntos = models.IntegerField(default=1000)
 		puntos_reservados = models.IntegerField(default=0)
+		ethereum_address = models.CharField(max_length=42, null=True)
+		ethereum_private_key = models.CharField(max_length=66, null=True, blank=True)
 		# Specify a unique related_name for the groups field
-#		groups = models.ManyToManyField('user_groups',related_name='users_db_Group', blank=True)
-#		user_permissions = models.ManyToManyField('user_permissions',related_name='users_db_Permission', blank=True)	
-		def update_fields(self, **kwargs):
-			for field in kwargs:
-				if field in ['first_name', 'last_name', 'tournament_name'] and hasattr(self, field):
-					setattr(self, field, kwargs[field])
-			self.save()
+		groups = models.ManyToManyField(
+			'auth.Group', related_name='users_db_Group', blank=True)
+		user_permissions = models.ManyToManyField(
+			'auth.Permission', related_name='users_db_Permission', blank=True)
 
 User = get_user_model()
 
