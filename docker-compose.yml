@@ -28,6 +28,12 @@ services:
   redis:
     image: 'redis:6.2-alpine'
     container_name: redis
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s          # Check every 30 seconds
+      timeout: 10s           # Wait 10 seconds for a response
+      retries: 3
+      start_period: 5s     # start 30 seconds after the container starts    
     
   celery_worker:
     build:
@@ -121,7 +127,10 @@ services:
     restart: always
     container_name: gateway
     depends_on:
-      - redis
+      redis:
+        condition: service_healthy
+      db:
+        condition: service_healthy
     build: ./gateway
     #ports:
       #- "8000:8000"
@@ -147,7 +156,10 @@ services:
   usermanagement:
     restart: always
     depends_on:
-      - migrations
+      migrations:
+        condition: service_started
+      db:
+        condition: service_healthy
     container_name: usermanagement
     build: ./usermanagement
     volumes:
@@ -168,7 +180,10 @@ services:
     restart: always
 
     depends_on:
-      - migrations
+      migrations:
+        condition: service_started
+      db:
+        condition: service_healthy
     container_name: chat
     build: ./chat
     volumes:
@@ -184,9 +199,13 @@ services:
 
   tournaments:
     depends_on:
-      - redis
-      - db
-      - migrations
+      redis:
+        condition: service_healthy
+      db:
+        condition: service_healthy
+      migrations:
+        condition: service_started
+
     container_name: tournaments
     build: ./tournaments
     volumes:
