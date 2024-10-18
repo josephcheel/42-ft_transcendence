@@ -3,25 +3,25 @@
   <div id="app">
     <nav class="navbar navbar-expand-lg " v-if="!isNav()">
       <img src="/src/images/Logo.png" alt="Logo" style="margin-left:15px; width: 65px; height: auto;">
-        <h2 style="margin-left: 180px;">TRANSCENDENCE</h2>
+        <h2 style="margin-left: 180px; margin-right: 180px;">Pong</h2>
         <ul class="navbar-nav">
           <li class="nav-item">
             <router-link to="/" class="nav-link1">{{ $t('message.home')}}</router-link>
           </li>
           <li class="nav-item">
-            <router-link to="/Login" class="nav-link1">{{ $t('message.login')}}</router-link>
+            <router-link to="/login" class="nav-link1">{{ $t('message.login')}}</router-link>
           </li>
           <li class="nav-item">
             <router-link to="/play" class="nav-link1">{{ $t('message.play')}}</router-link>
           </li>
           <li class="nav-item">
-            <router-link to="/Dashboard" class="nav-link1">{{ $t('message.dashboard')}}</router-link>
+            <router-link to="/dashboard" class="nav-link1">{{ $t('message.dashboard')}}</router-link>
           </li>
           <li class="nav-item">
             <router-link to="/profile" class="nav-link1">{{ $t('message.profile')}}</router-link>
           </li>
           <li class="nav-item">
-            <router-link to="/Chat" class="nav-link1">{{ $t('message.chat')}}</router-link>
+            <router-link to="/chat" class="nav-link1">{{ $t('message.chat')}}</router-link>
           </li>
           <select class="form-select form-select-sm" v-model="selectedLang" @change="changeLang">
             <option value="en">English</option>
@@ -53,27 +53,20 @@ export default {
     changeLang() {
       this.$i18n.locale = this.selectedLang;
     },
-    isGame() {
-      return this.$route.path === '/game';
-    },
     isNav() {
       return (this.$route.path === '/game' ||  this.$route.path === '/main');
-    }
+    },
   }
+  
 }
 </script>
 
-<style scoped>
-html{
-  overflow: hidden;
-}
-
+<style>
 #app {
   display: flex;
   flex-direction: column;
   height: 100vh;
   width: 100%;
-  overflow: hidden;
 }
 
 nav {
@@ -130,4 +123,5 @@ nav {
   gap: 20px; 
     margin-right: 20px;
 }
+
 </style>

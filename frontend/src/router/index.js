@@ -42,7 +42,7 @@ const routes = [
     component: Chat
   },
   {
-    path: '/Dashboard',
+    path: '/dashboard',
     name: 'Dashboard',
     component: Dashboard
   },
@@ -68,9 +68,21 @@ const routes = [
   }
 ]
 
+
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes
+})
+
+router.beforeEach((to, from, next) => {
+  if (to.path === '/main' || to.path === '/game') {
+    document.body.style.overflow = 'hidden';
+  }
+  else {
+    document.body.style.overflow = 'auto';
+  }
+  next();
 })
 
 export default router

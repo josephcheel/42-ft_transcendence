@@ -1,32 +1,36 @@
 <template>
 <div class="container-fluid d-flex justify-content-center align-items-center ">
-  <div class="card p-4 shadow-sm" style="max-width: 400px; width: 100%;  box-shadow: -5px 5px 55px lightblue;">
-    <h3 class="text-center mb-4">{{ $t('message.register')}}</h3>
+  <div class="p-4 " style="max-width: 400px; width: 100%;">
+    <h3 id="register_title" class="text-center mb-4">{{ $t('message.register_title')}}</h3>
     <form @submit.prevent="login">
-      <div class="mb-3">
+      <!-- <div class="mb-3">
         <label for="user" class="form-label">{{ $t('message.name')}}</label>
-        <input v-model="name" type="text" class="form-control" id="name" placeholder="Enter your Name" required>
+        <input v-model="name" type="text" class="form-control" id="name" placeholder="Enter your name" required>
       </div>
       <div class="mb-3">
         <label for="user" class="form-label">{{ $t('message.lastname')}}</label>
-        <input v-model="lastname" type="text" class="form-control" id="lastname" placeholder="Enter your Lastname" required>
-      </div>
+        <input v-model="lastname" type="text" class="form-control" id="lastname" placeholder="Enter your lastname" required>
+      </div> -->
       <div class="mb-3">
         <label for="user" class="form-label">{{ $t('message.username')}}</label>
-        <input v-model="user" type="text" class="form-control" id="user" placeholder="Enter your Username" required>
+        <input v-model="user" spellcheck="false" type="text" class="form-control" id="user" placeholder="Enter your username" required>
+      </div>
+      <div class="mb-3">
+        <label for="email" class="form-label">{{ $t('message.email')}}</label>
+        <input v-model="email" spellcheck="true" type="email" class="form-control" id="email" placeholder="Enter your email" required>
       </div>
       <div class="mb-3">
         <label for="password" class="form-label">{{ $t('message.password')}}</label>
-        <input v-model="psw" type="password" class="form-control" id="password" placeholder="Enter your Password" required>
+        <input v-model="psw" type="password" class="form-control" id="password" placeholder="Enter your password" required>
       </div>
       <div class="mb-3">
         <label for="password" class="form-label">{{ $t('message.confirm_pass')}}</label>
         <input v-model="psw2" type="password" class="form-control" id="password2" placeholder="Confirm your password" required>
       </div>
-      <button id="login" type="submit" class="btn btn-primary w-100">{{ $t('message.register')}}</button>
+      <button type="submit" class="btn btn-primary w-100">{{ $t('message.register')}}</button>  <!---id="register" -->
     </form>
     <div class="mt-3 text-center">
-    <p>{{ $t('message.alreadyAcc')}} <router-link to="/Login">{{ $t('message.login')}}</router-link></p>
+    <p id="already_account">{{ $t('message.alreadyAcc')}} <router-link @click="navigateTo('Login')" id="login" to="#">{{ $t('message.login')}}</router-link></p>
     </div>
     <p style="color: red;">
       {{ toastMsg }}
@@ -36,6 +40,17 @@
 
 
 </template>
+<script>
+  export default {
+    name: 'Register',
+    methods: {
+        navigateTo(view) {
+          this.$emit('changeView', view);
+        },
+    }
+  }
+</script>
+
 <script setup>
     import { onMounted, ref } from 'vue';
     import { useRouter } from 'vue-router';
@@ -48,6 +63,7 @@
     const name = ref();
     const lastname = ref();
     const psw2 = ref();
+    const email = ref();
     const errorToast = ref(null)
     const toastMsg = ref(null)
 
@@ -93,10 +109,67 @@
 
 
 <style scoped>
-.form-label{
-  display: flex;
-  font-weight: bold;
+
+#login {
+  background: linear-gradient(90deg, #66ff69 0%, #4af7fd 100%);
+  /* background: linear-gradient(90deg, #b5ffb7 0%, #b6fdff 100%); */
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 21px;
+  text-align: left;
+  text-decoration: underline;
+  background-size: 200% 200%;
+  animation: gradientAnimation 4s ease infinite;
+
 }
+
+#login:hover {
+    background: linear-gradient(90deg, #66ff69 0%, #4af7fd 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 21px;
+    text-align: left;
+    text-decoration: underline;
+    background-size: 200% 200%;
+    animation: gradientAnimation 2s ease infinite;
+  }
+  @keyframes gradientAnimation {
+    0% {
+    background-position: 0% 50%;
+    }
+    50% {
+    background-position: 100% 50%;
+    }
+    100% {
+    background-position: 0% 50%;
+    }
+}
+
+#already_account
+{
+  margin-top: 2em;
+  color: white;
+  font-family: 'Nokia Cellphone FC' ;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+#register_title {
+  color : white;
+  font-weight: 700;
+}
+
+.form-label {
+    display: flex;
+    text-align: left;
+    font-size: 14px ;
+  }
 
 
 </style>

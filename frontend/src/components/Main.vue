@@ -1,10 +1,15 @@
 <template>
-	<img id="title" src="/public/PONG3D.png" alt="Logo">
+	<img id="title" src="/assets/images/PONG3D.png" alt="Logo">
 	<section id="login-wrapper" class="container-fluid d-flex justify-content-center align-items-center">
-		<Login></Login>
+		<!-- <Login></Login> -->
+		<component :is="currentView" @changeView="changeComponent" ></component>
 	</section>
 	<div ref="canvas"></div>
-	<img id="arrow" src="/public/assets/icons/chevron-down.svg">
+	<img id="arrow" src="/assets/icons/chevron-down.svg">
+
+
+    <!-- The child components (Login, Register, ForgotPassword) will be rendered here -->
+    <router-view />
 </template>
 <style scoped>
 
@@ -37,12 +42,13 @@
     text-align: left;
     margin-bottom: 2em;
 	margin: 0em 10em 0em 10em;
-  }
+}
 
 body {
   margin: 0;
   height: 100%;
   position: relative;
+
   /* place-content: center; */
 }
 canvas {
@@ -84,13 +90,12 @@ canvas {
 /* Custom styles for primary button */
 .btn-primary {
 	position: absolute;
-	background-color: #007bff; /* Change the background color */
-	border-color: #007bff; /* Change the border color */
-	color: #fff; /* Change the text color */
-	/* padding: 10px 20px; Adjust padding */
+	background-color: #007bff;
+	border-color: #007bff;
+	color: #fff;
 	font-size: 16px; 
-	border-radius: 5px; /* Adjust border radius */
-	transition: background-color 0.3s ease, border-color 0.3s ease; /* Add transition for smooth effect */
+	border-radius: 5px;
+	transition: background-color 0.3s ease, border-color 0.3s ease;
 }
 
 .btn-secondary {
@@ -110,38 +115,65 @@ canvas {
 
 }
 
-#Headline {
-	position: absolute;
-	top: 50%;
-	right: 50%;
-	transform: translate(50%, -50%);
-	font-family: 'LeisurePark', sans-serif;
-	font-weight: 500;
-	font-size: 6em;
-	/* text-overflow: clip; */
-	color: #000168;
-	line-height: 0.8; 
-}
+.form-label {
+    font-family: 'Nokia Cellphone FC' ;
+  }
+  .form-control:focus, .form-control { 
+    font-family:'Courier New', Courier;
+    font-size: 1em;
+    font-weight: 500;
+    border-radius: 25px;
+    background-color: #ffffffae;
+    border: 0px
+  }
 
-#Headline {
-	position: absolute;
-	top: 50%;
-	right: 50%;
-	transform: translate(50%, -50%);
-	font-family: 'Roboto', sans-serif;
-	color: #ffffff;
-}
 
+@media screen and (max-width: 600px) {
+	#title {
+		height: 5vh;
+		top: 5%;
+		left: 5%;
+		position: absolute;
+	}
+}
 </style>
 <script>
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+import Clouds from './game/Clouds.js';
 import Login from './Login.vue';
+import Register from './Register.vue';
+import Forgotps from './Forgotps.vue';
 export default {
 	name: 'HomePage',
 	components: {
-		Login // Register child component
+		Login,
+		Register,
+		Forgotps
 	},
+
+  data() {
+    return {
+      // Inicialmente se muestra el componente Login
+      currentView: 'Login',
+    };
+  },
+  computed: {
+    currentViewComponent() {
+      // Mapeamos el nombre de la vista al componente correspondiente
+      return {
+        'Login': 'Login',
+        'Register': 'Register',
+        'Forgotps': 'Forgotps',
+      }[this.currentView];
+    },
+  },
+  methods: {
+	// Actualizamos el valor de currentView
+	changeComponent(view) {
+      this.currentView = view;
+    }
+  },
 	mounted() {
 		const login = document.getElementById('login-wrapper');
 		const arrow = document.getElementById('arrow');
@@ -185,7 +217,7 @@ export default {
 
 		this.$refs.canvas.appendChild(renderer.domElement);
 
-		camera.position.z = 50;
+		camera.position.z = 15;
 
 		const geometry = new THREE.SphereGeometry(10, 50, 50);
 		const material = new THREE.MeshPhongMaterial({
@@ -213,6 +245,14 @@ export default {
 		sphere.castShadow = true;
 		scene.add(sphere);
 
+
+		// const clouds = new Clouds(this.scene);
+		// const model = '/assets/models/model.gltf';
+		// clouds.add(scene, model, new THREE.Vector3(45, 0, 0), new THREE.Vector3(0.1, 0.1, 0.1), new THREE.Vector3(0, Math.PI / 2, 0));
+		// clouds.add(scene, model, new THREE.Vector3(-45, 0, 0), new THREE.Vector3(0.1, 0.1, 0.1), new THREE.Vector3(0, Math.PI / -2, 0));
+		// clouds.add(scene, model, new THREE.Vector3(0, -50, -10), new THREE.Vector3(1, 1, 1), new THREE.Vector3(0, 0, 0));
+
+
 		const controls = new OrbitControls(camera, renderer.domElement);
 		controls.enableDamping = true; // for smooth motion
 		controls.dampingFactor = 1;
@@ -235,24 +275,25 @@ export default {
 
 		let angle = 0.01; // Angle for moving the camera in a circular path
 		const radius = 20; // Distance from the sphere
-		let coilHeight = 0.02;
-		let speed = 0.00000000001; // Speed of movement
+		const MaxDistanceToSphere = 20; // Maximum distance from the sphere
+		const MinDIstanceToSphere = 10; // Minimum distance from the sphere
+		const SpeedRotation = 0.00000000001; // Speed of movement
+		let SpeedToSphere = 0.00002;
 		let y = 0;
 
 		function animate() {
 			requestAnimationFrame(animate);
-			sphere.rotation.x += 0.01;
-			angle += speed;
-			angle += 0.01; // Adjust speed of movement (lower is slower)
+			angle += SpeedRotation + 0.01;
 			const x = radius * Math.cos(angle); // X position of the camera
 			const z = radius * Math.sin(angle); // Z position of the camera
+			controls.update();
+			y += SpeedToSphere;
 
-			y += coilHeight;
-
-			if (y >= 50 || y <= -50) {
-				coilHeight *= -1; // Reverse the direction of the oscillation
+			if (y >= MinDIstanceToSphere || y <= -MaxDistanceToSphere) {
+				SpeedToSphere *= -1;
 			}
 
+			// light2.position.set(x, y, z);
 			camera.position.set(x, y, z);
 			camera.lookAt(sphere.position);
 			renderer.render(scene, camera);

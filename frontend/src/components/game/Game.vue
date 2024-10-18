@@ -19,8 +19,8 @@
 		<header>
 			<h1 id="score">Score 0 - 0 </h1>
 			<input type="checkbox" id="volume">
-			<img src="/public/assets/icons/mute.svg" alt="volume mute" id="mute" >
-			<img src="/public/assets/icons/unmute.svg" alt="volume unmute" id="unmute" >
+			<img src="/assets/icons/mute.svg" alt="volume mute" id="mute" >
+			<img src="/assets/icons/unmute.svg" alt="volume unmute" id="unmute" >
 		</header>
 
 		<section> 
@@ -270,7 +270,11 @@ export default {
 			this.ball.position.set(0, 0, 0);
 
 			new Stadium(this.scene);
-			new Clouds(this.scene);
+			const clouds = new Clouds(this.scene);
+			const model = '/assets/models/model.gltf';
+			clouds.add(this.scene, model, new Vector3(45, 0, 0), new Vector3(0.1, 0.1, 0.1), new Vector3(0, Math.PI / 2, 0));
+			clouds.add(this.scene, model, new Vector3(-45, 0, 0), new Vector3(0.1, 0.1, 0.1), new Vector3(0, Math.PI / -2, 0));
+			clouds.add(this.scene, model, new Vector3(0, -150, 60), new Vector3(0.5, 0.5, 0.5), new Vector3(0, 0, 0));
 
 			this.controls = new OrbitControls(this.camera, this.renderer.domElement);
 			this.controls.enableDamping = true;
