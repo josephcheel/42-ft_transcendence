@@ -35,13 +35,13 @@ start :
 	@$(COMPOSE) -f $(DOCKER_COMPOSE_FILE) start
 
 rebuild:
-# @$(COMPOSE) -f $(DOCKER_COMPOSE_FILE) down --volumes
+	@$(COMPOSE) -f $(DOCKER_COMPOSE_FILE) down --volumes
 	@sudo find . -type d -name 'migrations' -exec rm -r {} +
 	@sudo find . -type d -name '__pycache__' -exec rm -r {} +
 	@sudo find . -type f -name 'db.sqlite3' -exec rm {} +
-# @sudo rm -rf $(VOLUMES)
-# @mkdir -p $(VOLUMES)
-# @touch $(LOG_FILES)
+	@sudo rm -rf $(VOLUMES)
+	@mkdir -p $(VOLUMES)
+	@touch $(LOG_FILES)
 	@$(COMPOSE) -f $(DOCKER_COMPOSE_FILE) up --build -d
 
 migrat:

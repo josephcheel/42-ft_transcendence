@@ -147,3 +147,10 @@ curl  -u "elastic:changeme" PUT http://localhost:9200/_snapshot/my_repository -H
 
 
 curl -X GET "localhost:9200/_snapshot/_all"
+
+
+curl --user elastic:changeme -X GET "localhost:5601/api/saved_objects/dashboard/a3ebeba0-4fe4-11ef-a74c-6de6710340ab" -H "kbn-xsrf: true" -H "Content-Type: application/json" 
+
+curl --user elastic:changeme -X GET "localhost:5601/api/saved_objects/dataView/3e6b4da2-f1fa-4b22-9253-878d9ad4ab1" -H "kbn-xsrf: true" -H "Content-Type: application/json" 
+
+curl --user elastic:changeme -X GET "http://localhost:5601/api/saved_objects/" -H "kbn-xsrf: true" -H "Content-Type: application/json" 
