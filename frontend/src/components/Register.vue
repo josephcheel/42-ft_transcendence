@@ -3,29 +3,31 @@
   <div class="p-4 " style="max-width: 400px; width: 100%;">
     <h3 id="register_title" class="text-center mb-4">{{ $t('message.register_title')}}</h3>
     <form @submit.prevent="login">
-      <!-- <div class="mb-3">
-        <label for="user" class="form-label">{{ $t('message.name')}}</label>
-        <input v-model="name" type="text" class="form-control" id="name" placeholder="Enter your name" required>
-      </div>
-      <div class="mb-3">
-        <label for="user" class="form-label">{{ $t('message.lastname')}}</label>
-        <input v-model="lastname" type="text" class="form-control" id="lastname" placeholder="Enter your lastname" required>
-      </div> -->
+      <div class="d-flex mb-3">
+        <div class="me-3">
+          <label for="user" class="form-label">{{ $t('message.name')}}</label>
+          <input v-model="name" type="text" class="form-control" id="name" :placeholder="$t('message.name_placeholder')" required>
+        </div>
+        <div class="me-3">
+          <label for="user" class="form-label">{{ $t('message.lastname')}}</label>
+          <input v-model="lastname" type="text" class="form-control" id="lastname" :placeholder="$t('message.lastname_placeholder')" required>
+        </div>
+     </div>
       <div class="mb-3">
         <label for="user" class="form-label">{{ $t('message.username')}}</label>
-        <input v-model="user" spellcheck="false" type="text" class="form-control" id="user" placeholder="Enter your username" required>
+        <input v-model="user" spellcheck="false" type="text" class="form-control" id="user" :placeholder="$t('message.username_placeholder')" required>
       </div>
       <div class="mb-3">
         <label for="email" class="form-label">{{ $t('message.email')}}</label>
-        <input v-model="email" spellcheck="true" type="email" class="form-control" id="email" placeholder="Enter your email" required>
+        <input v-model="email" spellcheck="true" type="email" class="form-control" id="email" placeholder="name@example.com" required>
       </div>
       <div class="mb-3">
         <label for="password" class="form-label">{{ $t('message.password')}}</label>
-        <input v-model="psw" type="password" class="form-control" id="password" placeholder="Enter your password" required>
+        <input v-model="psw" type="password" class="form-control" id="password" :placeholder="$t('message.password_placeholder')" required>
       </div>
       <div class="mb-3">
         <label for="password" class="form-label">{{ $t('message.confirm_pass')}}</label>
-        <input v-model="psw2" type="password" class="form-control" id="password2" placeholder="Confirm your password" required>
+        <input v-model="psw2" type="password" class="form-control" id="password2" :placeholder="$t('message.confirm_pass_placeholder')" required>
       </div>
       <button type="submit" class="btn btn-primary w-100">{{ $t('message.register')}}</button>  <!---id="register" -->
     </form>

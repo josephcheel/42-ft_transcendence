@@ -87,25 +87,6 @@ canvas {
 	left: 0;
 	z-index: -1;
 }
-/* Custom styles for primary button */
-.btn-primary {
-	position: absolute;
-	background-color: #007bff;
-	border-color: #007bff;
-	color: #fff;
-	font-size: 16px; 
-	border-radius: 5px;
-	transition: background-color 0.3s ease, border-color 0.3s ease;
-}
-
-.btn-secondary {
-	position: absolute;
-}
-
-.btn-primary:hover {
-	background-color: #0056b3; /* Change background color on hover */
-	border-color: #0056b3; /* Change border color on hover */
-}
 
 #title {
 	height: 10vh;
@@ -130,9 +111,10 @@ canvas {
 
 @media screen and (max-width: 600px) {
 	#title {
-		height: 5vh;
-		top: 5%;
-		left: 5%;
+		height: 4vh;
+		top: 1%;
+		align-items: center;
+		display: flex;
 		position: absolute;
 	}
 }
@@ -263,7 +245,8 @@ export default {
 
 		// const ambientLight = new AmbientLight(0xffffff, 0.05);
 
-		const ambientLight = new AmbientLight(0xffffff, 0.15);
+		// const ambientLight = new AmbientLight(0xffffff, 0.15);
+		const ambientLight = new AmbientLight(0xffffff, 0.45);
 		scene.add(ambientLight);
 
 		const light2 = new PointLight(0xffffff, 5000);

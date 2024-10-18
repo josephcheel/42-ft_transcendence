@@ -39,7 +39,12 @@ const messages = {
             tournament: 'Tournament',
             explain_tournament: 'Create a tournament for 16 players',
             email: 'Email',
-            reset_pass: 'Restore your password'
+            reset_pass: 'Restore your password',
+            name_placeholder: 'first name',
+            lastname_placeholder: 'last name',
+            username_placeholder: 'username',
+            password_placeholder: 'password',
+            confirm_pass_placeholder: 'confirm password',
         },
     },
     es: {
