@@ -40,30 +40,52 @@
 </template>
 <style>
 
-@import url('https://fonts.googleapis.com/css2?family=SUSE:wght@100..800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Sixtyfour+Convergence&display=swap');
 
-body {
-  margin: 0;
-  height: 100%;
-  /* place-content: center; */
+@font-face {
+  font-family: 'SUSE';
+  font-style: normal;
+  font-weight: 100 800;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/suse/v1/MwQ5bhb078Wt2VFBPbh5uGMHjA.woff2) format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'SUSE';
+  font-style: normal;
+  font-weight: 100 800;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/suse/v1/MwQ5bhb078Wt2V9BPbh5uGM.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+
+body 
+{
+	margin: 0;
+	height: 100%;
+	place-content: center;
 }
 canvas {
   display: block;
 }
 #score {
-		display: flexbox;
-		/* justify-content: center; */
-		/* align-items: center; */
-		/* font-family: 'SUSE'; */
 		margin-top: 6%;
 		margin-left: 22%;
 		margin-right: 20%;
 		position: absolute;
-		font-family:monospace;
+		font-family: 'Noto Sans Mono', monospace;
 		font-weight: 700;
 		font-size: 2.5em;
 		visibility: hidden;
 		padding: 10px;
+		color: rgb(8, 8, 8) !important; /* Change the color of the font */
+		font-variation-settings:
+		"BLED" 0,
+		"SCAN" 1,
+		"XELA" 0,
+		"YELA" 0;
 }
 header {
 
@@ -78,17 +100,16 @@ header {
 {
   position: absolute;
   top : 18%;
-  right: 25%;
-  padding: 10px;
+  right: 22%;
+  padding: 0.5em;
 }
 
 #left-keys
 {
   position: absolute;
   top : 18%;
-  left: 25%;
-  padding: 10px;
-  /* text-align: center; */
+  left: 22%;
+  padding: 0.5em;
  }
 
 .keys {
@@ -96,10 +117,12 @@ header {
   font-weight: 700;
   font-family: 'SUSE';
   letter-spacing: 1;
-  width: 3em;
-  height: 3em;
+  width: 2.5em;
+  height: 2.5em;
+  margin: 1em;
   border: none;
   outline: none;
+  color : black;
   background: rgba(255, 255, 255, 0.3);
   border-radius: 20%;
   text-align: center;
@@ -121,19 +144,18 @@ header {
   font-family: 'SUSE';
   font-weight: 700;
   padding: 10px;
-
+  color: black !important;
   justify-content: center;
   align-items: center;
 }
 #countdown-container {
-  position: fixed;
-top: 50%;
-left: 50%;
-transform: translate(-50%, -50%);
-display: flex;
-align-items: center;
-justify-content: center;
-
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	display: flex;
+	align-items: center;
+	justify-content: center;
 }
 
 #volume {
@@ -221,12 +243,9 @@ export default {
 			endText: null,
 			endSound: null,
 			goalSound: null,
-			// kenney_rocket_regular: require('@/assets/fonts/kenney_rocket_regular.json'),
-			// endsoundFile: require('@/assets/audio/end.wav'),
-			// goalSoundFile: require('@/assets/audio/goal4.wav'),
-			// beepSoundFile: require('@/assets/audio/beep2.mp3'),
 		};
 	},
+	
 	mounted() {
 		this.initThree();
 	},
