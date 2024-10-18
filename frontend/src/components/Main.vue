@@ -275,10 +275,10 @@ export default {
 
 		let angle = 0.01; // Angle for moving the camera in a circular path
 		const radius = 20; // Distance from the sphere
-		const MaxDistanceToSphere = 20; // Maximum distance from the sphere
-		const MinDIstanceToSphere = 10; // Minimum distance from the sphere
+		const MaxDistanceToSphere = 10; // Maximum distance from the sphere
+		const MinDIstanceToSphere = 14; // Minimum distance from the sphere
 		const SpeedRotation = 0.00000000001; // Speed of movement
-		let SpeedToSphere = 0.00002;
+		let SpeedToSphere = 0.02;
 		let y = 0;
 
 		function animate() {
@@ -286,7 +286,7 @@ export default {
 			angle += SpeedRotation + 0.01;
 			const x = radius * Math.cos(angle); // X position of the camera
 			const z = radius * Math.sin(angle); // Z position of the camera
-			controls.update();
+			// controls.update();
 			y += SpeedToSphere;
 
 			if (y >= MinDIstanceToSphere || y <= -MaxDistanceToSphere) {
