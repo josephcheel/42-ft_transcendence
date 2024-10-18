@@ -138,9 +138,8 @@ canvas {
 }
 </style>
 <script>
-import * as THREE from 'three';
+import { PerspectiveCamera, Scene, WebGLRenderer, SphereGeometry, MeshPhongMaterial, Mesh, DirectionalLight, AmbientLight, PointLight, FrontSide } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
-import Clouds from './game/Clouds.js';
 import Login from './Login.vue';
 import Register from './Register.vue';
 import Forgotps from './Forgotps.vue';
@@ -208,10 +207,10 @@ export default {
 
 		window.addEventListener('wheel', handleScroll);
 		window.addEventListener('touchstart', handleTouch);
-		const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-		const scene = new THREE.Scene();
+		const camera = new PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+		const scene = new Scene();
 
-		const renderer = new THREE.WebGLRenderer();
+		const renderer = new WebGLRenderer();
 		renderer.setSize(window.innerWidth, window.innerHeight);
 		renderer.setClearColor(0xADD8E6); // Super light blue color
 
@@ -219,8 +218,8 @@ export default {
 
 		camera.position.z = 15;
 
-		const geometry = new THREE.SphereGeometry(10, 50, 50);
-		const material = new THREE.MeshPhongMaterial({
+		const geometry = new SphereGeometry(10, 50, 50);
+		const material = new MeshPhongMaterial({
 			color: 0xff0000, // Red color
 			specular: 0x555555, // Specular highlights
 			shininess: 30, // Shininess of the material
@@ -230,7 +229,7 @@ export default {
 			wireframe: false, // Render geometry as wireframe
 			transparent: true, // Material is not transparent
 			opacity: 1, // Fully opaque
-			side: THREE.FrontSide, // Render front side of the material
+			side: FrontSide, // Render front side of the material
 			depthTest: true, // Enable depth testing
 			depthWrite: true, // Enable depth writing
 			polygonOffset: false, // Disable polygon offset
@@ -241,16 +240,16 @@ export default {
 			premultipliedAlpha: true, // Disable premultiplied alpha
 			visible: true // Material is visible
 		});
-		const sphere = new THREE.Mesh(geometry, material);
+		const sphere = new Mesh(geometry, material);
 		sphere.castShadow = true;
 		scene.add(sphere);
 
 
 		// const clouds = new Clouds(this.scene);
 		// const model = '/assets/models/model.gltf';
-		// clouds.add(scene, model, new THREE.Vector3(45, 0, 0), new THREE.Vector3(0.1, 0.1, 0.1), new THREE.Vector3(0, Math.PI / 2, 0));
-		// clouds.add(scene, model, new THREE.Vector3(-45, 0, 0), new THREE.Vector3(0.1, 0.1, 0.1), new THREE.Vector3(0, Math.PI / -2, 0));
-		// clouds.add(scene, model, new THREE.Vector3(0, -50, -10), new THREE.Vector3(1, 1, 1), new THREE.Vector3(0, 0, 0));
+		// clouds.add(scene, model, new Vector3(45, 0, 0), new Vector3(0.1, 0.1, 0.1), new Vector3(0, Math.PI / 2, 0));
+		// clouds.add(scene, model, new Vector3(-45, 0, 0), new Vector3(0.1, 0.1, 0.1), new Vector3(0, Math.PI / -2, 0));
+		// clouds.add(scene, model, new Vector3(0, -50, -10), new Vector3(1, 1, 1), new Vector3(0, 0, 0));
 
 
 		const controls = new OrbitControls(camera, renderer.domElement);
@@ -259,15 +258,15 @@ export default {
 		controls.screenSpacePanning = false; // Do not allow panning up and down
 		controls.maxPolarAngle = Math.PI / 2;
 
-		const light = new THREE.DirectionalLight(0xffffff, 5);
+		const light = new DirectionalLight(0xffffff, 5);
 		light.position.set(0, 0, 1);
 
-		// const ambientLight = new THREE.AmbientLight(0xffffff, 0.05);
+		// const ambientLight = new AmbientLight(0xffffff, 0.05);
 
-		const ambientLight = new THREE.AmbientLight(0xffffff, 0.15);
+		const ambientLight = new AmbientLight(0xffffff, 0.15);
 		scene.add(ambientLight);
 
-		const light2 = new THREE.PointLight(0xffffff, 5000);
+		const light2 = new PointLight(0xffffff, 5000);
 		light2.position.set(0, 0, 50);
 		scene.add(light2);
 
