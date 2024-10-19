@@ -40,13 +40,13 @@ start :
 	@$(COMPOSE) -f $(DOCKER_COMPOSE_FILE) start
 
 rebuild:
-# @$(COMPOSE) -f $(DOCKER_COMPOSE_FILE) down --volumes
+	@$(COMPOSE) -f $(DOCKER_COMPOSE_FILE) down --volumes
 	@sudo find . -type d -name 'migrations' -exec rm -r {} +
 	@sudo find . -type d -name '__pycache__' -exec rm -r {} +
 	@sudo find . -type f -name 'db.sqlite3' -exec rm {} +
-# @sudo rm -rf $(VOLUMES)
-# @mkdir -p $(VOLUMES)
-# @touch $(LOG_FILES)
+	@sudo rm -rf $(VOLUMES)
+	@mkdir -p $(VOLUMES)
+	@touch $(LOG_FILES)
 	@$(COMPOSE) -f $(DOCKER_COMPOSE_FILE) up --build -d
 
 migrat:
@@ -67,14 +67,14 @@ gate:
 work:
 	docker exec -it celery_worker /bin/bash
 
-volumes: rm_vol
+volumes:
 	@echo Creating Volumes DIR	
 	@mkdir -p $(VOLUMES)
 	@touch $(LOG_FILES)
 
 del_vol:rm_vol
 	@echo Deleting Volumes DIR
-	@sudo rm -rf $(VOLUMES_FOLDER)
+	@suifeq ($(MAKECMDGOALS), debug)
 
 rm_vol:
 	@if [ -n "$(LIST_CURRENT_VOLUMES)" ]; then \
@@ -91,16 +91,9 @@ clean: stop
 	
 fclean: clean
 	@$(COMPOSE) -f $(DOCKER_COMPOSE_FILE) down --rmi all --volumes
-
 #@docker system prune -af 
 	@sudo rm -rf $(VOLUMES)
 
 re: fclean all
 
-
-
-
 .PHONY: all build up down restart logs clean re fclean volumes
-
-
-
