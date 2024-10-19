@@ -30,10 +30,10 @@ services:
     container_name: redis
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
-      interval: 10s          # Check every 30 seconds
-      timeout: 10s           # Wait 10 seconds for a response
+      interval: 10s
+      timeout: 10s
       retries: 3
-      start_period: 5s     # start 30 seconds after the container starts    
+      start_period: 5s   
     
   celery_worker:
     build:
@@ -48,8 +48,8 @@ services:
       - migrations
       - tournaments
     volumes:
-      - ./tournaments:/app
-      - ./usermodel:/app/user
+      - ./tournaments:/app/tournaments
+      - ./usermodel:/app/tournaments/user
     env_file:
       - .env
 
@@ -66,8 +66,8 @@ services:
       - migrations
       - tournaments
     volumes:
-      - ./tournaments:/app
-      - ./usermodel:/app/user
+      - ./tournaments:/app/tournaments
+      - ./usermodel:/app/tournaments/user
     env_file:
       - .env
 
@@ -86,8 +86,8 @@ services:
     ports:
       - 5557:5555
     volumes:
-      - ./tournaments:/app/
-      - ./usermodel:/app/user
+      - ./tournaments:/app/tournaments
+      - ./usermodel:/app/tournaments/user
     env_file:
       - .env
 
@@ -384,7 +384,6 @@ services:
     volumes:
       - ${TOURNAMENTS_FOLDER}${TOURNAMENT_LOG}:/var/log/${TOURNAMENT_LOG}
       - ./blockchain:/app
-      
   frontend:
     container_name: frontend
     depends_on:

@@ -4,17 +4,13 @@ else
   DEBUG := False
 endif
 
-
 export DEBUG
-
-VOLUME_IN_COMPOSE = $(shell docker volume ls -q)
+include .env
 
 COMPOSE = docker compose
-
 LIST_CURRENT_VOLUMES=$(shell docker volume ls -q)
 
 DOCKER_COMPOSE_FILE = ./docker-compose.yml
-include .env
 VOLUMES = ${VOLUMES_FOLDER} ${CERTS_FOLDER} ${ESDATA_FOLDER} ${KIBANA_FOLDER} ${LOGSTASH_FOLDER} ${POSTGREE_FOLDER} ${PROMETHEUS_FOLDER} ${GRAFANA_FOLDER} ${BLOCKCHAIN_FOLDER} ${TOURNAMENTS_FOLDER}
 LOG_FILES =  $(addprefix ${LOGSTASH_FOLDER}, ${GATEWAY_LOG} ${USER_LOG} ${CHAT_LOG} ${MATCHES_LOG} ${TOURNAMENT_LOG})
 
@@ -67,8 +63,8 @@ gate:
 work:
 	docker exec -it celery_worker /bin/bash
 
-volumes:
-	@echo Creating Volumes DIR	
+volumes: 
+	@echo Creating Volumes DIR
 	@mkdir -p $(VOLUMES)
 	@touch $(LOG_FILES)
 
@@ -91,9 +87,12 @@ clean: stop
 	
 fclean: clean
 	@$(COMPOSE) -f $(DOCKER_COMPOSE_FILE) down --rmi all --volumes
-#@docker system prune -af 
+	@docker system prune -af 
 	@sudo rm -rf $(VOLUMES)
 
 re: fclean all
+
+
+
 
 .PHONY: all build up down restart logs clean re fclean volumes
