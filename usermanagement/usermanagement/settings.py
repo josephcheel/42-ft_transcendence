@@ -32,7 +32,8 @@ MEDIA_URL = '/profile_pictures/'
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-1vc7k2#w%hp*8k_lb5^(zsxuqnuy&^&cp)hwxk@skwg3j#-n!4'
+SECRET_KEY = os.environ.get(
+    "SECRET_KEY", 'django-insecure-1vc7k2#w%hp*8k_lb5^(zsxuqnuy&^&cp)hwxk@skwg3j#-n!4')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 

@@ -4,7 +4,6 @@ from django.conf import settings
 
 #if settings.DEBUG:
 from django.contrib.auth.models import AbstractUser
-from django.contrib.auth.models import AbstractUser
 
 
 class User(AbstractUser):
@@ -40,6 +39,20 @@ class UserStatus(models.Model):
     def change_status(self, status):
         self.is_online = status
         self.save()
+
+
+class UserProfilePic(models.Model):
+    def get_upload_path(instance, filename):
+        return f'{instance.user.username}/{filename}'
+
+    def update_picture(self, picture):
+        self.picture = picture
+        self.save()
+
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    picture = models.ImageField(
+        upload_to=get_upload_path, default='default.jpeg')
+
 
 class Friendship(models.Model):
     DECLINED_CHOICE = 0
