@@ -40,19 +40,16 @@ class UserStatus(models.Model):
         self.is_online = status
         self.save()
 
-
 class UserProfilePic(models.Model):
     def get_upload_path(instance, filename):
         return f'{instance.user.username}/{filename}'
-
+        
     def update_picture(self, picture):
         self.picture = picture
         self.save()
-
+        
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    picture = models.ImageField(
-        upload_to=get_upload_path, default='default.jpeg')
-
+    picture = models.ImageField(upload_to=get_upload_path, default='default.jpeg')
 
 class Friendship(models.Model):
     DECLINED_CHOICE = 0

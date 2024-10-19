@@ -4,6 +4,27 @@ networks:
     external: false
 
 services:
+  setup:
+    image: docker.elastic.co/elasticsearch/elasticsearch:${STACK_VERSION}
+    volumes:
+      - certs:/usr/share/elasticsearch/config/certs
+      - ./setup/setup_script.sh:/setup_script.sh
+      - ./setup/grafana_script.sh:/grafana_script.sh
+      - ./setup/ELK_script.sh:/ELK_script.sh
+      - ./ELK:/ELK
+      - ./Grafana/gateway_dashboard.json:/gateway_dashboard.json
+    user: "0"
+    environment:
+      - SLACK_HOOK=${SLACK_HOOK}
+    env_file:
+      - .env
+    command: >
+      bash /setup_script.sh
+    healthcheck:
+      test: ["CMD-SHELL", "[ -f config/certs/es01/es01.crt ]"]
+      interval: 1s
+      timeout: 5s
+      retries: 120
   redis:
     image: 'redis:6.2-alpine'
     container_name: redis
@@ -76,7 +97,6 @@ services:
       - .env
     volumes:
       - ./usermanagement:/app/usermanagement
-#      - ./tournaments:/app/tournaments
 
   db:
     container_name: db
@@ -103,12 +123,13 @@ services:
     depends_on:
       - redis
     build: ./gateway
-    ports:
-      - "8000:8000"
+    #ports:
+      #- "8000:8000"
     volumes:
       - ${LOGSTASH_FOLDER}${GATEWAY_LOG}:/var/log/${GATEWAY_LOG}
       - ${DJANGO_SCRIPT}:/start.sh
       - ./gateway:/app
+      - ./usermodel:/app/user
 
     env_file:
       - .env
@@ -174,42 +195,23 @@ services:
     image: prom/prometheus:v2.53.1
     container_name: prometheus
     command:
-      - '--config.file=/etc/prometheus/prometheus.yaml'
+      - '--config.file=/etc/prometheus/prometheus.yml'
     volumes:
-      - ./Prometheus/prometheus.yaml:/etc/prometheus/prometheus.yaml:ro
+      - ./Prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
       - prometheus-data:/prometheus
   grafana:
     image: grafana/grafana:11.1.1-ubuntu
     container_name: grafana
-    ports:
-      - 3000:3000
     environment:
       - GF_SECURITY_ADMIN_PASSWORD=newadmin
+      - GF_SERVER_ROOT_URL=%(protocol)s://%(domain)s:%(http_port)s/grafana # Set to the internal URL
+      - GF_SERVER_SERVE_FROM_SUB_PATH=true
+      - GF_SERVER_HTTP_PORT=3000
     volumes:
       - grafana-data:/var/lib/grafana
 
 
-  setup:
-    image: docker.elastic.co/elasticsearch/elasticsearch:${STACK_VERSION}
-    volumes:
-      - certs:/usr/share/elasticsearch/config/certs
-      - ./setup/setup_script.sh:/setup_script.sh
-      - ./setup/grafana_script.sh:/grafana_script.sh
-      - ./setup/ELK_script.sh:/ELK_script.sh
-      - ./ELK:/ELK
-      - ./Grafana/gateway_dashboard.json:/gateway_dashboard.json
-#    user: "0"
-    environment:
-      - SLACK_HOOK=${SLACK_HOOK}
-    env_file:
-      - .env
-    command: >
-      bash /setup_script.sh
-    healthcheck:
-      test: ["CMD-SHELL", "[ -f config/certs/es01/es01.crt ]"]
-      interval: 1s
-      timeout: 5s
-      retries: 120
+
 
   es01:
     restart: always
@@ -284,8 +286,6 @@ services:
 
   kibana:
     restart: always
-    ports:
-      - ${KIBANA_PORT}:5601
     depends_on:
       es01:
         condition: service_healthy
@@ -298,7 +298,8 @@ services:
 
     container_name: kibana
     environment:
-      - SERVERNAME=kibana
+      - SERVER_REWRITE_BASE_PATH=true
+      - SERVER_BASEPATH=/kibana 
       - ELASTICSEARCH_HOSTS=https://es01:9200
       - ELASTICSEARCH_USERNAME=kibana_system
       - ELASTICSEARCH_PASSWORD=${KIBANA_PASSWORD}
@@ -329,17 +330,23 @@ services:
       - "8545:8545"
     env_file:
       - .env
-    #restart: always
+    restart: always
     volumes:
       - ${TOURNAMENTS_FOLDER}${TOURNAMENT_LOG}:/var/log/${TOURNAMENT_LOG}
       - ./blockchain:/app
       
   frontend:
     container_name: frontend
+    depends_on:
+      - gateway
+      - kibana
+      - grafana
     build:
       context: ./frontend
     ports:
-      - "8080:80"
+      - "8000:8000"
+    volumes:
+      - ./usermanagement/profile_pictures/:/usr/share/nginx/html/profile_pictures 
 
 volumes:
   certs:

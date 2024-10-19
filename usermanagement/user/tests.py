@@ -12,8 +12,8 @@ class usermodelTests(TestCase):
 
     def setUp(self):
         self.client = Client()
-        self.user1 = {'first_name': 'Luis', 'last_name' : 'Soto', "username" : "Test1", "password" : "test", 'tournament_name' : 'my_tournament_name'}
-        self.user2 = {'first_name': 'Luis', 'last_name' : 'Soto', "username" : "Test2", "password" : "test", 'tournament_name' : 'my_tournament_name'}
+        self.user1 = {'first_name': 'Luis', 'last_name' : 'Soto', "username" : "Test1", "password" : "test"}
+        self.user2 = {'first_name': 'Luis', 'last_name' : 'Soto', "username" : "Test2", "password" : "test"}
         self.base_json = {
             'status': None,
             'message': None,
@@ -33,8 +33,8 @@ class usermodelTests(TestCase):
 
         self.check_json(response, 201)
 
-        user = User.objects.get(username=self.user1['username'].lower())
-        self.assertEqual(user.original_username, self.user1['username'])
+        user = User.objects.get(username=self.user1['username'])
+        self.assertEqual(user.username, self.user1['username'])
 
 
         self.base_json['status'] = 'success'
@@ -83,7 +83,7 @@ class usermodelTests(TestCase):
 
         response = self.client.get(reverse(list_users))
         self.check_json(response, 200)
-        self.base_json['data'] = [{'id': 1, 'username': self.user1['username'].lower()}]
+        self.base_json['data'] = [{'id': 1, 'username': self.user1['username']}]
         response = self.client.post(reverse(create_user),json.dumps(self.user1),content_type='application/json')
         response = self.client.get(reverse(list_users))
         self.check_json(response, 200)
@@ -91,7 +91,7 @@ class usermodelTests(TestCase):
 class logInTest(TestCase):
     def setUp(self):
         self.client = Client()
-        self.user1 = {'first_name': 'Luis', 'last_name' : 'Soto', "username" : "test1", "password" : "test", 'tournament_name' : 'my_tournament_name'}
+        self.user1 = {'first_name': 'Luis', 'last_name' : 'Soto', "username" : "test1", "password" : "test"}
         self.base_json = {
             'status': None,
             'message': None,
@@ -434,16 +434,16 @@ class getAllFriends(TestCase):
         self.client = Client()
         self.client2 = Client()
         self.client3 = Client()
-        self.user1 = User.objects.create_user(username='test1',original_username='Test1', password='test')
-        self.user2 = User.objects.create_user(username='test2',original_username='Test2', password='test')
-        self.user3 = User.objects.create_user(username='test3',original_username='Test3', password='test')
+        self.user1 = User.objects.create_user(lowercase_username='test1',username='Test1', password='test')
+        self.user2 = User.objects.create_user(lowercase_username='test2',username='Test2', password='test')
+        self.user3 = User.objects.create_user(lowercase_username='test3',username='Test3', password='test')
 
         #Create user Status state
         self.user1.userstatus.is_online = True
         self.user1.userstatus.save()
-        self.client.login(username='test1', password='test')
-        self.client2.login(username='test2', password='test')
-        self.client3.login(username='test3', password='test')
+        self.client.login(username='Test1', password='test')
+        self.client2.login(username='Test2', password='test')
+        self.client3.login(username='Test3', password='test')
         Friendship.add_friendship(self.user1, self.user2)
         self.status = 'accepted'
         self.base_json = {
@@ -507,9 +507,9 @@ class updateUser(TestCase):
 
     def setUp(self):
         self.client = Client()
-        self.user1 = User.objects.create_user(username='test1',original_username='Test1', password='test')
+        self.user1 = User.objects.create_user(username='Test1',lowercase_username='test1', password='test')
         self.content = {}
-        self.client.login(username='test1', password='test')
+        self.client.login(username='Test1', password='test')
         self.base_json = {
             'status': None,
             'message': None,
@@ -560,7 +560,7 @@ class updateUser(TestCase):
         self.assertEqual(user.last_name, "Soto")
         self.assertEqual(user.tournament_name, "Tournament")
         #username can't be changed
-        self.assertEqual(user.username, "test1")
+        self.assertEqual(user.username, self.user1.username)
     
         self.check_json()
 
@@ -650,8 +650,8 @@ class UploadPictureTests(TestCase):
 
 class getUserProfile(TestCase):
     def setUp(self):
-        self.user = User.objects.create_user(first_name='Luis', last_name='Soto', original_username='TestUser' ,username='TestUser', password='testpass', tournament_name='TestUser')
-        self.user2 = User.objects.create_user(first_name='Luis', last_name='Soto', original_username='TestUser2' ,username='TestUser2', password='testpass', tournament_name='TestUser2')
+        self.user = User.objects.create_user(first_name='Luis', last_name='Soto', username='TestUser' ,lowercase_username='testUser', password='testpass', tournament_name='TestUser')
+        self.user2 = User.objects.create_user(first_name='Luis', last_name='Soto', username='TestUser2' ,lowercase_username='testUser2', password='testpass', tournament_name='TestUser2')
         self.client = Client()
         self.client.login(username='TestUser', password='testpass')
         self.base_json = {

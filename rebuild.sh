@@ -12,7 +12,7 @@ sudo rm -rf $VOLUMES
 make volumes
 
 DOCKER_COMPOSE_FILE=./docker-compose.yml
-
-docker compose -f $DOCKER_COMPOSE_FILE up --build -d usermanagement  gateway frontend
+    
+docker compose -f $DOCKER_COMPOSE_FILE up --build -d  frontend
 
 #psql -U ${DB_USER} -d ${DB_NAME}

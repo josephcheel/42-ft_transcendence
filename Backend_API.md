@@ -121,7 +121,7 @@ You need to call /user/get_profile_picture_url/{username}/ to get the profile pi
 | --- | --- | --- | ---| ---|
 | Gets profile picture url for user| GET | /username | profile_picture_url |  200,401,405, 500|
 
-Then you need to call user/ + profile_picture_url to get the binary. If you already have the profile_picture_url (from a upload_profile_picture call, for example), you can just call user/+profile_picture_url without geting the url first
+
 
 
 [Back to Top](#table-of-contents)

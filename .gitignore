@@ -2,6 +2,7 @@
 *pycache*
 volumes*
 db.s*
+*sqlite*
 *.log
 .vscode
 *Snapshots*
@@ -16,4 +17,5 @@ node_modules/
 
 celery-beat-schedule
 celerybeat-schedule
+django-selfsigned*
 cookies*
