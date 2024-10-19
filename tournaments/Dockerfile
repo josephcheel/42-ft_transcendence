@@ -19,14 +19,17 @@ RUN apt-get update \
 	&& apt-get install -y git \
 	# cleaning up unused files
 	&& apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
-	&& rm -rf /var/lib/apt/lists/*
-	
+	&& rm -rf /var/lib/apt/lists/* \
+	&& apt-get update -y && apt-get install -y postgresql-client
+
 WORKDIR /app
 
 # Requirements are installed here to ensure they will be cached.
 COPY ./start.sh /start.sh
 COPY ./requirements.txt /requirements.txt
 RUN pip install -r /requirements.txt
+
+RUN chmod +x /start.sh
 
 CMD ["/start.sh"]
 #ENTRYPOINT [ "bash", "-c", "while true; do sleep 3306; done"]

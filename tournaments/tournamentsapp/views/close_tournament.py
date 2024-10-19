@@ -5,13 +5,9 @@ from tournamentsapp.status_options import StatusTournaments, StatusInvitations, 
 from datetime import timedelta
 from django.utils import timezone
 from tournaments.settings import TIME_DELTA
-
-try: 
-	from usermodel.models import User
-except:
-	from tournamentsapp.models import User
 import math
 
+from user.models import User
 
 @require_post
 @user_is_authenticated

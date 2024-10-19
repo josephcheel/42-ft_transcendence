@@ -59,12 +59,13 @@ onMounted(() =>{
   if(user) {
     username.value = user;
   } else {
-    router.push({name: 'Login'})
+    // router.push({name: 'Login'})
   }
 })
 
 function startLocalMatch() {
   alert('Starting a local match...');
+  router.push({name: 'Game'});
 }
 
 function startSimpleMatch() {

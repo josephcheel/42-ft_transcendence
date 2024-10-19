@@ -1,15 +1,18 @@
 import { Vector3 } from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
-import model from '@/assets/models/model.gltf';
-import sound from '@/assets/audio/beep.mp3';
+import model from '/assets/models/model.gltf';
 export default class Clouds {
   constructor(scene) {
 	this.loader = new GLTFLoader();
+	// this.add(scene, model, new Vector3(45, 0, 0), new Vector3(0.1, 0.1, 0.1), new Vector3(0, Math.PI / 2, 0));
+	// this.add(scene, model, new Vector3(-45, 0, 0), new Vector3(0.1, 0.1, 0.1), new Vector3(0, Math.PI / -2, 0));
+	// this.add(scene, model, new Vector3(0, -150, 60), new Vector3(0.5, 0.5, 0.5), new Vector3(0, 0, 0));
+  }
+  addGameClouds(scene) {
 	this.add(scene, model, new Vector3(45, 0, 0), new Vector3(0.1, 0.1, 0.1), new Vector3(0, Math.PI / 2, 0));
 	this.add(scene, model, new Vector3(-45, 0, 0), new Vector3(0.1, 0.1, 0.1), new Vector3(0, Math.PI / -2, 0));
 	this.add(scene, model, new Vector3(0, -150, 60), new Vector3(0.5, 0.5, 0.5), new Vector3(0, 0, 0));
-  }
-
+}
   add(scene, path, position, scale, rotation) {
 		this.loader.load(path, (gltf) => {
 		scene.add(gltf.scene);

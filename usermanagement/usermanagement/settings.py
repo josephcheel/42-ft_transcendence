@@ -32,7 +32,8 @@ MEDIA_URL = '/profile_pictures/'
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-1vc7k2#w%hp*8k_lb5^(zsxuqnuy&^&cp)hwxk@skwg3j#-n!4'
+SECRET_KEY = os.environ.get(
+    "SECRET_KEY", 'django-insecure-1vc7k2#w%hp*8k_lb5^(zsxuqnuy&^&cp)hwxk@skwg3j#-n!4')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 
@@ -213,3 +214,6 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+GANACHE_URL = 'http://blockchain:8545'
+GANACHE_BANK = "0x4f3edf983ac636a65a842ce7c78d9aa706d3b113bce9c46f30d7d21715b23b1d"

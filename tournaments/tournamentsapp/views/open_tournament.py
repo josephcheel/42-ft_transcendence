@@ -6,12 +6,11 @@ import math
 from tournamentsapp.models import Tournaments, Invitations
 from tournamentsapp.status_options import StatusTournaments, StatusInvitations
 from tournaments.settings import TIME_DELTA
+from django.views.decorators.csrf import csrf_exempt
 
-try: 
-	from user.models import User
-except:
-	from tournamentsapp.models import User
+from user.models import User
  
+@csrf_exempt
 @require_post
 @user_is_authenticated
 @validate_json

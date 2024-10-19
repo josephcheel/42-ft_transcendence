@@ -27,7 +27,8 @@ DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-+r@zs#c&itagtc*ns-n)1bj5=w1!u53z3@lp%6cul0_2n70ew9'
+SECRET_KEY = os.environ.get(
+    "SECRET_KEY", 'django-insecure-+r@zs#c&itagtc*ns-n)1bj5=w1!u53z3@lp%6cul0_2n70ew9')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 ALLOWED_HOSTS = ['localhost', 'chat', 'chatapp']

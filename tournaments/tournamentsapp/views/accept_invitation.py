@@ -4,11 +4,7 @@ from tournamentsapp.models import Tournaments, Invitations
 from tournamentsapp.status_options import StatusInvitations
 
 
-try: 
-	from user.models import User
-except:
-	from tournamentsapp.models import User
-import math
+from user.models import User
 
 
 @require_post

@@ -24,12 +24,13 @@ LOG_FILE = os.environ.get("TOURNAMENT_LOG", "tournament.log")
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-e5m60_kk8wzj52xpmb69*h9u^kg29b6$uyum19p87(7or7bop9'
+SECRET_KEY = os.environ.get(
+    "SECRET_KEY", 'django-insecure-e5m60_kk8wzj52xpmb69*h9u^kg29b6$uyum19p87(7or7bop9')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG', 'true') == 'True'
 
-ALLOWED_HOSTS = ['localhost', 'tournaments', 'tournamentsapp']
+ALLOWED_HOSTS = ['localhost', 'tournaments', 'tournamentsapp','blockchain']
 
 # Application definition
 if not DEBUG:
@@ -58,9 +59,6 @@ if not DEBUG:
             },
         },
     }
-    print ('printing LOGGING')
-    print (LOGGING)
-    logging.config.dictConfig(LOGGING)
     
 # Application definition
 
@@ -73,13 +71,14 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django_prometheus',
     'tournamentsapp',
+    'blockchainapp',
     'user',
 ]
 
-if not DEBUG:
-    AUTH_USER_MODEL="user.User"
-else:
-    AUTH_USER_MODEL="tournamentsapp.User"
+#if not DEBUG:
+AUTH_USER_MODEL="user.User"
+#else:
+#    AUTH_USER_MODEL="tournamentsapp.User"
 
 MIDDLEWARE = [
     'django_prometheus.middleware.PrometheusBeforeMiddleware',
@@ -92,9 +91,23 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 
-    'django_prometheus.middleware.PrometheusAfterMiddleware',
 
+
+    'django_prometheus.middleware.PrometheusAfterMiddleware',
 ]
+PROMETHEUS_LATENCY_BUCKETS = (0.01, 0.025, 0.05, 0.075, 0.1, 0.25, 0.5,
+                              0.75, 1.0, 2.5, 5.0, 7.5, 10.0, 25.0, 50.0, 75.0, float("inf"),)
+PROMETHEUS_EXPORT_MIGRATIONS = True
+PROMETHEUS_METRIC_NAMESPACE = "tournament"
+
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django_prometheus.cache.backends.filebased.FileBasedCache',
+        'LOCATION': '/var/tmp/django_cache',
+    }
+}
+
 
 ROOT_URLCONF = 'tournaments.urls'
 
@@ -201,3 +214,6 @@ CELERY_TASK_SERIALIZER = 'json'
 CELERY_IMPORTS = ('tournamentsapp.tasks.check_match_db_status', 'tournamentsapp.tasks.actualise_tournaments','tournamentsapp.tasks.finish_tournament')
 
 TIME_DELTA = 5
+
+GANACHE_URL = "http://blockchain:8545"
+GANACHE_BANK = "0x4f3edf983ac636a65a842ce7c78d9aa706d3b113bce9c46f30d7d21715b23b1d"

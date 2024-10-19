@@ -1,6 +1,6 @@
 import { Mesh, SphereGeometry, Vector3, EventDispatcher, MeshStandardMaterial, DoubleSide } from 'three';
 import SoundEffect from './SoundEffect.js';
-import sound from '@/assets/audio/beep.mp3';
+import sound from '/assets/audio/beep.mp3';
 export default class Ball extends EventDispatcher {
 
 	speed = 50;

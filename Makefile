@@ -4,9 +4,14 @@ else
   DEBUG := False
 endif
 
+
 export DEBUG
 
+VOLUME_IN_COMPOSE = $(shell docker volume ls -q)
+
 COMPOSE = docker compose
+
+LIST_CURRENT_VOLUMES=$(shell docker volume ls -q)
 
 DOCKER_COMPOSE_FILE = ./docker-compose.yml
 include .env
@@ -56,25 +61,39 @@ user:
 bch:
 	docker exec -it blockchain /bin/bash
 
-volumes: 
-	@echo Creating Volumes DIR
+gate:
+	docker exec -it gateway /bin/bash
+
+work:
+	docker exec -it celery_worker /bin/bash
+
+volumes:
+	@echo Creating Volumes DIR	
 	@mkdir -p $(VOLUMES)
 	@touch $(LOG_FILES)
+
+del_vol:rm_vol
+	@echo Deleting Volumes DIR
+	@suifeq ($(MAKECMDGOALS), debug)
+
+rm_vol:
+	@if [ -n "$(LIST_CURRENT_VOLUMES)" ]; then \
+        echo "Removing Docker volumes: $(LIST_CURRENT_VOLUMES)"; \
+        docker volume rm $(LIST_CURRENT_VOLUMES); \
+    else \
+        echo "No Docker volumes to remove"; \
+    fi
+	sudo find . -type d -name 'migrations' -exec find {} -type f -delete \;
+	sudo find . -type d -name '_pycache_' -exec rm -r {} +
+	sudo find . -type f -name 'db.sqlite3' -exec rm {} +
 
 clean: stop
 	
 fclean: clean
 	@$(COMPOSE) -f $(DOCKER_COMPOSE_FILE) down --rmi all --volumes
-
 #@docker system prune -af 
 	@sudo rm -rf $(VOLUMES)
 
 re: fclean all
 
-
-
-
 .PHONY: all build up down restart logs clean re fclean volumes
-
-
-

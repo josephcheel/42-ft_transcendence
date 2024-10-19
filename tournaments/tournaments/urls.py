@@ -21,4 +21,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('',include('django_prometheus.urls')),
     path('tournaments/', include('tournamentsapp.urls')),
+    path('blockchain/', include('blockchainapp.urls')),
 ]

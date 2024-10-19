@@ -18,3 +18,4 @@ node_modules/
 celery-beat-schedule
 celerybeat-schedule
 django-selfsigned*
+cookies*

@@ -11,7 +11,8 @@ import random
 from .printing import print_all_tournaments, print_all_invitations, print_all_matches, print_all_users
 from datetime import datetime
 # Create your tests here.
-#User = get_user_model()
+from django.contrib.auth import get_user_model
+User = get_user_model()
 
 # Create an array of users
 class test_open_tournament(TestCase):

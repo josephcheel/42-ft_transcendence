@@ -3,7 +3,8 @@ requests
 logstash-formatter
 python-json-logger
 django-prometheus
-
+web3==7.3.0
+eth_account==0.13.4
 # needed to intereact with PostGreeSql
 psycopg==3.2.1
 django-cors-headers

@@ -5,10 +5,7 @@ from tournamentsapp.models import Tournaments, Matches
 from tournamentsapp.status_options import  StatusMatches, Rounds
 from tournamentsapp.tasks.actualise_tournaments import actualise_tournament
 
-try: 
-	from usermodel.models import User
-except:
-	from ..models import User
+from user.models import User
 
 @require_post
 @validate_json
@@ -42,6 +39,6 @@ def finish_match(request):
 	except Tournaments.DoesNotExist:
 		winner.puntos += 100
 		return JsonResponse({'status': 'error', 'message': 'Free play finished', 'data': None}, status=200)
-	actualise_tournament.delay(match)
+	actualise_tournament(match.id)
 
 	return JsonResponse({'status': 'success', 'message': 'Match finished successfully', 'data': None}, status=200)
