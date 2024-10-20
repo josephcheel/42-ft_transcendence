@@ -47,7 +47,7 @@ CSRF_TRUSTED_ORIGINS = [
 
 
 CORS_ALLOWED_ORIGINS = [
-     'https://' + ORIGIN_IP +':8000',,
+     'https://' + ORIGIN_IP +':8000',
 ]
 
 CORS_ALLOW_CREDENTIALS = True

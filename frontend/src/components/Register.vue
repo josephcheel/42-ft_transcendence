@@ -80,7 +80,7 @@
         else{
 
           try {
-          const response = await axios.post('https://${ORIGIN_IP}:8000/api/user/create_user/', {
+          const response = await axios.post(`https://${ORIGIN_IP}:8000/api/user/create_user/`, {
             username: user.value,
             password: psw.value,
             first_name: name.value,
