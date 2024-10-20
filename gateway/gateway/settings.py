@@ -7,6 +7,7 @@ from corsheaders.defaults import default_headers
 
 LOG_FILE= os.environ.get("GATEWAY_LOG", "gateway.log")
 DEBUG = os.environ.get('DEBUG', 'True') == 'True'
+ORIGIN_IP = os.environ.get('ORIGIN_IP') or 'localhost'
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -23,12 +24,12 @@ SECRET_KEY = os.environ.get(
 # Specify trusted origins
 #CSRF_HEADER_NAME='csrftoken1'
 CSRF_TRUSTED_ORIGINS = [
-    'https://localhost:8000',  # Your frontend origin
+    'https://' + ORIGIN_IP + ':8000',  # Your frontend origin
 ]
 
 
 CORS_ALLOWED_ORIGINS = [
-    "https://localhost:8000",
+   'https://' + ORIGIN_IP + ':8000',
 ]
 
 CORS_ALLOW_CREDENTIALS = True
@@ -42,7 +43,7 @@ SESSION_COOKIE_SAMESITE = 'None'
 USE_X_FORWARDED_HOST = True
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '[::1]', 'gateway', 'usermanagement']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '[::1]', 'gateway', 'usermanagement', ORIGIN_IP]
 
 # Application definition
 if not DEBUG:

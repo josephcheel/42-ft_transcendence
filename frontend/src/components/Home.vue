@@ -6,7 +6,7 @@
 </template>
   
 <script>
-
+	
 	export default {
 		data() {
 			return {
@@ -17,8 +17,9 @@
 		},
 		methods: {
 			connect() {
+				const ORIGIN_IP =  process.env.VUE_APP_ORIGIN_IP;
 				const ws_scheme = window.location.protocol === "https:" ? "wss" : "ws";
-				const ws_path = ws_scheme + '://localhost:8000/ws/gateway/';
+				const ws_path = ws_scheme + '://${ORIGIN_IP}:8000/ws/gateway/';
 
 				this.socket = new WebSocket(ws_path);
 

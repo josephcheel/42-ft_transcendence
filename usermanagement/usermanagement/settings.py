@@ -21,6 +21,7 @@ from corsheaders.defaults import default_headers
 BASE_DIR = Path(__file__).resolve().parent.parent
 LOG_FILE= os.environ.get("USER_LOG", "usermanagement.log")
 DEBUG = os.environ.get('DEBUG', 'True') == 'True'
+ORIGIN_IP = os.environ.get('ORIGIN_IP') or 'localhost'
 
 # Absolute filesystem path to the profile pictures directory
 MEDIA_ROOT = os.path.join(BASE_DIR, 'profile_pictures')
@@ -37,16 +38,16 @@ SECRET_KEY = os.environ.get(
 
 # SECURITY WARNING: don't run with debug turned on in production!
 
-ALLOWED_HOSTS = ['localhost', 'usermanagement', 'user', '127.0.0.1', 'gateway']
+ALLOWED_HOSTS = ['localhost', 'usermanagement', 'user', '127.0.0.1', 'gateway', ORIGIN_IP]
 
 
 CSRF_TRUSTED_ORIGINS = [
-    'https://localhost:8000',  # Your frontend origin
+    'https://' + ORIGIN_IP +':8000',  # Your frontend origin
 ]
 
 
 CORS_ALLOWED_ORIGINS = [
-    "https://localhost:8000",
+     'https://' + ORIGIN_IP +':8000',,
 ]
 
 CORS_ALLOW_CREDENTIALS = True

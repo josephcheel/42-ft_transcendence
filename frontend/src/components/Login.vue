@@ -149,7 +149,7 @@
     import { useRouter } from 'vue-router';
     import axios from '../utils/axiosConfig';
 
-   
+     const ORIGIN_IP =  process.env.VUE_APP_ORIGIN_IP
     const user = ref();
 
     const psw = ref();
@@ -164,7 +164,7 @@
         console.log(psw.value);
 
           try {
-          const response = await axios.post('https://localhost:8000/api/user/login_user/', {
+          const response = await axios.post('https://${ORIGIN_IP}:8000/api/user/login_user/', {
             username: user.value,
             password: psw.value
           }, {

@@ -68,6 +68,7 @@
     const email = ref();
     const errorToast = ref(null)
     const toastMsg = ref(null)
+    const ORIGIN_IP = process.env.VUE_APP_ORIGIN_IP;
 
     async function login()
     {
@@ -79,7 +80,7 @@
         else{
 
           try {
-          const response = await axios.post('https://localhost:8000/api/user/create_user/', {
+          const response = await axios.post('https://${ORIGIN_IP}:8000/api/user/create_user/', {
             username: user.value,
             password: psw.value,
             first_name: name.value,
