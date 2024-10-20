@@ -15,6 +15,7 @@ from pythonjsonlogger import jsonlogger
 from pathlib import Path
 import os
 from celery.schedules import crontab
+from corsheaders.defaults import default_headers
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -30,7 +31,25 @@ SECRET_KEY = os.environ.get(
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG', 'true') == 'True'
 
-ALLOWED_HOSTS = ['localhost', 'tournaments', 'tournamentsapp','blockchain']
+ALLOWED_HOSTS = ['localhost', 'users', 'tournaments',
+                 'tournamentsapp', 'blockchain', '127.0.0.1', 'gateway']
+
+CSRF_TRUSTED_ORIGINS = [
+    'https://localhost:8000',  # Your frontend origin
+]
+
+
+CORS_ALLOWED_ORIGINS = [
+    "https://localhost:8000",
+]
+
+CORS_ALLOW_CREDENTIALS = True
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SAMESITE = 'None'  # or 'Lax' depending on your requirements
+SESSION_COOKIE_HTTPONLY = False  # Make sure this is set correctly
+CSRF_COOKIE_HTTPONLY = False  # Ensure CSRF is accessible if
+#if needed
 
 # Application definition
 if not DEBUG:
@@ -73,6 +92,7 @@ INSTALLED_APPS = [
     'tournamentsapp',
     'blockchainapp',
     'user',
+    'corsheaders',
 ]
 
 #if not DEBUG:
@@ -91,14 +111,12 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 
-
-
     'django_prometheus.middleware.PrometheusAfterMiddleware',
 ]
 PROMETHEUS_LATENCY_BUCKETS = (0.01, 0.025, 0.05, 0.075, 0.1, 0.25, 0.5,
                               0.75, 1.0, 2.5, 5.0, 7.5, 10.0, 25.0, 50.0, 75.0, float("inf"),)
 PROMETHEUS_EXPORT_MIGRATIONS = True
-PROMETHEUS_METRIC_NAMESPACE = "tournament"
+PROMETHEUS_METRIC_NAMESPACE = "tournaments"
 
 
 CACHES = {
@@ -170,10 +188,6 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
-
-PROMETHEUS_LATENCY_BUCKETS = (0.01, 0.025, 0.05, 0.075, 0.1, 0.25, 0.5, 0.75, 1.0, 2.5, 5.0, 7.5, 10.0, 25.0, 50.0, 75.0, float("inf"),)
-PROMETHEUS_EXPORT_MIGRATIONS = True
-PROMETHEUS_METRIC_NAMESPACE = "tournaments"
 
 
 # Internationalization

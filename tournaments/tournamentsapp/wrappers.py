@@ -3,8 +3,8 @@ from django.http import JsonResponse
 import json
 from functools import wraps
 
-
 def user_is_authenticated(function):
+	@wraps(function)
 	def wrapper(request, *args, **kwargs):
 		if not request.user.is_authenticated:
 			return JsonResponse({'status': 'error',
