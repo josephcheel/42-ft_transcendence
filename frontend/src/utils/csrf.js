@@ -1,5 +1,5 @@
 export async function fetchCSRFToken() {
-    const ORIGIN_IP =  process.env.VUE_APP_ORIGIN_IP
+    const ORIGIN_IP = import.meta.env.VITE_VUE_APP_ORIGIN_IP || 'localhost';
     try {
         const response = await fetch(`https://${ORIGIN_IP}:8000/api/get_cookie/`, {
             credentials: 'include',

@@ -18,6 +18,7 @@ LOG_FILES =  $(addprefix ${LOGSTASH_FOLDER}, ${GATEWAY_LOG} ${USER_LOG} ${CHAT_L
 all: build 
 
 build: 	| volumes
+	cp .env ./frontend/.env
 	$(COMPOSE) -f $(DOCKER_COMPOSE_FILE) up --build -d
 
 down:

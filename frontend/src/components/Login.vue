@@ -149,7 +149,7 @@
     import { useRouter } from 'vue-router';
     import axios from '../utils/axiosConfig';
 
-     const ORIGIN_IP =  process.env.VUE_APP_ORIGIN_IP
+    const ORIGIN_IP = import.meta.env.VITE_VUE_APP_ORIGIN_IP || 'localhost';
     const user = ref();
 
     const psw = ref();

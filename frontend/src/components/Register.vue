@@ -68,7 +68,7 @@
     const email = ref();
     const errorToast = ref(null)
     const toastMsg = ref(null)
-    const ORIGIN_IP = process.env.VUE_APP_ORIGIN_IP;
+    const ORIGIN_IP = import.meta.env.VITE_VUE_APP_ORIGIN_IP || 'localhost';
 
     async function login()
     {

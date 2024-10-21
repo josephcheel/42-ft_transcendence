@@ -370,20 +370,20 @@ services:
       retries: 120
 
   blockchain:
-    depends_on:
-      - migrations
-      - tournaments
-    build:
-      context: ./blockchain
-    container_name: blockchain
-    ports:
-      - "8545:8545"
-    env_file:
-      - .env
-    restart: always
-    volumes:
-      - ${TOURNAMENTS_FOLDER}${TOURNAMENT_LOG}:/var/log/${TOURNAMENT_LOG}
-      - ./blockchain:/app
+   depends_on:
+     - migrations
+     - tournaments
+   build:
+     context: ./blockchain
+   container_name: blockchain
+   ports:
+     - "8545:8545"
+   env_file:
+     - .env
+   restart: always
+   volumes:
+     - ${TOURNAMENTS_FOLDER}${TOURNAMENT_LOG}:/var/log/${TOURNAMENT_LOG}
+     - ./blockchain:/app
   frontend:
     container_name: frontend
     depends_on:
@@ -393,7 +393,8 @@ services:
         condition: service_healthy
       grafana:
         condition: service_healthy
-
+    env_file:
+      - .env
     build:
       context: ./frontend
     ports:

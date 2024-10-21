@@ -17,7 +17,8 @@
 		},
 		methods: {
 			connect() {
-				const ORIGIN_IP =  process.env.VUE_APP_ORIGIN_IP;
+				const ORIGIN_IP = import.meta.env.VITE_VUE_APP_ORIGIN_IP || 'localhost';
+				console.log(ORIGIN_IP);
 				const ws_scheme = window.location.protocol === "https:" ? "wss" : "ws";
 				const ws_path = ws_scheme + `://${ORIGIN_IP}:8000/ws/gateway/`;
 
