@@ -19,7 +19,7 @@
         "forget_pass": "Forgot password",
         "local_match": "Local Match",
         "explain_local_match": "Play vs guest player on the same keyboard",
-        "simple_match": "Simple Match",
+        "simple_match": "Online Match",
         "explain_simple_match": "Play on-line vs a random player",
         "friend_match": "Friend Match",
         "explain_friend_match": "Send an invitation to play vs friends",

@@ -49,7 +49,7 @@ export default {
       this.$i18n.locale = this.selectedLang;
     },
     isNav() {
-      return (this.$route.path === '/' ||  this.$route.path === '/game');
+      return (this.$route.path === '/' ||  this.$route.path === '/game' || this.$route.path === '/game-online');
     },
   }
   

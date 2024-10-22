@@ -11,6 +11,7 @@ import Profile from '../components/Profile.vue'
 import Game from '../components/game/Game.vue'
 import Home from '../components/Home.vue'
 import Nav from '../components/Nav.vue'
+import GameOnline from '../components/GameOnline/GameOnline.vue'
 const routes = [
   {
     path: '/',
@@ -61,6 +62,11 @@ const routes = [
     path: '/game',
     name: 'Game',
     component: Game
+  },
+  {
+    path: '/game-online',
+    name: 'GameOnline',
+    component: GameOnline
   },
   // {
   //   path: '/main',

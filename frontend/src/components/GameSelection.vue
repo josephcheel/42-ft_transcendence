@@ -3,7 +3,7 @@
     <div class="row w-100">
       <!-- Left Column (Vertical Grid) -->
       <div class="col-lg-3 d-flex flex-column align-items-center justify-content-start">
-        <div id="simple-match" class="bento-box flex-grow-1">
+        <div @click="startOnlineMatch" id="simple-match" class="bento-box flex-grow-1">
           <h2>{{ $t('message.simple_match')}}</h2>
           <p>{{ $t('message.explain_simple_match')}}</p>
        </div>
@@ -154,8 +154,9 @@ function startLocalMatch() {
   router.push({name: 'Game'});
 }
 
-function startSimpleMatch() {
-  alert('Starting a simple match...');
+function startOnlineMatch() {
+  alert('Starting a online match...');
+  router.push({name: 'GameOnline'});
 }
 
 function showFriendMatchInput() {
