@@ -1,86 +1,66 @@
 <template>
-  <div class="container-fluid h-100">
-    <div class="row h-100">
-      <!-- Sección izquierda (LOCAL MATCH) -->
-      <div class="col-4 d-flex justify-content-center align-items-center border border-dark bg-light" @click="startLocalMatch">
-        <div class="text-center">
-          <h2>{{ $t('message.local_match')}}</h2>
-          <p>{{ $t('message.explain_local_match')}}</p>
-        </div>
-      </div>
+	<!-- <div>
+	  <h1>Home Page</h1>
+	  <p>Bienvenido a la página de inicio.</p>
+	</div> -->
 
-      <!-- Parte central (dividida en dos partes horizontalmente) -->
-      <div class="col-4">
-        <!-- Central superior (SIMPLE MATCH) -->
-        <div class="row h-50 d-flex justify-content-center align-items-center border border-dark bg-light" @click="startSimpleMatch">
-          <div class="text-center">
-            <h2>{{ $t('message.simple_match')}}</h2>
-            <p>{{ $t('message.explain_simple_match')}}</p>
-          </div>
-        </div>
-        <!-- Central inferior (FRIEND MATCH) -->
-        <div class="row h-50 d-flex justify-content-center align-items-center border border-dark bg-light" @click="showFriendMatchInput">
-          <div class="text-center">
-            <h2>{{ $t('message.friend_match')}}</h2>
-            <p>{{ $t('message.explain_friend_match')}}</p>
-            <!-- Input para enviar invitación -->
-            <div v-if="showFriendInput" class="mt-3">
-              <input type="text" v-model="friendName" placeholder="Enter player's name" class="form-control d-inline-block w-50" />
-              <button @click="sendInvitation" class="btn btn-success ml-2">{{ $t('message.send')}}</button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Sección derecha (TOURNAMENT) -->
-      <div class="col-4 d-flex justify-content-center align-items-center border border-dark bg-light" @click="goToTournament">
-        <div class="text-center">
-          <h2>{{ $t('message.tournament')}}</h2>
-          <p>{{ $t('message.explain_tournament')}}</p>
-        </div>
-      </div>
-    </div>
-  </div>
+	<div class="container-fluid d-flex justify-content-center align-items-center " style="max-width: 400px; width: 100%;">
+				<router-link id="play-button" class="btn btn-primary w-100" to="/select-game">PLAY!</router-link>
+	</div>
 </template>
-
-
-<script setup>
-import { ref, onMounted } from 'vue';
-import { useRouter } from 'vue-router';
-
-const username = ref('');
-const router = useRouter();
-
-const showFriendInput = ref(false);
-const friendName = ref('');
-
-onMounted(() =>{
-  const user = localStorage.getItem('username');
-  if(user) {
-    username.value = user;
-  } else {
-    // router.push({name: 'Login'})
-  }
-})
-
-function startLocalMatch() {
-  alert('Starting a local match...');
-  router.push({name: 'Game'});
+<style scoped>
+#play-button {
+	font-size: 40px !important;
 }
 
-function startSimpleMatch() {
-  alert('Starting a simple match...');
-}
+</style>
+<script>
 
-function showFriendMatchInput() {
-  showFriendInput.value = true;
-}
+	export default {
+		data() {
+			return {
+				socket: null,
+				message: '',
+				receivedMessages: []
+			};
+		},
+		methods: {
+			connect() {
+				const ws_scheme = window.location.protocol === "https:" ? "wss" : "ws";
+				const ws_path = ws_scheme + '://localhost:8000/ws/gateway/';
 
-function sendInvitation() {
-  alert(`Invitation sent to ${friendName.value}`);
-}
+				this.socket = new WebSocket(ws_path);
 
-function goToTournament() {
-  alert('Navigating to tournament creation...');
-}
+				this.socket.onopen = () => {
+					console.log("WebSocket connected");
+				};
+
+				this.socket.onmessage = (event) => {
+					const data = JSON.parse(event.data);
+					this.receivedMessages.push(data.message);
+				};
+
+				this.socket.onclose = () => {
+					console.log("WebSocket disconnected");
+				};
+				this.socket.onerror = function(error) {
+          		console.log('WebSocket Error: ', error);
+        };
+			},
+			sendMessage() {
+				if (this.socket && this.socket.readyState === WebSocket.OPEN) {
+					this.socket.send(JSON.stringify({
+						'message': this.message
+					}));
+					this.message = '';
+				}
+			}
+		},
+		mounted() {
+			this.connect();
+		}
+	};
+
 </script>
+
+

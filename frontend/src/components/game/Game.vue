@@ -1,26 +1,11 @@
 <template>
-	<!-- <head>
-		<meta charset="UTF-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<title>Pong</title>
-		<link rel="icon" href="./game/assets/icons/favicon.png" type="image/png" sizes="any">
-		<link rel="icon" href="./game/assets/icons/icon-16.ico" type="image/x-icon" sizes="16x16">
-		<link rel="icon" href="./game/assets/icons/icon-32.ico" type="image/x-icon" sizes="32x32">
-		<link rel="icon" href="./game/assets/icons/icon-48.ico" type="image/x-icon" sizes="48x48">
-		<link rel="icon" href="./game/assets/icons/icon-64.ico" type="image/x-icon" sizes="64x64">
-		<link rel="preconnect" href="https://fonts.googleapis.com">
-		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-		<link href="https://fonts.googleapis.com/css2?family=SUSE:wght@100..800&display=swap" rel="stylesheet">
-		<link rel="stylesheet" href="style.css">
-		<<script type="module" src="./game/index.js" ></script> -->
-	<!-- </head> -->
-
-		
 		<header>
 			<h1 id="score">Score 0 - 0 </h1>
 			<input type="checkbox" id="volume">
 			<img src="/assets/icons/mute.svg" alt="volume mute" id="mute" >
 			<img src="/assets/icons/unmute.svg" alt="volume unmute" id="unmute" >
+			<button @click="this.$router.go(-1)" id="goBackButton"></button>
+			<img src="/assets/icons/reply.svg" alt="go back" id="goBackIcon" >
 		</header>
 
 		<section> 
@@ -161,7 +146,7 @@ header {
 #volume {
   position: absolute;
   opacity: 0;
-  right: 10%;
+  right: 5%;
   top : 5%;
   /* border: black; */
   cursor: pointer;
@@ -176,7 +161,7 @@ header {
   z-index: 0;
   height: 2em;
   width: 2em;
-  right: 10%;
+  right: 5%;
   top : 5%;
 }
 
@@ -185,9 +170,32 @@ header {
   z-index: 0;
   height: 2em;
   width: 2em;
-  right: 10%;
+  right: 5%;
   top : 5%;
 }
+
+#goBackIcon {
+	position: absolute;
+  z-index: 0;
+  height: 2em;
+  width: 2em;
+  left: 5%;
+  top : 5%;
+/* transform: scaleX(-1); */
+} 
+
+#goBackButton {
+  position: absolute;
+  opacity: 0;
+  left: 5%;
+  top : 5%;
+  /* border: black; */
+  cursor: pointer;
+  height: 3em;
+  width: 3em;
+  z-index: 1
+}
+
 
 #volume:checked ~ #mute {
   display: block;
@@ -493,6 +501,7 @@ export default {
 			this.renderer.render(this.scene, this.camera);
 		},
 		async startCountdown() {
+			document.getElementById('countdown').textContent = '3';
 			await this.sleep(2000);
 			document.getElementById('countdown').textContent = '2';
 			await this.sleep(1000);

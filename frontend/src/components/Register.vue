@@ -15,7 +15,7 @@
      </div>
       <div class="mb-3">
         <label for="user" class="form-label">{{ $t('message.username')}}</label>
-        <input v-model="user" spellcheck="false" type="text" class="form-control" id="user" :placeholder="$t('message.username_placeholder')" required>
+        <input v-model="username" spellcheck="false" type="text" class="form-control" id="user" :placeholder="$t('message.username_placeholder')" required>
       </div>
       <div class="mb-3">
         <label for="email" class="form-label">{{ $t('message.email')}}</label>
@@ -59,7 +59,7 @@
     import { Toast } from 'bootstrap' 
     import axios from '../utils/axiosConfig';
 
-    const user = ref();
+    const username = ref();
     const psw = ref();
     const router = useRouter();
     const name = ref();
@@ -71,8 +71,6 @@
 
     async function login()
     {
-        console.log(user.value);
-        console.log(psw.value);
         if (psw2.value != psw.value) {
           toastMsg.value = "The password doesn't match"
         }
@@ -80,10 +78,11 @@
 
           try {
           const response = await axios.post('https://localhost:8000/api/user/create_user/', {
-            username: user.value,
+            username: username.value,
             password: psw.value,
             first_name: name.value,
             last_name: lastname.value,
+            email: email.value,
           }, {
             headers: {
               'Content-Type': 'application/json',

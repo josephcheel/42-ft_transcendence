@@ -1,15 +1,16 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import Home from '../components/Home.vue'
+import Play from '../components/Play.vue'
 import About from '../components/About.vue'
 import Login from '../components/Login.vue'
 import Forgotps from '../components/Forgotps.vue'
 import Register from '../components/Register.vue'
 import Chat from '../components/chat/chatLayout.vue'
 import Dashboard from '../components/Dashboard.vue'
-import Play from '../components/Play.vue'
+import GameSelection from '../components/GameSelection.vue'
 import Profile from '../components/Profile.vue'
 import Game from '../components/game/Game.vue'
-import Main from '../components/Main.vue'
+import Home from '../components/Home.vue'
+import Nav from '../components/Nav.vue'
 const routes = [
   {
     path: '/',
@@ -47,9 +48,9 @@ const routes = [
     component: Dashboard
   },
   {
-    path: '/play',
-    name: 'Play',
-    component: Play
+    path: '/select-game',
+    name: 'GameSelection',
+    component: GameSelection
   },
   {
     path: '/profile/',
@@ -61,10 +62,20 @@ const routes = [
     name: 'Game',
     component: Game
   },
+  // {
+  //   path: '/main',
+  //   name: 'Main',
+  //   component: Main
+  // },
   {
-    path: '/main',
-    name: 'Main',
-    component: Main
+    path: '/Nav',
+    name: 'Nav',
+    component: Nav
+  },
+  {
+    path: '/play',
+    name: 'play',
+    component: Play
   }
 ]
 
@@ -75,8 +86,8 @@ const router = createRouter({
   routes
 })
 
-router.beforeEach((to, from, next) => {
-  if (to.path === '/main' || to.path === '/game') {
+router.beforeResolve ((to, from, next) => {
+  if (to.path === '/' || to.path === '/game') {
     document.body.style.overflow = 'hidden';
   }
   else {

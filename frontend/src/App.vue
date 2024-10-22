@@ -1,18 +1,19 @@
 
 <template>
   <div id="app">
+    <!-- <div style="width: 100%; height: 100%; background: #FF9670; border-bottom-left-radius: 20px; border--right-radius: 20px"></div> -->
     <nav class="navbar navbar-expand-lg " v-if="!isNav()">
-      <img src="/src/images/Logo.png" alt="Logo" style="margin-left:15px; width: 65px; height: auto;">
+      <!-- <img src="/src/images/Logo.png" alt="Logo" style="margin-left:15px; width: 65px; height: auto;"> -->
         <h2 style="margin-left: 180px; margin-right: 180px;">Pong</h2>
         <ul class="navbar-nav">
           <li class="nav-item">
-            <router-link to="/" class="nav-link1">{{ $t('message.home')}}</router-link>
+            <router-link to="/play" class="nav-link1">{{ $t('message.home')}}</router-link>
           </li>
           <li class="nav-item">
             <router-link to="/login" class="nav-link1">{{ $t('message.login')}}</router-link>
           </li>
           <li class="nav-item">
-            <router-link to="/play" class="nav-link1">{{ $t('message.play')}}</router-link>
+            <router-link to="/select-game" class="nav-link1">{{ $t('message.play')}}</router-link>
           </li>
           <li class="nav-item">
             <router-link to="/dashboard" class="nav-link1">{{ $t('message.dashboard')}}</router-link>
@@ -32,12 +33,6 @@
     <div :class="{ 'content-wrapper': !isNav() }">
       <RouterView />
     </div>
-
-    <footer v-if="!isNav()" class="footer mt-auto py-3">
-      <div class="container">
-        <span class="text-muted">© 2024 Ft_Transcendence. 42Barcelona.</span>
-      </div>
-    </footer>
   </div>
 </template>
 
@@ -54,14 +49,14 @@ export default {
       this.$i18n.locale = this.selectedLang;
     },
     isNav() {
-      return (this.$route.path === '/game' ||  this.$route.path === '/main');
+      return (this.$route.path === '/' ||  this.$route.path === '/game');
     },
   }
   
 }
 </script>
 
-<style>
+<style scoped>
 #app {
   display: flex;
   flex-direction: column;
@@ -73,11 +68,12 @@ nav {
   flex-shrink: 0; 
 }
 .navbar {
-  background: rgb(182 201 205 / 60%); 
+  background: #FF9670;/*rgb(182 201 205 / 60%); */
   backdrop-filter: blur(10px); 
   box-shadow: 0 5px 6px rgba(0, 0, 0, 0.1); 
   margin-left: 10px;
   margin-right: 10px;
+  margin-top: 10px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -94,7 +90,7 @@ nav {
 .footer {
   flex-shrink: 0; 
   width: 100%;
-  background-color: #738692;
+  background-color: #96c1ce;
 }
 
 
@@ -121,7 +117,7 @@ nav {
 .navbar-nav {
   display: flex;
   gap: 20px; 
-    margin-right: 20px;
+  margin-right: 20px;
 }
 
 </style>
