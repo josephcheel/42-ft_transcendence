@@ -19,3 +19,4 @@ celery-beat-schedule
 celerybeat-schedule
 django-selfsigned*
 cookies*
+frontend/.env
