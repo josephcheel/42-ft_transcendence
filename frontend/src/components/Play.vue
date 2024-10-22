@@ -26,8 +26,10 @@
 		},
 		methods: {
 			connect() {
+				const ORIGIN_IP = import.meta.env.VITE_VUE_APP_ORIGIN_IP || 'localhost';
+				console.log(ORIGIN_IP);
 				const ws_scheme = window.location.protocol === "https:" ? "wss" : "ws";
-				const ws_path = ws_scheme + '://localhost:8000/ws/gateway/';
+				const ws_path = ws_scheme + `://${ORIGIN_IP}:8000/ws/gateway/`;
 
 				this.socket = new WebSocket(ws_path);
 
