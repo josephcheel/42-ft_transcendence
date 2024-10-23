@@ -21,9 +21,9 @@
           <h2>{{ $t('message.friend_match')}}</h2>
             <p>{{ $t('message.explain_friend_match')}}</p>
             <!-- Input para enviar invitación -->
-            <div v-if="showFriendInput" class="mt-3">
-              <input type="text" v-model="friendName" placeholder="Enter player's name" class="form-control d-inline-block w-50" />
-              <button @click="sendInvitation" class="btn btn-success ml-2">{{ $t('message.send')}}</button>
+            <div v-if="showFriendInput" class="col-lg-6 d-flex flex-column align-items-center justify-content-center">
+              <input type="text" v-model="friendName" placeholder="Enter Match Id" class="form-control d-inline-block w-50" />
+              <button @click="sendInvitation" class="btn btn-success mt-2">{{ $t('message.send')}}</button>
             </div>
         </div>
       </div>
@@ -129,7 +129,6 @@ export default {
 
 </style>
 
-
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
@@ -163,8 +162,16 @@ function showFriendMatchInput() {
   showFriendInput.value = true;
 }
 
+function goToMatch() {
+  if (friendName.value) {
+    // Programmatically navigate to '/route1/:id'
+    router.push(`/game-online?match-id=${friendName.value}`);
+  }
+}
+
 function sendInvitation() {
   alert(`Invitation sent to ${friendName.value}`);
+  goToMatch();
 }
 
 function goToTournament() {

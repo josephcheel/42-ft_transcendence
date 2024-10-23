@@ -68,6 +68,11 @@ const routes = [
     name: 'GameOnline',
     component: GameOnline
   },
+  {
+    path: '/game-online/:id',
+    name: 'GameFriend',
+    component: GameOnline
+  },
   // {
   //   path: '/main',
   //   name: 'Main',
