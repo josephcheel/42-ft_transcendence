@@ -3,6 +3,7 @@
   
 	<header>
 	  <h1 id="score">Score 0 - 0 </h1>
+    <h3 id="score" v-if="matchId && tournamentId === '' && !start"> Invite your friend to join! Use this match code: {{ matchId }}</h3>
 	  <input type="checkbox" id="volume">
 		<img src="/assets/icons/mute.svg" alt="volume mute" id="mute">
 		<img src="/assets/icons/unmute.svg" alt="volume unmute" id="unmute">

@@ -39,6 +39,7 @@ export default {
 				},
 			},
 			PLAYER: 0,
+			start: false,
 			renderer: undefined,
 			listener: undefined,
 			camera: undefined,
@@ -55,11 +56,17 @@ export default {
 			text: undefined,
 			animationFrameIdanimate: undefined,
 			endText: undefined,
+			matchId: '',
+			tournamentId: '',
 		};
 	  },
 	  mounted() {
-	  
-		this.initClient();
+		const query = this.getQuery();
+		console.log('query:', typeof(query));
+		this.matchId = query['match-id'] !== undefined ? query['match-id'] : '';
+		this.tournamentId = query['tournament-id'] !== undefined ? query['tournament-id'] : '';
+		
+		this.initClient(this.matchId, this.tournamentId);
 		this.initThree();
 	},
 	beforeUnmount() {
@@ -68,6 +75,9 @@ export default {
 		this.socket.disconnect();
 	},
 	  methods: {
+		getQuery() {
+			return this.$route.query;
+		},
 		initThree() {
 		
 			const CENTER_DISTANCE_TO_PADDLE = 45;
@@ -98,10 +108,10 @@ export default {
 			this.listener = new THREE.AudioListener();
 			this.camera.add(this.listener);
 
-			this.endSound = new SoundEffect(this.listener, './assets/audio/end.wav', 0.5);
-			this.goalSound = new SoundEffect(this.listener, './assets/audio/goal4.wav', 0.5);
-			this.paddlecollisionSound = new SoundEffect(this.listener, './assets/audio/beep2.mp3', 0.5);
-			this.wallCollisionSound = new SoundEffect(this.listener, './assets/audio/beep.mp3', 0.5);
+			this.endSound = new SoundEffect(this.listener, '/assets/audio/end.wav', 0.5);
+			this.goalSound = new SoundEffect(this.listener, '/assets/audio/goal4.wav', 0.5);
+			this.paddlecollisionSound = new SoundEffect(this.listener, '/assets/audio/beep2.mp3', 0.5);
+			this.wallCollisionSound = new SoundEffect(this.listener, '/assets/audio/beep.mp3', 0.5);
 			
 			document.getElementById('volume').addEventListener('change', () => {
 				const volumeButton =  document.getElementById('volume');
@@ -269,8 +279,13 @@ export default {
 			this.lights.ambientLight.intensity = 0.7
 			this.PLAYER = 0
 		},
-		initClient() {
-			this.socket = io("ws://localhost:4000?match-id=dgf81vey8dv31fyfoijbd89wd1y", {
+		initClient(matchId, tournamentId) {
+
+			console.log('matchId:', matchId);
+			console.log('tournamentId:', tournamentId);
+			const ORIGIN_IP = import.meta.env.VITE_VUE_APP_ORIGIN_IP || 'localhost';
+
+			this.socket = io(`wss://${ORIGIN_IP}:4000?match-id=${matchId}&tournament-id=${tournamentId}`, {
 				withCredentials: true,
 			});
 			this.socket.on('connect', () => {
@@ -330,7 +345,7 @@ export default {
 					// 	// camera.position.set(-60, 5, 0);
 					// 	PlayerNb = 2;
 					// }
-					
+					this.start = true;
 					let elements = document.getElementsByClassName('waiting-screen');
 			
 					for (let i = 0; i < elements.length; i++) {
@@ -352,6 +367,7 @@ export default {
 			
 				this.socket.on('reconnect', (data) => {
 					console.log('Reconnected to server');
+					this.start = true;
 					let elements = document.getElementsByClassName('waiting-screen');
 			
 					for (let i = 0; i < elements.length; i++) {
@@ -381,6 +397,7 @@ export default {
 				});
 				this.socket.on('disconnect', () => {
 					console.log('Disconnected from server');
+					this.start = false;
 				});
 			
 				this.socket.on('roomLeft', (message) => {
