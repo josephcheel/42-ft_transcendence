@@ -93,6 +93,7 @@ export default {
       }
     },
     async fetchUserProfile() {
+      const ORIGIN_IP = import.meta.env.VITE_VUE_APP_ORIGIN_IP || 'localhost';
       const username = localStorage.getItem('username');
     
       if (!username) {
@@ -100,7 +101,7 @@ export default {
         return; // Salir si no hay nombre de usuario
       }
       axios
-        .get(`https://localhost:8000/api/user/get_profile/${username}/`)
+        .get(`https://$(ORIGIN_IP):8000/api/user/get_profile/${username}/`)
         .then((response) => {
           const data = response.data.data;
           // Asegurarse de que 'data' tenga las propiedades necesarias
@@ -115,7 +116,7 @@ export default {
         })
 
     axios
-      .get(`https://localhost:8000/api/user/get_profile_picture_url/${username}/`)
+      .get(`https://$(ORIGIN_IP):8000/api/user/get_profile_picture_url/${username}/`)
       .then((response) => {
         const pict = response.data.data;
         const url = pict.profile_picture_url;
