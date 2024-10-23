@@ -64,7 +64,8 @@ export default {
         tournament_name: "",
         profile_picture_url: ""
       },
-      selectedImage: null
+      selectedImage: null,
+      ORIGIN_IP : import.meta.env.VITE_VUE_APP_ORIGIN_IP || 'localhost'
     };
   },
   mounted() {
@@ -99,7 +100,6 @@ export default {
       }
     },
     async fetchUserProfile() {
-      const ORIGIN_IP = import.meta.env.VITE_VUE_APP_ORIGIN_IP || 'localhost';
       const username = localStorage.getItem('username');
     
       if (!username) {
@@ -107,7 +107,7 @@ export default {
         return; // Salir si no hay nombre de usuario
       }
       axios
-        .get(`https://${ORIGIN_IP}:8000/api/user/get_profile/${username}/`)
+        .get(`https://${this.ORIGIN_IP}:8000/api/user/get_profile/${username}/`)
         .then((response) => {
           const data = response.data.data;
           // Asegurarse de que 'data' tenga las propiedades necesarias
@@ -122,7 +122,7 @@ export default {
         })
 
     axios
-      .get(`https://${ORIGIN_IP}:8000/api/user/get_profile_picture_url/${username}/`)
+      .get(`https://${this.ORIGIN_IP}:8000/api/user/get_profile_picture_url/${username}/`)
       .then((response) => {
         const pict = response.data.data;
         const url = pict.profile_picture_url;
@@ -135,7 +135,7 @@ export default {
     },
     async updateUserProfile() {
       try{
-        await axios.post('https://${ORIGIN_IP}:8000/api/user/update_user/', {
+        await axios.post(`https://${this.ORIGIN_IP}:8000/api/user/update_user/`, {
           first_name: this.user.first_name,
           last_name: this.user.last_name,
           username: this.user.username,
@@ -152,7 +152,7 @@ export default {
       formData.append('picture', this.selectedImage);
 
       try {
-        const response = await axios.post('https://${ORIGIN_IP}:8000/api/user/upload_picture/', formData,);
+        const response = await axios.post(`https://${this.ORIGIN_IP}:8000/api/user/upload_picture/`, formData,);
         this.user.profile_picture_url = response.data.profile_picture_url;
         console.log('Profile picture uploaded successfully.');
       } catch (error) {
