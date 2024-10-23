@@ -63,11 +63,12 @@ export default {
         username: "",
         tournament_name: "",
         profile_picture_url: ""
-      }
+      },
+      selectedImage: null
     };
   },
   mounted() {
-  const username = localStorage.getItem('username');  
+   const username = localStorage.getItem('username');  
   if (!username) {
     this.$router.push('/login'); // Redirigir al login si no está autenticado
   } else {
@@ -77,17 +78,22 @@ export default {
 
   methods: {
     toggleEdit() {
-      this.isEditing = !this.isEditing;
-      if (!this.isEditing) {
-        console.log('Datos guardados:', this.user);
+      if (this.isEditing){
+        this.updateUserProfile();
+        if (this.selectedImage){
+          this.uploadProfilePicture();
+        }
       }
+      this.isEditing = !this.isEditing;
     },
+
     onImageChange(event) {
       const file = event.target.files[0];
       if (file) {
         const reader = new FileReader();
         reader.onload = (e) => {
           this.user.profile_picture_url = e.target.result; // Cambiar la imagen con la seleccionada
+          this.selectedImage = file
         };
         reader.readAsDataURL(file);
       }
@@ -125,8 +131,33 @@ export default {
       .catch((error) => {
         console.error("Error fetching user profile:", error.response ? error.response.data : error);
       });
-    }
+    },
+    async updateUserProfile() {
+      try{
+        await axios.post('https://localhost:8000/api/user/update_user/', {
+          first_name: this.user.first_name,
+          last_name: this.user.last_name,
+          username: this.user.username,
+          tournament_name: this.user.tournament_name
+        });
+        console.log('User profile updated successfully.');
+      } catch (error) {
+        console.error("Error updating user profile:", error);
+      }
+    },
 
+    async uploadProfilePicture() {
+      const formData = new FormData();
+      formData.append('picture', this.selectedImage);
+
+      try {
+        const response = await axios.post('https://localhost:8000/api/user/upload_picture/', formData,);
+        this.user.profile_picture_url = response.data.profile_picture_url;
+        console.log('Profile picture uploaded successfully.');
+      } catch (error) {
+        console.error("Error uploading profile picture:", error);
+      }
+    }
   }
 };
 </script>

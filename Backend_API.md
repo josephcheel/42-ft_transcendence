@@ -127,9 +127,9 @@ You need to call /user/get_profile_picture_url/{username}/ to get the profile pi
 [Back to Top](#table-of-contents)
 
 
-### upload_profile_picture
+### upload_picture
 
-You need to call /user/upload_profile_picture/ and upload a a form with a key/value pair of picture:{picture_data} to update the picture for the signed in user. Returns profile_picture_url inside data, containing the url for the uploaded file
+You need to call /user/upload_picture/ and upload a a form with a key/value pair of picture:{picture_data} to update the picture for the signed in user. Returns profile_picture_url inside data, containing the url for the uploaded file
 
 | Use | Methods | Request Data | Response Data | Return Values|
 | --- | --- | --- | ---| ---|
