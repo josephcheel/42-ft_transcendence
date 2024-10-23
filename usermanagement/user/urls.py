@@ -16,7 +16,7 @@ urlpatterns = [
     path('get_friends/', get_friends, name='get_friends'),
     path('update_user/', update_user, name='update_user'),
     path('get_profile_picture_url/<str:username>/', get_profile_picture_url, name='get_profile_picture'),
-    path('upload_profile_picture_url/', upload_picture, name='upload_picture'),
+    path('upload_picture/', upload_picture, name='upload_picture'),
     path('get_profile/<str:username>/', get_profile, name='get_profile'),
 
 ]

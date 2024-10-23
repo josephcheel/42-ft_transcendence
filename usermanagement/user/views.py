@@ -263,6 +263,13 @@ def update_user(request):
 @require_post
 @exception_handler
 def upload_picture(request):
+    if 'picture' not in request.FILES:
+        logger.info("No picture received in request")
+        return JsonResponse({
+            'status': 'error',
+            'message': 'No picture received',
+            'data': {}
+        }, status=400)
     picture = request.FILES['picture']
     user_profile_pic= UserProfilePic.objects.get(user=request.user)
     user_profile_pic.update_picture(picture)

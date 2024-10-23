@@ -20,3 +20,5 @@ celerybeat-schedule
 django-selfsigned*
 cookies*
 frontend/.env
+usermanagement/profile_pictures/*
+!usermanagement/profile_pictures/*.*

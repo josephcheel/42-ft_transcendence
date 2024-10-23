@@ -20,13 +20,20 @@ def custom_404_view(request, exception=None):
 
 def handle_request(request, internal_url, subpath):
     response = None
-    cookies = request.COOKIES
-    logger.info((cookies))
-
-    logger.info(request.headers)
-    logger.info(request.user)
     try:
-        if request.method == "POST": 
+        if request.method == 'POST' and request.FILES:
+            form_data = request.POST
+            files = {'picture': request.FILES['picture']}
+            headers = dict(request.headers)
+            headers.pop('Content-Type', None)
+            response = requests.post(
+                f'http://{internal_url}{subpath}/',
+                data=form_data, 
+                files=files, 
+                cookies=request.COOKIES, 
+                headers=headers
+            )
+        elif request.method == "POST": 
             try:
                 data = json.loads(request.body) 
             except json.JSONDecodeError:
@@ -46,10 +53,10 @@ def handle_request(request, internal_url, subpath):
             if settings.DEBUG:
                 return HttpResponse(response.text, status=response.status_code, content_type='text/html')
             logger.exception(e)
-            return JsonResponse({'status' : 'error', 'data' : None, 'message' : 'Internal error'}, status=500)
+            return JsonResponse({'status' : 'error', 'data' : None, 'message' : 'Internal error 1'}, status=500)
     except Exception as e:
         logger.exception(e)
-        return JsonResponse({'status' : 'error', 'data' : None, 'message' : 'Internal error'}, status=500)
+        return JsonResponse({'status' : 'error', 'data' : None, 'message' : 'Internal error 2'}, status=500)
 
 @ensure_csrf_cookie
 def tournaments(request, subpath):
