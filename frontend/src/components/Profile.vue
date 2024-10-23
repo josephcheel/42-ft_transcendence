@@ -135,7 +135,7 @@ export default {
     },
     async updateUserProfile() {
       try{
-        await axios.post('https://localhost:8000/api/user/update_user/', {
+        await axios.post('https://$(ORIGIN_IP):8000/api/user/update_user/', {
           first_name: this.user.first_name,
           last_name: this.user.last_name,
           username: this.user.username,
@@ -152,7 +152,7 @@ export default {
       formData.append('picture', this.selectedImage);
 
       try {
-        const response = await axios.post('https://localhost:8000/api/user/upload_picture/', formData,);
+        const response = await axios.post('https://$(ORIGIN_IP):8000/api/user/upload_picture/', formData,);
         this.user.profile_picture_url = response.data.profile_picture_url;
         console.log('Profile picture uploaded successfully.');
       } catch (error) {
