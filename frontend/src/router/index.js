@@ -12,9 +12,10 @@ import Game from '../components/game/Game.vue'
 import Home from '../components/Home.vue'
 import Nav from '../components/Nav.vue'
 import GameOnline from '../components/GameOnline/GameOnline.vue'
+import { isAuthorized } from '../utils/isAuthorized'
 const routes = [
   {
-    path: '/',
+    path: '/:currentView?',
     name: 'Home',
     component: Home
   },
@@ -91,13 +92,31 @@ const routes = [
 ]
 
 
-
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes
 })
 
-router.beforeResolve ((to, from, next) => {
+router.ORIGIN_IP = import.meta.env.VITE_VUE_APP_ORIGIN_IP || 'localhost';
+
+router.beforeResolve (async (to, from, next) => {
+ 
+  // const isLoggedIn = await isAuthorized(router.ORIGIN_IP); // Accessing ORIGIN_IP
+  // console.log("Is logged in: ", isLoggedIn);
+  // if (to.path === '/')
+  // {
+  //   if (isLoggedIn) {
+  //     next({ path: '/play' });
+  //     return;
+  //   }
+  // }
+  // else {
+  //   if (!isLoggedIn) {
+  //     next({ path: '/', params: { currentView: 'Login' } });
+  //     return;
+  //   }
+  // }
+
   if (to.path === '/' || to.path === '/game') {
     document.body.style.overflow = 'hidden';
   }

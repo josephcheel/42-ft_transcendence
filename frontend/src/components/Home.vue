@@ -135,7 +135,8 @@ export default {
   data() {
     return {
       // Inicialmente se muestra el componente Login
-      currentView: 'Login',
+      currentView: this.$route.params.currentView || 'Login',
+	//   ORIGIN_IP : import.meta.env.VITE_VUE_APP_ORIGIN_IP || 'localhost'
     };
   },
   computed: {

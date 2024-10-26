@@ -186,6 +186,7 @@ class Paddle extends UserInput {
         this.connected = true;
         this.matchId = null;
         this.tournamentId = null;
+        this.usename = undefined;
     }
 
     PaddleLimits() {
@@ -387,7 +388,8 @@ async function startGame(room, socketId, KeyPlayer1) {
 
 io.on("connection", (socket) => {
     console.log('New Connection');
-  
+    // const username = localStorage.getItem('username');
+    // console.log('Username:', username);
     let reconnected = false
     const cookiesHeader = socket.handshake.headers.cookie;
     if (cookiesHeader)
@@ -395,6 +397,7 @@ io.on("connection", (socket) => {
         // console.log('THere are cookies');
         // console.log('Cookies:', cookiesHeader);
         const cookies = cookie.parse(cookiesHeader);
+        // Add username by the COOKIE SESSIONID
         if (cookies.playerId && cookies.roomId)//&& io.sockets.adapter.rooms.has(cookies.roomId)) // Problem if the two players disconnect could never reconnect again, but if I uncomment 'io.sockets.adapter.rooms.has(cookies.roomId)' then you can create a game with yourself just recharging the page
         { 
             // console.log('PlayerId:', cookies.playerId);
@@ -407,8 +410,18 @@ io.on("connection", (socket) => {
                 socket.join(cookies.roomId);
                 setCookie(socket);
                 console.log('Reconnected:', socket.id);
-                socket.emit('reconnect', { player: players[socket.id], score: balls[cookies.roomId].ball.score, nb: players[socket.id].nb });
+                
                 delete players[cookies.playerId]
+                if (players[socket.id].nb == 1)
+                {
+                    const playerTwo = Object.values(players).find(player => player.room === cookies.roomId && player.nb === 2);
+                    io.to(cookies.roomId).emit('reconnect', { player1: players[socket.id], player2: playerTwo, score: balls[cookies.roomId].ball.score, nb: players[socket.id].nb });
+                }
+                else
+                {
+                    const playerOne = Object.values(players).find(player => player.room === cookies.roomId && player.nb === 1);
+                    io.to(cookies.roomId).emit('reconnect', { player2: players[socket.id], player1: playerOne, score: balls[cookies.roomId].ball.score, nb: players[socket.id].nb });
+                }
             }
         }
     }
@@ -417,11 +430,13 @@ io.on("connection", (socket) => {
         const query = socket.handshake.query;
         const matchId = query["match-id"] || null;
         const tournamentId = query['tournament-id'] || null;
+        const username = query['username'] || null;
         
         players[socket.id] = new Paddle(new Vector3(0, 0, 0), 1, 2, 6);
         players[socket.id].id = socket.id;
         players[socket.id].matchId = matchId;
         players[socket.id].tournamentId = tournamentId;
+        players[socket.id].username = username;
 
         let pairedPlayerId = null;
         for (let id in players) {

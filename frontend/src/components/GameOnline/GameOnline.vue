@@ -10,6 +10,17 @@
     <button @click="this.$router.go(-1)" id="goBackButton"></button>
 			<img src="/assets/icons/reply.svg" alt="go back" id="goBackIcon" >
 	  </input>
+    
+    <div id="player1-info" >
+        <img id="player1-img" :src="profile_picture_url1"  alt="Profile Picture" class="rounded-circle profile-picture">
+        <h5 id="player1-username" class="mt-2">{{username1}}</h5>
+    </div>
+
+    <div id="player2-info">
+        <img id="player2-img" :src="profile_picture_url2" alt="Profile Picture" class="rounded-circle profile-picture">
+        <h5 id="player2-username" class="mt-2">{{ username2}}</h5>
+    </div>
+
 	</header>
   
 	<div class="waiting-screen" id="loading">
@@ -23,14 +34,14 @@
 	  <aside id="countdown-container">
 		<h1 id="countdown">3</h1>
 	  </aside>
-	  <aside id="left-keys">
+	  <!-- <aside id="left-keys">
 		<h2 class="keys">W</h2>
 		<h2 class="keys">S</h2>
 	  </aside>
 	  <aside id="right-keys">
 		<h2 class="keys">↑</h2>
 		<h2 class="keys">↓</h2>
-	  </aside>
+	  </aside> -->
 	</section>
   
 	<div ref="canvas"></div>
@@ -49,6 +60,50 @@
 </script>
 
 <style scoped>
+#player1-info, #player2-info {
+  top: 15%;
+  position: absolute;
+  visibility: hidden;
+}
+#player1-info {
+  right: 5%;
+}
+
+#player2-info {
+  left: 5%;
+}
+
+#player1-img {
+  width: 9vh;
+  height: 9vh;
+  /* height: 100px; */
+  border-radius: 50%;
+  border: 3px solid black;
+  object-fit: cover; /* Ensures the image covers the entire area */
+  object-position: center; /* Centers the image */
+}
+
+#player2-img {
+  width: 9vh;
+  height: 9vh;
+
+  /* width: 100px;
+  height: 100px; */
+  border-radius: 50%;
+  border: 3px solid black;
+  object-fit: cover; /* Ensures the image covers the entire area */
+  object-position: center; /* Centers the image */
+}
+
+#player1-username, #player2-username {
+  color: black;
+  font-weight: 600;
+  font-size: 1.5em;
+  font-family: "SUSE";
+  text-align: center;
+  /* background-color: rgb(93, 93, 227); */
+}
+
 .my-component {
 	/* background-image: radia
 	l-gradient( circle 311px at 8.6% 27.9%,  rgba(62,147,252,0.57) 12.9%, rgba(239,183,192,0.44) 91.2% ); */

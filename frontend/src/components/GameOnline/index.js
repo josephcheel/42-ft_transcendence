@@ -9,7 +9,8 @@ import { markRaw } from 'vue';
 import SoundEffect from '../game/SoundEffect.js';
 import Stadium from '../game/Stadium.js';
 import Clouds from '../game/Clouds.js';
-
+import { isAuthorized } from '../../utils/isAuthorized.js';
+import axios from 'axios';
 export default {
 	  name: 'GameOnline',
 	  data() {
@@ -58,6 +59,13 @@ export default {
 			endText: undefined,
 			matchId: '',
 			tournamentId: '',
+
+			username1 : 'username',
+			profile_picture_url1: '/profile_pictures/default.jpeg',
+			username2: 'username',
+			profile_picture_url2: '/profile_pictures/default.jpeg',
+			my_username : '',
+			// ORIGIN_IP : import.meta.env.VITE_VUE_APP_ORIGIN_IP || 'localhost'
 		};
 	  },
 	  mounted() {
@@ -66,7 +74,9 @@ export default {
 		this.matchId = query['match-id'] !== undefined ? query['match-id'] : '';
 		this.tournamentId = query['tournament-id'] !== undefined ? query['tournament-id'] : '';
 		
-		this.initClient(this.matchId, this.tournamentId);
+		if (localStorage.getItem('username'))
+			this.my_username = localStorage.getItem('username')
+		this.initClient(this.my_username, this.matchId, this.tournamentId);
 		this.initThree();
 	},
 	beforeUnmount() {
@@ -264,7 +274,7 @@ export default {
 			this.lights.recLight.visible = false;
 			this.lights.recLight2.visible = false;
 			this.lights.spotLight.visible = true
-			this.lights.ambientLight.intensity = 0
+			this.lights.ambientLight.intensity = 0.4
 		},
 		start_light()
 		{
@@ -279,18 +289,75 @@ export default {
 			this.lights.ambientLight.intensity = 0.7
 			this.PLAYER = 0
 		},
-		initClient(matchId, tournamentId) {
+		loadImages(username1, username2) {
+			axios.get(`https://${this.$router.ORIGIN_IP}:8000/api/user/get_profile/${username1}/`)
+			.then((response) => {
+			const data = response.data.data;
+			// Asegurarse de que 'data' tenga las propiedades necesarias
+				if (data.username) {
+					this.username1 = data.username || 'username';
+					axios.get(`https://${this.$router.ORIGIN_IP}:8000/api/user/get_profile_picture_url/${this.username1}/`)
+					.then((response) => {
+						if (response.status === 200 )
+						{
+							const pict = response.data.data;
+							const url = pict.profile_picture_url;
+							console.log("URL: " + url);
+							this.profile_picture_url1 = url ;
+						}
+					})
+					.catch((error) => {
+						// console.error("Error fetching user profile:", error.response ? error.response.data : error);
+						// this.profile_picture_url1 = '/src/images/default.jpeg';
+					});
+				} else {
+					console.error("No user profile data received");
+				}
+			})
+			// .catch(() => {
+			// 	this.profile_picture_url1 = '/src/images/default.jpeg';
+			// });
+			
+			axios.get(`https://${this.$router.ORIGIN_IP}:8000/api/user/get_profile/${username2}/`)
+			.then((response) => {
+			const data = response.data.data;
+			// Asegurarse de que 'data' tenga las propiedades necesarias
+				if (data.username) {
+					this.username2 = data.username || 'username';
+					axios.get(`https://${this.$router.ORIGIN_IP}:8000/api/user/get_profile_picture_url/${this.username2}/`)
+					.then((response) => {
+						if (response.status === 200 )
+						{
+							const pict = response.data.data;
+							const url = pict.profile_picture_url;
+							console.log("URL: " + url);
+							this.profile_picture_url2 = url ;
+						}
+					})
+					.catch((error) => {
+						// this.profile_picture_url2 = '/src/images/default.jpeg';
+					});
+				} else {
+					console.error("No user profile data received");
+				}
+			})
+			// .catch(() => {
+			// 	this.profile_picture_url2 = '/src/images/default.jpeg';
+			// });
+			
+			
+		},
+		initClient(username, matchId, tournamentId) {
 
 			console.log('matchId:', matchId);
 			console.log('tournamentId:', tournamentId);
-			const ORIGIN_IP = import.meta.env.VITE_VUE_APP_ORIGIN_IP || 'localhost';
-
-			this.socket = io(`wss://${ORIGIN_IP}:4000?match-id=${matchId}&tournament-id=${tournamentId}`, {
+			
+			// const ORIGIN_IP = import.meta.env.VITE_VUE_APP_ORIGIN_IP || 'localhost';
+			this.socket = io(`wss://${this.$router.ORIGIN_IP}:4000?username=${username}&match-id=${matchId}&tournament-id=${tournamentId}`, {
 				withCredentials: true,
 			});
 			this.socket.on('connect', () => {
 				console.log('Connected to server');
-				
 				this.socket.on('set-cookie', (cookies) => {
 					console.log('Setting cookies', cookies);
 					for (let cookie of cookies) {
@@ -300,6 +367,12 @@ export default {
 					document.cookie = `playerId=${this.socket.id}; path=/;`;
 				});
 				this.socket.on('countdown-3', (players) => {
+					console.log('countdown-3', players);
+					// this.loadImages(players.player1.username, players.player2.username);
+					this.loadImages(players.player2.username, players.player1.username);
+					
+					document.getElementById('player1-info').style.visibility = 'visible';
+					document.getElementById('player2-info').style.visibility = 'visible';
 					document.getElementById('countdown-container').style.visibility = 'visible';
 					let keys = document.getElementsByClassName('keys');
 					for (let i = 0; i < keys.length; i++) 
@@ -309,6 +382,7 @@ export default {
 						this.visibleFollowPlayer(1)
 					else if (players.player2.id == this.socket.id)
 						this.visibleFollowPlayer(2)
+
 				});
 			
 				this.socket.on('countdown-2', () => {
@@ -345,6 +419,8 @@ export default {
 					// 	// camera.position.set(-60, 5, 0);
 					// 	PlayerNb = 2;
 					// }
+					
+
 					this.start = true;
 					let elements = document.getElementsByClassName('waiting-screen');
 			
@@ -366,15 +442,18 @@ export default {
 				});
 			
 				this.socket.on('reconnect', (data) => {
-					console.log('Reconnected to server');
+					// console.log('Reconnected to server');
 					this.start = true;
 					let elements = document.getElementsByClassName('waiting-screen');
-			
+					
 					for (let i = 0; i < elements.length; i++) {
 						elements[i].style.display = 'none';
 					}
 					this.animate()
 					
+					this.loadImages( data.player1.username, data.player2.username);
+					document.getElementById('player1-info').style.visibility = 'visible';
+					document.getElementById('player2-info').style.visibility = 'visible';
 					let score = document.getElementById('score');
 					score.style.visibility = 'visible';
 					score.textContent = `Score ${data.score.player1} - ${data.score.player2}`

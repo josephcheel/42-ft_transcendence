@@ -43,6 +43,43 @@
 <script>
 export default {
   name: 'BentoGrid',
+  data() {
+    return {
+      showFriendInput: false,
+      friendName: '',
+    };
+  },
+  mounted() {
+    const user = localStorage.getItem('username');
+    if(user) {
+      username.value = user;
+    } else {
+      // router.push({name: 'Login'})
+    }
+  },
+  methods: {
+    startLocalMatch() {
+      alert('Starting a local match...');
+      this.$router.push({name: 'Game'});
+    },
+    startOnlineMatch() {
+      alert('Starting a online match...');
+      this.$router.push({name: 'GameOnline'});
+    },
+    showFriendMatchInput() {
+      this.showFriendInput = true;
+    },
+    goToMatch() {
+      if (this.friendName) {
+        // Programmatically navigate to '/route1/:id'
+        this.$router.push(`/game-online?match-id=${this.friendName}`);
+      }
+    },
+    sendInvitation() {
+      alert(`Invitation sent to ${this.friendName}`);
+      this.goToMatch();
+    },
+  },
 };
 </script>
 
@@ -129,24 +166,16 @@ export default {
 
 </style>
 
-<script setup>
+<!-- <script setup>
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
+import { isAuthorized } from '../utils/isAuthorized';
 
 const username = ref('');
 const router = useRouter();
 
 const showFriendInput = ref(false);
 const friendName = ref('');
-
-onMounted(() =>{
-  const user = localStorage.getItem('username');
-  if(user) {
-    username.value = user;
-  } else {
-    // router.push({name: 'Login'})
-  }
-})
 
 function startLocalMatch() {
   alert('Starting a local match...');
@@ -177,4 +206,4 @@ function sendInvitation() {
 function goToTournament() {
   alert('Navigating to tournament creation...');
 }
-</script>
+</script> -->
