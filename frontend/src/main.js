@@ -9,7 +9,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { createI18n } from 'vue-i18n';
 import en from './locales/en.json';
 import es from './locales/es.json';
-
+import fr from './locales/fr.json';
 
 
 // Create the i18n instance
@@ -18,7 +18,8 @@ const i18n = createI18n({
     fallbackLocale: 'en', // Set fallback locale
     messages:{
         en: en,
-        es: es
+        es: es,
+        fr: fr
     }, // Provide messages
 });
 

@@ -27,6 +27,7 @@
           <select class="form-select form-select-sm" v-model="selectedLang" @change="changeLang">
             <option value="en">English</option>
             <option value="es">Español</option>
+            <option value="fr">French</option>
           </select>
         </ul>
     </nav>
