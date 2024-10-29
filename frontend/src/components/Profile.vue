@@ -31,10 +31,6 @@
           <input type="text" class="form-control" v-model="user.last_name" id="lastName">
         </div>
         <div class="mb-3">
-          <label for="username" class="form-label">Username</label>
-          <input type="text" class="form-control" v-model="user.username" id="username">
-        </div>
-        <div class="mb-3">
           <label for="tournamentName" class="form-label">Tournament Username</label>
           <input type="text" class="form-control" v-model="user.tournament_name" id="tournamentName">
         </div>
@@ -138,7 +134,6 @@ export default {
         await axios.post(`https://${this.ORIGIN_IP}:8000/api/user/update_user/`, {
           first_name: this.user.first_name,
           last_name: this.user.last_name,
-          username: this.user.username,
           tournament_name: this.user.tournament_name
         });
         console.log('User profile updated successfully.');
@@ -155,6 +150,7 @@ export default {
         const response = await axios.post(`https://${this.ORIGIN_IP}:8000/api/user/upload_picture/`, formData,);
         this.user.profile_picture_url = response.data.profile_picture_url;
         console.log('Profile picture uploaded successfully.');
+        window.location.reload();
       } catch (error) {
         console.error("Error uploading profile picture:", error);
       }
