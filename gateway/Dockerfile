@@ -1,12 +1,6 @@
-FROM python:3.13.0b4-bookworm
-
-WORKDIR /app
-RUN apt-get update && apt-get install -y python3-pip vim curl iputils-ping
+FROM eavedillo/transcendence:latest
 
 COPY . .
-
-RUN pip install -r requirements.txt
-
 
 RUN chmod +x start.sh
 RUN chown root:root test.sh
