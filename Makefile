@@ -17,7 +17,7 @@ LOG_FILES =  $(addprefix ${LOGSTASH_FOLDER}, ${GATEWAY_LOG} ${USER_LOG} ${CHAT_L
 # Define targets
 all: build 
 
-build: 	| volumes
+build: 	| volumes run_npm
 	cp .env ./frontend/.env
 	$(COMPOSE) -f $(DOCKER_COMPOSE_FILE) up --build -d
 
@@ -72,11 +72,20 @@ volumes:
 	@mkdir -p $(VOLUMES)
 	@touch $(LOG_FILES)
 
+compile: ./frontend/package-lock.json 
+	@npm --prefix ./frontend install
+	@touch .exec_run_npm
+
+run_npm: .exec_run_npm
+	@npm --prefix ./frontend run build
+
 del_vol:rm_vol
 	@echo Deleting Volumes DIR
 	@suifeq ($(MAKECMDGOALS), debug)
 
 rm_vol:
+	@rm -rfd frontend/dist/
+	@rm .exec_run_npm
 	@if [ -n "$(LIST_CURRENT_VOLUMES)" ]; then \
         echo "Removing Docker volumes: $(LIST_CURRENT_VOLUMES)"; \
         docker volume rm $(LIST_CURRENT_VOLUMES); \
@@ -99,4 +108,4 @@ re: fclean all
 
 
 
-.PHONY: all build up down restart logs clean re fclean volumes
+.PHONY: all build up down restart logs clean re fclean volumes compile run_pm
