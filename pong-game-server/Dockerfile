@@ -13,11 +13,10 @@ WORKDIR /app
 
 # Copy the entire app source code after installing dependencies
 COPY app/backend.js .
-COPY dist/ dist/
 COPY node_modules/ node_modules/
 
 # Install node server daemon
-#RUN npm install pm2 -g
+RUN npm install pm2 -g
 
 RUN openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
   -keyout /app/selfsigned.key \
