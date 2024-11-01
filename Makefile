@@ -45,7 +45,6 @@ rebuild: rm_files
 rm_files:
 	@rm -rfd frontend/dist/
 	@rm -rfd frontend/node_modules/
-	@rm -rfd pong-game-server/dist/
 	@rm -rfd pong-game-server/node_modules/
 	@rm .exec_run_npm
 	@$(COMPOSE) -f $(DOCKER_COMPOSE_FILE) down --volumes
@@ -84,7 +83,6 @@ compile: ./frontend/package-lock.json
 
 run_npm: .exec_run_npm
 	@npm --prefix ./frontend run build
-	@npm --prefix ./pong-game-server pm2 -g
 
 del_vol:rm_vol
 	@echo Deleting Volumes DIR
