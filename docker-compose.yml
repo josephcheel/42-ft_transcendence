@@ -221,9 +221,9 @@ services:
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/metrics"]
       interval: 10s
-      timeout: 10s
-      start_period: 10s
-      retries: 3
+      timeout: 20s
+      start_period: 40s
+      retries: 5
 
   # Monitoring Container
 
