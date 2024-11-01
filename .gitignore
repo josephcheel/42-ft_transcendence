@@ -14,7 +14,7 @@ db.s*
 *TestUser*
 frontend/node_modules/
 node_modules/
-
+dist/
 celery-beat-schedule
 celerybeat-schedule
 django-selfsigned*
@@ -22,3 +22,4 @@ cookies*
 frontend/.env
 usermanagement/profile_pictures/*
 !usermanagement/profile_pictures/*.*
+.exec_run_npm

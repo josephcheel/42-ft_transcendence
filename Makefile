@@ -17,7 +17,7 @@ LOG_FILES =  $(addprefix ${LOGSTASH_FOLDER}, ${GATEWAY_LOG} ${USER_LOG} ${CHAT_L
 # Define targets
 all: build 
 
-build: 	| volumes run_npm
+build: 	| volumes compile run_npm
 	cp .env ./frontend/.env
 	$(COMPOSE) -f $(DOCKER_COMPOSE_FILE) up --build -d
 
@@ -43,6 +43,9 @@ rebuild: rm_files
 	@$(COMPOSE) -f $(DOCKER_COMPOSE_FILE) up --build -d
 
 rm_files:
+	@rm -rfd frontend/dist/
+	@rm -rfd frontend/node_modules/
+	@rm .exec_run_npm
 	@$(COMPOSE) -f $(DOCKER_COMPOSE_FILE) down --volumes
 	@sudo find . -type d -name 'migrations' -exec rm -r {} +
 	@sudo find . -type d -name '__pycache__' -exec rm -r {} +
@@ -84,8 +87,6 @@ del_vol:rm_vol
 	@suifeq ($(MAKECMDGOALS), debug)
 
 rm_vol:
-	@rm -rfd frontend/dist/
-	@rm .exec_run_npm
 	@if [ -n "$(LIST_CURRENT_VOLUMES)" ]; then \
         echo "Removing Docker volumes: $(LIST_CURRENT_VOLUMES)"; \
         docker volume rm $(LIST_CURRENT_VOLUMES); \
