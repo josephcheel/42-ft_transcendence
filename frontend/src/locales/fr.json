@@ -32,6 +32,7 @@
         "lastname_placeholder": "nom de famille",
         "username_placeholder": "nom d'utilisateur",
         "password_placeholder": "mot de passe",
-        "confirm_pass_placeholder": "confirmer le mot de passe"
+        "confirm_pass_placeholder": "confirmer le mot de passe",
+        "logout": "Se déconnecter"
     }
 }

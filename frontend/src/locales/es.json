@@ -27,6 +27,7 @@
         "tournament": "Torneo",
         "explain_tournament": "Crea un torneo para 16 personas",
         "email": "Correo",
-        "reset_pass": "Restablece tu contraseña"
+        "reset_pass": "Restablece tu contraseña",
+        "logout": "Cerrar Sesión"
     }
 }

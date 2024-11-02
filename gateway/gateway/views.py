@@ -35,10 +35,10 @@ def handle_request(request, internal_url, subpath):
             )
         elif request.method == "POST": 
             try:
-                data = json.loads(request.body) 
+                data = json.loads(request.body)
+                response = requests.post(f'http://{internal_url}{subpath}/', json=data, cookies=request.COOKIES, headers=request.headers)
             except json.JSONDecodeError:
-                    return JsonResponse({'status': 'error', 'message':'Invalid Json body', 'data' : None}, status=400)
-            response = requests.post(f'http://{internal_url}{subpath}/', json=data, cookies=request.COOKIES, headers=request.headers)
+                response = requests.post(f'http://{internal_url}{subpath}/', cookies=request.COOKIES, headers=request.headers)
         elif request.method == "GET": 
             response = requests.get(f'http://{internal_url}{subpath}', cookies=request.COOKIES, headers=request.headers)
         try:
