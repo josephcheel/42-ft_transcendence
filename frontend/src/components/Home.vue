@@ -176,10 +176,10 @@ export default {
 
 		function handleTouch(event) {
 			if (event.touches[0].clientY < window.innerHeight / 2) {
-				login.style.transition = 'opacity 1.5s ease-in-out';
-				login.style.opacity = '0';
-				arrow.style.transition = 'opacity 1.5s ease-in-out';
-				arrow.style.opacity = '1';
+				// login.style.transition = 'opacity 1.5s ease-in-out';
+				// login.style.opacity = '0';
+				// arrow.style.transition = 'opacity 1.5s ease-in-out';
+				// arrow.style.opacity = '1';
 			} else {
 				login.style.transition = 'opacity 1.5s ease-in-out';
 				login.style.opacity = '1';

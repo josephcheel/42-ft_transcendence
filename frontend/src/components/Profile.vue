@@ -2,7 +2,7 @@
   <div class="card mx-auto" style="width: 18rem;">
     <!-- Mostrar la imagen o el campo de carga de archivo según el modo -->
     <div class="text-center mt-3" v-if="!isEditing">
-      <img :src="user.profile_picture_url" class="rounded-circle img-fluid" alt="User Image" />
+      <img id="profile-picture" :src="user.profile_picture_url" class="rounded-circle img-fluid profile-picture" alt="User Image" />
     </div>
     <div class="mb-3" v-else>
       <label for="imageUpload" class="form-label">Profile Image</label>
@@ -49,10 +49,33 @@
     </div>
   </div>
 </template>
+<style scoped>
+#profile-picture {
+  width: 15vh;
+  height: 15vh;
+  border-radius: 50%;
+  border: 3px solid black;
+  object-fit: cover; /* Ensures the image covers the entire area */
+  object-position: center; /* Centers the image */
+  background-color: #f0f0f0; /* Placeholder background color */
+}
 
+#profile-picture::before {
+  content: '';
+  display: block;
+  width: 100%;
+  height: 100%;
+  background-image: url('/profile_pictures/default.jpeg'); /* Placeholder image */
+  background-size: cover;
+  background-position: center;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: -1; /* Ensure the placeholder is behind the actual image */
+}
+</style>
 <script>
 import axios from '../utils/axiosConfig';
-
 export default {
   data() {
     return {
@@ -62,19 +85,20 @@ export default {
         last_name: "",
         username: "",
         tournament_name: "",
-        profile_picture_url: ""
+        profile_picture_url: '/profile_pictures/default.jpeg',
       },
       selectedImage: null,
-      ORIGIN_IP : import.meta.env.VITE_VUE_APP_ORIGIN_IP || 'localhost'
     };
   },
   mounted() {
-   const username = localStorage.getItem('username');  
-  if (!username) {
-    this.$router.push('/login'); // Redirigir al login si no está autenticado
-  } else {
-    this.fetchUserProfile();
-  }
+    const username = localStorage.getItem('username');
+    if (!username) {
+      this.$router.push({ path: '/', params: { currentView: 'Login' } });
+      // this.$router.push('/login'); // Redirigir al login si no está autenticado
+    } else {
+      
+      this.fetchUserProfile();
+    }
 },
 
   methods: {
@@ -107,7 +131,7 @@ export default {
         return; // Salir si no hay nombre de usuario
       }
       axios
-        .get(`https://${this.ORIGIN_IP}:8000/api/user/get_profile/${username}/`)
+        .get(`https://${this.$router.ORIGIN_IP}:8000/api/user/get_profile/${username}/`)
         .then((response) => {
           const data = response.data.data;
           // Asegurarse de que 'data' tenga las propiedades necesarias
@@ -122,7 +146,7 @@ export default {
         })
 
     axios
-      .get(`https://${this.ORIGIN_IP}:8000/api/user/get_profile_picture_url/${username}/`)
+      .get(`https://${this.$router.ORIGIN_IP}:8000/api/user/get_profile_picture_url/${username}/`)
       .then((response) => {
         const pict = response.data.data;
         const url = pict.profile_picture_url;
@@ -135,7 +159,7 @@ export default {
     },
     async updateUserProfile() {
       try{
-        await axios.post(`https://${this.ORIGIN_IP}:8000/api/user/update_user/`, {
+        await axios.post(`https://${this.$router.ORIGIN_IP}:8000/api/user/update_user/`, {
           first_name: this.user.first_name,
           last_name: this.user.last_name,
           username: this.user.username,
@@ -152,7 +176,7 @@ export default {
       formData.append('picture', this.selectedImage);
 
       try {
-        const response = await axios.post(`https://${this.ORIGIN_IP}:8000/api/user/upload_picture/`, formData,);
+        const response = await axios.post(`https://${this.$router.ORIGIN_IP}:8000/api/user/upload_picture/`, formData,);
         this.user.profile_picture_url = response.data.profile_picture_url;
         console.log('Profile picture uploaded successfully.');
       } catch (error) {
