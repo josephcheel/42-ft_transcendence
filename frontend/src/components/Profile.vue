@@ -14,10 +14,10 @@
 
       <!-- Campos de información del usuario -->
       <div v-if="!isEditing">
-        <p class="card-text"><strong>Name:</strong> {{ user.first_name }}</p>
-        <p class="card-text"><strong>Last Name:</strong> {{ user.last_name }}</p>
-        <p class="card-text"><strong>Username:</strong> {{ user.username }}</p>
-        <p class="card-text"><strong>Tournament Username:</strong> {{ user.tournament_name }}</p>
+        <p class="form-label"><strong>Name:</strong> {{ user.first_name }}</p>
+        <p class="form-label"><strong>Last Name:</strong> {{ user.last_name }}</p>
+        <p class="form-label"><strong>Username:</strong> {{ user.username }}</p>
+        <p class="form-label"><strong>Tournament Username:</strong> {{ user.tournament_name }}</p>
       </div>
 
       <!-- Campos editables -->
@@ -46,6 +46,7 @@
   </div>
 </template>
 <style scoped>
+
 #profile-picture {
   width: 15vh;
   height: 15vh;
@@ -56,20 +57,16 @@
   background-color: #f0f0f0; /* Placeholder background color */
 }
 
-#profile-picture::before {
-  content: '';
-  display: block;
-  width: 100%;
-  height: 100%;
-  background-image: url('/profile_pictures/default.jpeg'); /* Placeholder image */
-  background-size: cover;
-  background-position: center;
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: -1; /* Ensure the placeholder is behind the actual image */
+.card {
+  background-color: rgba(255, 255, 255, 0.379) !important;
 }
+.form-label {
+  color: black !important;
+  font-size: small !important;
+}
+
 </style>
+
 <script>
 import axios from '../utils/axiosConfig';
 export default {
@@ -81,7 +78,7 @@ export default {
         last_name: "",
         username: "",
         tournament_name: "",
-        profile_picture_url: '/profile_pictures/default.jpeg',
+        profile_picture_url: "/assets/images/default-profile.jpeg"
       },
       selectedImage: null,
     };
@@ -89,11 +86,11 @@ export default {
   mounted() {
     const username = localStorage.getItem('username');
     if (!username) {
-      this.$router.push({ path: '/', params: { currentView: 'Login' } });
+      // this.$router.push({ path: '/', params: { currentView: 'Login' } });
       // this.$router.push('/login'); // Redirigir al login si no está autenticado
+      this.fetchUserProfile();
     } else {
       
-      this.fetchUserProfile();
     }
 },
 
