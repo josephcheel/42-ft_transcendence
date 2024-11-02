@@ -180,7 +180,7 @@ You need to call /user/upload_picture/ and upload a a form with a key/value pair
 ### start_match
 | Use | Methods | Request Data | Response Data | Return Values|
 | --- | --- | --- | ---| ---|
-|When the first player access to the match| POST | 'tournament_id' | None |  200 (invitation accepted), 400 (incorrect data), 404 (user not in database), 500|
+|When the first player access to the match| POST | 'match_id' | None |  200 (invitation accepted), 400 (incorrect data), 404 (user not in database), 500|
 
 [Back to Top](#table-of-contents)
 
