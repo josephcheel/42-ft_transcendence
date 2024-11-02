@@ -377,7 +377,7 @@ services:
      context: ./blockchain
    container_name: blockchain
    ports:
-     - "8545:8545"
+     - "0.0.0.0:8545:8545"
    env_file:
      - .env
    restart: always
@@ -398,7 +398,7 @@ services:
     build:
       context: ./frontend
     ports:
-      - "8000:8000"
+      - "0.0.0.0:8000:8000"
     volumes:
       - ./usermanagement/profile_pictures/:/usr/share/nginx/html/profile_pictures
 
