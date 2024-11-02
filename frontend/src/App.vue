@@ -9,9 +9,13 @@
           <li class="nav-item">
             <router-link to="/play" class="nav-link1">{{ $t('message.home')}}</router-link>
           </li>
-          <li class="nav-item">
-            <router-link to="/login" class="nav-link1">{{ $t('message.login')}}</router-link>
-          </li>
+         <!-- Conditionally display Login or Logout based on isAuthenticated -->
+        <li class="nav-item" v-if="!this.isAuthenticated">
+          <router-link to="/login" class="nav-link1">{{ $t('message.login')}}</router-link>
+        </li>
+        <li class="nav-item" v-else>
+          <a style="cursor: pointer;" @click="logout" class="nav-link1">{{ $t('message.logout')}}</a>
+        </li>
           <li class="nav-item">
             <router-link to="/select-game" class="nav-link1">{{ $t('message.play')}}</router-link>
           </li>
@@ -27,6 +31,7 @@
           <select class="form-select form-select-sm" v-model="selectedLang" @change="changeLang">
             <option value="en">English</option>
             <option value="es">Español</option>
+            <option value="fr">French</option>
           </select>
         </ul>
     </nav>
@@ -38,22 +43,62 @@
 
 
 <script>
-export default {
-  data(){
-    return {
-      selectedLang: 'en'
-    };
-  },
-  methods: {
-    changeLang() {
-      this.$i18n.locale = this.selectedLang;
+  import axios from './utils/axiosConfig';
+  const ORIGIN_IP = import.meta.env.VITE_VUE_APP_ORIGIN_IP || 'localhost';
+
+  export default {
+    data(){
+      return {
+        selectedLang: 'en',
+        isAuthenticated: false,
+      };
     },
-    isNav() {
-      return (this.$route.path === '/' ||  this.$route.path === '/game' || this.$route.path.startsWith('/game-online'));
+    methods: {
+      changeLang() {
+        this.$i18n.locale = this.selectedLang;
+      },
+      isNav() {
+        return (this.$route.path === '/' ||  this.$route.path === '/game' || this.$route.path.startsWith('/game-online'));
+      },
+      logout() {
+        axios.post(`https://${ORIGIN_IP}:8000/api/user/logout_user/`).then((response) => {
+          if (response.status === 200)
+          {
+            console.log(response);
+            this.isAuthenticated = false;
+          }
+          else
+          {
+            console.log(response);
+          }
+        });
+      },
+      checkAuthStatus(){
+      axios.get(`https://${ORIGIN_IP}:8000/api/user/is_logged_in/`)
+        .then(response => {
+          if (response.status === 200) {
+            // User is authenticated
+            console.log(response);
+            this.isAuthenticated = true;
+          }
+        })
+        .catch(error => {
+          if (error.response && error.response.status === 401) {
+            // User is not authenticated
+            console.log(error.response);
+            this.isAuthenticated = false;
+          } else {
+            // Handle other errors (e.g., network issues)
+            console.error("Error checking auth status:", error);
+          }
+        });
+      },
+    },
+    mounted() {
+      this.checkAuthStatus();
+      console.log(this.isAuthenticated);
     },
   }
-  
-}
 </script>
 
 <style scoped>

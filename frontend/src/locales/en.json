@@ -32,6 +32,7 @@
         "lastname_placeholder": "last name",
         "username_placeholder": "username",
         "password_placeholder": "password",
-        "confirm_pass_placeholder": "confirm password"
+        "confirm_pass_placeholder": "confirm password",
+        "logout": "Log out"
     }
 }
