@@ -36,11 +36,11 @@ def handle_request(request, internal_url, subpath):
         elif request.method == "POST": 
             try:
                 data = json.loads(request.body)
-                response = requests.post(f'http://{internal_url}{subpath}/', json=data, cookies=request.COOKIES, headers=request.headers)
+                response = requests.post(f'http://{internal_url}{subpath}/', json=data, cookies=request.COOKIES, headers=request.headers, timeout=10)
             except json.JSONDecodeError:
-                response = requests.post(f'http://{internal_url}{subpath}/', cookies=request.COOKIES, headers=request.headers)
+                response = requests.post(f'http://{internal_url}{subpath}/', cookies=request.COOKIES, headers=request.headers, timeout=10)
         elif request.method == "GET": 
-            response = requests.get(f'http://{internal_url}{subpath}', cookies=request.COOKIES, headers=request.headers)
+            response = requests.get(f'http://{internal_url}{subpath}', cookies=request.COOKIES, headers=request.headers, timeout=10)
         try:
             response_data = response.json()
             #ensure Set cookies headers are properly set
