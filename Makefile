@@ -46,7 +46,9 @@ rm_files:
 	@rm -rfd frontend/dist/
 	@rm -rfd frontend/node_modules/
 	@rm -rfd pong-game-server/node_modules/
-	@rm .exec_run_npm
+	@rm -rfd pong-game-server/bin/
+	@rm -rfd pong-game-server/lib/
+	@rm -f .exec_run_npm
 	@$(COMPOSE) -f $(DOCKER_COMPOSE_FILE) down --volumes
 	@sudo find . -type d -name 'migrations' -exec rm -r {} +
 	@sudo find . -type d -name '__pycache__' -exec rm -r {} +
@@ -71,6 +73,12 @@ gate:
 work:
 	docker exec -it celery_worker /bin/bash
 
+fron:
+	docker exec -it frontend sh
+
+pong:
+	docker exec -it pong-game-server sh
+
 volumes: 
 	@echo Creating Volumes DIR
 	@mkdir -p $(VOLUMES)
@@ -79,6 +87,7 @@ volumes:
 compile: ./frontend/package-lock.json 
 	@npm --prefix ./frontend install
 	@npm --prefix ./pong-game-server install
+	@npm --prefix ./pong-game-server install pm2 -g
 	@touch .exec_run_npm
 
 run_npm: .exec_run_npm
