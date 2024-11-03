@@ -53,6 +53,8 @@ def open_tournament(request):
 		date_start=received_date_start,
 		last_match_date=received_date_start,
 		date_max_end=received_date_start + timedelta(minutes=nr_of_matches * TIME_DELTA + 30),
+		name = data.get('name'),
+		winning_points = data.get('winning_points'),
 		max_players = data.get('max_players'), 
 		cost = data.get('cost'),
 		current_round = nr_of_rounds + extra_round,

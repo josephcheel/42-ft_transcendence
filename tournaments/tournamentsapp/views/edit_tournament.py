@@ -5,7 +5,6 @@ from user.models import User
 
 
 @require_get
-@user_is_authenticated
 #@user_is_authenticated
 def edit_tournament(request):
 	data = request.data
