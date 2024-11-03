@@ -24,6 +24,6 @@ def list_matches(request):
 				if isinstance(value, datetime):
 					match[key] = value.isoformat()
 		data = json.dumps(matches_list)
-		return JsonResponse({'status': 'success', 'message': 'List of tournaments', 'data': data}, status=200)
+		return JsonResponse({'status': 'success', 'message': 'List of matches', 'data': data}, status=200)
 	except OperationalError:
 		return JsonResponse({'status': 'error', 'message': 'Internal error', 'data': None}, status=500)
