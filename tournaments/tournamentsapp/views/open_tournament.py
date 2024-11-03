@@ -10,7 +10,6 @@ from django.views.decorators.csrf import csrf_exempt
 
 from user.models import User
  
-@csrf_exempt
 @require_post
 @user_is_authenticated
 @validate_json
