@@ -26,6 +26,9 @@
             <router-link to="/profile" class="nav-link1">{{ $t('message.profile')}}</router-link>
           </li>
           <li class="nav-item">
+            <router-link to="/gamestats" class="nav-link1">{{ $t('message.gamestats')}}</router-link>
+          </li>
+          <li class="nav-item">
             <router-link to="/chat" class="nav-link1">{{ $t('message.chat')}}</router-link>
           </li>
           <select class="form-select form-select-sm" v-model="selectedLang" @change="changeLang">

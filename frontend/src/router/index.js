@@ -12,6 +12,7 @@ import Game from '../components/game/Game.vue'
 import Home from '../components/Home.vue'
 import Nav from '../components/Nav.vue'
 import GameOnline from '../components/GameOnline/GameOnline.vue'
+import Gamestats from '../components/Gamestats.vue'
 import { isAuthorized } from '../utils/isAuthorized'
 const routes = [
   {
@@ -43,6 +44,11 @@ const routes = [
     path: '/chat',
     name: 'Chat',
     component: Chat
+  },
+  {
+    path: '/gamestats',
+    name: 'Gamestats',
+    component: Gamestats
   },
   {
     path: '/dashboard',

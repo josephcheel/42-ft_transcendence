@@ -33,6 +33,7 @@
         "username_placeholder": "username",
         "password_placeholder": "password",
         "confirm_pass_placeholder": "confirm password",
-        "logout": "Log out"
+        "logout": "Log out",
+        "gamestats": "Game Stats"
     }
 }

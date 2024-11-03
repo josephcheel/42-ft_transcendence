@@ -79,19 +79,19 @@ if __name__ == "__main__":
         'players': ['test','test1']
     })
     response1 = send_request(session, accept_invitation, csrf1, {
-        'tournament_id': 1
+        'tournament_id': 2
     })
     response1 = send_request(session2, accept_invitation, csrf2, {
-        'tournament_id': 1
+        'tournament_id': 2
     })
     response1 = send_request(session, close_tournament, csrf1, {
-        'tournament_id': 1
+        'tournament_id': 2
     })
 
     response1 = send_request(session, finish_match, csrf1, {
-        'match_id': '1',
-        'winner': 'test',
-        'looser': 'test1'
+        'match_id': '2',
+        'winner': 'test1',
+        'looser': 'test'
     })
 
     response1 = get_request(session, list_matches, csrf1)

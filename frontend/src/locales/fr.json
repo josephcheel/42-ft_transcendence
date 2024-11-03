@@ -33,6 +33,7 @@
         "username_placeholder": "nom d'utilisateur",
         "password_placeholder": "mot de passe",
         "confirm_pass_placeholder": "confirmer le mot de passe",
-        "logout": "Se déconnecter"
+        "logout": "Se déconnecter",
+        "gamestats": "Statistiques de jeu"
     }
 }
