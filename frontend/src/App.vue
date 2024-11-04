@@ -83,6 +83,8 @@
             // User is authenticated
             console.log(response);
             this.isAuthenticated = true;
+            localStorage.setItem('id', response.data.data.id);
+            localStorage.setItem('username', response.data.data.username);
           }
         })
         .catch(error => {
