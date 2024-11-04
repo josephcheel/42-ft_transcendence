@@ -38,7 +38,8 @@ urlpatterns = [
     path('start_match/',start_match),
     path('finish_match/', finish_match),
     path('list_tournaments/', list_tournaments),
-    path('list_matches/', list_matches),
+    path('list_matches/', list_matches, name='list_matches_no_username'),
+    path('list_matches/<str:username>/', list_matches, name='list_matches_with_username'),
     path('list_invitations/', list_invitations),
 
 ]

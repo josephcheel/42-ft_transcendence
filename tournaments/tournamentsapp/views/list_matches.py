@@ -6,21 +6,22 @@ from django.http import JsonResponse
 import json
 import logging
 from django.db.models import Q
-
-
 from user.models import User
 logger = logging.getLogger('django')
 logger.setLevel(logging.DEBUG)
 
 @require_get
-def list_matches(request):
+def list_matches(request, username=None):
 	logger.debug(request.user)
 	try:
 #		try:
 #			player = User.objects.get(username=player)
 #		except User.DoesNotExist:
 #			return JsonResponse({'status': 'error', 'message': 'A user does not exist', 'data': None}, status=404)
-		player = User.objects.get(username=request.user)
+		if username:
+			player = User.objects.get(Q(username=username) | Q(id=username))
+		else:	
+			player = User.objects.get(username=request.user)
 		matches_data = Matches.objects.filter(
     		Q(player_id_1=player.id) | Q(player_id_2=player.id)
 )
