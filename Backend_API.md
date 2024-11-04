@@ -115,7 +115,7 @@ Set tournament name to username by default, user can later change the tournament
 
 ### get_profile_picture_url
 
-You need to call /user/get_profile_picture_url/{username}/ to get the profile picture url for {username}
+You need to call /user/get_profile_picture_url/{username}OR{user_id}/ to get the profile picture url for {username}
 
 | Use | Methods | Request Data | Response Data | Return Values|
 | --- | --- | --- | ---| ---|
@@ -145,7 +145,7 @@ You need to call /user/upload_picture/ and upload a a form with a key/value pair
 
 | Use | Methods | Request Data | Response Data | Return Values|
 | --- | --- | --- | ---| ---|
-| Gets a user profile information| GET | username  | first_name, last_name, username, tournament_name, is_online, profile_picture_url |  200,400,401,404, 405, 500|
+| Gets a user profile information| GET | username OR user_id  | first_name, last_name, username, tournament_name, is_online, profile_picture_url |  200,400,401,404, 405, 500|
 
 
 [Back to Top](#table-of-contents)

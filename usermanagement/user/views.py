@@ -4,6 +4,7 @@ from django.db import OperationalError
 from django.conf import settings
 from django.contrib.auth import authenticate, login, logout, get_user_model
 from user.wrappers import *
+from django.db.models import Q
 import json
 import logging
 from web3 import Web3
@@ -286,7 +287,7 @@ def upload_picture(request):
 @require_get
 @exception_handler
 def get_profile_picture_url(request, username):
-    user = User.objects.get(username=username)
+    user = User.objects.get(Q(username=username) | Q(id=username))
     profile_pic = UserProfilePic.objects.get(user=user)
     return JsonResponse({'status' : 'success',
                 'message' : "Got profile picture",
@@ -300,7 +301,7 @@ def get_profile_picture_url(request, username):
 @require_get
 @exception_handler
 def get_profile(request, username):   
-    user = User.objects.get(username=username)
+    user = User.objects.get(Q(username=username) | Q(id=username))
     return JsonResponse({'status' : 'success',
             'message' : "Got user profile",
             'data' : user.get_all(),
