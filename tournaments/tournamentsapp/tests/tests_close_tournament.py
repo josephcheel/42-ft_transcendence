@@ -72,12 +72,14 @@ class test_close_tournament (TestCase):
 		self.tournament = {
 			'username': 'test10',
 			'password': 'test',
+			'name': 'test10_tournament',
 			'date_start': (timezone.now() + timedelta(days=1)).isoformat(),
 			'max_players': 14,
 			'cost': 10,
 			'price_1': 1000,
 			'price_2': 500,
 			'price_3': 250,
+			'winnig_points': 5,
 			'players': ['test20', 'test19', 'test7', 'test4', 'test13', 'test17', 'test15', 'test16',
 						'test5', 'test6', 'test14', 'test9', 'test11', 'test12'], }
 		self.base_json['status'] = 'success'
@@ -118,12 +120,14 @@ class test_close_tournament (TestCase):
 		self.tournament = {
 			'username': 'test10',
 			'password': 'test',
+			'name': 'test10_tournament2',
 			'date_start': (timezone.now() + timedelta(days=1)).isoformat(),
 			'max_players': 14,
 			'cost': 10,
 			'price_1': 1000,
 			'price_2': 500,
 			'price_3': 250,
+			'winning_points': 5,	
 			'players': ['test1', 'test2', 'test3', 'test4', 'test5', 'test6', 'test7', 'test8', 'test9', 'test10', 'test11', 'test12'], }
 		self.base_json['status'] = 'success'
 		self.base_json['message'] = 'Tournament created successfully'
@@ -163,12 +167,14 @@ class test_close_tournament (TestCase):
 		self.tournament = {
 			'username': 'test10',
 			'password': 'test',
+			'name': 'test10_tournament3',
 			'date_start': (timezone.now() + timedelta(days=1)).isoformat(),
 			'max_players': 14,
 			'cost': 10,
 			'price_1': 1000,
 			'price_2': 500,
 			'price_3': 250,
+			'winning_points': 6,
 			'players': ['test1', 'test2', 'test3', 'test4', 'test5', 'test6', 'test7', 'test8', 'test9', 'test10', 'test11', 'test12'], }
 		self.base_json['status'] = 'success'
 		self.base_json['message'] = 'Tournament created successfully'
@@ -252,7 +258,8 @@ class test_close_tournament (TestCase):
 				else:
 					the_winner_id = match.player_id_1.username
 					the_looser_id = match.player_id_2.username
-				self.match_to_finish = {'match_id': match.id,'winner': the_winner_id, 'looser': the_looser_id}
+				looser_points = random.randint(0, 5)
+				self.match_to_finish = {'match_id': match.id,'winner': the_winner_id, 'looser': the_looser_id, 'winner_points': tournament.winning_points, 'looser_points': looser_points}
 				self.base_json['status'] = 'success'
 				self.base_json['message'] = 'Match finished successfully'
 				self.base_json['data'] = None
