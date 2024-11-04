@@ -136,7 +136,8 @@ def is_logged_in(request):
     if request.user.is_authenticated:
         return JsonResponse({'status': 'success', 
                             'message':'User is logged in', 
-                            'data' : None}, 
+                            'data' : {'username': request.user.username,
+                                        'id': request.user.id}}, 
                             status=200)
     else:
         return JsonResponse({'status': 'error', 
