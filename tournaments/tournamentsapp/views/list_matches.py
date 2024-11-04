@@ -19,7 +19,10 @@ def list_matches(request, username=None):
 #		except User.DoesNotExist:
 #			return JsonResponse({'status': 'error', 'message': 'A user does not exist', 'data': None}, status=404)
 		if username:
-			player = User.objects.get(Q(username=username) | Q(id=username))
+			if username.isdigit():
+				player = User.objects.get(Q(id=int(username)))
+			else:
+				player = User.objects.get(Q(username=username))
 		else:	
 			player = User.objects.get(username=request.user)
 		matches_data = Matches.objects.filter(
