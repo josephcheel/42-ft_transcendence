@@ -13,6 +13,26 @@
         {{ this.userWinPercentage }}%
       </div>
     </div>
+    <div class="dashboard">
+      <div 
+        v-for="(match, id) in matchList" 
+        :key="id" 
+        class="match-box" 
+        @click="goToGameStats(match.opponentProfile.username)"
+      >
+        <img 
+          :src="match.opponentProfile && match.opponentProfile.profile_picture_url 
+            ? match.opponentProfile.profile_picture_url 
+            : '/profile_pictures/default.jpeg'" 
+          alt="Profile picture" 
+          width="100" 
+          height="100" 
+        >
+        <div class="match-info">
+          <p>{{ match.opponentProfile ? match.opponentProfile.username : 'Loading...' }}</p>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -20,18 +40,29 @@
 import axios from 'axios';
 
 export default {
+  props: {
+    username: {
+      type: String,
+      default: null,
+    },
+  },
   name: 'Gamestats',
   data() {
     return {
-      matchList: [],
-      userWinPercentage: 0
+      matchList: {},
+      userWinPercentage: 0,
+      userId: localStorage.getItem('id')
     }
   },
   methods: {
-    getMatchList() {
-      axios.get(`https://${this.$router.ORIGIN_IP}:8000/api/tournaments/list_matches/`)
+    goToGameStats(username) {
+      this.$router.push(`/gamestats/${username}`);
+    },
+    getMatchList(username) {
+      axios.get(`https://${this.$router.ORIGIN_IP}:8000/api/tournaments/list_matches/${username}`)
         .then(response => {
           this.matchList = JSON.parse(response.data.data);
+          this.getOpponentProfiles();
           this.renderChart();
         })
         .catch(error => {
@@ -44,13 +75,12 @@ export default {
       }
       const canvas = this.$refs.pieChart;
       const ctx = canvas.getContext('2d');
-      const userId = localStorage.getItem('id');
 
       // Count the number of wins for each player
       const winnerCount = {};
       this.matchList.forEach(match => {
         const winnerId = String(match.winner_id_id);
-        if (winnerId === userId) {
+        if (winnerId === this.userId) {
           winnerCount[winnerId] = (winnerCount[winnerId] || 0) + 1;
         }
         else {
@@ -58,7 +88,7 @@ export default {
         }
       });
       const total = Object.values(winnerCount).reduce((sum, count) => sum + count, 0);
-      this.userWinPercentage = (((winnerCount[userId] || 0) / total) * 100).toFixed(1); // Calculate user win percentage
+      this.userWinPercentage = (((winnerCount[this.userId] || 0) / total) * 100).toFixed(1); // Calculate user win percentage
 
       // Draw the donut chart
       const centerX = 200;
@@ -78,17 +108,27 @@ export default {
         ctx.arc(centerX, centerY, innerRadius, startAngle + sliceAngle, startAngle, true); // Inner arc (reverse)
         ctx.closePath();
 
-        ctx.fillStyle = key === userId ? userColor : otherColor;
+        ctx.fillStyle = key === this.userId ? userColor : otherColor;
         ctx.fill();
 
         startAngle += sliceAngle;
       });
-
-
-    }
+    },
+    getOpponentProfiles() {
+      this.matchList.forEach(match => {
+        const opponentId = String(match.player_id_1_id) === this.userId ? String(match.player_id_2_id) : String(match.player_id_1_id);
+        axios.get(`https://${this.$router.ORIGIN_IP}:8000/api/user/get_profile/${opponentId}/`)
+          .then(response => {
+            match.opponentProfile = response.data.data; // Directly updating the match object
+          })
+          .catch(error => {
+            console.error(`Error fetching profile for user ${opponentId}:`, error);
+          });
+      });
+    },
   },
   mounted() {
-    this.getMatchList();
+    this.getMatchList(this.userId);
   }
 }
 </script>

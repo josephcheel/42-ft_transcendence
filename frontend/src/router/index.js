@@ -46,9 +46,10 @@ const routes = [
     component: Chat
   },
   {
-    path: '/gamestats',
+    path: '/gamestats/:username?',
     name: 'Gamestats',
-    component: Gamestats
+    component: Gamestats,
+    props: true
   },
   {
     path: '/dashboard',
