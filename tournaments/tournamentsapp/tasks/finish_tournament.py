@@ -2,6 +2,7 @@ from __future__ import absolute_import, unicode_literals
 from tournamentsapp.status_options import StatusTournaments, Rounds
 from tournamentsapp.models import Tournaments, Matches
 from celery import shared_task
+from blockchainapp.views import execute_contract
 
 
 @shared_task
@@ -25,3 +26,4 @@ def finish_tournament(tournament_id):
 				match.winner_id.save()
 	tournament.status = StatusTournaments.FINISHED_TOURNAMENT.value
 	tournament.save()
+	execute_contract(tournament_id)
