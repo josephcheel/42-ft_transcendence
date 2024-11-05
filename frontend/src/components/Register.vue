@@ -1,35 +1,38 @@
 <template>
 <div class="container-fluid d-flex justify-content-center align-items-center ">
-  <div class="card p-4 shadow-sm" style="max-width: 400px; width: 100%;  box-shadow: -5px 5px 55px lightblue;">
-    <h3 class="text-center mb-4">Register</h3>
+  <div class="p-4 " style="max-width: 400px; width: 100%;">
+    <h3 id="register_title" class="text-center mb-4">{{ $t('message.register_title')}}</h3>
     <form @submit.prevent="login">
+      <div class="d-flex mb-3">
+        <div class="me-3">
+          <label for="user" class="form-label">{{ $t('message.name')}}</label>
+          <input v-model="name" type="text" class="form-control" id="name" :placeholder="$t('message.name_placeholder')" required>
+        </div>
+        <div class="me-3">
+          <label for="user" class="form-label">{{ $t('message.lastname')}}</label>
+          <input v-model="lastname" type="text" class="form-control" id="lastname" :placeholder="$t('message.lastname_placeholder')" required>
+        </div>
+     </div>
       <div class="mb-3">
-        <label for="user" class="form-label">Name</label>
-        <input v-model="name" type="text" class="form-control" id="user" placeholder="Enter your Name" required>
-      </div>
-      <div class="mb-3">
-        <label for="user" class="form-label">Username</label>
-        <input v-model="user" type="text" class="form-control" id="username" placeholder="Enter your Username" required>
-      </div>
-      <div class="mb-3">
-        <label for="user" class="form-label">Email</label>
-        <input v-model="email" type="text" class="form-control" id="mail" placeholder="Enter your Email" required>
-      </div>
-      <div class="mb-3">
-        <label for="password" class="form-label">Password</label>
-        <input v-model="psw" type="password" class="form-control" id="password" placeholder="Enter your Password" required>
+        <label for="user" class="form-label">{{ $t('message.username')}}</label>
+        <input v-model="username" spellcheck="false" type="text" class="form-control" id="user" :placeholder="$t('message.username_placeholder')" required>
       </div>
       <div class="mb-3">
-        <label for="password" class="form-label">Confirm Password</label>
-        <input v-model="psw2" type="password" class="form-control" id="password2" placeholder="Confirm your password" required>
+        <label for="email" class="form-label">{{ $t('message.email')}}</label>
+        <input v-model="email" spellcheck="true" type="email" class="form-control" id="email" placeholder="name@example.com" required>
       </div>
-      <div class="d-flex justify-content-center">
-        <a href="http://usermanagement:8000/register" class="btn btn-secondary w-100">Register</a>
+      <div class="mb-3">
+        <label for="password" class="form-label">{{ $t('message.password')}}</label>
+        <input v-model="psw" type="password" class="form-control" id="password" :placeholder="$t('message.password_placeholder')" required>
       </div>
-      <button id="login" type="submit" class="btn btn-primary w-100">Register</button>
+      <div class="mb-3">
+        <label for="password" class="form-label">{{ $t('message.confirm_pass')}}</label>
+        <input v-model="psw2" type="password" class="form-control" id="password2" :placeholder="$t('message.confirm_pass_placeholder')" required>
+      </div>
+      <button type="submit" class="btn btn-primary w-100">{{ $t('message.register')}}</button>  <!---id="register" -->
     </form>
     <div class="mt-3 text-center">
-    <p>Already have an account? <router-link to="/Login">Login</router-link></p>
+    <p id="already_account">{{ $t('message.alreadyAcc')}} <router-link @click="navigateTo('Login')" id="login" to="#">{{ $t('message.login')}}</router-link></p>
     </div>
     <p style="color: red;">
       {{ toastMsg }}
@@ -39,69 +42,51 @@
 
 
 </template>
+<script>
+  export default {
+    name: 'Register',
+    methods: {
+        navigateTo(view) {
+          this.$emit('changeView', view);
+        },
+    }
+  }
+</script>
+
 <script setup>
     import { onMounted, ref } from 'vue';
     import { useRouter } from 'vue-router';
-    import { Toast } from 'bootstrap' // Import the Toast class from Bootstrap
-    import axios from 'axios'
-    axios.defaults.withCredentials = true;
+    import { Toast } from 'bootstrap' 
+    import axios from '../utils/axiosConfig';
 
-    const user = ref();
+    const username = ref();
     const psw = ref();
     const router = useRouter();
     const name = ref();
-    const email = ref();
+    const lastname = ref();
     const psw2 = ref();
+    const email = ref();
     const errorToast = ref(null)
     const toastMsg = ref(null)
-
-    async function fetchCSRFToken() {
-    await fetch('http://localhost:8000/get_cookie/', {
-      credentials: 'include'
-    });
-    
-}
-
-    function getCSRFToken() {
-        // Split the document.cookie string into individual cookies
-        const cookies = document.cookie.split('; ');
-
-        // Look for the CSRF token in the cookies
-        const csrftoken = cookies.find(cookie => cookie.startsWith('csrftoken='));
-
-        // If found, return the value of the CSRF token
-        if (csrftoken) {
-            return csrftoken.split('=')[1]; // Get the token value after the '='
-        }
-
-        // If the CSRF token is not found, return null or undefined
-        return null;
-    }
+    const ORIGIN_IP = import.meta.env.VITE_VUE_APP_ORIGIN_IP || 'localhost';
 
     async function login()
     {
-        await fetchCSRFToken();
-        const csrftoken = getCSRFToken();
-        //axios.defaults.headers.common['X-CSRFToken'] = csrftoken;
-
-        console.log(csrftoken);
-        console.log(user.value);
-        console.log(psw.value);
         if (psw2.value != psw.value) {
           toastMsg.value = "The password doesn't match"
         }
         else{
 
           try {
-          const response = await axios.post('http://localhost:8000/user/create_user/', {
+          const response = await axios.post(`https://${ORIGIN_IP}:8000/api/user/create_user/`, {
             username: user.value,
             password: psw.value,
-            first_name: user.value,
-            last_name: user.value,
+            first_name: name.value,
+            last_name: lastname.value,
+            email: email.value,
           }, {
             headers: {
               'Content-Type': 'application/json',
-              'X-CSRFToken' : csrftoken,
             },
           });
 
@@ -117,6 +102,7 @@
           }
         } catch (error) {
           toastMsg.value = `ERROR CODE: ${error.response.status} \n An unexpected error occurred during the user creation `;
+          console.error(error);
         }
 
     }
@@ -125,10 +111,67 @@
 
 
 <style scoped>
-.form-label{
-  display: flex;
-  font-weight: bold;
+
+#login {
+  background: linear-gradient(90deg, #66ff69 0%, #4af7fd 100%);
+  /* background: linear-gradient(90deg, #b5ffb7 0%, #b6fdff 100%); */
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 21px;
+  text-align: left;
+  text-decoration: underline;
+  background-size: 200% 200%;
+  animation: gradientAnimation 4s ease infinite;
+
 }
+
+#login:hover {
+    background: linear-gradient(90deg, #66ff69 0%, #4af7fd 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 21px;
+    text-align: left;
+    text-decoration: underline;
+    background-size: 200% 200%;
+    animation: gradientAnimation 2s ease infinite;
+  }
+  @keyframes gradientAnimation {
+    0% {
+    background-position: 0% 50%;
+    }
+    50% {
+    background-position: 100% 50%;
+    }
+    100% {
+    background-position: 0% 50%;
+    }
+}
+
+#already_account
+{
+  margin-top: 2em;
+  color: white;
+  font-family: 'Nokia Cellphone FC' ;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+#register_title {
+  color : white;
+  font-weight: 700;
+}
+
+.form-label {
+    display: flex;
+    text-align: left;
+    font-size: 14px ;
+  }
 
 
 </style>

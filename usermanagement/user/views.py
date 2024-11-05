@@ -6,17 +6,42 @@ from django.contrib.auth import authenticate, login, logout, get_user_model
 from user.wrappers import *
 import json
 import logging
+from web3 import Web3
+
 
 #If testing we dont have usermodel.User so we want to use default
 
 from .models import *
 User = get_user_model()
 
-
-
 if not settings.DEBUG:
     logger = logging.getLogger('django')
     logger.setLevel(logging.DEBUG)
+
+def transfer_first_founds(user):
+	web3 = Web3(Web3.HTTPProvider(settings.GANACHE_URL))
+	ganache_url = settings.GANACHE_URL
+	web3 = Web3(Web3.HTTPProvider(ganache_url))
+	if not web3.is_connected():
+		logger.warning("Could not connect to blockchain")
+		return False
+	new_account = web3.eth.account.create()
+	user.ethereum_address = new_account.address
+	user.ethereum_private_key = '0x' + new_account._private_key.hex()
+	user.save()
+	ganache_bank_account = web3.eth.accounts[0]
+	tx = {'from': ganache_bank_account,
+		  'to': user.ethereum_address,
+		  'value': web3.to_wei(10, 'ether'),
+		  'gas': 21000,
+		  'gasPrice': Web3.to_wei('1', 'gwei'),
+		  'nonce': web3.eth.get_transaction_count(ganache_bank_account)}
+	signed_tx = web3.eth.account.sign_transaction(
+		tx, settings.GANACHE_BANK)
+	tx_hash = web3.eth.send_raw_transaction(signed_tx.raw_transaction)
+	web3.eth.wait_for_transaction_receipt(tx_hash)
+	return True
+
 
 def custom_404_view(request, exception=None):
     response_data = {
@@ -35,22 +60,26 @@ def create_user(request):
     password = request.password
     first_name = request.first_name
     last_name = request.last_name
-    original_username = request.original_username
+    lowercase_username = request.lowercase_username
     try:
-        User.objects.get(username=username)# need to check email too
+        User.objects.get(lowercase_username=lowercase_username)# need to check email too
         return JsonResponse({'status' : 'error',
                                 'message' : "User already Exists",
                                 'data' : None},
                                 status=409)
     except User.DoesNotExist:
         user = User(username=username,
-                    original_username=original_username,
-                    tournament_name=original_username,
+                    lowercase_username=lowercase_username,
+                    tournament_name=username,
                     first_name=first_name,
                     last_name=last_name)
         try:
             user.set_password(password)
             user.save()
+            if not transfer_first_founds(user):
+                return JsonResponse({'status': 'error',
+                                     'message': 'Could not connect to blockchain',
+                                     'data': None}, status=500)
         except OperationalError:
             return JsonResponse({'status' : 'error',
                                 'message' : 'Internal database error',
@@ -61,12 +90,11 @@ def create_user(request):
                                 'data' : None},
                                 status=201)
 
-    
 @require_post
 @validate_login_credentials
 @exception_handler
 def login_user(request):
-    username = request.original_username
+    username = request.username
     password = request.password
     user = authenticate(request, username=username, password=password)
     if user is not None:
@@ -101,6 +129,7 @@ def logout_user(request):
                                 'data' : None},
                                 status=403)
     
+
 @require_get
 @exception_handler
 def is_logged_in(request):
@@ -125,6 +154,8 @@ def list_users(request):
                             status=200)
 
 # GET current user status or POST new user status (online/offline)
+
+
 @require_auth
 @exception_handler
 def user_status(request):
@@ -165,6 +196,8 @@ def user_status(request):
             }, status=405)
 
 #Creates a new friendship if it doens't exist
+
+
 @require_auth
 @require_post
 @get_friend
@@ -203,6 +236,8 @@ def change_friendship_status(request):
             'data' : None}, status=200)
 
 #Gets all friends
+
+
 @require_auth
 @require_get
 @exception_handler
@@ -223,10 +258,18 @@ def update_user(request):
                 'message' : "Updated fields",
                 'data' : None}, status=200)
 
+
 @require_auth
 @require_post
 @exception_handler
 def upload_picture(request):
+    if 'picture' not in request.FILES:
+        logger.info("No picture received in request")
+        return JsonResponse({
+            'status': 'error',
+            'message': 'No picture received',
+            'data': {}
+        }, status=400)
     picture = request.FILES['picture']
     user_profile_pic= UserProfilePic.objects.get(user=request.user)
     user_profile_pic.update_picture(picture)
@@ -236,11 +279,12 @@ def upload_picture(request):
                     'profile_picture_url': request.user.userprofilepic.picture.url
                     }
                 }, status=200)
-    
+
+
 @require_auth
 @require_get
 @exception_handler
-def get_profile_picture(request, username):
+def get_profile_picture_url(request, username):
     user = User.objects.get(username=username)
     profile_pic = UserProfilePic.objects.get(user=user)
     return JsonResponse({'status' : 'success',
@@ -250,12 +294,14 @@ def get_profile_picture(request, username):
                     }
                 }, status=200)
 
+
 @require_auth
 @require_get
 @exception_handler
-def get_profile(request, username):
+def get_profile(request, username):   
     user = User.objects.get(username=username)
     return JsonResponse({'status' : 'success',
             'message' : "Got user profile",
             'data' : user.get_all(),
             }, status=200)
+

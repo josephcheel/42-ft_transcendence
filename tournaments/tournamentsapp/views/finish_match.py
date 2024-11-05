@@ -39,6 +39,6 @@ def finish_match(request):
 	except Tournaments.DoesNotExist:
 		winner.puntos += 100
 		return JsonResponse({'status': 'error', 'message': 'Free play finished', 'data': None}, status=200)
-	actualise_tournament.delay(match)
+	actualise_tournament(match.id)
 
 	return JsonResponse({'status': 'success', 'message': 'Match finished successfully', 'data': None}, status=200)

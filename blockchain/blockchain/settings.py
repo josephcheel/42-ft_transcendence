@@ -14,16 +14,17 @@ from pathlib import Path
 import logging
 import logging.config
 from pythonjsonlogger import jsonlogger
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-4j3tb^r2(*7ms0!u(_=n0x$kp)usdu&pl7=p67!!r#8pbejlq&'
+SECRET_KEY = os.environ.get(
+    "SECRET_KEY", 'django-insecure-4j3tb^r2(*7ms0!u(_=n0x$kp)usdu&pl7=p67!!r#8pbejlq&')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True

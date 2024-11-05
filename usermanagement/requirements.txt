@@ -1,11 +1,11 @@
-Django==5.0.7
+Django==5.1.1
 requests
 logstash-formatter
 python-json-logger
 django-prometheus
 django-cors-headers
-
+web3==7.3.0
+eth_account==0.13.4
 # needed to intereact with PostGreeSql
 psycopg==3.2.1
 pillow==10.4.0
-

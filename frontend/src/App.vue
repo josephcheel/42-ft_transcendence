@@ -1,98 +1,104 @@
 
-
-<!-- <template>
-<div id="app">
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-  <a class="navbar-brand" href="#">Navbar</a>
-  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-  </button>
-  <div class="collapse navbar-collapse" id="navbarNav">
-    <ul class="navbar-nav">
-      <li class="nav-item active">
-        <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="#">Features</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="#">Pricing</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link disabled" href="#">Disabled</a>
-      </li>
-    </ul>
-  </div>
-</nav>
-   <div class="content-wrapper d-flex justify-content-center align-items-center">
-      <RouterView />
-      <footer class="footer mt-auto py-3" style="position: absolute; bottom: 0; background-color: #738692;">
-      <div class="container">
-        <span class="text-muted">© 2024 Ft_Transcendence. 42Barcelona.</span>
-      </div>
-    </footer>
-    </div>
-  </div>
-
-</template>
-
-<style scoped>
-#app {
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
-  width: 100%;
-}
-
-.content {
-  height: 100%;
-  width: 100%;
-}
-.data-v-app{
-  width: 100%;
-
-}
-
-</style> -->
 <template>
   <div id="app">
-    <nav class="navbar navbar-expand-lg ">
-      <img src="/src/images/Logo.png" alt="Logo" style="margin-left:15px; width: 65px; height: auto;">
-        <h2 style="margin-left: 180px;">TRANSCENDENCE</h2>
+    <!-- <div style="width: 100%; height: 100%; background: #FF9670; border-bottom-left-radius: 20px; border--right-radius: 20px"></div> -->
+    <nav class="navbar navbar-expand-lg " v-if="!isNav()">
+      <!-- <img src="/src/images/Logo.png" alt="Logo" style="margin-left:15px; width: 65px; height: auto;"> -->
+        <h2 style="margin-left: 180px; margin-right: 180px;">Pong</h2>
         <ul class="navbar-nav">
           <li class="nav-item">
-            <router-link to="/" class="nav-link1">Home</router-link>
+            <router-link to="/play" class="nav-link1">{{ $t('message.home')}}</router-link>
+          </li>
+         <!-- Conditionally display Login or Logout based on isAuthenticated -->
+        <li class="nav-item" v-if="!this.isAuthenticated">
+          <router-link to="/login" class="nav-link1">{{ $t('message.login')}}</router-link>
+        </li>
+        <li class="nav-item" v-else>
+          <a style="cursor: pointer;" @click="logout" class="nav-link1">{{ $t('message.logout')}}</a>
+        </li>
+          <li class="nav-item">
+            <router-link to="/select-game" class="nav-link1">{{ $t('message.play')}}</router-link>
           </li>
           <li class="nav-item">
-            <router-link to="/Login" class="nav-link1">Login</router-link>
+            <router-link to="/dashboard" class="nav-link1">{{ $t('message.dashboard')}}</router-link>
           </li>
           <li class="nav-item">
-            <router-link to="/play" class="nav-link1">Play</router-link>
+            <router-link to="/profile" class="nav-link1">{{ $t('message.profile')}}</router-link>
           </li>
           <li class="nav-item">
-            <router-link to="/Dashboard" class="nav-link1">Dashboard</router-link>
+            <router-link to="/chat" class="nav-link1">{{ $t('message.chat')}}</router-link>
           </li>
-          <li class="nav-item">
-            <router-link to="/Chat" class="nav-link1">Chat</router-link>
-          </li>
+          <select class="form-select form-select-sm" v-model="selectedLang" @change="changeLang">
+            <option value="en">English</option>
+            <option value="es">Español</option>
+            <option value="fr">French</option>
+          </select>
         </ul>
     </nav>
-
-    <div class="content-wrapper">
+    <div :class="{ 'content-wrapper': !isNav() }">
       <RouterView />
     </div>
-
-    <footer class="footer mt-auto py-3">
-      <div class="container">
-        <span class="text-muted">© 2024 Ft_Transcendence. 42Barcelona.</span>
-      </div>
-    </footer>
   </div>
 </template>
 
 
 <script>
+  import axios from './utils/axiosConfig';
+  const ORIGIN_IP = import.meta.env.VITE_VUE_APP_ORIGIN_IP || 'localhost';
 
+  export default {
+    data(){
+      return {
+        selectedLang: 'en',
+        isAuthenticated: false,
+      };
+    },
+    methods: {
+      changeLang() {
+        this.$i18n.locale = this.selectedLang;
+      },
+      isNav() {
+        return (this.$route.path === '/' ||  this.$route.path === '/game' || this.$route.path.startsWith('/game-online'));
+      },
+      logout() {
+        axios.post(`https://${ORIGIN_IP}:8000/api/user/logout_user/`).then((response) => {
+          if (response.status === 200)
+          {
+            console.log(response);
+            this.isAuthenticated = false;
+          }
+          else
+          {
+            console.log(response);
+          }
+        });
+      },
+      checkAuthStatus(){
+      axios.get(`https://${ORIGIN_IP}:8000/api/user/is_logged_in/`)
+        .then(response => {
+          if (response.status === 200) {
+            // User is authenticated
+            console.log(response);
+            this.isAuthenticated = true;
+          }
+        })
+        .catch(error => {
+          if (error.response && error.response.status === 401) {
+            // User is not authenticated
+            console.log(error.response);
+            this.isAuthenticated = false;
+          } else {
+            // Handle other errors (e.g., network issues)
+            console.error("Error checking auth status:", error);
+          }
+        });
+      },
+    },
+    mounted() {
+      this.checkAuthStatus();
+      console.log(this.isAuthenticated);
+    },
+  }
 </script>
 
 <style scoped>
@@ -107,28 +113,29 @@ nav {
   flex-shrink: 0; 
 }
 .navbar {
-  background: rgb(182 201 205 / 60%); 
+  background: #FF9670;/*rgb(182 201 205 / 60%); */
   backdrop-filter: blur(10px); 
   box-shadow: 0 5px 6px rgba(0, 0, 0, 0.1); 
   margin-left: 10px;
   margin-right: 10px;
+  margin-top: 10px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   border-radius: 5px;
 }
 
-.content-wrapper {
+.content-wrapper { 
   flex-grow: 1;  
   display: flex; 
   justify-content: center; 
-  align-items: center;   
+  align-items: center; 
 }
 
 .footer {
   flex-shrink: 0; 
   width: 100%;
-  background-color: #738692;
+  background-color: #96c1ce;
 }
 
 
@@ -155,6 +162,7 @@ nav {
 .navbar-nav {
   display: flex;
   gap: 20px; 
-    margin-right: 20px;
+  margin-right: 20px;
 }
+
 </style>

@@ -21,6 +21,7 @@ from corsheaders.defaults import default_headers
 BASE_DIR = Path(__file__).resolve().parent.parent
 LOG_FILE= os.environ.get("USER_LOG", "usermanagement.log")
 DEBUG = os.environ.get('DEBUG', 'True') == 'True'
+ORIGIN_IP = os.environ.get('ORIGIN_IP') or 'localhost'
 
 # Absolute filesystem path to the profile pictures directory
 MEDIA_ROOT = os.path.join(BASE_DIR, 'profile_pictures')
@@ -32,24 +33,29 @@ MEDIA_URL = '/profile_pictures/'
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-1vc7k2#w%hp*8k_lb5^(zsxuqnuy&^&cp)hwxk@skwg3j#-n!4'
+SECRET_KEY = os.environ.get(
+    "SECRET_KEY", 'django-insecure-1vc7k2#w%hp*8k_lb5^(zsxuqnuy&^&cp)hwxk@skwg3j#-n!4')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 
-ALLOWED_HOSTS = ['localhost', 'usermanagement', 'user', '127.0.0.1']
+ALLOWED_HOSTS = ['localhost', 'usermanagement', 'user', '127.0.0.1', 'gateway', ORIGIN_IP]
 
 
 CSRF_TRUSTED_ORIGINS = [
-    'http://localhost:8080',  # Your frontend origin
+    'https://' + ORIGIN_IP +':8000',  # Your frontend origin
 ]
 
 
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:8080",
+     'https://' + ORIGIN_IP +':8000',
 ]
 
 CORS_ALLOW_CREDENTIALS = True
-
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SAMESITE = 'None'  # or 'Lax' depending on your requirements
+SESSION_COOKIE_HTTPONLY = False  # Make sure this is set correctly
+CSRF_COOKIE_HTTPONLY = False  # Ensure CSRF is accessible if needed
 
 # Application definition
 if not DEBUG:
@@ -209,3 +215,6 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+GANACHE_URL = 'http://blockchain:8545'
+GANACHE_BANK = "0x4f3edf983ac636a65a842ce7c78d9aa706d3b113bce9c46f30d7d21715b23b1d"

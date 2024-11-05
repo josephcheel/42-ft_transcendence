@@ -2,6 +2,7 @@
 *pycache*
 volumes*
 db.s*
+*sqlite*
 *.log
 .vscode
 *Snapshots*
@@ -16,3 +17,8 @@ node_modules/
 
 celery-beat-schedule
 celerybeat-schedule
+django-selfsigned*
+cookies*
+frontend/.env
+usermanagement/profile_pictures/*
+!usermanagement/profile_pictures/*.*

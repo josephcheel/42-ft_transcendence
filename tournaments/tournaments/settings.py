@@ -15,6 +15,7 @@ from pythonjsonlogger import jsonlogger
 from pathlib import Path
 import os
 from celery.schedules import crontab
+from corsheaders.defaults import default_headers
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -24,12 +25,31 @@ LOG_FILE = os.environ.get("TOURNAMENT_LOG", "tournament.log")
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-e5m60_kk8wzj52xpmb69*h9u^kg29b6$uyum19p87(7or7bop9'
+SECRET_KEY = os.environ.get(
+    "SECRET_KEY", 'django-insecure-e5m60_kk8wzj52xpmb69*h9u^kg29b6$uyum19p87(7or7bop9')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG', 'true') == 'True'
 
-ALLOWED_HOSTS = ['localhost', 'tournaments', 'tournamentsapp']
+ALLOWED_HOSTS = ['localhost', 'users', 'tournaments',
+                 'tournamentsapp', 'blockchain', '127.0.0.1', 'gateway']
+
+CSRF_TRUSTED_ORIGINS = [
+    'https://localhost:8000',  # Your frontend origin
+]
+
+
+CORS_ALLOWED_ORIGINS = [
+    "https://localhost:8000",
+]
+
+CORS_ALLOW_CREDENTIALS = True
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SAMESITE = 'None'  # or 'Lax' depending on your requirements
+SESSION_COOKIE_HTTPONLY = False  # Make sure this is set correctly
+CSRF_COOKIE_HTTPONLY = False  # Ensure CSRF is accessible if
+#if needed
 
 # Application definition
 if not DEBUG:
@@ -70,15 +90,19 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django_prometheus',
     'tournamentsapp',
+    'blockchainapp',
     'user',
+    'corsheaders',
 ]
 
-if not DEBUG:
-    AUTH_USER_MODEL="user.User"
-else:
-    AUTH_USER_MODEL="tournamentsapp.User"
+#if not DEBUG:
+AUTH_USER_MODEL="user.User"
+#else:
+#    AUTH_USER_MODEL="tournamentsapp.User"
 
 MIDDLEWARE = [
+    'django_prometheus.middleware.PrometheusBeforeMiddleware',
+
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -86,7 +110,22 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
+    'django_prometheus.middleware.PrometheusAfterMiddleware',
 ]
+PROMETHEUS_LATENCY_BUCKETS = (0.01, 0.025, 0.05, 0.075, 0.1, 0.25, 0.5,
+                              0.75, 1.0, 2.5, 5.0, 7.5, 10.0, 25.0, 50.0, 75.0, float("inf"),)
+PROMETHEUS_EXPORT_MIGRATIONS = True
+PROMETHEUS_METRIC_NAMESPACE = "tournaments"
+
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django_prometheus.cache.backends.filebased.FileBasedCache',
+        'LOCATION': '/var/tmp/django_cache',
+    }
+}
+
 
 ROOT_URLCONF = 'tournaments.urls'
 
@@ -189,3 +228,6 @@ CELERY_TASK_SERIALIZER = 'json'
 CELERY_IMPORTS = ('tournamentsapp.tasks.check_match_db_status', 'tournamentsapp.tasks.actualise_tournaments','tournamentsapp.tasks.finish_tournament')
 
 TIME_DELTA = 5
+
+GANACHE_URL = "http://blockchain:8545"
+GANACHE_BANK = "0x4f3edf983ac636a65a842ce7c78d9aa706d3b113bce9c46f30d7d21715b23b1d"

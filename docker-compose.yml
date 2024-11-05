@@ -4,9 +4,36 @@ networks:
     external: false
 
 services:
+  setup:
+    image: docker.elastic.co/elasticsearch/elasticsearch:${STACK_VERSION}
+    volumes:
+      - certs:/usr/share/elasticsearch/config/certs
+      - ./setup/setup_script.sh:/setup_script.sh
+      - ./setup/grafana_script.sh:/grafana_script.sh
+      - ./setup/ELK_script.sh:/ELK_script.sh
+      - ./ELK:/ELK
+      - ./Grafana/gateway_dashboard.json:/gateway_dashboard.json
+    user: "0"
+    environment:
+      - SLACK_HOOK=${SLACK_HOOK}
+    env_file:
+      - .env
+    command: >
+      bash /setup_script.sh
+    healthcheck:
+      test: ["CMD-SHELL", "[ -f config/certs/es01/es01.crt ]"]
+      interval: 1s
+      timeout: 5s
+      retries: 120
   redis:
     image: 'redis:6.2-alpine'
     container_name: redis
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 10s
+      retries: 3
+      start_period: 5s   
     
   celery_worker:
     build:
@@ -76,7 +103,6 @@ services:
       - .env
     volumes:
       - ./usermanagement:/app/usermanagement
-#      - ./tournaments:/app/tournaments
 
   db:
     container_name: db
@@ -101,14 +127,18 @@ services:
     restart: always
     container_name: gateway
     depends_on:
-      - redis
+      redis:
+        condition: service_healthy
+      db:
+        condition: service_healthy
     build: ./gateway
-    ports:
-      - "8000:8000"
+    #ports:
+      #- "8000:8000"
     volumes:
       - ${LOGSTASH_FOLDER}${GATEWAY_LOG}:/var/log/${GATEWAY_LOG}
       - ${DJANGO_SCRIPT}:/start.sh
       - ./gateway:/app
+      - ./usermodel:/app/user
 
     env_file:
       - .env
@@ -116,11 +146,20 @@ services:
       - DEBUG=${DEBUG}
       - REDIS_HOST=redis
       - REDIS_PORT=6379
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/metrics"]
+      interval: 10s
+      timeout: 10s
+      start_period: 10s
+      retries: 3
 
   usermanagement:
     restart: always
     depends_on:
-      - migrations
+      migrations:
+        condition: service_started
+      db:
+        condition: service_healthy
     container_name: usermanagement
     build: ./usermanagement
     volumes:
@@ -130,12 +169,21 @@ services:
       - DEBUG=${DEBUG}
     env_file:
       - .env
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/metrics"]
+      interval: 10s
+      timeout: 10s
+      start_period: 10s
+      retries: 3
 
   chat:
     restart: always
 
     depends_on:
-      - migrations
+      migrations:
+        condition: service_started
+      db:
+        condition: service_healthy
     container_name: chat
     build: ./chat
     volumes:
@@ -151,9 +199,13 @@ services:
 
   tournaments:
     depends_on:
-      - redis
-      - db
-      - migrations
+      redis:
+        condition: service_healthy
+      db:
+        condition: service_healthy
+      migrations:
+        condition: service_started
+
     container_name: tournaments
     build: ./tournaments
     volumes:
@@ -166,8 +218,12 @@ services:
       - APP=tournaments
       - DEBUG=${DEBUG}
       - TOURNAMENTS_FOLDER=${TOURNAMENTS_FOLDER}
-    ports:
-      - 8001:8001
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/metrics"]
+      interval: 10s
+      timeout: 10s
+      start_period: 10s
+      retries: 3
 
   # Monitoring Container
 
@@ -176,42 +232,36 @@ services:
     image: prom/prometheus:v2.53.1
     container_name: prometheus
     command:
-      - '--config.file=/etc/prometheus/prometheus.yaml'
+      - '--config.file=/etc/prometheus/prometheus.yml'
     volumes:
-      - ./Prometheus/prometheus.yaml:/etc/prometheus/prometheus.yaml:ro
+      - ./Prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
       - prometheus-data:/prometheus
+    depends_on:
+      gateway:
+        condition: service_healthy
+      usermanagement:
+        condition: service_healthy
+      tournaments:
+        condition: service_healthy
+
   grafana:
     image: grafana/grafana:11.1.1-ubuntu
     container_name: grafana
-    ports:
-      - 3000:3000
     environment:
       - GF_SECURITY_ADMIN_PASSWORD=newadmin
+      - GF_SERVER_ROOT_URL=%(protocol)s://%(domain)s:%(http_port)s/grafana # Set to the internal URL
+      - GF_SERVER_SERVE_FROM_SUB_PATH=true
+      - GF_SERVER_HTTP_PORT=3000
     volumes:
       - grafana-data:/var/lib/grafana
-
-
-  setup:
-    image: docker.elastic.co/elasticsearch/elasticsearch:${STACK_VERSION}
-    volumes:
-      - certs:/usr/share/elasticsearch/config/certs
-      - ./setup/setup_script.sh:/setup_script.sh
-      - ./setup/grafana_script.sh:/grafana_script.sh
-      - ./setup/ELK_script.sh:/ELK_script.sh
-      - ./ELK:/ELK
-      - ./Grafana/gateway_dashboard.json:/gateway_dashboard.json
-#    user: "0"
-    environment:
-      - SLACK_HOOK=${SLACK_HOOK}
-    env_file:
-      - .env
-    command: >
-      bash /setup_script.sh
     healthcheck:
-      test: ["CMD-SHELL", "[ -f config/certs/es01/es01.crt ]"]
-      interval: 1s
-      timeout: 5s
-      retries: 120
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
+      interval: 10s    
+      timeout: 10s       
+      retries: 3
+      start_period: 10s            
+
+
 
   es01:
     restart: always
@@ -286,8 +336,6 @@ services:
 
   kibana:
     restart: always
-    ports:
-      - ${KIBANA_PORT}:5601
     depends_on:
       es01:
         condition: service_healthy
@@ -300,7 +348,8 @@ services:
 
     container_name: kibana
     environment:
-      - SERVERNAME=kibana
+      - SERVER_REWRITE_BASE_PATH=true
+      - SERVER_BASEPATH=/kibana 
       - ELASTICSEARCH_HOSTS=https://es01:9200
       - ELASTICSEARCH_USERNAME=kibana_system
       - ELASTICSEARCH_PASSWORD=${KIBANA_PASSWORD}
@@ -321,26 +370,49 @@ services:
       retries: 120
 
   blockchain:
-    depends_on:
-      - migrations
-      - tournaments
-    build:
-      context: ./blockchain
-    container_name: blockchain
-    ports:
-      - "8545:8545"
-    env_file:
-      - .env
-    #restart: always
-    volumes:
-      - ${TOURNAMENTS_FOLDER}${TOURNAMENT_LOG}:/var/log/${TOURNAMENT_LOG}
-      - ./blockchain:/app
+   depends_on:
+     - migrations
+     - tournaments
+   build:
+     context: ./blockchain
+   container_name: blockchain
+   ports:
+     - "8545:8545"
+   env_file:
+     - .env
+   restart: always
+   volumes:
+     - ${TOURNAMENTS_FOLDER}${TOURNAMENT_LOG}:/var/log/${TOURNAMENT_LOG}
+     - ./blockchain:/app
   frontend:
     container_name: frontend
+    depends_on:
+      gateway:
+        condition: service_healthy
+      kibana:
+        condition: service_healthy
+      grafana:
+        condition: service_healthy
+    env_file:
+      - .env
     build:
       context: ./frontend
     ports:
-      - "8080:80"
+      - "8000:8000"
+    volumes:
+      - ./usermanagement/profile_pictures/:/usr/share/nginx/html/profile_pictures
+
+  #### Pong Game Server ####
+  pong-game-server:
+    container_name: pong-game-server
+    build:
+      context: ./pong-game-server
+    env_file:
+      - .env
+    image: pong-game-server-img
+    restart: always
+    ports:
+      - 0.0.0.0:4000:4000
 
 volumes:
   certs:

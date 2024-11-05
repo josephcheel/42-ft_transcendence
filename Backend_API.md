@@ -1,7 +1,7 @@
 # Table of contents
 | Section | Links |
 |---------|-------|
-| [User](#user) | [create_user](#create_user) <br> [login_user](#login_user) <br> [logout_user](#logout_user) <br> [is_logged_in](#is_logged_in) <br> [list_users](#list_users) <br> [user_status](#user_status) <br> [send_friend_request](#send_friend_request)<br> [change_friendship_status](#change_friendship_status)<br> [get_friends](#get_friends)<br> [update_user](#update_user) <br> [get_profile_picture_url](#get_profile_picture_url)<br> [upload_profile_picture](#upload_profile_picture) <br> [get_profile](#get_profile)|
+| [User](#user) | [create_user](#create_user) <br> [login_user](#login_user) <br> [logout_user](#logout_user) <br> [is_logged_in](#is_logged_in) <br> [list_users](#list_users) <br> [user_status](#user_status) <br> [send_friend_request](#send_friend_request)<br> [change_friendship_status](#change_friendship_status)<br> [get_friends](#get_friends)<br> [update_user](#update_user) <br> [get_profile_picture_url](#get_profile_picture_url)<br> [upload_picture](#upload_picture) <br> [get_profile](#get_profile)|
 |[Tournaments](#tournaments)| [open_tournament](#open_tournament) <br> [accept_invitation](#accept_invitation) <br> [close_tournament](#close_tournament) <br> [start_match](#start_match) <br>[finish_match](#finish_match)|
 
 All API calls will return a json response and the corresponding code
@@ -121,15 +121,15 @@ You need to call /user/get_profile_picture_url/{username}/ to get the profile pi
 | --- | --- | --- | ---| ---|
 | Gets profile picture url for user| GET | /username | profile_picture_url |  200,401,405, 500|
 
-Then you need to call user/ + profile_picture_url to get the binary. If you already have the profile_picture_url (from a upload_profile_picture call, for example), you can just call user/+profile_picture_url without geting the url first
+
 
 
 [Back to Top](#table-of-contents)
 
 
-### upload_profile_picture
+### upload_picture
 
-You need to call /user/upload_profile_picture/ and upload a a form with a key/value pair of picture:{picture_data} to update the picture for the signed in user. Returns profile_picture_url inside data, containing the url for the uploaded file
+You need to call /user/upload_picture/ and upload a a form with a key/value pair of picture:{picture_data} to update the picture for the signed in user. Returns profile_picture_url inside data, containing the url for the uploaded file
 
 | Use | Methods | Request Data | Response Data | Return Values|
 | --- | --- | --- | ---| ---|
