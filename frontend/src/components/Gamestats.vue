@@ -51,15 +51,19 @@ export default {
     return {
       matchList: {},
       userWinPercentage: 0,
-      userId: localStorage.getItem('id')
+      userId: localStorage.getItem('id'),
+      userToFetch: ""
     }
   },
   methods: {
     goToGameStats(username) {
       this.$router.push(`/gamestats/${username}`);
     },
-    getMatchList(username) {
-      axios.get(`https://${this.$router.ORIGIN_IP}:8000/api/tournaments/list_matches/${username}`)
+    getMatchList() {
+      const username = this.$route.params.username;
+      const userToFetch = username || this.userId;
+
+      axios.get(`https://${this.$router.ORIGIN_IP}:8000/api/tournaments/list_matches/${userToFetch}`)
         .then(response => {
           this.matchList = JSON.parse(response.data.data);
           this.getOpponentProfiles();
@@ -128,8 +132,15 @@ export default {
     },
   },
   mounted() {
-    this.getMatchList(this.userId);
-  }
+    this.getMatchList();
+  },
+  watch: {
+    // Watch for changes in the route's username parameter
+    '$route.params.username': function() {
+      // Fetch the match list whenever the username changes
+      this.getMatchList();
+    }
+  },
 }
 </script>
 
