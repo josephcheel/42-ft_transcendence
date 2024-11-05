@@ -6,6 +6,9 @@ from tournamentsapp.views.accept_invitation import accept_invitation
 from tournamentsapp.views.close_tournament import close_tournament
 from tournamentsapp.views.start_match import start_match
 from tournamentsapp.views.finish_match import finish_match
+from tournamentsapp.views.list_matches import list_matches
+from django.db.models import Q
+
 from datetime import timedelta
 from django.utils import timezone
 import json
@@ -273,3 +276,19 @@ class test_close_tournament (TestCase):
 		print_all_invitations()
 		print_all_matches()
 		print_all_users()
+	def test_list_matches(self):
+		self.client.login(username='test10', password='test')
+		test10User = User.objects.get(username='test10')
+		matches = {
+			'username': 'test10',
+		}
+		self.base_json['status'] = 'success'
+		self.base_json['message'] = 'List of matches'
+		list_of_matches = Matches.objects.filter(Q(player_id_1=test10User) | Q(player_id_2__username=test10User))
+		json.dumps()
+		self.base_json['data'] = json.dumps(list_of_matches)
+		response = self.client.post(reverse(list_matches), json.dumps(
+			matches), content_type='application/json')
+		print (response.content)
+		self.check_json(response, 200)
+		self.client.logout()
