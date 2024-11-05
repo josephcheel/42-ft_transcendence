@@ -6,6 +6,9 @@ from tournamentsapp.views.accept_invitation import accept_invitation
 from tournamentsapp.views.close_tournament import close_tournament
 from tournamentsapp.views.start_match import start_match
 from tournamentsapp.views.finish_match import finish_match
+from tournamentsapp.views.list_matches import list_matches
+from django.db.models import Q
+
 from datetime import timedelta
 from django.utils import timezone
 import json
@@ -72,12 +75,14 @@ class test_close_tournament (TestCase):
 		self.tournament = {
 			'username': 'test10',
 			'password': 'test',
+			'name': 'test10_tournament',
 			'date_start': (timezone.now() + timedelta(days=1)).isoformat(),
 			'max_players': 14,
 			'cost': 10,
 			'price_1': 1000,
 			'price_2': 500,
 			'price_3': 250,
+			'winnig_points': 5,
 			'players': ['test20', 'test19', 'test7', 'test4', 'test13', 'test17', 'test15', 'test16',
 						'test5', 'test6', 'test14', 'test9', 'test11', 'test12'], }
 		self.base_json['status'] = 'success'
@@ -118,12 +123,14 @@ class test_close_tournament (TestCase):
 		self.tournament = {
 			'username': 'test10',
 			'password': 'test',
+			'name': 'test10_tournament2',
 			'date_start': (timezone.now() + timedelta(days=1)).isoformat(),
 			'max_players': 14,
 			'cost': 10,
 			'price_1': 1000,
 			'price_2': 500,
 			'price_3': 250,
+			'winning_points': 5,	
 			'players': ['test1', 'test2', 'test3', 'test4', 'test5', 'test6', 'test7', 'test8', 'test9', 'test10', 'test11', 'test12'], }
 		self.base_json['status'] = 'success'
 		self.base_json['message'] = 'Tournament created successfully'
@@ -163,12 +170,14 @@ class test_close_tournament (TestCase):
 		self.tournament = {
 			'username': 'test10',
 			'password': 'test',
+			'name': 'test10_tournament3',
 			'date_start': (timezone.now() + timedelta(days=1)).isoformat(),
 			'max_players': 14,
 			'cost': 10,
 			'price_1': 1000,
 			'price_2': 500,
 			'price_3': 250,
+			'winning_points': 6,
 			'players': ['test1', 'test2', 'test3', 'test4', 'test5', 'test6', 'test7', 'test8', 'test9', 'test10', 'test11', 'test12'], }
 		self.base_json['status'] = 'success'
 		self.base_json['message'] = 'Tournament created successfully'
@@ -252,7 +261,8 @@ class test_close_tournament (TestCase):
 				else:
 					the_winner_id = match.player_id_1.username
 					the_looser_id = match.player_id_2.username
-				self.match_to_finish = {'match_id': match.id,'winner': the_winner_id, 'looser': the_looser_id}
+				looser_points = random.randint(0, 5)
+				self.match_to_finish = {'match_id': match.id,'winner': the_winner_id, 'looser': the_looser_id, 'winner_points': tournament.winning_points, 'looser_points': looser_points}
 				self.base_json['status'] = 'success'
 				self.base_json['message'] = 'Match finished successfully'
 				self.base_json['data'] = None
@@ -266,3 +276,19 @@ class test_close_tournament (TestCase):
 		print_all_invitations()
 		print_all_matches()
 		print_all_users()
+	def test_list_matches(self):
+		self.client.login(username='test10', password='test')
+		test10User = User.objects.get(username='test10')
+		matches = {
+			'username': 'test10',
+		}
+		self.base_json['status'] = 'success'
+		self.base_json['message'] = 'List of matches'
+		list_of_matches = Matches.objects.filter(Q(player_id_1=test10User) | Q(player_id_2__username=test10User))
+		json.dumps()
+		self.base_json['data'] = json.dumps(list_of_matches)
+		response = self.client.post(reverse(list_matches), json.dumps(
+			matches), content_type='application/json')
+		print (response.content)
+		self.check_json(response, 200)
+		self.client.logout()

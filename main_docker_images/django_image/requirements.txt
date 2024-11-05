@@ -3,10 +3,16 @@ requests
 logstash-formatter
 python-json-logger
 django-prometheus
+channels[daphne]
+channels_redis
+django-cors-headers
 web3==7.3.0
 eth_account==0.13.4
 # needed to intereact with PostGreeSql
 psycopg==3.2.1
-django-cors-headers
-Pillow
-celery
+pillow==10.4.0
+chardet
+celery==5.3.6
+redis==5.0.1
+flower==2.0.1
+SQLAlchemy

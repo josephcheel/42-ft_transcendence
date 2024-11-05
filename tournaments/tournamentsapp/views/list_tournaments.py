@@ -8,7 +8,6 @@ import json
 from user.models import User
 
 @require_get
-@user_is_authenticated
 def list_tournaments(request):
 	player = request.user
 	try:
