@@ -33,6 +33,7 @@ User = get_user_model()
 
 class Tournaments(models.Model):
 	id = models.AutoField(primary_key=True)
+	name = models.CharField(max_length=50, null=True)
 	player_id = models.ForeignKey(
 		settings.AUTH_USER_MODEL, on_delete=models.DO_NOTHING, null=True, related_name='tournaments_player')
 	date_start = models.DateTimeField()
@@ -44,6 +45,7 @@ class Tournaments(models.Model):
 	price_1 = models.IntegerField(default = 0)
 	price_2 = models.IntegerField(default = 0)
 	price_3 = models.IntegerField(default = 0)
+	winning_points = models.IntegerField(default = 5, null = True)
 	id_winner = models.ForeignKey(
 		settings.AUTH_USER_MODEL, on_delete=models.DO_NOTHING, null=True, related_name='tournaments_winner')
 	id_second = models.ForeignKey(
@@ -78,8 +80,10 @@ class Matches(models.Model):
 	date_time = models.DateTimeField()
 	winner_id = models.ForeignKey(
 		settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, related_name='matches_winner')
+	points_winner = models.IntegerField(default=0, null = True)
 	looser_id = models.ForeignKey(
 		settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, related_name='matches_looser')
+	points_looser = models.IntegerField(default=0, null = True)
 	round = models.CharField(max_length=11, choices=Rounds.choices, default=Rounds.QUALIFIED_ROUND.value)
 	number_round = models.IntegerField()
 	status = models.CharField(max_length=20, choices=StatusMatches.choices, default=StatusMatches.NOT_PLAYED.value)

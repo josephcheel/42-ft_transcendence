@@ -47,6 +47,7 @@ def close_tournament(request):
 				number_round = 1, 
 				date_time = next_match_date,
 				player_id_1 = tournament_players[0].player_id,
+				points_winner = tournament.winning_points,
 				player_id_2 = tournament_players[1].player_id,
 				round=Rounds.FINAL_ROUND.value)
 			tournament_players[0].player_id.puntos_reservados -= tournament.cost
@@ -61,6 +62,7 @@ def close_tournament(request):
 				date_time = next_match_date,
 				player_id_1 = tournament_players[0].player_id,
 				player_id_2 = tournament_players[1].player_id,
+				points_winner=tournament.winning_points,
 				round=Rounds.SEMIFINAL_ROUND.value)
 			tournament_players[0].player_id.puntos_reservados -= tournament.cost
 			tournament_players[0].player_id.save()
@@ -73,6 +75,7 @@ def close_tournament(request):
 				date_time=next_match_date,
 				player_id_1=tournament_players[2].player_id,
 				player_id_2=tournament_players[3].player_id,
+				points_winner=tournament.winning_points,
 				round=Rounds.SEMIFINAL_ROUND.value)
 			tournament_players[2].player_id.puntos_reservados -= tournament.cost
 			tournament_players[2].player_id.save()
@@ -101,7 +104,8 @@ def close_tournament(request):
 					player_id_1 = tournament_players[i].player_id,
 					player_id_2 = player_2,
 					winner_id = player_winner,
-					round = Rounds.QUALIFIED_ROUND.value,
+                    points_winner=tournament.winning_points,
+					round=Rounds.QUALIFIED_ROUND.value,
 					number_round = current_round + extra_round,
 					status=status)
 				next_match_date += timedelta(minutes=TIME_DELTA)

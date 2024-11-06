@@ -158,7 +158,7 @@ You need to call /user/upload_picture/ and upload a a form with a key/value pair
 
 | Use | Methods | Request Data | Response Data | Return Values|
 | --- | --- | --- | ---| ---|
-| Creates a tournament and sends invitation to all players  | POST | 'date_start', <BR> 'max_players', <BR> 'cost', <BR> 'price_1', <BR> 'price_2', <BR> 'price_3', <BR> 'players':[username1, username2, ...]	 | None |  200 (tournament created), 400 (incorrect data), 404 (user not in database), 500|
+| Creates a tournament and sends invitation to all players  | POST | 'name',<BR> 'winning_points', <BR> 'date_start', <BR> 'max_players', <BR> 'cost', <BR> 'price_1', <BR> 'price_2', <BR> 'price_3', <BR> 'players':[username1, username2, ...]	 | None |  200 (tournament created), 400 (incorrect data), 404 (user not in database), 500|
 
 [Back to Top](#table-of-contents)
 
@@ -187,5 +187,5 @@ You need to call /user/upload_picture/ and upload a a form with a key/value pair
 ### finish_match
 | Use | Methods | Request Data | Response Data | Return Values|
 | --- | --- | --- | ---| ---|
-|When the match finishes, informs who is the winner| POST | 'match_id' 'winner' 'looser' | None |  200 (Match finished successfully), 400 (he match has already been played), 404 (user not in database), 500|
+|When the match finishes, informs who is the winner| POST | 'match_id' 'winner' 'winner_points' 'looser' 'looser_points' | None |  200 (Match finished successfully), 400 (he match has already been played), 404 (user not in database), 500|
 
