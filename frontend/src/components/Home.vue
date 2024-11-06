@@ -260,13 +260,13 @@ export default {
 		const radius = 20; // Distance from the sphere
 		const MaxDistanceToSphere = 10; // Maximum distance from the sphere
 		const MinDIstanceToSphere = 14; // Minimum distance from the sphere
-		const SpeedRotation = 0.00000000001; // Speed of movement
-		let SpeedToSphere = 0.02;
+		const SpeedRotation = 0.007; // Speed of movement
+		let SpeedToSphere = 0.01;
 		let y = 0;
 
 		function animate() {
 			requestAnimationFrame(animate);
-			angle += SpeedRotation + 0.01;
+			angle += SpeedRotation;
 			const x = radius * Math.cos(angle); // X position of the camera
 			const z = radius * Math.sin(angle); // Z position of the camera
 			// controls.update();
