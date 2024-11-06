@@ -400,8 +400,8 @@ export default {
 			
 				this.socket.on('countdown-end', () => {
 					this.start_light()
-					document.getElementById('right-keys').hidden = true;
-					document.getElementById('left-keys').hidden = true;
+					// document.getElementById('right-keys').hidden = true;
+					// document.getElementById('left-keys').hidden = true;
 					document.getElementById('countdown').hidden = true;
 					document.getElementById('score').style.visibility = 'visible';
 				});
