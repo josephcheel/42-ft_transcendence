@@ -13,6 +13,7 @@ import Home from '../components/Home.vue'
 import Nav from '../components/Nav.vue'
 import GameOnline from '../components/GameOnline/GameOnline.vue'
 import { isAuthorized } from '../utils/isAuthorized'
+import Tournaments from '../components/Tournaments.vue'
 const routes = [
   {
     path: '/:currentView?',
@@ -88,6 +89,11 @@ const routes = [
     path: '/play',
     name: 'play',
     component: Play
+  },
+  {
+    path: '/tournaments',
+    name: 'tournaments',
+    component: Tournaments
   }
 ]
 

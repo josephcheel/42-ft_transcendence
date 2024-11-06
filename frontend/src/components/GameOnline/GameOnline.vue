@@ -283,7 +283,7 @@ body {
 #volume {
   position: absolute;
   opacity: 0;
-  right: 10%;
+  right: 5%;
   top : 5%;
   /* border: black; */
   cursor: pointer;
