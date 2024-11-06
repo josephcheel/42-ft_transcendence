@@ -5,7 +5,9 @@
 		<component :is="currentView" @changeView="changeComponent" ></component>
 	</section>
 	<div ref="canvas"></div>
-	<img id="arrow" src="/assets/icons/chevron-down.svg">
+	<abbr title="Slide up or move the mouse wheel or click it" @click="handleArrowClick">
+		<img id="arrow" src="/assets/icons/chevron-down.svg">
+	</abbr>
 
     <!-- The child components (Login, Register, ForgotPassword) will be rendered here -->
     <router-view />

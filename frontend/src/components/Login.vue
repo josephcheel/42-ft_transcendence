@@ -13,16 +13,25 @@
         <label for="password" class="form-label">{{ $t('message.password')}}</label>
         <input v-model="psw" type="password" class="form-control" id="password" placeholder="Enter your password" required>
       </div>
-      <button v-if="!display" v-on:click="display = !display" type="submit" class="btn btn-primary w-100 mt-4 login-button">{{ $t('message.login')}}</button>
-      <button v-if="display"  class="btn btn-primary w-100 mt-4 login-button">{{ $t('message.enter')}}</button>
+      <button v-if="!display" v-on:click="display = !display"  class="btn btn-primary w-100 mt-4 login-button">{{ $t('message.login')}}</button>
+      <button v-if="display" type="submit" class="btn btn-primary w-100 mt-4 login-button">{{ $t('message.enter')}}</button>
     </form>
     <div class="forgot-password-signup text-center">
       <router-link class="forgot-password-signup mt-5" id="forgot" @click.prevent="navigateTo('Forgotps')" to="#">{{ $t('message.forget_pass')}}</router-link>
       <p id="forgot">{{ $t('message.no_account')}} <router-link id="register" @click.prevent="navigateTo('Register')" to="#">{{ $t('message.register')}}</router-link></p>
     </div>
-    <p style="color: red;">
-      {{ toastMsg }}
-    </p>
+    <div
+        id="mytoast"
+        class="toast-message toast card mt-3"
+        role="alert"
+        aria-live="assertive"
+        aria-atomic="true"
+        :class="{ show: isToastVisible }"
+      >
+        <div id="toast-body">
+          {{ toastMsg }}
+        </div>
+      </div>
   </div>
 </div>
 
@@ -30,6 +39,15 @@
 
 </template>
 <style scoped>
+  #mytoast {
+    position: absolute;
+  }
+  #toast-body {
+    transition: opacity 2s ease-in-out;
+    color:rgb(117, 255, 168);
+    font-family: 'Nokia Cellphone FC' ;
+  }
+
   #subtitle {
     font-family: 'Nokia Cellphone FC' !important;
     color: white;
@@ -114,19 +132,6 @@
     font-size: 14px ;
     bottom: 0%;
   }
-  /* .form-label {
-    font-family: 'Nokia Cellphone FC' ;
-    color: white;
-    font-weight: 700;
-  }
-  .form-control:focus, .form-control { 
-    font-family:'Courier New', Courier;
-    font-size: 1em;
-    font-weight: 500;
-    border-radius: 15px;
-    background-color: #ffffffae;
-    border: 0px
-  } */
 </style>
 <script>
  export default {
@@ -134,12 +139,24 @@
       data() {
         return {
           display: false,
+          isToastVisible: false,
+          toastMsg: '',
         }
 
       },
       methods: {
         navigateTo(view) {
           this.$emit('changeView', view);
+        },
+        showToast(message) {
+          this.toastMsg = message;
+          this.isToastVisible = true;
+          setTimeout(() => {
+            this.isToastVisible = false;
+          }, 3000); // Toast will disappear after 3 seconds
+        },
+        hideToast() {
+          this.isToastVisible = false;
         },
     }
 }
@@ -155,41 +172,58 @@
     const psw = ref();
 
     const router = useRouter();
-    const toastMsg = ref(null)
+    const toastMsg = ref()
+    const isToastVisible = ref(false);
 
-    async function login()
-    
+    function showToast(message, type = "error") {
+      if (type === "error") {
+        document.getElementById('toast-body').style.color = 'rgb(255, 111, 0)';
+      } else if (type === "success") {
+        document.getElementById('toast-body').style.color = 'rgb(117, 255, 168)';
+      }
+      toastMsg.value = message;
+      isToastVisible.value = true;
+      setTimeout(() => {
+        isToastVisible.value = false;
+      }, 3000); // Toast will disappear after 3 seconds
+    }
+
+    async function login()    
     {
-        console.log(user.value);
-        console.log(psw.value);
-
           try {
-          const response = await axios.post(`https://${ORIGIN_IP}:8000/api/user/login_user/`, {
-            username: user.value,
-            password: psw.value
-          }, {
-            headers: {
-              'Content-Type': 'application/json',
-            }
-          });
-
-          console.log(response);
-
-          if (response.status === 200) {
-            // connectWebSocket();
-            localStorage.setItem('username', user.value)
-            router.push('/play').then(() => {
-              window.location.reload()            
+            const response = await axios.post(`https://${ORIGIN_IP}:8000/api/user/login_user/`, {
+              username: user.value,
+              password: psw.value
+            }, {
+              headers: {
+                'Content-Type': 'application/json',
+              }
             });
-
-          } else {
-            toastMsg.value = `ERROR CODE:  ${response.status} \n An unexpected error occurred during the user creation`;
-
-          }
+            switch (response.status) {
+                case 200:
+                  localStorage.setItem('username', user.value)
+                  router.push('/play').then(() => {
+                    window.location.reload()
+                  });
+                  break;
+               
+                default:
+                  showToast(`ERROR CODE: ${response.status} \n An unexpected error occurred during the user creation`);
+                  break;
+              }
         } catch (error) {
-          console.log(error)
-          toastMsg.value = `ERROR CODE: ${error.response.status} \n An unexpected error occurred during the user creation `;
-        }
+            switch (error.response.status) {
+              case 401:
+                  showToast("The username or password is incorrect");
+                  break;
+              case 500:
+                showToast("An unexpected error occurred during login");
+                break;
+              default:
+                showToast(`Error CODE: ${error.response.status} \n An unexpected error occurred during the user creation`);
+                break;
+            }
+          }
   }
   //   //esto de acontinuación deberia cerrar el webSocket al cerrar la pagina
   // onBeforeUnmount(() => {
