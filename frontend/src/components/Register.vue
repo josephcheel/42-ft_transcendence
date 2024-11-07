@@ -34,17 +34,32 @@
     <div class="mt-3 text-center">
     <p id="already_account">{{ $t('message.alreadyAcc')}} <router-link @click="navigateTo('Login')" id="login" to="#">{{ $t('message.login')}}</router-link></p>
     </div>
-    <p style="color: red;">
-      {{ toastMsg }}
-    </p>
+      <div
+        id="mytoast"
+        class="toast-message toast card"
+        role="alert"
+        aria-live="assertive"
+        aria-atomic="true"
+        :class="{ show: isToastVisible }"
+      >
+        <div id="toast-body">
+          {{ toastMsg }}
+        </div>
+      </div>
   </div>
 </div>
-
-
 </template>
+
+
 <script>
   export default {
     name: 'Register',
+    data() {
+      return {
+        isToastVisible: false,
+        toastMsg: '',
+      }
+    },
     methods: {
         navigateTo(view) {
           this.$emit('changeView', view);
@@ -58,6 +73,9 @@
     import { useRouter } from 'vue-router';
     import { Toast } from 'bootstrap' 
     import axios from '../utils/axiosConfig';
+    import { defineEmits } from 'vue';
+
+    const emit = defineEmits(['changeView']);
 
     const username = ref();
     const psw = ref();
@@ -67,50 +85,81 @@
     const psw2 = ref();
     const email = ref();
     const errorToast = ref(null)
-    const toastMsg = ref(null)
+    const toastMsg = ref()
+    const isToastVisible = ref(false);
     const ORIGIN_IP = import.meta.env.VITE_VUE_APP_ORIGIN_IP || 'localhost';
 
+    function showToast(message, type = "error") {
+      if (type === "error") {
+        document.getElementById('toast-body').style.color = 'rgb(255, 111, 0)';
+      } else if (type === "success") {
+        document.getElementById('toast-body').style.color = 'rgb(117, 255, 168)';
+      }
+      toastMsg.value = message;
+      isToastVisible.value = true;
+      setTimeout(() => {
+        isToastVisible.value = false;
+      }, 3000); // Toast will disappear after 3 seconds
+    }
     async function login()
     {
         if (psw2.value != psw.value) {
-          toastMsg.value = "The password doesn't match"
+          showToast("The password doesn't match");
+          return;
         }
         else{
-
           try {
-          const response = await axios.post(`https://${ORIGIN_IP}:8000/api/user/create_user/`, {
-            username: user.value,
-            password: psw.value,
-            first_name: name.value,
-            last_name: lastname.value,
-            email: email.value,
-          }, {
-            headers: {
-              'Content-Type': 'application/json',
-            },
-          });
+            const response = await axios.post(`https://${ORIGIN_IP}:8000/api/user/create_user/`, {
+              username: user.value,
+              password: psw.value,
+              first_name: name.value,
+              last_name: lastname.value,
+              email: email.value,
+            }, {
+              headers: {
+                'Content-Type': 'application/json',
+              },
+            });
 
-          console.log(response);
-
-          if (response.status === 201) {
-            //LOGIN
-            router.push('/Login');
-
-          } else {
-            toastMsg.value = `ERROR CODE:  ${response.status} \n An unexpected error occurred during the user creation`;
-
+            switch (response.status) {
+              case 201:
+                showToast("User created successfully. Now you can log in!", "success");
+                setTimeout(() => {
+                  emit('changeView', 'Login');
+                }, 2000);
+                break;
+              default:
+                showToast(`ERROR CODE: ${response.status} \n An unexpected error occurred during the user creation`);
+                break;
+            }
+          } catch (error) {
+            switch (error.response.status) {
+             
+              case 409:
+                showToast("The username or email is already in use");
+                break;
+              case 500:
+                showToast("An unexpected error occurred during the user creation");
+                break;
+              default:
+                showToast(`Error CODE: ${error.response.status} \n An unexpected error occurred during the user creation`);
+                break;
+            }
           }
-        } catch (error) {
-          toastMsg.value = `ERROR CODE: ${error.response.status} \n An unexpected error occurred during the user creation `;
-          console.error(error);
-        }
-
-    }
+      }
   }
 </script>
 
 
 <style scoped>
+#mytoast {
+  position: absolute;
+}
+#toast-body {
+    transition: opacity 2s ease-in-out;
+    color:rgb(117, 255, 168);
+    font-family: 'Nokia Cellphone FC' ;
+  }
 
 #login {
   background: linear-gradient(90deg, #66ff69 0%, #4af7fd 100%);

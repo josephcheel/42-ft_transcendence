@@ -31,7 +31,7 @@
       <!-- Right Column (Vertical Grid) -->
       <div class="col-lg-3 d-flex flex-column align-items-center justify-content-start">
         <!-- <div class="bento-box flex-grow-1">Right Grid 1</div> -->
-        <div @click="" id="tournament" class="bento-box flex-grow-1">
+        <div @click="goToTournament" id="tournament" class="bento-box flex-grow-1">
         <h2>{{ $t('message.tournament')}}</h2>
         <p>{{ $t('message.explain_tournament')}}</p>
       </div>
@@ -79,6 +79,10 @@ export default {
       alert(`Invitation sent to ${this.friendName}`);
       this.goToMatch();
     },
+    goToTournament() {
+      // alert('Navigating to tournament page...');
+      this.$router.push({path: '/tournaments'});
+    }
   },
 };
 </script>
