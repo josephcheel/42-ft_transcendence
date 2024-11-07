@@ -1,38 +1,38 @@
 <template>
 <div class="container-fluid d-flex justify-content-center align-items-center ">
   <div class="p-4 " style="max-width: 400px; width: 100%;">
-    <h3 id="register_title" class="text-center mb-4">{{ $t('message.register_title')}}</h3>
+    <h3 id="register_title" class="text-center mb-4">{{ $t('register.register_title')}}</h3>
     <form @submit.prevent="login">
       <div class="d-flex mb-3">
         <div class="me-3">
-          <label for="user" class="form-label">{{ $t('message.name')}}</label>
+          <label for="user" class="form-label">{{ $t('general.name')}}</label>
           <input v-model="name" type="text" class="form-control" id="name" :placeholder="$t('message.name_placeholder')" required>
         </div>
         <div class="me-3">
-          <label for="user" class="form-label">{{ $t('message.lastname')}}</label>
+          <label for="user" class="form-label">{{ $t('general.lastname')}}</label>
           <input v-model="lastname" type="text" class="form-control" id="lastname" :placeholder="$t('message.lastname_placeholder')" required>
         </div>
      </div>
       <div class="mb-3">
-        <label for="user" class="form-label">{{ $t('message.username')}}</label>
+        <label for="user" class="form-label">{{ $t('general.username')}}</label>
         <input v-model="username" spellcheck="false" type="text" class="form-control" id="user" :placeholder="$t('message.username_placeholder')" required>
       </div>
       <div class="mb-3">
-        <label for="email" class="form-label">{{ $t('message.email')}}</label>
+        <label for="email" class="form-label">{{ $t('general.email')}}</label>
         <input v-model="email" spellcheck="true" type="email" class="form-control" id="email" placeholder="name@example.com" required>
       </div>
       <div class="mb-3">
-        <label for="password" class="form-label">{{ $t('message.password')}}</label>
+        <label for="password" class="form-label">{{ $t('general.password')}}</label>
         <input v-model="psw" type="password" class="form-control" id="password" :placeholder="$t('message.password_placeholder')" required>
       </div>
       <div class="mb-3">
-        <label for="password" class="form-label">{{ $t('message.confirm_pass')}}</label>
+        <label for="password" class="form-label">{{ $t('general.confirm_pass')}}</label>
         <input v-model="psw2" type="password" class="form-control" id="password2" :placeholder="$t('message.confirm_pass_placeholder')" required>
       </div>
-      <button type="submit" class="btn btn-primary w-100">{{ $t('message.register')}}</button>  <!---id="register" -->
+      <button type="submit" class="btn btn-primary w-100">{{ $t('general.register')}}</button>  <!---id="register" -->
     </form>
     <div class="mt-3 text-center">
-    <p id="already_account">{{ $t('message.alreadyAcc')}} <router-link @click="navigateTo('Login')" id="login" to="#">{{ $t('message.login')}}</router-link></p>
+    <p id="already_account">{{ $t('register.alreadyAcc')}} <router-link @click="navigateTo('Login')" id="login" to="#">{{ $t('general.login')}}</router-link></p>
     </div>
       <div
         id="mytoast"

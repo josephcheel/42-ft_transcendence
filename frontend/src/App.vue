@@ -1,40 +1,10 @@
 
 <template>
-  <div id="app">
-    <!-- <div style="width: 100%; height: 100%; background: #FF9670; border-bottom-left-radius: 20px; border--right-radius: 20px"></div> -->
-    <nav class="navbar navbar-expand-lg " v-if="!isNav()">
-      <!-- <img src="/src/images/Logo.png" alt="Logo" style="margin-left:15px; width: 65px; height: auto;"> -->
-        <h2 style="margin-left: 180px; margin-right: 180px;">Pong</h2>
-        <ul class="navbar-nav">
-          <li class="nav-item">
-            <router-link to="/play" class="nav-link1">{{ $t('message.home')}}</router-link>
-          </li>
-         <!-- Conditionally display Login or Logout based on isAuthenticated -->
-        <li class="nav-item" v-if="!this.isAuthenticated">
-          <router-link to="/login" class="nav-link1">{{ $t('message.login')}}</router-link>
-        </li>
-        <li class="nav-item" v-else>
-          <a style="cursor: pointer;" @click="logout" class="nav-link1">{{ $t('message.logout')}}</a>
-        </li>
-          <li class="nav-item">
-            <router-link to="/select-game" class="nav-link1">{{ $t('message.play')}}</router-link>
-          </li>
-          <li class="nav-item">
-            <router-link to="/dashboard" class="nav-link1">{{ $t('message.dashboard')}}</router-link>
-          </li>
-          <li class="nav-item">
-            <router-link to="/profile" class="nav-link1">{{ $t('message.profile')}}</router-link>
-          </li>
-          <li class="nav-item">
-            <router-link to="/chat" class="nav-link1">{{ $t('message.chat')}}</router-link>
-          </li>
-          <select class="form-select form-select-sm" v-model="selectedLang" @change="changeLang">
-            <option value="en">English</option>
-            <option value="es">Español</option>
-            <option value="fr">French</option>
-          </select>
-        </ul>
-    </nav>
+  <div id="app">    
+  <div v-if="!isNav()" style="z-index: 1;">
+    <Navigation ref="Navigation" @mounted="onNavMounted" />
+  </div>
+
     <div :class="{ 'content-wrapper': !isNav() }">
       <RouterView />
     </div>
@@ -43,23 +13,34 @@
 
 
 <script>
+  import Navigation from './components/Nav.vue';
   import axios from './utils/axiosConfig';
   const ORIGIN_IP = import.meta.env.VITE_VUE_APP_ORIGIN_IP || 'localhost';
 
   export default {
+    components: {
+      Navigation,
+    },
     data(){
       return {
         selectedLang: 'en',
         isAuthenticated: false,
       };
+    },watch: {
+      $route() {
+        if (!this.isNav() && this.$refs.Navigation) {
+          this.$refs.Navigation.getProfilePicture();
+        }
+      }
     },
     methods: {
+      isNav() {
+        return (this.$route.path === '/' ||  this.$route.path === '/game' || this.$route.path.startsWith('/game-online') || this.$route.name === 'NotFound' || this.$route.path === '/login' || this.$route.path === '/register' || this.$route.path === '/forgot-password');
+      },
       changeLang() {
         this.$i18n.locale = this.selectedLang;
       },
-      isNav() {
-        return (this.$route.path === '/' ||  this.$route.path === '/game' || this.$route.path.startsWith('/game-online'));
-      },
+     
       logout() {
         axios.post(`https://${ORIGIN_IP}:8000/api/user/logout_user/`).then((response) => {
           if (response.status === 200)
@@ -94,9 +75,26 @@
         });
       },
     },
+    onNavMounted() {
+      this.navigationMounted = true; // Set the flag to true when Navigation is mounted
+      this.$nextTick(() => {
+        if (this.$refs.Navigation) {
+          this.$refs.Navigation.getProfilePicture();
+        }
+      });
+    },
+    fetchProfilePicture() {
+        // Call getProfilePicture on Navigation if it exists
+        if (this.$refs.Navigation && this.$refs.Navigation.getProfilePicture) {
+          this.$refs.Navigation.getProfilePicture();
+        }
+      },
     mounted() {
       this.checkAuthStatus();
+      this.fetchProfilePicture();
       console.log(this.isAuthenticated);
+      console.log(this.$route.path);
+
     },
   }
 </script>
@@ -112,18 +110,7 @@
 nav {
   flex-shrink: 0; 
 }
-.navbar {
-  background: #FF9670;/*rgb(182 201 205 / 60%); */
-  backdrop-filter: blur(10px); 
-  box-shadow: 0 5px 6px rgba(0, 0, 0, 0.1); 
-  margin-left: 10px;
-  margin-right: 10px;
-  margin-top: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  border-radius: 5px;
-}
+
 
 .content-wrapper { 
   flex-grow: 1;  

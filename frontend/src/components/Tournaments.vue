@@ -223,16 +223,21 @@ export default {
 			const tournament = {
 				name: this.name,
 				date: this.date,
-				maxGoals: this.maxGoalsValue,
+				winning_points: this.maxGoalsValue,
 				speedLevel: this.speedLevelValue,
-				players: this.players
+				players: this.players,
+				max_players: this.players.length,
+				cost: 10,
+				price_1: 100,
+				price_2: 50,
+				price_3: 25,
 			};
 
 			const tournamentJson = JSON.stringify(tournament);
 			
 			try {
 
-				const reponse = await axios.post(`https://${this.$router.ORIGIN_IP}:8000/api/tournaments/open_tournament/`, tournamentJson, {
+				const response = await axios.post(`https://${this.$router.ORIGIN_IP}:8000/api/tournaments/open_tournament/`, tournamentJson, {
 					headers: {
 						'Content-Type': 'application/json'
 					}

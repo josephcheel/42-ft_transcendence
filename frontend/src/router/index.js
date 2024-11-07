@@ -10,13 +10,13 @@ import GameSelection from '../components/GameSelection.vue'
 import Profile from '../components/Profile.vue'
 import Game from '../components/game/Game.vue'
 import Home from '../components/Home.vue'
-import Nav from '../components/Nav.vue'
 import GameOnline from '../components/GameOnline/GameOnline.vue'
+import NotFound from '../components/NotFound.vue'
 import { isAuthorized } from '../utils/isAuthorized'
 import Tournaments from '../components/Tournaments.vue'
 const routes = [
   {
-    path: '/:currentView?',
+    path: '/',
     name: 'Home',
     component: Home
   },
@@ -31,7 +31,7 @@ const routes = [
     component: Login
   },
   {
-    path: '/forgotps',
+    path: '/forgot-password',
     name: 'Forgotps',
     component: Forgotps
   },
@@ -75,16 +75,6 @@ const routes = [
     name: 'GameFriend',
     component: GameOnline
   },
-  // {
-  //   path: '/main',
-  //   name: 'Main',
-  //   component: Main
-  // },
-  {
-    path: '/Nav',
-    name: 'Nav',
-    component: Nav
-  },
   {
     path: '/play',
     name: 'play',
@@ -94,7 +84,12 @@ const routes = [
     path: '/tournaments',
     name: 'tournaments',
     component: Tournaments
-  }
+  },
+  {
+    path: '/:pathMatch(.*)*',
+    name: 'NotFound',
+    component: NotFound
+  }  
 ]
 
 

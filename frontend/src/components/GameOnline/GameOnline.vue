@@ -24,8 +24,9 @@
 	</header>
   
 	<div class="waiting-screen" id="loading">
-	  <img src="/assets/icons/line-md--loading-twotone-loop.svg" alt="loading">
-	</div>
+    <img src="/assets/icons/bouncing-ball.svg" height="100px" alt="loading">
+	  <!-- <img src="/assets/icons/line-md--loading-twotone-loop.svg" alt="loading"> -->
+	</div> 
 	<div class="waiting-screen" id="waiting-text">
 	  <h1>Waiting for players...</h1>
 	</div>

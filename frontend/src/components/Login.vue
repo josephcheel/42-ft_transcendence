@@ -6,19 +6,19 @@
     fully immersive, fast-paced, and in stunning 3D!</h2>
     <form  id="form" @submit.prevent="login">
       <div v-if="display" class="mb-3">
-        <label for="user" class="form-label">{{ $t('message.username')}}</label>
+        <label for="user" class="form-label">{{ $t('general.username')}}</label>
         <input v-model="user" type="text" class="form-control" id="user" placeholder="Enter your username" required>
       </div>
       <div v-if="display" class="mb-3">
-        <label for="password" class="form-label">{{ $t('message.password')}}</label>
+        <label for="password" class="form-label">{{ $t('general.password')}}</label>
         <input v-model="psw" type="password" class="form-control" id="password" placeholder="Enter your password" required>
       </div>
-      <button v-if="!display" v-on:click="display = !display"  class="btn btn-primary w-100 mt-4 login-button">{{ $t('message.login')}}</button>
-      <button v-if="display" type="submit" class="btn btn-primary w-100 mt-4 login-button">{{ $t('message.enter')}}</button>
+      <button v-if="!display" v-on:click="display = !display"  class="btn btn-primary w-100 mt-4 login-button">{{ $t('general.login')}}</button>
+      <button v-if="display" type="submit" class="btn btn-primary w-100 mt-4 login-button">{{ $t('login.enter')}}</button>
     </form>
     <div class="forgot-password-signup text-center">
-      <router-link class="forgot-password-signup mt-5" id="forgot" @click.prevent="navigateTo('Forgotps')" to="#">{{ $t('message.forget_pass')}}</router-link>
-      <p id="forgot">{{ $t('message.no_account')}} <router-link id="register" @click.prevent="navigateTo('Register')" to="#">{{ $t('message.register')}}</router-link></p>
+      <router-link class="forgot-password-signup mt-5" id="forgot" @click.prevent="navigateTo('Forgotps')" to="#">{{ $t('login.forget_pass')}}</router-link>
+      <p id="forgot">{{ $t('login.no_account')}} <router-link id="register" @click.prevent="navigateTo('Register')" to="#">{{ $t('general.register')}}</router-link></p>
     </div>
     <div
         id="mytoast"
@@ -225,11 +225,5 @@
             }
           }
   }
-  //   //esto de acontinuación deberia cerrar el webSocket al cerrar la pagina
-  // onBeforeUnmount(() => {
-  // if (socket.value) {
-  //   socket.value.close();
-  // }
-  // });
     
 </script>

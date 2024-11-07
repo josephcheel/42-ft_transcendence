@@ -1,22 +1,43 @@
 {
-    "message": {
-        "home": "Home",
-        "login": "Log in",
-        "enter": "Enter",
-        "play": "Play",
-        "dashboard": "Dashboard",
-        "profile": "Profile",
-        "chat": "Chat",
-        "register": "Register",
+    "login": {
+        "forget_pass": "Forgot password",
+        "no_account": "Don't have an account?",
+        "enter": "Enter"
+    },
+    "register": {
         "register_title": "Create an account",
-        "name": "Name",
-        "lastname": "Lastname",
+        "alreadyAcc": "Already have an account?"
+    },
+    "general": {
         "username": "Username",
         "password": "Password",
+        "register": "Register",
+        "login": "Log in",
+        "name": "Name",
+        "lastname": "Lastname",
         "confirm_pass": "Confirm password",
-        "alreadyAcc": "Already have an account?",
-        "no_account": "Don't have an account?",
-        "forget_pass": "Forgot password",
+        "email": "Email"
+        
+    },
+    "games": {
+
+    },
+    "message": {
+        "home": "Home",
+        "links": {
+            "home": "Home",
+            "login": "Login",
+            "logout": "Logout",
+            "register": "Register",
+            "games": "Games",
+            "settings": "Settings",
+            "language": "Language",
+            "friends": "Friends",
+            "history": "History",
+            "profile": "Profile",
+            "play": "Play",
+            "stats": "Stats"
+        },
         "local_match": "Local Match",
         "explain_local_match": "Play vs guest player on the same keyboard",
         "simple_match": "Online Match",
@@ -33,6 +54,6 @@
         "username_placeholder": "username",
         "password_placeholder": "password",
         "confirm_pass_placeholder": "confirm password",
-        "logout": "Log out"
+        "logout": "Logout"
     }
 }
