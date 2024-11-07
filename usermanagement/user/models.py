@@ -28,7 +28,7 @@ class User(AbstractUser):
         self.save()
 
     def get_all(self):
-        return {'first_name': self.first_name, 'last_name': self.last_name, 'username' : self.username ,"tournament_name" : self.tournament_name, 'is_online' : self.userstatus.is_online, 'profile_picture_url' : self.userprofilepic.picture.url}
+        return {'puntos': self.puntos, 'first_name': self.first_name, 'last_name': self.last_name, 'username' : self.username ,"tournament_name" : self.tournament_name, 'is_online' : self.userstatus.is_online, 'profile_picture_url' : self.userprofilepic.picture.url}
 
 
 User = get_user_model()
