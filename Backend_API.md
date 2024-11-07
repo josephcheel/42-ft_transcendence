@@ -145,7 +145,7 @@ You need to call /user/upload_picture/ and upload a a form with a key/value pair
 
 | Use | Methods | Request Data | Response Data | Return Values|
 | --- | --- | --- | ---| ---|
-| Gets a user profile information| GET | username  | first_name, last_name, username, tournament_name, is_online, profile_picture_url |  200,400,401,404, 405, 500|
+| Gets a user profile information| GET | username  | puntos, first_name, last_name, username, tournament_name, is_online, profile_picture_url |  200,400,401,404, 405, 500|
 
 
 [Back to Top](#table-of-contents)
