@@ -1,5 +1,8 @@
 import requests
 from datetime import datetime, timedelta
+import urllib3
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+
 
 
 def get_csrf_token(session, url):
@@ -11,11 +14,16 @@ def get_csrf_token(session, url):
 
 csrf_url = 'https://localhost:8000/api/get_cookie/'
 login_url = 'https://localhost:8000/api/user/login_user/'
+get_profile_url = 'https://localhost:8000/api/user/get_profile/1'
 create_tournament_url = 'https://localhost:8000/api/tournaments/open_tournament/'
 accept_invitation = 'https://localhost:8000/api/tournaments/accept_invitation/'
 close_tournament = 'https://localhost:8000/api/tournaments/close/'
 finish_match = 'https://localhost:8000/api/tournaments/finish_match/'
 list_matches = 'https://localhost:8000/api/tournaments/list_matches/'
+list_matches_username = 'https://localhost:8000/api/tournaments/list_matches/1'
+create_user_url = 'https://localhost:8000/api/user/create_user/'
+check_user_url = 'https://localhost:8000/api/user/check_user/'
+
 
 
 session = requests.Session()
@@ -54,11 +62,27 @@ def send_request(session, url, csrf_token, data=None):
 
 # Main execution
 if __name__ == "__main__":
+    send_request(session, create_user_url, csrf1, {
+        'username': 'test',
+        'password': 'test',
+        'first_name': 'test',
+        'last_name': 'test',
+        'email': 'test1@gmail.com'
+    })
+
+    send_request(session, create_user_url, csrf1, {
+        'username': 'test1',
+        'password': 'test',
+        'first_name': 'test',
+        'last_name': 'test',
+        'email': 'test@gmail.com'
+    })
 
     response1 = send_request(session, login_url, csrf1, {
         'username': "test",
         'password': "test"
     })
+
     response2 = send_request(session2, login_url, csrf2,{
         'username': "test1",
         'password': "test"
@@ -79,25 +103,24 @@ if __name__ == "__main__":
         'players': ['test','test1']
     })
     response1 = send_request(session, accept_invitation, csrf1, {
-        'tournament_id': 2
+        'tournament_id': 1
     })
     response1 = send_request(session2, accept_invitation, csrf2, {
-        'tournament_id': 2
+        'tournament_id': 1
     })
     response1 = send_request(session, close_tournament, csrf1, {
-        'tournament_id': 2
+        'tournament_id': 1
     })
 
     response1 = send_request(session, finish_match, csrf1, {
-        'match_id': '2',
+        'match_id': '1',
         'winner': 'test1',
         'looser': 'test'
     })
-
-    response1 = get_request(session, list_matches, csrf1)
-
+    
+    response1 = get_request(session, list_matches_username, csrf1)
+    
     
     print(response1.json())
     session2.close()
     session.close()
-

@@ -4,7 +4,7 @@ import json
 from tournamentsapp.models import Tournaments, Matches
 from tournamentsapp.status_options import  StatusMatches, Rounds
 from tournamentsapp.tasks.actualise_tournaments import actualise_tournament
-
+from django.utils import timezone
 from user.models import User
 
 @require_post
@@ -12,11 +12,18 @@ from user.models import User
 def finish_match(request):
 	data = request.data
 	match_id = request.data.get('match_id')
+	if int(match_id) < 0:
+		player1 = User.objects.get(username=data.get('winner'))
+		player2 = User.objects.get(username=data.get('looser'))
+		Matches.objects.create(tounament_id=None, number_round=0, date_time=timezone.now(
+		), player_id_1=player1, player_id_2=player2, round=None, status=StatusMatches.PLAYED.value, winner_id = player1, points_winner=data.get("points_winner"), looser_id = player2, points_looser=data.get("points_looser"),
+		)
+		return JsonResponse({'status': 'success', 'message': 'Match finished successfully', 'data': None}, status=200)
 	try:
 		match = Matches.objects.get(id=match_id)
 	except Matches.DoesNotExist:
-		return JsonResponse({'status': 'error', 'message': 'The match does not exist', 'data': None}, status=400)
-	
+			return JsonResponse({'status': 'error', 'message': 'The match does not exist', 'data': None}, status=400)
+
 	tournament_id = match.tournament_id
 	winner = data.get('winner')
 	looser = data.get('looser')
@@ -31,6 +38,8 @@ def finish_match(request):
 		return JsonResponse({'status': 'error', 'message': 'The match has already been played', 'data': None}, status=400)
 	match.winner_id = winner
 	match.looser_id = looser
+	match.points_winner = data.get('winner_points')
+	match.points_looser = data.get('points_looser')
 	match.status = StatusMatches.PLAYED.value
 	match.save()
 
