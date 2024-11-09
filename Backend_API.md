@@ -1,7 +1,7 @@
 # Table of contents
 | Section | Links |
 |---------|-------|
-| [User](#user) | [create_user](#create_user) <br> [login_user](#login_user) <br> [logout_user](#logout_user) <br> [is_logged_in](#is_logged_in) <br> [list_users](#list_users) <br> [user_status](#user_status) <br> [send_friend_request](#send_friend_request)<br> [change_friendship_status](#change_friendship_status)<br> [get_friends](#get_friends)<br> [update_user](#update_user) <br> [get_profile_picture_url](#get_profile_picture_url)<br> [upload_picture](#upload_picture) <br> [get_profile](#get_profile)|
+| [User](#user) | [create_user](#create_user) <br> [login_user](#login_user) <br> [logout_user](#logout_user) <br> [is_logged_in](#is_logged_in) <br> [list_users](#list_users) <br> [user_status](#user_status) <br> [send_friend_request](#send_friend_request)<br> [change_friendship_status](#change_friendship_status)<br> [get_friends](#get_friends)<br> [update_user](#update_user) <br> [get_profile_picture_url](#get_profile_picture_url)<br> [upload_picture](#upload_picture) <br> [get_profile](#get_profile) <br> [check_user](#check_user)|
 |[Tournaments](#tournaments)| [open_tournament](#open_tournament) <br> [accept_invitation](#accept_invitation) <br> [close_tournament](#close_tournament) <br> [start_match](#start_match) <br>[finish_match](#finish_match)|
 
 All API calls will return a json response and the corresponding code
@@ -151,7 +151,14 @@ You need to call /user/upload_picture/ and upload a a form with a key/value pair
 [Back to Top](#table-of-contents)
 
 
+### check_user
 
+| Use | Methods | Request Data | Response Data | Return Values|
+| --- | --- | --- | ---| ---|
+| Checks if the logged in user is the same as the one in data| POST | username  | is_same(true/false) |  200, 400, 401, 404, 405, 500|
+
+
+[Back to Top](#table-of-contents)
 ## Tournaments
 
 ### open_tournament

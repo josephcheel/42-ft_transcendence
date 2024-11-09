@@ -305,3 +305,11 @@ def get_profile(request, username):
             'data' : user.get_all(),
             }, status=200)
 
+
+@require_auth
+@require_post
+@get_data
+@exception_handler
+def check_user(request):
+    user = User.objects.get(username=request.data.get('username'))
+    return JsonResponse({'status': 'success', 'message': 'Checked if users are the same', 'data': {'is_same':user==request.user}}, status=200)
