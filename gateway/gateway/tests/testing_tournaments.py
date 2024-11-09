@@ -71,11 +71,11 @@ if __name__ == "__main__":
     })
 
     send_request(session, create_user_url, csrf1, {
-        'username': 'test1',
+        'username': 'test2',
         'password': 'test',
         'first_name': 'test',
         'last_name': 'test',
-        'email': 'test@gmail.com'
+        'email': 'test2@gmail.com'
     })
 
     response1 = send_request(session, login_url, csrf1, {
@@ -84,7 +84,7 @@ if __name__ == "__main__":
     })
 
     response2 = send_request(session2, login_url, csrf2,{
-        'username': "test1",
+        'username': "test2",
         'password': "test"
     })
     current_datetime = datetime.now()
@@ -93,30 +93,39 @@ if __name__ == "__main__":
 
     date_start_iso = date_start.isoformat()
 
-    response1 = send_request(session, create_tournament_url, csrf1,     {
-		'date_start': date_start_iso,
-        'max_players': 16,
-        'cost': 10,
-        'price_1': 100,
-        'price_2': 50,
-        'price_3': 25,
-        'players': ['test','test1']
-    })
-    response1 = send_request(session, accept_invitation, csrf1, {
-        'tournament_id': 1
-    })
-    response1 = send_request(session2, accept_invitation, csrf2, {
-        'tournament_id': 1
-    })
-    response1 = send_request(session, close_tournament, csrf1, {
-        'tournament_id': 1
-    })
 
-    response1 = send_request(session, finish_match, csrf1, {
-        'match_id': '1',
-        'winner': 'test1',
-        'looser': 'test'
-    })
+    tournament_id=11
+    match_id=11
+    winner="test2"
+    loser="test"
+    for _ in range(0, 10):
+        print(_)
+        response1 = send_request(session, create_tournament_url, csrf1,     {
+            'date_start': date_start_iso,
+            'max_players': 16,
+            'cost': 10,
+            'price_1': 100,
+            'price_2': 50,
+            'price_3': 25,
+            'players': ['test','test2']
+        })
+        tournament_id+=1
+        match_id+=1
+        response1 = send_request(session, accept_invitation, csrf1, {
+            'tournament_id': tournament_id
+        })
+        response1 = send_request(session2, accept_invitation, csrf2, {
+            'tournament_id': tournament_id
+        })
+        response1 = send_request(session, close_tournament, csrf1, {
+            'tournament_id': tournament_id
+        })
+
+        response1 = send_request(session, finish_match, csrf1, {
+            'match_id': match_id,
+            'winner': winner,
+            'looser': loser
+        })
     
     response1 = get_request(session, list_matches_username, csrf1)
     
