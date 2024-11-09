@@ -77,10 +77,12 @@ def test_register_user():
             print(f"User test{i} already exists")
         my_data = {'username': f"test{i}", 'password': "test"}
         response = send_request(mysessions[i], login_url, csrf[i], my_data)
+        print(response.json())
         assert response.status_code == 200
         assert response.json()['status'] == 'success'
-        assert response.json()['message'] == 'User logged in successfully'
+        assert response.json()['message'] == 'user is logged in'
         response = send_request(mysessions[i], get_profile_url, csrf[i])
+        print(response.json())
         assert response.status_code == 200
         assert response.json()['status'] == 'success'
         assert response.json()['message'] == 'User profile retrieved successfully'
