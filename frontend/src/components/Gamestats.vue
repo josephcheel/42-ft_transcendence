@@ -2,15 +2,8 @@
   <div>
     <h1>Game Stats for {{ this.$route.params.username }}</h1>
     <div style="position: relative; display: inline-block;">
-      <canvas ref="pieChart" width="400" height="400"></canvas>
-      <div style="
-          position: absolute;
-          top: 50%;
-          left: 50%;
-          transform: translate(-50%, -50%);
-          font-size: 24px;
-          font-weight: bold;
-          color: black;">
+      <canvas class="pieChart" ref="pieChart" height="400" width="400"></canvas>
+      <div class="win-percent">
         {{ this.userWinPercentage }}%
       </div>
     </div>
@@ -19,11 +12,14 @@
         'player-won': String(match.winner_id_id) === this.userId,
         'other-won': String(match.winner_id_id) !== this.userId
       }">
-        <img :src="match.opponentProfile && match.opponentProfile.profile_picture_url
+        <img class="opponentPicture" :src="match.opponentProfile && match.opponentProfile.profile_picture_url
           ? match.opponentProfile.profile_picture_url
-          : '/profile_pictures/default.jpeg'" alt="Profile picture" width="100" height="100">
+          : '/profile_pictures/default.jpeg'" alt="Profile picture"
+          height="100"
+          width="100">
         <div class="match-info" @click="goToGameStats(match.opponentProfile.username)">
           <p class="player-name">{{ match.opponentProfile ? match.opponentProfile.username : 'Loading...' }}</p>
+          <p class="match-id"> {{ match.id }} </p>
         </div>
       </div>
     </div>
@@ -185,4 +181,17 @@ canvas {
 .player-name:hover {
   cursor: pointer;
 }
+
+.win-percent {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 24px;
+  font-weight: bold;
+  color: black;
+}
+
+
+
 </style>
