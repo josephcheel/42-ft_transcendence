@@ -287,7 +287,10 @@ def upload_picture(request):
 @require_get
 @exception_handler
 def get_profile_picture_url(request, username):
-    user = User.objects.get(Q(username=username) | Q(id=username))
+    if username.isdigit():
+        user = User.objects.get(id=username)
+    else:
+        user = User.objects.get(username=username)   
     profile_pic = UserProfilePic.objects.get(user=user)
     return JsonResponse({'status' : 'success',
                 'message' : "Got profile picture",
@@ -300,8 +303,11 @@ def get_profile_picture_url(request, username):
 @require_auth
 @require_get
 @exception_handler
-def get_profile(request, username):   
-    user = User.objects.get(Q(username=username) | Q(id=username))
+def get_profile(request, username):
+    if username.isdigit():
+        user = User.objects.get(id=username)
+    else:
+        user = User.objects.get(username=username)   
     return JsonResponse({'status' : 'success',
             'message' : "Got user profile",
             'data' : user.get_all(),
