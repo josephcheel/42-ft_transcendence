@@ -3,19 +3,29 @@
     <h1 class="text-center">Not Found</h1>
     <p class="text-center">The page you are looking for could not be found.</p>
 </div>
-<a id="goHome" href="/" class="btn btn-primary text-center">Go Home</a>
 
-
+	<a id="goBack" @click="this.$router.go(-1)" class="btn btn-primary">Go Back</a>
+	<router-link id="goHome" to="/" class="btn btn-primary">Go Home</router-link>
 
 
 	<!-- </div> -->
 	<div ref="canvas"></div>
 </template>
+
 <style scoped>
+#goBack
+{
+	/* max-width: 300px; */
+	top: 65%;
+	left: 55%;
+	transform: translate(-50%, -50%);
+	color: rgb(255, 252, 252);
+	position: absolute;
+}
 #goHome {
 	max-width: 300px;
 	top: 65%;
-	left: 50%;
+	left: 45%;
 	transform: translate(-50%, -50%);
 	color: rgb(255, 252, 252);
 	position: absolute;

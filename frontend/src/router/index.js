@@ -14,6 +14,7 @@ import GameOnline from '../components/GameOnline/GameOnline.vue'
 import NotFound from '../components/NotFound.vue'
 import { isAuthorized } from '../utils/isAuthorized'
 import Tournaments from '../components/Tournaments.vue'
+import Friends from '../components/Friends.vue'
 const routes = [
   {
     path: '/',
@@ -84,6 +85,11 @@ const routes = [
     path: '/tournaments',
     name: 'tournaments',
     component: Tournaments
+  },
+  {
+    path: '/friends',
+    name: 'Friends',
+    component: Friends
   },
   {
     path: '/:pathMatch(.*)*',

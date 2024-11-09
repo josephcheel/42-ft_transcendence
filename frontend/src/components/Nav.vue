@@ -31,7 +31,7 @@
 				<router-link :class="`nav-link ${isActive('/select-game')}`" to="/select-game">{{ $t('message.links.games') }}</router-link>
 			</li>
 			<li class="nav-item">
-				<router-link :class="`nav-link ${isActive('')}`" to="/friends">{{ $t('message.links.friends') }}</router-link>
+				<router-link :class="`nav-link ${isActive('/friends')}`" to="/friends">{{ $t('message.links.friends') }}</router-link>
 			</li>
 			<li class="nav-item dropdown">
 				<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -69,7 +69,7 @@
 			<ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
 				<li><router-link :class="`dropdown-item ${isActive('')}`" to="/profile">{{ $t('message.links.profile') }}</router-link></li>
 				<li><router-link :class="`dropdown-item ${isActive('')}`" to="/settings">{{ $t('message.links.settings') }}</router-link></li>
-				<li><a class="dropdown-item" href="#">{{ $t('message.links.logout')}}</a></li>
+				<li><a class="dropdown-item" @click="logout">{{ $t('message.links.logout')}}</a></li>
 			</ul>
 		</div>
 
@@ -149,12 +149,10 @@
  import axios from '../utils/axiosConfig'; 
   export default {
 	name: "NavBar",
-	data() {
-		return {
-		username: 'a',
-		points: 0,
-		profile_picture_url: '/assets/images/default-profile.jpeg',
-		};
+	props: {
+		username: { type: String, required: true },
+		points: { type: Number, required: true },
+		profile_picture_url: { type: String, required: true },
 	},
 	computed: {
 		currentRoute() {
@@ -190,8 +188,20 @@
 		.catch((error) => {
 			console.error("Error fetching user profile:", error.response ? error.response.data : error);
 		});
-	}
-
+	},
+	logout() {
+        axios.post(`https://${this.$router.ORIGIN_IP}:8000/api/user/logout_user/`).then((response) => {
+          if (response.status === 200)
+          {
+			this.$router.push('/');
+			console.log(response);
+          }
+          else
+          {
+            console.log(response);
+          }
+        });
+      },
 	},
   };
   </script>

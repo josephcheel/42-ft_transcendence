@@ -222,7 +222,7 @@ export default {
 			alert("Tournament Created!");
 			const tournament = {
 				name: this.name,
-				date: this.date,
+				date_start: new Date(this.date).toISOString(),
 				winning_points: this.maxGoalsValue,
 				speedLevel: this.speedLevelValue,
 				players: this.players,
@@ -233,6 +233,7 @@ export default {
 				price_3: 25,
 			};
 
+			console.log(tournament.date_start);
 			const tournamentJson = JSON.stringify(tournament);
 			
 			try {
