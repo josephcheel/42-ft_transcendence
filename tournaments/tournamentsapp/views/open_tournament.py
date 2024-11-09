@@ -37,7 +37,8 @@ def open_tournament(request):
 		try:
 			player_reg = User.objects.get(username=player)
 		except User.DoesNotExist:
-			return JsonResponse({'status': 'error', 'message': 'One invited player does not exist', 'data': None}, status=400)
+			player_reg = User.objects.get(username=player)
+			return JsonResponse({'status': 'error', 'message': f'The player with name: {player}, does not exist', 'data': None}, status=400)
 	if nr_of_players != 2 and nr_of_players < 4:
 		return JsonResponse({'status': 'error', 'message': 'The number of players must be 2 or at least 4', 'data': None}, status=400)
 	extra_round, nr_of_rounds = math.modf(math.log2(nr_of_players))
