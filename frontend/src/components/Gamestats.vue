@@ -14,20 +14,11 @@
       </div>
     </div>
     <div class="dashboard">
-      <div 
-        v-for="(match, id) in matchList" 
-        :key="id" 
-        class="match-box" 
-        @click="goToGameStats(match.opponentProfile.username)"
-      >
-        <img 
-          :src="match.opponentProfile && match.opponentProfile.profile_picture_url 
-            ? match.opponentProfile.profile_picture_url 
-            : '/profile_pictures/default.jpeg'" 
-          alt="Profile picture" 
-          width="100" 
-          height="100" 
-        >
+      <div v-for="(match, id) in matchList" :key="id" class="match-box"
+        @click="goToGameStats(match.opponentProfile.username)">
+        <img :src="match.opponentProfile && match.opponentProfile.profile_picture_url
+          ? match.opponentProfile.profile_picture_url
+          : '/profile_pictures/default.jpeg'" alt="Profile picture" width="100" height="100">
         <div class="match-info">
           <p>{{ match.opponentProfile ? match.opponentProfile.username : 'Loading...' }}</p>
         </div>
@@ -51,27 +42,21 @@ export default {
     return {
       matchList: {},
       userWinPercentage: 0,
-      userId: localStorage.getItem('id'),
-      userToFetch: ""
+      userId: "",
     }
   },
   methods: {
     goToGameStats(username) {
       this.$router.push(`/gamestats/${username}`);
     },
-    getMatchList() {
+    async getMatchList() {
       const username = this.$route.params.username;
-      const userToFetch = username || this.userId;
-
-      axios.get(`https://${this.$router.ORIGIN_IP}:8000/api/tournaments/list_matches/${userToFetch}`)
-        .then(response => {
-          this.matchList = JSON.parse(response.data.data);
-          this.getOpponentProfiles();
-          this.renderChart();
-        })
-        .catch(error => {
-          console.error("Error fetching match list:", error);
-        });
+      const matches = await axios.get(`https://${this.$router.ORIGIN_IP}:8000/api/tournaments/list_matches/${username}`).catch(error => {
+        console.error("Error fetching match list:", error);
+      });
+      this.matchList = JSON.parse(matches.data.data);
+      await this.getOpponentProfiles(username);
+      this.renderChart();
     },
     renderChart() {
       if (!this.matchList.length) {
@@ -118,25 +103,41 @@ export default {
         startAngle += sliceAngle;
       });
     },
-    getOpponentProfiles() {
-      this.matchList.forEach(match => {
-        const opponentId = String(match.player_id_1_id) === this.userId ? String(match.player_id_2_id) : String(match.player_id_1_id);
-        axios.get(`https://${this.$router.ORIGIN_IP}:8000/api/user/get_profile/${opponentId}/`)
-          .then(response => {
-            match.opponentProfile = response.data.data; // Directly updating the match object
-          })
-          .catch(error => {
-            console.error(`Error fetching profile for user ${opponentId}:`, error);
-          });
-      });
+    async getOpponentProfiles(user) {
+      try {
+        // Fetch the initial user profile and set this.userId
+        const response = await axios.get(`https://${this.$router.ORIGIN_IP}:8000/api/user/get_profile/${user}/`).catch(error => {
+          console.error("Error fetching profile data:", error);
+          return;
+        });
+        this.userId = String(response.data.data.id);
+
+        // Create an array of Promises for each match's opponent profile request
+        const requests = this.matchList.map(async match => {
+          const opponentId = String(match.player_id_1_id) === this.userId
+            ? String(match.player_id_2_id)
+            : String(match.player_id_1_id);
+
+          // Fetch the opponent's profile and attach it to the match object
+          const opponentResponse = await axios.get(`https://${this.$router.ORIGIN_IP}:8000/api/user/get_profile/${opponentId}/`);
+          match.opponentProfile = opponentResponse.data.data; // Update the match object with the profile data
+        });
+
+        // Wait for all opponent profile requests to complete
+        await Promise.all(requests);
+      } catch (error) {
+        console.error(`Error fetching profile data:`, error);
+        throw error;
+      }
     },
+
   },
   mounted() {
     this.getMatchList();
   },
   watch: {
     // Watch for changes in the route's username parameter
-    '$route.params.username': function() {
+    '$route.params.username': function () {
       // Fetch the match list whenever the username changes
       this.getMatchList();
     }

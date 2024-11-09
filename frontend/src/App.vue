@@ -26,7 +26,9 @@
             <router-link to="/profile" class="nav-link1">{{ $t('message.profile')}}</router-link>
           </li>
           <li class="nav-item">
-            <router-link to="/gamestats" class="nav-link1">{{ $t('message.gamestats')}}</router-link>
+            <router-link :to="userGameStatsLink" class="nav-link1">
+              {{ $t('message.gamestats') }}
+            </router-link>
           </li>
           <li class="nav-item">
             <router-link to="/chat" class="nav-link1">{{ $t('message.chat')}}</router-link>
@@ -56,6 +58,11 @@
         isAuthenticated: false,
       };
     },
+    computed: {
+    userGameStatsLink() {
+        return `/gamestats/${localStorage?.getItem('username') || ''}`;
+      }
+    },
     methods: {
       changeLang() {
         this.$i18n.locale = this.selectedLang;
@@ -81,7 +88,6 @@
         .then(response => {
           if (response.status === 200) {
             // User is authenticated
-            console.log(response);
             this.isAuthenticated = true;
             localStorage.setItem('id', response.data.data.id);
             localStorage.setItem('username', response.data.data.username);
@@ -101,7 +107,6 @@
     },
     mounted() {
       this.checkAuthStatus();
-      console.log(this.isAuthenticated);
     },
   }
 </script>
