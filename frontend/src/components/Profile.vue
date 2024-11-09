@@ -37,7 +37,7 @@
       </div>
 
       <!-- Botón para alternar entre modo de edición y visualización -->
-      <div class="text-center">
+      <div v-if="editDisplay" class="text-center">
         <button class="btn btn-primary" @click="toggleEdit">
           {{ isEditing ? 'Save' : 'Edit' }}
         </button>
@@ -86,14 +86,20 @@ export default {
   mounted() {
     const username = localStorage.getItem('username');
     if (!username) {
-      this.$router.push({ path: '/', params: { currentView: 'Login' } });
+      // this.$router.push({ path: '/', params: { currentView: 'Login' } });
       // this.$router.push('/login'); // Redirigir al login si no está autenticado
-    } else {
       this.fetchUserProfile();
+    } else {
       
     }
 },
-
+  props: {
+    editDisplay: {
+      type: Boolean,
+      required: true,
+      default: true
+    }
+  },
   methods: {
     toggleEdit() {
       if (this.isEditing){
