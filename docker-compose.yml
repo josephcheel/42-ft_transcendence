@@ -403,16 +403,16 @@ services:
       - ./usermanagement/profile_pictures/:/usr/share/nginx/html/profile_pictures
 
   #### Pong Game Server ####
-  #pong-game-server:
-   # container_name: pong-game-server
-    #build:
-     # context: ./pong-game-server
-    #env_file:
-    #  - .env
-    #image: pong-game-server-img
-    #restart: always
-    #ports:
-    #  - 0.0.0.0:4000:4000
+  pong-game-server:
+    container_name: pong-game-server
+    build:
+      context: ./pong-game-server
+    env_file:
+      - .env
+    image: pong-game-server-img
+    restart: always
+    ports:
+      - 0.0.0.0:4000:4000
 
 volumes:
   certs:
