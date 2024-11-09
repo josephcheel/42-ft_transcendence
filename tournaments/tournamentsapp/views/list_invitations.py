@@ -17,9 +17,6 @@ def list_invitations(request):
 		# except User.DoesNotExist:
 		# return JsonResponse({'status': 'error', 'message': 'A user does not exist', 'data': None}, status=404)
 		player = User.objects.get(username=request.username)
-		print ('---------------------------------------------------')
-		print('player', player)
-		print('---------------------------------------------------')
 		invitation_data = Invitations.objects.filter(player_id=player.id)
 		# Convert any datetime fields to string
 		invitation_list = list(invitation_data.values())
