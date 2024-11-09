@@ -52,23 +52,32 @@ export default {
     goToGameStats(username) {
       this.$router.push(`/gamestats/${username}`);
     },
-    async getMatchList() {
+    async createGraphAndMatchHistory() {
       try {
+        // set this.userId to the route params user
         const username = this.$route.params.username;
-        const response = await axios.get(`https://${this.$router.ORIGIN_IP}:8000/api/tournaments/list_matches/${username}`);
-        this.matchList = response.data.data;
-        await this.getOpponentProfiles(username);
+        await this.setCurrentUserId(username)
+
+        // gets all matches for the user
+        const matches = await axios.get(`https://${this.$router.ORIGIN_IP}:8000/api/tournaments/list_matches/${username}`);
+        this.matchList = JSON.parse(matches.data.data);
+
+        // gets oponent profiles into the match list
+        await this.getOpponentProfiles();
         this.renderChart();
-      } catch (error) {
+      }
+      catch {
         console.error("Error fetching match list:", error);
       }
     },
+
     renderChart() {
       if (!this.matchList.length) {
         return;
       }
       const canvas = this.$refs.pieChart;
       const ctx = canvas.getContext('2d');
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
 
       // Count the number of wins for each player
       const winnerCount = {};
@@ -90,8 +99,8 @@ export default {
       const outerRadius = 100;
       const innerRadius = 60; // Adjust this for donut thickness
       let startAngle = 0;
-      const userColor = '#77AB43'; // Color for the user
-      const otherColor = '#FF2700'; // Color for others
+      const userColor = '#77AB43';
+      const otherColor = '#FF2700';
 
       Object.entries(winnerCount).forEach(([key, value]) => {
         const sliceAngle = (value / total) * 2 * Math.PI;
@@ -108,15 +117,21 @@ export default {
         startAngle += sliceAngle;
       });
     },
-    async getOpponentProfiles(user) {
+
+    async setCurrentUserId(user) {
       try {
         // Fetch the initial user profile and set this.userId
-        const response = await axios.get(`https://${this.$router.ORIGIN_IP}:8000/api/user/get_profile/${user}/`).catch(error => {
-          console.error("Error fetching profile data:", error);
-          return;
-        });
+        const response = await axios.get(`https://${this.$router.ORIGIN_IP}:8000/api/user/get_profile/${user}/`);
         this.userId = String(response.data.data.id);
-
+        return this.userId;
+      }
+      catch (error) {
+        console.error("Error fetching profile data:", error);
+        throw error;
+      }
+    },
+    async getOpponentProfiles() {
+      try {
         // Create an array of Promises for each match's opponent profile request
         const requests = this.matchList.map(async match => {
           const opponentId = String(match.player_id_1_id) === this.userId
@@ -125,7 +140,7 @@ export default {
 
           // Fetch the opponent's profile and attach it to the match object
           const opponentResponse = await axios.get(`https://${this.$router.ORIGIN_IP}:8000/api/user/get_profile/${opponentId}/`);
-          match.opponentProfile = opponentResponse.data.data; // Update the match object with the profile data
+          match.opponentProfile = opponentResponse.data.data;
         });
 
         // Wait for all opponent profile requests to complete
@@ -138,13 +153,13 @@ export default {
 
   },
   mounted() {
-    this.getMatchList();
+    this.createGraphAndMatchHistory();
   },
   watch: {
     // Watch for changes in the route's username parameter
     '$route.params.username': function () {
       // Fetch the match list whenever the username changes
-      this.getMatchList();
+      this.createGraphAndMatchHistory();
     }
   },
 }
