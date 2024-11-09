@@ -1,5 +1,6 @@
 <template>
   <div>
+    <h1>Game Stats for {{ this.$route.params.username }}</h1>
     <div style="position: relative; display: inline-block;">
       <canvas ref="pieChart" width="400" height="400"></canvas>
       <div style="
@@ -14,13 +15,15 @@
       </div>
     </div>
     <div class="dashboard">
-      <div v-for="(match, id) in matchList" :key="id" class="match-box"
-        @click="goToGameStats(match.opponentProfile.username)">
+      <div v-for="(match, id) in matchList" :key="id" class="match-box" :class="{
+        'player-won': String(match.winner_id_id) === this.userId,
+        'other-won': String(match.winner_id_id) !== this.userId
+      }">
         <img :src="match.opponentProfile && match.opponentProfile.profile_picture_url
           ? match.opponentProfile.profile_picture_url
           : '/profile_pictures/default.jpeg'" alt="Profile picture" width="100" height="100">
-        <div class="match-info">
-          <p>{{ match.opponentProfile ? match.opponentProfile.username : 'Loading...' }}</p>
+        <div class="match-info" @click="goToGameStats(match.opponentProfile.username)">
+          <p class="player-name">{{ match.opponentProfile ? match.opponentProfile.username : 'Loading...' }}</p>
         </div>
       </div>
     </div>
@@ -50,13 +53,15 @@ export default {
       this.$router.push(`/gamestats/${username}`);
     },
     async getMatchList() {
-      const username = this.$route.params.username;
-      const matches = await axios.get(`https://${this.$router.ORIGIN_IP}:8000/api/tournaments/list_matches/${username}`).catch(error => {
+      try {
+        const username = this.$route.params.username;
+        const response = await axios.get(`https://${this.$router.ORIGIN_IP}:8000/api/tournaments/list_matches/${username}`);
+        this.matchList = response.data.data;
+        await this.getOpponentProfiles(username);
+        this.renderChart();
+      } catch (error) {
         console.error("Error fetching match list:", error);
-      });
-      this.matchList = JSON.parse(matches.data.data);
-      await this.getOpponentProfiles(username);
-      this.renderChart();
+      }
     },
     renderChart() {
       if (!this.matchList.length) {
@@ -152,5 +157,17 @@ export default {
 canvas {
   border: 1px solid #ccc;
   /* Optional: for visibility */
+}
+
+.player-won {
+  background-color: #77AB43;
+}
+
+.other-won {
+  background-color: #FF2700;
+}
+
+.player-name:hover {
+  cursor: pointer;
 }
 </style>
