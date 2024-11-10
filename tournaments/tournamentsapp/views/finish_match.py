@@ -15,8 +15,16 @@ def finish_match(request):
 	if match_id < 0:
 		player1 = User.objects.get(username=data.get('winner'))
 		player2 = User.objects.get(username=data.get('looser'))
-		Matches.objects.create(tounament_id=None, number_round=0, date_time=timezone.now(
-		), player_id_1=player1, player_id_2=player2, round=None, status=StatusMatches.PLAYED.value, winner_id = player1, points_winner=data.get("points_winner"), looser_id = player2, points_looser=data.get("points_looser"),
+		Matches.objects.create(
+			number_round=0, 
+			date_time=timezone.now(), 
+			player_id_1=player1, 
+			player_id_2=player2, 
+			round=None, 
+			status=StatusMatches.PLAYED.value, 
+			winner_id = player1, 
+			points_winner=data.get("points_winner"), looser_id = player2, 
+			points_looser=data.get("points_looser"),
 		)
 		return JsonResponse({'status': 'success', 'message': 'Match finished successfully', 'data': None}, status=200)
 	try:
