@@ -174,10 +174,10 @@ export default {
 }
 .row-container{
   display: flex;
-  justify-content: center; 
+  align-items: flex-start;
   gap: 20px;
-  width: 100%;
-  max-width: 1000px; 
+  max-width: 1000px;
+  margin: 0 auto;
 }
 
 canvas {
@@ -185,11 +185,13 @@ canvas {
 }
 
 .match-box {
-  width: 100%;
-  max-width: 300px;
-  min-width: 100px;
-  height: auto;
-  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  margin-bottom: 10px;
 }
 
 .player-won {
@@ -205,10 +207,10 @@ canvas {
 }
 
 .win-percent {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  position: absolute;      /* Positioning relative to .chart-container */
+  top: 50%;                /* Center vertically */
+  left: 50%;               /* Center horizontally */
+  transform: translate(-50%, -50%); /* Adjust to the exact center */
   font-size: 1.5em;
   font-weight: bold;
   color: #333;
@@ -216,15 +218,16 @@ canvas {
 }
 
 .chart-container {
+  flex-shrink: 0;
+  width: 400px;
+  max-width: 100%;
   position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  max-width: 500px;
-  min-width: 300px;
-  height: auto;
-  aspect-ratio: 1;
+}
+.dashboard {
+  flex-grow: 1;            
+  overflow-y: auto;        
+  max-height: 80vh;       
+  padding-left: 10px;   
 }
 
 .canvas {
