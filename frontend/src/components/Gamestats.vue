@@ -2,10 +2,22 @@
   <div class="container">
     <h1>Game Stats for {{ this.$route.params.username }}</h1>
     <div class="row-container">
-      <div class="chart-container">
-        <canvas class="canvas" ref="pieChart" height="400" width="400"></canvas>
-        <div class="win-percent">
-          {{ this.userWinPercentage }}%
+      <div class="stats-container">
+        <div class="chart-container">
+          <h2>Win rate</h2>
+          <div class="canvas-wrapper">
+            <canvas class="canvas" ref="pieChart" height="400" width="400"></canvas>
+            <div class="win-percent">
+              {{ this.userWinPercentage }}%
+            </div>
+          </div>
+          <div class="win-stats">
+            <p>Wins: {{ this.matchList.filter(match => match.winner_id_id === this.userId).length }}</p>
+            <p>Losses: {{ this.matchList.filter(match => match.winner_id_id !== this.userId).length }}</p>
+          </div>
+        </div>
+        <div class="tournaments-stats">
+          <p>Comming soon...</p>
         </div>
       </div>
       <div class="dashboard">
@@ -18,7 +30,7 @@
             : '/profile_pictures/default.jpeg'" alt="Profile picture" height="100" width="100">
           <div class="match-info" @click="goToGameStats(match.opponentProfile.username)">
             <p class="player-name">{{ match.opponentProfile ? match.opponentProfile.username : 'Loading...' }}</p>
-            <p class="match-id"> {{ match.id }} </p>
+            <p v-if="match.tournament_id > 0" class="round">{{ match.round }}</p>
           </div>
         </div>
       </div>
@@ -172,7 +184,8 @@ export default {
   align-items: center;
   padding: 20px;
 }
-.row-container{
+
+.row-container {
   display: flex;
   align-items: flex-start;
   gap: 20px;
@@ -207,10 +220,10 @@ canvas {
 }
 
 .win-percent {
-  position: absolute;      /* Positioning relative to .chart-container */
-  top: 50%;                /* Center vertically */
-  left: 50%;               /* Center horizontally */
-  transform: translate(-50%, -50%); /* Adjust to the exact center */
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   font-size: 1.5em;
   font-weight: bold;
   color: #333;
@@ -223,11 +236,20 @@ canvas {
   max-width: 100%;
   position: relative;
 }
+
 .dashboard {
-  flex-grow: 1;            
-  overflow-y: auto;        
-  max-height: 80vh;       
-  padding-left: 10px;   
+  flex-grow: 1;
+  overflow-y: auto;
+  max-height: 80vh;
+  padding-left: 10px;
+}
+
+.canvas-wrapper {
+  position: relative;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .canvas {
