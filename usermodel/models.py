@@ -7,7 +7,7 @@ from django.contrib.auth.models import AbstractUser
 
 
 class User(AbstractUser):
-    original_username = models.CharField(max_length=100, null=True)
+    lowercase_username = models.CharField(max_length=100, null=True)
     tournament_name = models.CharField(max_length=100, null=True)
     puntos = models.IntegerField(default=1000)
     puntos_reservados = models.IntegerField(default=0)
