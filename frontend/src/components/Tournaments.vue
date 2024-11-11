@@ -3,39 +3,39 @@
 			<div class="row">
 					<!-- Form to create a new tournament -->
 					<form  @submit.prevent="createTournament" class="col col-md-6 bg-light p-4">
-						<h1 class="titles mb-4">Create Tournaments</h1>
+						<h1 class="titles mb-4">{{ $t('tournaments.create_tournament')}}</h1>
 						<!-- <p>Set up your own tournament with just a few details. Fill out the form below to get started.</p> -->
 						<div class="d-flex flex-column flex-md-row mb-3">
 							<div class="me-md-3 mb-3 mb-md-0 col-12 col-md-6">
-								<label for="tournament-name" class="form-label">Tournament Name</label>
-								<input v-model="name" type="text" maxlength="15" class="form-control" id="tournament-name" :placeholder="`Enter tournament's name`" required>
+								<label for="tournament-name" class="form-label">{{ $t('tournaments.create_tournament')}}</label>
+								<input v-model="name" type="text" maxlength="15" class="form-control" id="tournament-name" :placeholder="$t('tournaments.placehold_name')" required>
 							</div>
 							<div class="me-md-3 col-12 col-md-6">
-								<label for="date" class="form-label">Start Date</label>
+								<label for="date" class="form-label">{{ $t('tournaments.tournament_date')}}</label>
 								<input v-model="date" type="datetime-local" class="form-control form-date" id="date" required>
 							</div>
 						</div>
 
 						<div class="mb-3">
-							<label for="maxGoals"  class="form-label">Maximum Goals  {{ this.maxGoalsValue}}</label>
+							<label for="maxGoals"  class="form-label">{{ $t('tournaments.max_goals')}}  {{ this.maxGoalsValue}}</label>
 							<input v-model="maxGoalsValue" spellcheck="false" type="range" min="1" max="10" class="form-range" id="maxGoals" required>
 						</div>
 						<div class="mb-3">
-							<label for="Speed" class="form-label">Speed {{ this.speedLevelText }}</label>
+							<label for="Speed" class="form-label">{{ $t('tournaments.speed')}} {{ this.speedLevelText }}</label>
 							<input v-model="speedLevelValue" spellcheck="false" @input="getLevelSpeed" type="range" min="1" max="3" class="form-range" id="Speed" required>
 						</div>
 						<div class="mb-3">
-							<label for="player-username" class="form-label">Add Player</label>
+							<label for="player-username" class="form-label">{{ $t('tournaments.add_player')}}</label>
 							<div class="d-flex">
 							<input 
 								v-model="newPlayerName" 
 								type="text" 
 								id="player-username" 
 								class="form-control me-2" 
-								placeholder="Enter player's username"
+								:placeholder="$t('tournaments.placehold_playername')"
 								@keyup.enter="addPlayer($event)"
 							/>
-							<button id="add-button" @click="addPlayer" type="button" class="btn btn-primary">Add</button>
+							<button id="add-button" @click="addPlayer" type="button" class="btn btn-primary">{{ $t('tournaments.add')}}</button>
 							</div>
 
 							<!-- List of added players with delete button -->
@@ -55,7 +55,7 @@
 							</span>
 							</div>
 						</div>
-						<button type="button" @click="createTournament" class="btn btn-primary w-100">Create</button> 
+						<button type="button" @click="createTournament" class="btn btn-primary w-100">{{ $t('tournaments.create')}}</button> 
 					</form>
 					<div id="your-tournaments"class="col col-md-6 bg-light p-4">
 						<h1 class="titles">Your Tournaments</h1>
