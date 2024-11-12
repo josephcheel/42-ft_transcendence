@@ -29,7 +29,14 @@
         "speed": "Vitesse",
         "add_player": "Ajouter un joueur",
         "placehold_playername": "Entrez le nom du joueur",
-        "add": "Ajouter"
+        "add": "Ajouter",
+        "create": "Créer",
+        "your_tournaments": "Vos tournois",
+        "upcoming": "Prochains matchs de tournoi",
+        "check_list": "Consultez le calendrier de vos prochains matchs et restez prêt.",
+        "round": "Tour",
+        "pending_tournaments": "Tournois en attente",
+        "check_inv": "Examinez et acceptez les invitations pour rejoindre des tournois."
     },
     "games": {
         "local_match": "Match local",

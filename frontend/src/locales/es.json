@@ -29,7 +29,14 @@
         "speed": "Velocidad",
         "add_player": "Agregar jugador",
         "placehold_playername": "Ingresa el nombre del jugador",
-        "add": "Agregar"
+        "add": "Agregar",
+        "create": "Crear",
+        "your_tournaments": "Tus torneos",
+        "upcoming": "Próximos partidos del torneo",
+        "check_list": "Consulta el calendario de tus próximos partidos y mantente preparado.",
+        "round": "Ronda",
+        "pending_tournaments": "Torneos pendientes",
+        "check_inv": "Revisa y acepta invitaciones para unirte a torneos."
     },
     "games": {
         "local_match": "Partida local",

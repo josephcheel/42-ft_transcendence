@@ -30,7 +30,13 @@
         "add_player": "Add Player",
         "placehold_playername": "Enter player's name",
         "add": "Add",
-        "create": "Create"
+        "create": "Create",
+        "your_tournaments": "Your tournaments",
+        "upcoming": "Upcoming Tournament Matches",
+        "check_list": "Check the schedule for your upcoming matches and stay prepared.",
+        "round": "Round",
+        "pending_tournaments": "Pending Tournaments",
+        "check_inv": "Review and accept invitations to join tournaments."
     },
     "games": {
         "local_match": "Local Match",

@@ -58,11 +58,11 @@
 						<button type="button" @click="createTournament" class="btn btn-primary w-100">{{ $t('tournaments.create')}}</button> 
 					</form>
 					<div id="your-tournaments"class="col col-md-6 bg-light p-4">
-						<h1 class="titles">Your Tournaments</h1>
+						<h1 class="titles">{{ $t('tournaments.your_tournaments')}}</h1>
 						<!-- Section 1: Upcoming Tournaments -->
 						<section class="mt-3">
-							<h2 class="h4">Upcoming Tournament Matches</h2>
-							<p class="text-muted">Check the schedule for your upcoming matches and stay prepared.</p>
+							<h2 class="h4">{{ $t('tournaments.upcoming')}}</h2>
+							<p class="text-muted">{{ $t('tournaments.check_list')}}</p>
 							<div class="overflow-auto" style="max-height: 150px;">
 							<ul class="list-group">
 								<li id="matches" class="list-group-item">
@@ -72,11 +72,11 @@
 											<h3>example</h3>
 										</div>
 										<div class="col">
-											<h5>Round:</h5>
+											<h5>{{ $t('tournaments.round')}}</h5>
 											<h4><strong>4</strong></h4>
 										</div>
 										<div class="col">
-											<h5>Max Goals:</h5>
+											<h5>{{ $t('tournaments.max_goals')}}</h5>
 											<h4><strong>5</strong></h4>
 										</div>
 										<div class="col">
@@ -91,11 +91,11 @@
 											<h3>example</h3>
 										</div>
 										<div class="col">
-											<h5>Round:</h5>
+											<h5>{{ $t('tournaments.round')}}</h5>
 											<h4><strong>4</strong></h4>
 										</div>
 										<div class="col">
-											<h5>Max Goals:</h5>
+											<h5>{{ $t('tournaments.max_goals')}}</h5>
 											<h4><strong>5</strong></h4>
 										</div>
 										<div class="col">
@@ -110,11 +110,11 @@
 											<h3>example</h3>
 										</div>
 										<div class="col">
-											<h5>Round:</h5>
+											<h5>{{ $t('tournaments.round')}}</h5>
 											<h4><strong>4</strong></h4>
 										</div>
 										<div class="col">
-											<h5>Max Goals:</h5>
+											<h5>{{ $t('tournaments.max_goals')}}</h5>
 											<h4><strong>5</strong></h4>
 										</div>
 										<div class="col">
@@ -127,8 +127,8 @@
 						</section>
 
 						<section class="mt-4">
-							<h2 class="h4">Pending Tournaments</h2>
-							<p class="text-muted">Review and accept invitations to join tournaments.</p>
+							<h2 class="h4">{{ $t('tournaments.pending_tournaments')}}</h2>
+							<p class="text-muted">{{ $t('tournaments.check_inv')}}</p>
 							<div class="list-group overflow-auto" style="max-height: 150px;">
 								<div class="list-group-item d-flex justify-content-between align-items-center">
 									Tournament Y - Date
