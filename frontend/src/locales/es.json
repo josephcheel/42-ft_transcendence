@@ -20,6 +20,11 @@
         "username_tournament": "Nombre de usuario para el torneo",
         "picprofile": "Imagen de perfil"
     },
+    "friends": {
+        "friends_title": "Mis amigos",
+        "placeholder_search": "Buscar amigos",
+        "requests_title": "Solicitudes de amistad"
+    },
     "tournaments": {
         "create_tournament": "Crear un torneo",
         "tournament_name": "Nombre del torneo",
