@@ -41,7 +41,6 @@
 					<li><a class="dropdown-item" @click="changeLang('en');">English</a></li>
 					<li><a class="dropdown-item" @click="changeLang('es');">Español</a></li>
 					<li><a class="dropdown-item" @click="changeLang('fr')">Français</a></li>
-					<li><a class="dropdown-item" @click="changeLang('ca')">Català</a></li>
 					<!-- Add more languages here -->
 				</ul>
 			</li>
@@ -87,6 +86,9 @@
   .col-12 {
 
 	padding: 0px;
+  }
+  .dropdown-item{
+	cursor: pointer;
   }
   #user-info {
 	  font-size: 0.6rem;

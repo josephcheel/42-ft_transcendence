@@ -1,5 +1,6 @@
 import express from 'express';
-import { createServer } from 'https';
+// import { createServer } from 'https';
+import { createServer } from 'http';
 import { Server } from 'socket.io';
 import { dirname } from 'path';
 import path from 'path';
@@ -86,7 +87,7 @@ class Ball extends UserInput {
     {
         super();
 
-        this.velocity = velocity;
+        this.velocity = velocity instanceof Vector3 ? velocity : new Vector3(velocity);
         this.speed = 50;
         this.radius = 1;
         this.position = position;
@@ -187,6 +188,7 @@ class Paddle extends UserInput {
         this.matchId = null;
         this.tournamentId = null;
         this.usename = undefined;
+        this.ball = undefined;
     }
 
     PaddleLimits() {
@@ -218,9 +220,14 @@ class Paddle extends UserInput {
             if (Math.abs(ball.position.x - paddleLeft) < ball.radius || 
                 Math.abs(ball.position.x - paddleRight) < ball.radius) {
                     io.to(this.room).emit('colision-paddle');
+                this.ball.velocity *= 10;
                 return 1; // Collision on X-axis
             } else {
+                
                 io.to(this.room).emit('colision-paddle');
+                console.log(this.ball)
+                this.ball.velocity *= 10;
+                console.log(this.ball)
                 return 2; // Collision on Z-axis
             }
         }
@@ -249,9 +256,11 @@ class Paddle extends UserInput {
     
             // Determine collision side based on the smaller overlap
             if (overlapX < overlapZ) {
+                // this.ball.velocity.multiplyScalar(10);
                 // Collision on X-axis
                 return 1; // Collision on X-axis
             } else {
+                // this.ball.velocity.multiplyScalar(10);
                 // Collision on Z-axis
                 return 2; // Collision on Z-axis
             }
@@ -268,7 +277,7 @@ const ORIGIN_IP = process.env.ORIGIN_IP || 'localhost';
 console.log('ORIGIN_IP:', ORIGIN_IP);
 
 app.use(cors({
-    origin: ["https://admin.socket.io", `http://${ORIGIN_IP}:5173`, `http://${ORIGIN_IP}:5174`, `https://${ORIGIN_IP}:8000`],
+    origin: ["https://admin.socket.io", `http://${ORIGIN_IP}:5173`, `http://${ORIGIN_IP}:5174`, `https://${ORIGIN_IP}:8000`, 'https://obscure-system-gvjrprvp7p4hvrrr-5173.app.github.dev'],
     credentials: true
 }));
 
@@ -287,8 +296,8 @@ const keyFilePath = path.join(__dirname, 'selfsigned.key');
 
 // Read the files
 const serverOptions = {
-    key: fs.readFileSync(keyFilePath),
-    cert: fs.readFileSync(pemFilePath),
+    // key: fs.readFileSync(keyFilePath),
+    // cert: fs.readFileSync(pemFilePath),
 };
 
 const server = createServer(serverOptions, app);
@@ -296,7 +305,7 @@ const server = createServer(serverOptions, app);
 const io = new Server(server, {
     cors: {
         // origin: "*", 
-        origin: ["https://admin.socket.io", `http://${ORIGIN_IP}:5173`, `http://${ORIGIN_IP}:5174`, `https://${ORIGIN_IP}:8000`],
+        origin: ["https://admin.socket.io", `http://${ORIGIN_IP}:5173`, `http://${ORIGIN_IP}:5174`, `https://${ORIGIN_IP}:8000`, 'https://obscure-system-gvjrprvp7p4hvrrr-5173.app.github.dev'],
         credentials: true
     },
     pingInterval: 2000, pingTimeout: 5000,
@@ -328,9 +337,12 @@ function GameLoop()
                 {
                     case 1:
                         balls[players[playerId].room].ball.velocity.x *= -1;
+                        balls[players[playerId].room].ball.velocity.multiplyScalar(10);
+                        // balls[pl]
                         break;
                     case 2:
                         balls[players[playerId].room].ball.velocity.z *= -1;
+                        balls[players[playerId].room].ball.velocity.multiplyScalar(10);
                         break;
                 }
             }
@@ -463,6 +475,8 @@ io.on("connection", (socket) => {
             tmpBall.room = room;
             balls[room] = { id: socket.id, room: room, ball: tmpBall };
 
+            players[pairedPlayerId].ball = balls[room];
+            players[socket.id].ball = balls[room];
             // Join the room for both players
             socket.join(room);
             setCookie(socket, pairedPlayerId);

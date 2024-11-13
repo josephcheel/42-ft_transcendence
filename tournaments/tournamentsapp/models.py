@@ -70,7 +70,7 @@ class Invitations(models.Model):
 
 class Matches(models.Model):
 	id = models.AutoField(primary_key=True)
-	tournament_id = models.IntegerField()
+	tournament_id = models.IntegerField(default=None,null=True)
 	player_id_1 = models.ForeignKey(
 		settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, related_name='matches_player_1')
 	is_player1_in_room = models.BooleanField(default=False)
@@ -84,6 +84,6 @@ class Matches(models.Model):
 	looser_id = models.ForeignKey(
 		settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, related_name='matches_looser')
 	points_looser = models.IntegerField(default=0, null = True)
-	round = models.CharField(max_length=11, choices=Rounds.choices, default=Rounds.QUALIFIED_ROUND.value)
+	round = models.CharField(max_length=11, choices=Rounds.choices, default=Rounds.QUALIFIED_ROUND.value, null = True)
 	number_round = models.IntegerField()
 	status = models.CharField(max_length=20, choices=StatusMatches.choices, default=StatusMatches.NOT_PLAYED.value)
