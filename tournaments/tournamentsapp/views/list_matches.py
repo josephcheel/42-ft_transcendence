@@ -24,3 +24,23 @@ def list_matches(request, username):
 		return JsonResponse({'status': 'success', 'message': 'List of matches', 'data': data}, status=200)
 	except OperationalError:
 		return JsonResponse({'status': 'error', 'message': 'Internal error', 'data': None}, status=500)
+
+
+
+
+
+@require_get
+@exception_handler
+def list_matches_by_tournament_id(request, tournament_id):
+    # player = request.user.username
+	try:
+		matches_data = Matches.objects.filter(tournament_id=int(tournament_id))
+		matches_list = list(matches_data.values())
+		for match in matches_list:
+			for key, value in match.items():
+				if isinstance(value, datetime):
+					match[key] = value.isoformat()
+		data = json.dumps(matches_list)
+		return JsonResponse({'status': 'success', 'message': 'List of matches', 'data': data}, status=200)
+	except OperationalError:
+		return JsonResponse({'status': 'error', 'message': 'Internal error', 'data': None}, status=500)
