@@ -28,10 +28,12 @@ get_profile_url = f'https://{DOMAIN}:8000/api/user/get_profile'
 create_tournament_url = f'https://{DOMAIN}:8000/api/tournaments/open_tournament/'
 accept_invitation = f'https://{DOMAIN}:8000/api/tournaments/accept_invitation/'
 close_tournament = f'https://{DOMAIN}:8000/api/tournaments/close/'
-finish_match = f'https://{DOMAIN}:8000/api/tournaments/finish_match/'
-list_matches = f'https://{DOMAIN}:8000/api/tournaments/list_matches/'
+finish_match_url = f'https://{DOMAIN}:8000/api/tournaments/finish_match/'
+list_matches_url = f'https://{DOMAIN}:8000/api/tournaments/list_matches/'
+list_matches_by_tournament_id_url = f'https://{DOMAIN}:8000/api/tournaments/list_matches_by_tournament_id/'
 list_invitations = f'https://{DOMAIN}:8000/api/tournaments/list_invitations/'
-list_tournaments = f'https://{DOMAIN}:8000/api/tournaments/list_tournaments/'
+list_tournaments_url = f'https://{DOMAIN}:8000/api/tournaments/list_tournaments/'
+start_match_url = f'https://{DOMAIN}:8000/api/tournaments/start_match/'
 total_players = 22
 total_matches = 100
 total_tournaments = 5
@@ -73,7 +75,6 @@ def test_register_user():
 		csrf[i] = get_csrf_token(mysessions[i], csrf_url)
 		my_data = {'username': f"test{i}", 'password': "test", 'first_name': f"test{i}",  'last_name': f"Apellido{i}"}
 		response = send_request(mysessions[i], register_url, csrf[i], my_data)
-		print(response.json())
 		if response.status_code == 201:
 			assert response.json()['status'] == 'success'
 			assert response.json()['message'] == 'User created successfully'
@@ -128,31 +129,34 @@ def play_match():
 				'points_winner': winning_points,
 				'points_looser': looser_points,
 			}
-			text_to_print = f"Played match {i} between {player1} and {player2}, result:  {player2}:{winning_points} - {player1}:{looser_points}"
-		response = send_request(mysessions[user_nr1], finish_match, csrf[user_nr1], data = my_data)
-		print(text_to_print)
+			#text_to_print = f"Played match {i} between {player1} and {player2}, result:  {player2}:{winning_points} - {player1}:{looser_points}"
+		response = send_request(mysessions[user_nr1], finish_match_url, csrf[user_nr1], data = my_data)
+		#print(text_to_print, "-------", response.json())
 		assert response.status_code == 200
 		assert response.json()['status'] == 'success'
 		assert response.json()['message'] == 'Match finished successfully'
 	for i in range(1, total_players + 1):
-		response= get_request(mysessions[i], list_matches + f"test{i}", csrf[i])
+		response= get_request(mysessions[i], list_matches_url + f"test{i}", csrf[i])
 		print(f"User test{i} list of matches: {response.json()}")
 
 def test_create_tournament():
 	for i in range(1, total_tournaments + 1):
-		platyer_nr = random.randint(1, total_players)
+		player_nr = random.randint(1, total_players)
 		players = []
-		for j in range(1, 15):
+		for j in range(1, random.randint(5, total_players)):
 			the_player = random.randint(1, total_players)
-			while the_player != platyer_nr:
+			while f'test{the_player}' in players:
+				#print(f"{the_player} is in players: {players}")
 				the_player = random.randint(1, total_players)
 			players.append(f'test{the_player}')
+			j += 1
+		#print(f"players: {players}")
 		my_data = {
 			"name" : f'test_tournament_{j}',
-            'username': f'test{platyer_nr}',
+            'username': f'test{player_nr}',
             'password': 'test',
             'date_start': (datetime.now(EuropeZone) + timedelta(minutes=1)).isoformat(),
-            'max_players': 14,
+            'max_players': total_players,
             'cost': 1,
             'price_1': 1000,
             'price_2': 500,
@@ -173,16 +177,22 @@ def test_accept_invitation():
 		print(list_invitations + f"test{i}")
 		print(f"User test{i} list of invitations: {response.json()}")
 		invitation_list = json.loads(response.json()['data'])
-		for invitation in invitation_list:
-			if random.randfloat(0, 1) >0.3:
-				my_data = {
-				'tournament_id': invitation['tournament_id']
-				}
-				response = send_request(mysessions[i], accept_invitation, csrf[i], my_data)
-				print(f"User test{i} accepted invitation {response.json()}")
-				assert response.status_code == 200
-				assert response.json()['status'] == 'success'
-				assert response.json()['message'] == 'Invitation accepted successfully'
+		if invitation_list == []:
+			print(f"User test{i} has no invitations")
+		else:
+			for invitation in invitation_list:
+				print ("La invitacion es:  ", invitation)
+				if random.uniform(0, 1) >0.3:
+					if invitation['status'] == 'ignored':
+						my_data = {
+						'tournament_id': invitation['tournament_id_id']
+						}
+						response = send_request(mysessions[i], accept_invitation, csrf[i], my_data)
+						print ("data_sent     " , my_data)
+						print(f"User test{i} accepted 	invitation {response.json()}")
+						assert response.status_code == 200
+						assert response.json()['status'] == 'success'
+						assert response.json()['message'] == 'Invitation accepted successfully'
 		user_data = {'username': f"test{i}", 'password': "test"}
 		response = send_request(mysessions[i], logout_url, csrf[i], user_data)
 
@@ -191,21 +201,101 @@ def test_close_tournament():
 		my_data = {'username': f"test{i}", 'password': "test"}
 		response = send_request(mysessions[i], login_url, csrf[i], my_data)
 		assert response.status_code == 200
-		response = get_request(mysessions[i], list_tournaments + f"test{i}", csrf[i])
+		response = get_request(mysessions[i], list_tournaments_url + f"test{i}", csrf[i])
 		print(f"User test{i} list of tournaments: {response.json()}")
 		list_tournaments = json.loads(response.json()['data'])
-		for tournament in list_tournaments:
-			if random.randfloat(0, 1) > 0.3:
-				my_data = {
-				"tournament_id": tournament['tournament_id']
-				}
-				response = send_request(mysessions[4], close_tournament, csrf[4], my_data)
-				print(f"Tournament {i} closed {response.json()}")
-				assert response.status_code == 200
-				assert response.json()['status'] == 'success'
-				assert response.json()['message'] == 'Tournament closed successfully'
+		if list_tournaments == []:
+			print(f"User test{i} has no tournaments")
+		else:
+			for tournament in list_tournaments:
+				if tournament['status'] == 'open' and random.uniform(0, 1) > 0.3:
+					my_data = {
+					"tournament_id": tournament['id']
+					}
+					response = send_request(mysessions[4], close_tournament, csrf[4], my_data)
+					print(f"Tournament {i} closed {response.json()}")
+					assert response.status_code == 200
+					assert response.json()['status'] == 'success'
+					assert response.json()['message'] == 'Tournament closed successfully'
 	user_data = {'username': f"test{i}", 'password': "test"}
 	response = send_request(mysessions[i], logout_url, csrf[i], user_data)
+
+def test_finish_tournament():
+	for i in range(1, total_players + 1):
+		user_data = {'username': f"test{i}", 'password': "test"}
+		response = send_request(mysessions[i], login_url, csrf[i], user_data)
+		assert response.status_code == 200
+
+	for i in range(1, total_players + 1):
+		response = get_request(
+			mysessions[i], list_tournaments_url + f"test{i}", csrf[i])
+		list_tournaments = json.loads(response.json()['data'])
+		if list_tournaments == []:
+			print(f"User test{i} has no tournaments")
+		else:
+			print(f"User test{i} list of tournaments: {response.json()}")
+			for tournament in list_tournaments:
+				tournament_id = tournament['id']
+				response = get_request(
+					mysessions[i], list_matches_by_tournament_id_url + f"{tournament_id}", csrf[i])
+				list_matches = json.loads(response.json()['data'])
+				while list_matches != []:
+					for match in list_matches:
+						player1 = match['player_id_1']
+						player2 = match['player_id_2']
+						my_data = {'match_id': match['id']}
+						if random.choice([True, False]):
+							response = send_request(mysessions[int(player1)], start_match_url, csrf[int(player1)], my_data)
+							assert response.status_code == 200
+							assert response.json()['status'] == 'success'
+							assert response.json()['message'] == 'Waiting for player 2 to start the match'
+							response = send_request(
+								mysessions[int(player2)], start_match_url, csrf[int(player2)], my_data)
+							assert response.status_code == 200
+							assert response.json()['status'] == 'success'
+							assert response.json()['message'] == 'Match started successfully'
+						else:
+							response = send_request(
+								mysessions[int(player2)], start_match_url, csrf[int(player2)], my_data)
+							assert response.status_code == 200
+							assert response.json()['status'] == 'success'
+							assert response.json()[                                                          'message'] == 'Waiting for player 1 to start the match'
+							response = send_request(
+								mysessions[int(player1)], start_match_url, csrf[int(player1)], my_data)
+							assert response.status_code == 200
+							assert response.json()['status'] == 'success'
+							assert response.json()['message'] == 'Match started successfully'
+
+						print('match =', match['id'], ' started!!!! player1 =',
+						      f'test{player1}', ' player2 =', f'test{player2}')
+						if random.choice([True, False]):
+							the_winner_id = f'test{player1}'
+							the_looser_id = f'test{player2}'
+						else:
+							the_winner_id = f'test{player2}'
+							the_looser_id = f'test{player1}'
+						my_data = {
+                            'match_id': -1,
+                            'player1': f'test{player1}',
+                            'player2': f'test{player2}',
+                            'winner': the_winner_id,
+                            'looser': the_winner_id,
+                            'points_winner': int(tournament['winning_points']),
+                            'points_looser': random.randint(0, int(tournament['winning_points'])-1)
+                        	}
+						response = send_request(
+							mysessions[player1], finish_match_url, csrf[player1], data=my_data)
+						assert response.status_code == 200
+						assert response.json()['status'] == 'success'
+						assert response.json()['message'] == 'Match finished successfully'
+
+						print('match =', match.id, ' finished. Won!!!!',
+							the_winner_id, ' lost ', the_looser_id)
+						response = get_request(
+                    mysessions[i], list_matches_by_tournament_id_url + f"{tournament_id}", csrf[i])
+					list_matches = json.loads(response.json()['data'])
+
+					
 
 def close_sessions():
 	for i in range(1, total_players + 1):
@@ -218,5 +308,6 @@ if __name__ == "__main__":
 	test_create_tournament()
 	test_accept_invitation()
 	test_close_tournament()
+	test_finish_tournament()
 	close_sessions()
 
