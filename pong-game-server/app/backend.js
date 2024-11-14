@@ -13,6 +13,7 @@ import fs from 'fs';
 import { fileURLToPath } from 'url';
 /* VARIABLES */
 const MAX_GOALS = 5;
+const MAX_SPEED = 70;
 
 const sleep = async (ms)  => {
     await new Promise(resolve => {
@@ -88,7 +89,7 @@ class Ball extends UserInput {
         super();
 
         this.velocity = velocity instanceof Vector3 ? velocity : new Vector3(velocity);
-        this.speed = 50;
+        this.speed = 25;
         this.radius = 1;
         this.position = position;
         this.velocity.multiplyScalar(this.speed);
@@ -151,6 +152,7 @@ class Ball extends UserInput {
                 newPosition.y = 0;
                 newPosition.z = 0;
                 this.velocity.x *= -1;
+                this.speed 
                 this.isGoal = false;
                 this.position.copy(newPosition);
                 io.to(this.room).emit('continue_after_goal');
@@ -256,11 +258,14 @@ class Paddle extends UserInput {
     
             // Determine collision side based on the smaller overlap
             if (overlapX < overlapZ) {
-                // this.ball.velocity.multiplyScalar(10);
+                this.ball.ball.velocity.multiplyScalar(-1);
+                this.ball.ball.velocity.multiplyScalar(1.5);
                 // Collision on X-axis
                 return 1; // Collision on X-axis
             } else {
-                // this.ball.velocity.multiplyScalar(10);
+                console.log(this.ball)
+                this.ball.ball.velocity.multiplyScalar(-1);
+                this.ball.ball.velocity.multiplyScalar(1.5);
                 // Collision on Z-axis
                 return 2; // Collision on Z-axis
             }
@@ -277,7 +282,7 @@ const ORIGIN_IP = process.env.ORIGIN_IP || 'localhost';
 console.log('ORIGIN_IP:', ORIGIN_IP);
 
 app.use(cors({
-    origin: ["https://admin.socket.io", `http://${ORIGIN_IP}:5173`, `http://${ORIGIN_IP}:5174`, `https://${ORIGIN_IP}:8000`, 'https://obscure-system-gvjrprvp7p4hvrrr-5173.app.github.dev'],
+    origin: ["https://admin.socket.io", `http://${ORIGIN_IP}:5173`, `http://${ORIGIN_IP}:5174`, `https://${ORIGIN_IP}:8000`, 'https://miniature-journey-9gr5x5gxwvjfxqv-5173.app.github.dev'],
     credentials: true
 }));
 
@@ -305,7 +310,7 @@ const server = createServer(serverOptions, app);
 const io = new Server(server, {
     cors: {
         // origin: "*", 
-        origin: ["https://admin.socket.io", `http://${ORIGIN_IP}:5173`, `http://${ORIGIN_IP}:5174`, `https://${ORIGIN_IP}:8000`, 'https://obscure-system-gvjrprvp7p4hvrrr-5173.app.github.dev'],
+        origin: ["https://admin.socket.io", `http://${ORIGIN_IP}:5173`, `http://${ORIGIN_IP}:5174`, `https://${ORIGIN_IP}:8000`, 'https://miniature-journey-9gr5x5gxwvjfxqv-5173.app.github.dev'],
         credentials: true
     },
     pingInterval: 2000, pingTimeout: 5000,
@@ -336,13 +341,13 @@ function GameLoop()
                 switch (players[playerId].handleCollision4(balls[players[playerId].room].ball))
                 {
                     case 1:
-                        balls[players[playerId].room].ball.velocity.x *= -1;
-                        balls[players[playerId].room].ball.velocity.multiplyScalar(10);
+                        // balls[players[playerId].room].ball.velocity.x *= -1;
+                        // balls[players[playerId].room].ball.velocity.multiplyScalar(10);
                         // balls[pl]
                         break;
                     case 2:
-                        balls[players[playerId].room].ball.velocity.z *= -1;
-                        balls[players[playerId].room].ball.velocity.multiplyScalar(10);
+                        // balls[players[playerId].room].ball.velocity.z *= -1;
+                        // balls[players[playerId].room].ball.velocity.multiplyScalar(10);
                         break;
                 }
             }
