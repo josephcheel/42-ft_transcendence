@@ -241,8 +241,8 @@ def test_finish_tournament():
 				list_matches = json.loads(response.json()['data'])
 				while list_matches != []:
 					for match in list_matches:
-						player1 = match['player_id_1']
-						player2 = match['player_id_2']
+						player1 = match['player_id_1_id']
+						player2 = match['player_id_2_id']
 						my_data = {'match_id': match['id']}
 						if random.choice([True, False]):
 							response = send_request(mysessions[int(player1)], start_match_url, csrf[int(player1)], my_data)
