@@ -1,4 +1,4 @@
-from tournamentsapp.wrappers import require_get, user_is_authenticated, validate_credentials
+from tournamentsapp.wrappers import require_get, user_is_authenticated, exception_handler
 from tournamentsapp.models import Matches
 from datetime import datetime
 from django.db import OperationalError
@@ -9,12 +9,12 @@ import json
 from user.models import User
 
 @require_get
-@validate_credentials
-def list_matches(request):
-	player = request.user.username
+@exception_handler
+def list_matches(request, username):
+    #player = request.user.username
 	try:
-		player = User.objects.get(username=request.username)
-		matches_data = Matches.objects.filter(Q(player_id1=player.id) | Q(player_id2=player.id))
+		player = User.objects.get(username=username)
+		matches_data = Matches.objects.filter(Q(player_id_1=player.id) | Q(player_id_2=player.id))
 		matches_list = list(matches_data.values())
 		for match in matches_list:
 			for key, value in match.items():

@@ -1,4 +1,4 @@
-from tournamentsapp.wrappers import require_get, user_is_authenticated
+from tournamentsapp.wrappers import require_get, user_is_authenticated, exception_handler
 from tournamentsapp.models import Tournaments
 from datetime import datetime
 from django.db import OperationalError
@@ -8,9 +8,12 @@ import json
 from user.models import User
 
 @require_get
-def list_tournaments(request):
-	player = request.user
+@exception_handler
+def list_tournaments(request, username):
+    #player = request.user
 	try:
+		player = User.objects.get(username=username)
+		tournament_data = Tournaments.objects.filter(player_id=player.id)
 		tournament_data = Tournaments.objects.filter(player_id=player.id)
 		# Convert any datetime fields to string
 		tournament_list = list(tournament_data.values())

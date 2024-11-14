@@ -65,3 +65,52 @@ def validate_json(func):
 
 		return func(request, *args, **kwargs)
 	return wrapper
+
+def require_auth(func):
+    @wraps(func)
+    def wrapper(request, *args, **kwargs):       
+        if not request.user.is_authenticated:
+            return JsonResponse({'status' : 'error',
+                                'message': 'Invalid credentials',
+                                'data' : None},
+                                status=401)
+        return func(request, *args, **kwargs)
+    return wrapper
+
+
+def exception_handler(view_func):
+    def wrapper(*args, **kwargs):
+        try:
+            return view_func(*args, **kwargs)
+        except User.DoesNotExist:
+            return JsonResponse({'status' : 'error',
+                            'message' : "User does not exists",
+                            'data' : None},
+                            status=404)
+        except OperationalError:
+            return JsonResponse({
+                'status': 'error',
+                'data': None,
+                'message': 'Internal database error'
+            }, status=500)
+        except Exception as e:
+            logger.error(e)
+            return JsonResponse({
+                'status': 'error',
+                'message': 'Internal server error',
+                'data': None
+            }, status=500)
+    return wrapper
+
+def get_data(func):
+    @wraps(func)
+    def wrapper(request, *args, **kwargs):
+        try:
+            request.data = json.loads(request.body)
+        except json.JSONDecodeError:
+            return JsonResponse({'status': 'error', 'message': 'Invalid JSON body', 'data': None}, status=400)
+        if not request.data:
+            return JsonResponse({'status': 'error', 'message': 'Invalid JSON body', 'data': None}, status=400)
+        return func(request, *args, **kwargs)
+    return wrapper
+		
