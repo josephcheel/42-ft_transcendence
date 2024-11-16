@@ -4,8 +4,8 @@
       <!-- Left Column (Vertical Grid) -->
       <div class="col-lg-3 d-flex flex-column align-items-center justify-content-start">
         <div @click="startOnlineMatch" id="simple-match" class="bento-box flex-grow-1">
-          <h2>{{ $t('message.simple_match')}}</h2>
-          <p>{{ $t('message.explain_simple_match')}}</p>
+          <h2>{{ $t('games.simple_match')}}</h2>
+          <p>{{ $t('games.explain_simple_match')}}</p>
        </div>
         <!-- <div class="bento-box flex-grow-1">Left Grid 2</div> -->
       </div>
@@ -14,16 +14,16 @@
       <div class="col-lg-6 d-flex flex-column align-items-center justify-content-center">
         <div @click="startLocalMatch" id="local-match" class="bento-box flex-grow-1">
          
-          <h2>{{ $t('message.local_match')}}</h2>
-          <p>{{ $t('message.explain_local_match')}}</p>
+          <h2>{{ $t('games.local_match')}}</h2>
+          <p>{{ $t('games.explain_local_match')}}</p>
         </div>
         <div id="friend-match" class="bento-box flex-grow-1" @click="showFriendMatchInput">
-          <h2>{{ $t('message.friend_match')}}</h2>
-            <p>{{ $t('message.explain_friend_match')}}</p>
+          <h2>{{ $t('games.friend_match')}}</h2>
+            <p>{{ $t('games.explain_friend_match')}}</p>
             <!-- Input para enviar invitación -->
             <div v-if="showFriendInput" class="col-lg-6 d-flex flex-column align-items-center justify-content-center">
               <input type="text" v-model="friendName" placeholder="Enter Match Id" class="form-control d-inline-block w-50" />
-              <button @click="sendInvitation" class="btn btn-success mt-2">{{ $t('message.send')}}</button>
+              <button @click="sendInvitation" class="btn btn-success mt-2">{{ $t('games.send')}}</button>
             </div>
         </div>
       </div>
@@ -32,8 +32,8 @@
       <div class="col-lg-3 d-flex flex-column align-items-center justify-content-start">
         <!-- <div class="bento-box flex-grow-1">Right Grid 1</div> -->
         <div @click="goToTournament" id="tournament" class="bento-box flex-grow-1">
-        <h2>{{ $t('message.tournament')}}</h2>
-        <p>{{ $t('message.explain_tournament')}}</p>
+        <h2>{{ $t('games.tournament')}}</h2>
+        <p>{{ $t('games.explain_tournament')}}</p>
       </div>
       </div>
     </div>

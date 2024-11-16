@@ -5,7 +5,7 @@
 		<div class="col-12 col-md-8 mb-4">
 		  <div class="card">
 			<div class="card-body">
-			  <h1 class="card-title">My Friends</h1>
+			  <h1 class="card-title">{{ $t('friends.friends_title')}}</h1>
 			  <!-- Search Input -->
 			  <div class="d-flex align-items-center mb-3"> 
 				<input
@@ -13,7 +13,7 @@
 					@input="filterFriends"
 					class="form-control mb-3"
 					type="text"
-					placeholder="Search for friends"
+					:placeholder="$t('friends.placeholder_search')"
 				/>
 				<button type="button" class="btn" data-bs-toggle="modal" data-bs-target="#addFriendModal">
 					<img id="add-friend" src="/assets/icons/person-add.svg" alt="Add Person" style="cursor: pointer;" @click="addPerson" />
@@ -48,7 +48,7 @@
       <div class="col-12">
         <div class="card">
           <div class="card-body">
-            <h2 class="card-title">Friend Requests</h2>
+            <h2 class="card-title">{{ $t('friends.requests_title')}}</h2>
             <p>This is a new section below the main content. You can add any content here, such as more forms, information, or controls.</p>
             <!-- You can add any content or components you need inside this new column -->
           </div>

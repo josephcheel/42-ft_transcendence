@@ -2,7 +2,7 @@
 <template>
   <div id="app">
     <!-- Only render Navigation when data is fully loaded -->
-    <div v-if="!isNav() && isDataLoaded" style="z-index: 1;">
+    <div v-if="!isNav()" style="z-index: 1;">
       <Navigation 
         :username="username" 
         :points="points" 
@@ -12,7 +12,8 @@
     </div>
 
     <div :class="{ 'content-wrapper': !isNav() }">
-      <RouterView />
+      <RouterView
+       />
     </div>
   </div>
 </template>

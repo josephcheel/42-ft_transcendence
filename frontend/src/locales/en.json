@@ -16,11 +16,43 @@
         "name": "Name",
         "lastname": "Lastname",
         "confirm_pass": "Confirm password",
-        "email": "Email"
-        
+        "email": "Email",
+        "username_tournament": "Tournament Username",
+        "picprofile": "Profile image"
+    },
+    "friends": {
+        "friends_title": "My Friends",
+        "placeholder_search": "Search for friends",
+        "requests_title": "Friend Requests"
+    },
+    "tournaments": {
+        "create_tournament": "Create Tournament",
+        "tournament_name": "Tournament Name",
+        "placehold_name": "Enter tournament name",
+        "tournament_date": "Start Date",
+        "max_goals": "Maximum Goals",
+        "speed": "Speed",
+        "add_player": "Add Player",
+        "placehold_playername": "Enter player's name",
+        "add": "Add",
+        "create": "Create",
+        "your_tournaments": "Your tournaments",
+        "upcoming": "Upcoming Tournament Matches",
+        "check_list": "Check the schedule for your upcoming matches and stay prepared.",
+        "round": "Round",
+        "pending_tournaments": "Pending Tournaments",
+        "check_inv": "Review and accept invitations to join tournaments."
     },
     "games": {
-
+        "local_match": "Local Match",
+        "explain_local_match": "Play vs guest player on the same keyboard",
+        "simple_match": "Online Match",
+        "explain_simple_match": "Play on-line vs a random player",
+        "friend_match": "Friend Match",
+        "explain_friend_match": "Join or create a match with a friend",
+        "send": "Send",
+        "tournament": "Tournament",
+        "explain_tournament": "Create a tournament for 16 players"
     },
     "message": {
         "home": "Home",
@@ -38,15 +70,6 @@
             "play": "Play",
             "stats": "Stats"
         },
-        "local_match": "Local Match",
-        "explain_local_match": "Play vs guest player on the same keyboard",
-        "simple_match": "Online Match",
-        "explain_simple_match": "Play on-line vs a random player",
-        "friend_match": "Friend Match",
-        "explain_friend_match": "Join or create a match with a friend",
-        "send": "Send",
-        "tournament": "Tournament",
-        "explain_tournament": "Create a tournament for 16 players",
         "email": "Email",
         "reset_pass": "Restore your password",
         "name_placeholder": "first name",
@@ -54,6 +77,8 @@
         "username_placeholder": "username",
         "password_placeholder": "password",
         "confirm_pass_placeholder": "confirm password",
-        "logout": "Logout"
+        "logout": "Log out",
+        "gamestats": "Game Stats"
+
     }
 }

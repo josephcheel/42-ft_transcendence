@@ -1,6 +1,7 @@
 import requests
 from datetime import datetime, timedelta
 from django.utils import timezone
+from django.utils import timezone
 import urllib3
 import json
 import random
@@ -315,4 +316,3 @@ if __name__ == "__main__":
 	test_close_tournament()
 	test_finish_tournament()
 	close_sessions()
-

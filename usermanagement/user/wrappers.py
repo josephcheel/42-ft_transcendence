@@ -47,9 +47,10 @@ def validate_creation_fields(func):
         request.password = request.data.get('password')
         request.first_name = request.data.get('first_name')
         request.last_name = request.data.get('last_name')
-
-        if not request.username or not request.password or not request.first_name or not request.last_name:
+        if not request.username or not request.password or not request.first_name or not request.last_name: 
             return JsonResponse({'status': 'error', 'message': 'Missing required fields', 'data': None}, status=400)
+        if request.username.isdigit():
+            return JsonResponse({'status': 'error', 'message': 'Invalid username', 'data': None}, status=400)
         request.lowercase_username = request.username.lower()
         return func(request, *args, **kwargs)
     return wrapper
