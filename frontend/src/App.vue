@@ -10,7 +10,6 @@
         @mounted="onNavMounted" 
       />
     </div>
-
     <div :class="{ 'content-wrapper': !isNav() }">
       <RouterView
        />
@@ -43,6 +42,40 @@ export default {
         this.updateProfilePicture();
       }
     },
+    computed: {
+    userGameStatsLink() {
+        return `/gamestats/${localStorage?.getItem('username') || ''}`;
+      }
+    },
+    methods: {
+      changeLang() {
+        this.$i18n.locale = this.selectedLang;
+      },
+      isNav() {
+        return (this.$route.path === '/' ||  this.$route.path === '/game' || this.$route.path.startsWith('/game-online'));
+      },
+      logout() {
+        axios.post(`https://${ORIGIN_IP}:8000/api/user/logout_user/`).then((response) => {
+          if (response.status === 200)
+          {
+            console.log(response);
+            this.isAuthenticated = false;
+          }
+          else
+          {
+            console.log(response);
+          }
+        });
+      },
+      checkAuthStatus(){
+      axios.get(`https://${ORIGIN_IP}:8000/api/user/is_logged_in/`)
+        .then(response => {
+          if (response.status === 200) {
+            // User is authenticated
+            this.isAuthenticated = true;
+            localStorage.setItem('id', response.data.data.id);
+            localStorage.setItem('username', response.data.data.username);
+          }
   },
   methods: {
     isCentered() {
@@ -65,6 +98,8 @@ export default {
           console.error("Error checking auth status:", error);
         });
     },
+    mounted() {
+      this.checkAuthStatus();
     async loadUserData() {
       // Simulate async data loading, checking localStorage for required info
       while (!localStorage.getItem('username') )

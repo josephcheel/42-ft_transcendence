@@ -7,9 +7,13 @@ from tournamentsapp.models import Tournaments, Invitations
 from tournamentsapp.status_options import StatusTournaments, StatusInvitations
 from tournaments.settings import TIME_DELTA
 from django.views.decorators.csrf import csrf_exempt
+import logging
 
 from user.models import User
- 
+
+logger = logging.getLogger('django')
+logger.setLevel(logging.DEBUG)
+
 @require_post
 @user_is_authenticated
 @validate_json
@@ -18,7 +22,7 @@ def open_tournament(request):
 	data = request.data
 
 	received_date_start = datetime.fromisoformat(str(data.get('date_start')))
-	if received_date_start < timezone.now():
+	if received_date_start < datetime.now():
 		return JsonResponse({'status': 'error', 'message': 'Invalid start date', 'data': None}, status=400)
 
 #	if data.get('max_players') & 1:

@@ -5,16 +5,32 @@ from django.db import OperationalError
 from django.http import JsonResponse
 from django.db.models import Q
 import json
-
+import logging
+from django.db.models import Q
 from user.models import User
+logger = logging.getLogger('django')
+logger.setLevel(logging.DEBUG)
 
 @require_get
-@validate_credentials
-def list_matches(request):
-	player = request.user.username
+def list_matches(request, username=None):
+	logger.debug(request.user)
 	try:
-		player = User.objects.get(username=request.username)
-		matches_data = Matches.objects.filter(Q(player_id1=player.id) | Q(player_id2=player.id))
+
+#		try:
+#			player = User.objects.get(username=player)
+#		except User.DoesNotExist:
+#			return JsonResponse({'status': 'error', 'message': 'A user does not exist', 'data': None}, status=404)
+		if username:
+			if username.isdigit():
+				player = User.objects.get(Q(id=int(username)))
+			else:
+				player = User.objects.get(Q(username=username))
+		else:	
+			player = User.objects.get(username=request.user)
+		matches_data = Matches.objects.filter(
+    		Q(player_id_1=player.id) | Q(player_id_2=player.id)
+)
+
 		matches_list = list(matches_data.values())
 		for match in matches_list:
 			for key, value in match.items():

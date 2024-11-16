@@ -43,6 +43,8 @@ ALLOWED_HOSTS = ['localhost', 'usermanagement', 'user', '127.0.0.1', 'gateway', 
 
 CSRF_TRUSTED_ORIGINS = [
     'https://' + ORIGIN_IP +':8000',  # Your frontend origin
+    'https://localhost:8000',
+
 ]
 
 

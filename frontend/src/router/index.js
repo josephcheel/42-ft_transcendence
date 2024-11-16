@@ -11,7 +11,9 @@ import Profile from '../components/Profile.vue'
 import Game from '../components/game/Game.vue'
 import Home from '../components/Home.vue'
 import GameOnline from '../components/GameOnline/GameOnline.vue'
+import Gamestats from '../components/Gamestats.vue'
 import NotFound from '../components/NotFound.vue'
+
 import { isAuthorized } from '../utils/isAuthorized'
 import Tournaments from '../components/Tournaments.vue'
 import Friends from '../components/Friends.vue'
@@ -45,6 +47,12 @@ const routes = [
     path: '/chat',
     name: 'Chat',
     component: Chat
+  },
+  {
+    path: '/gamestats/:username',
+    name: 'Gamestats',
+    component: Gamestats,
+    props: true
   },
   {
     path: '/dashboard',

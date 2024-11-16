@@ -12,6 +12,7 @@ from user.models import User
 def finish_match(request):
 	data = request.data
 	match_id = request.data.get('match_id')
+
 	if match_id < 0:
 		player1 = User.objects.get(username=data.get('winner'))
 		player2 = User.objects.get(username=data.get('looser'))
