@@ -7,8 +7,8 @@ import random
 import pytz
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
-#DOMAIN = '10.11.250.2'
-DOMAIN = '192.168.40.44'
+DOMAIN = '10.11.250.2'
+#DOMAIN = '192.168.40.44'
 EuropeZone = pytz.timezone('Europe/Madrid')
 
 def get_csrf_token(session, url):
@@ -276,14 +276,17 @@ def test_finish_tournament():
 						else:
 							the_winner_id = f'test{player2}'
 							the_looser_id = f'test{player1}'
+						points_to_win =  tournament['winning_points'] 
+						if points_to_win == None:
+							points_to_win = 5;
 						my_data = {
                             'match_id': -1,
                             'player1': f'test{player1}',
                             'player2': f'test{player2}',
                             'winner': the_winner_id,
                             'looser': the_winner_id,
-                            'points_winner': int(tournament['winning_points']),
-                            'points_looser': random.randint(0, int(tournament['winning_points'])-1)
+                            'points_winner': int(points_to_win),
+                            'points_looser': random.randint(0, points_to_win-1)
                         	}
 						response = send_request(
 							mysessions[player1], finish_match_url, csrf[player1], data=my_data)
