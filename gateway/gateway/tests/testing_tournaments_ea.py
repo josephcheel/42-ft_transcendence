@@ -157,6 +157,7 @@ def test_create_tournament():
             'password': 'test',
             'date_start': (datetime.now(EuropeZone) + timedelta(minutes=1)).isoformat(),
             'max_players': total_players,
+			'winning_points': 7,
             'cost': 1,
             'price_1': 1000,
             'price_2': 500,
@@ -244,27 +245,28 @@ def test_finish_tournament():
 						player1 = match['player_id_1_id']
 						player2 = match['player_id_2_id']
 						my_data = {'match_id': match['id']}
-						if random.choice([True, False]):
-							response = send_request(mysessions[int(player1)], start_match_url, csrf[int(player1)], my_data)
-							assert response.status_code == 200
-							assert response.json()['status'] == 'success'
-							assert response.json()['message'] == 'Waiting for player 2 to start the match'
-							response = send_request(
-								mysessions[int(player2)], start_match_url, csrf[int(player2)], my_data)
-							assert response.status_code == 200
-							assert response.json()['status'] == 'success'
-							assert response.json()['message'] == 'Match started successfully'
-						else:
-							response = send_request(
-								mysessions[int(player2)], start_match_url, csrf[int(player2)], my_data)
-							assert response.status_code == 200
-							assert response.json()['status'] == 'success'
-							assert response.json()[                                                          'message'] == 'Waiting for player 1 to start the match'
-							response = send_request(
-								mysessions[int(player1)], start_match_url, csrf[int(player1)], my_data)
-							assert response.status_code == 200
-							assert response.json()['status'] == 'success'
-							assert response.json()['message'] == 'Match started successfully'
+						if not player1 is None and not player2 is None:
+							if random.choice([True, False]):
+								response = send_request(mysessions[int(player1)], start_match_url, csrf[int(player1)], my_data)
+								assert response.status_code == 200
+								assert response.json()['status'] == 'success'
+								assert response.json()['message'] == 'Waiting for player 2 to start the match'
+								response = send_request(
+									mysessions[int(player2)], start_match_url, csrf[int(player2)], my_data)
+								assert response.status_code == 200
+								assert response.json()['status'] == 'success'
+								assert response.json()['message'] == 'Match started successfully'
+							else:
+								response = send_request(
+									mysessions[int(player2)], start_match_url, csrf[int(player2)], my_data)
+								assert response.status_code == 200
+								assert response.json()['status'] == 'success'
+								assert response.json()[                                                          'message'] == 'Waiting for player 1 to start the match'
+								response = send_request(
+									mysessions[int(player1)], start_match_url, csrf[int(player1)], my_data)
+								assert response.status_code == 200
+								assert response.json()['status'] == 'success'
+								assert response.json()['message'] == 'Match started successfully'
 
 						print('match =', match['id'], ' started!!!! player1 =',
 						      f'test{player1}', ' player2 =', f'test{player2}')
@@ -289,7 +291,7 @@ def test_finish_tournament():
 						assert response.json()['status'] == 'success'
 						assert response.json()['message'] == 'Match finished successfully'
 
-						print('match =', match.id, ' finished. Won!!!!',
+						print('match =', match['id'], ' finished. Won!!!!',
 							the_winner_id, ' lost ', the_looser_id)
 						response = get_request(
                     mysessions[i], list_matches_by_tournament_id_url + f"{tournament_id}", csrf[i])
