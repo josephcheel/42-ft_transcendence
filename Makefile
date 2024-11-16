@@ -17,7 +17,7 @@ LOG_FILES =  $(addprefix ${LOGSTASH_FOLDER}, ${GATEWAY_LOG} ${USER_LOG} ${CHAT_L
 # Define targets
 all: build 
 
-build: 	| volumes
+build: 	| volumes compile run_npm
 	cp .env ./frontend/.env
 	$(COMPOSE) -f $(DOCKER_COMPOSE_FILE) up --build -d
 
@@ -43,6 +43,12 @@ rebuild: rm_files
 	@$(COMPOSE) -f $(DOCKER_COMPOSE_FILE) up --build -d
 
 rm_files:
+	@rm -rfd frontend/dist/
+	@rm -rfd frontend/node_modules/
+	@rm -rfd pong-game-server/node_modules/
+	@rm -rfd pong-game-server/bin/
+	@rm -rfd pong-game-server/lib/
+	@rm -f .exec_run_npm
 	@$(COMPOSE) -f $(DOCKER_COMPOSE_FILE) down --volumes
 	@sudo find . -type d -name 'migrations' -exec rm -r {} +
 	@sudo find . -type d -name '__pycache__' -exec rm -r {} +
@@ -67,10 +73,25 @@ gate:
 work:
 	docker exec -it celery_worker /bin/bash
 
+fron:
+	docker exec -it frontend sh
+
+pong:
+	docker exec -it pong-game-server sh
+
 volumes: 
 	@echo Creating Volumes DIR
 	@mkdir -p $(VOLUMES)
 	@touch $(LOG_FILES)
+
+compile: ./frontend/package-lock.json 
+	@npm --prefix ./frontend install
+	@npm --prefix ./pong-game-server install
+	@npm --prefix ./pong-game-server install pm2 -g
+	@touch .exec_run_npm
+
+run_npm: .exec_run_npm
+	@npm --prefix ./frontend run build
 
 del_vol:rm_vol
 	@echo Deleting Volumes DIR
@@ -99,4 +120,4 @@ re: fclean all
 
 
 
-.PHONY: all build up down restart logs clean re fclean volumes
+.PHONY: all build up down restart logs clean re fclean volumes compile run_pm

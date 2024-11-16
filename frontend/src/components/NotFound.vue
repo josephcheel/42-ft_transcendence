@@ -1,48 +1,44 @@
 <template>
-	<img id="title" src="/assets/images/PONG3D.png" alt="Logo">
-	<section id="login-wrapper" class="container-fluid d-flex justify-content-center align-items-center">
-		<!-- <Login></Login> -->
-		<component :is="currentView" @changeView="changeComponent" ></component>
-	</section>
+<div id="notfound" class="d-flex justify-content-center align-items-center flex-column">
+    <h1 class="text-center">Not Found</h1>
+    <p class="text-center">The page you are looking for could not be found.</p>
+</div>
+
+	<a id="goBack" @click="this.$router.go(-1)" class="btn btn-primary">Go Back</a>
+	<router-link id="goHome" to="/" class="btn btn-primary">Go Home</router-link>
+
+
+	<!-- </div> -->
 	<div ref="canvas"></div>
-	<abbr title="Slide up or move the mouse wheel or click it" @click="handleArrowClick">
-		<img id="arrow" src="/assets/icons/chevron-down.svg">
-	</abbr>
-
-    <!-- The child components (Login, Register, ForgotPassword) will be rendered here -->
-    <router-view />
 </template>
+
 <style scoped>
-
-#arrow {
+#goBack
+{
+	/* max-width: 300px; */
+	top: 65%;
+	left: 55%;
+	transform: translate(-50%, -50%);
+	color: rgb(255, 252, 252);
 	position: absolute;
-	translate: -50%;
-	bottom: 2%;
-	width: 50px;
-	height: 50px;
-	animation: bounce 2s infinite;
 }
-
-@keyframes bounce {
-	0%, 20%, 50%, 80%, 100% {
-		transform: translateY(0);
-	}
-	40% {
-		transform: translateY(-5px);
-	}
-	60% {
-		transform: translateY(-15px);
-	}
+#goHome {
+	max-width: 300px;
+	top: 65%;
+	left: 45%;
+	transform: translate(-50%, -50%);
+	color: rgb(255, 252, 252);
+	position: absolute;
 }
-
-#subtitle {
-    color: white;
-    font-size: 24px;
-    font-weight: 700;
-    line-height: 36px;
-    text-align: left;
-    margin-bottom: 2em;
-	margin: 0em 10em 0em 10em;
+#notfound {
+	font-family: 'Nokia Cellphone FC';
+	/* font-size: 2em; */
+	/* height: 100vh; */
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	color: rgb(255, 252, 252);
 }
 
 body {
@@ -54,31 +50,6 @@ body {
 }
 canvas {
   display: block;
-}
-#login-wrapper {
-  position: absolute; /* Make it position absolute */
-  top: 50%;          /* Center vertically */
-  left: 50%;         /* Center horizontally */
-  transform: translate(-50%, -50%);
-  display: flex;     /* Use flexbox for centering content */
-  flex-direction: column; /* Optional: Stack child elements vertically */
-  justify-content: center; /* Center content vertically */
-  align-items: center; /* Center content horizontally */
-  width: 50em; /* Set width */
-  height: 10em; /* Set height */
-  opacity: 0;
-  /* Add additional styles as needed */
-}
-
-.container {
-    position: relative; /* Create a relative container for absolute positioning */
-    height: 100vh; /* Set the height of the container to viewport height */
-    overflow-y: scroll; /* Allow vertical scrolling */
-}
-
-.content {
-    height: 2000px; /* Make the content tall enough to scroll */
-    padding: 20px;
 }
 #canvas {
 	position: relative;
@@ -123,75 +94,11 @@ canvas {
 <script>
 import { PerspectiveCamera, Scene, WebGLRenderer, SphereGeometry, MeshPhongMaterial, Mesh, DirectionalLight, AmbientLight, PointLight, FrontSide } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
-import Login from './Login.vue';
-import Register from './Register.vue';
-import Forgotps from './Forgotps.vue';
+
 export default {
-	name: 'HomePage',
-	components: {
-		Login,
-		Register,
-		Forgotps
-	},
-
-  data() {
-    return {
-      // Inicialmente se muestra el componente Login
-      currentView: this.$route.params.currentView || 'Login',
-	//   ORIGIN_IP : import.meta.env.VITE_VUE_APP_ORIGIN_IP || 'localhost'
-    };
-  },
-  computed: {
-    currentViewComponent() {
-      // Mapeamos el nombre de la vista al componente correspondiente
-      return {
-        'Login': 'Login',
-        'Register': 'Register',
-        'Forgotps': 'Forgotps',
-      }[this.currentView];
-    },
-  },
-  methods: {
-	// Actualizamos el valor de currentView
-	changeComponent(view) {
-      this.currentView = view;
-    }
-  },
+	name: 'NotFound',
+	
 	mounted() {
-		const login = document.getElementById('login-wrapper');
-		const arrow = document.getElementById('arrow');
-
-		arrow.addEventListener('click', handleScroll);
-		function handleScroll(event) {
-			if (event.deltaY < 0) {
-				login.style.transition = 'opacity 1.5s ease-in-out';
-				login.style.opacity = '0';
-				arrow.style.transition = 'opacity 1.5s ease-in-out';
-				arrow.style.opacity = '1';
-			} else {
-				login.style.transition = 'opacity 1.5s ease-in-out';
-				login.style.opacity = '1';
-				arrow.style.transition = 'opacity 1.5s ease-in-out';
-				arrow.style.opacity = '0';
-			}
-		}
-
-		function handleTouch(event) {
-			if (event.touches[0].clientY < window.innerHeight / 2) {
-				// login.style.transition = 'opacity 1.5s ease-in-out';
-				// login.style.opacity = '0';
-				// arrow.style.transition = 'opacity 1.5s ease-in-out';
-				// arrow.style.opacity = '1';
-			} else {
-				login.style.transition = 'opacity 1.5s ease-in-out';
-				login.style.opacity = '1';
-				arrow.style.transition = 'opacity 1.5s ease-in-out';
-				arrow.style.opacity = '0';
-			}
-		}
-
-		window.addEventListener('wheel', handleScroll);
-		window.addEventListener('touchstart', handleTouch);
 		const camera = new PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 		const scene = new Scene();
 
@@ -205,7 +112,7 @@ export default {
 
 		const geometry = new SphereGeometry(10, 50, 50);
 		const material = new MeshPhongMaterial({
-			color: 0xff0000, // Red color
+			color: 0xffff00, // Yellow color
 			specular: 0x555555, // Specular highlights
 			shininess: 30, // Shininess of the material
 			emissive: 0x000000, // Emissive color
@@ -258,12 +165,12 @@ export default {
 
 		sphere.position.set(0, 0, 0);
 
-		let angle = 0.01; // Angle for moving the camera in a circular path
-		const radius = 20; // Distance from the sphere
-		const MaxDistanceToSphere = 10; // Maximum distance from the sphere
-		const MinDIstanceToSphere = 14; // Minimum distance from the sphere
-		const SpeedRotation = 0.007; // Speed of movement
-		let SpeedToSphere = 0.01;
+		let angle = 0.05; // Angle for moving the camera in a circular path
+		const radius = 12; // Distance from the sphere
+		const MaxDistanceToSphere = 100; // Maximum distance from the sphere
+		const MinDIstanceToSphere = 1400; // Minimum distance from the sphere
+		const SpeedRotation = 0.05; // Speed of movement
+		let SpeedToSphere = 0.031;
 		let y = 0;
 
 		function animate() {

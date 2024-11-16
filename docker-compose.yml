@@ -48,8 +48,8 @@ services:
       - migrations
       - tournaments
     volumes:
-      - ./tournaments:/app/tournaments
-      - ./usermodel:/app/tournaments/user
+      - ./tournaments:/app/
+      - ./usermodel:/app/user
     env_file:
       - .env
 
@@ -66,8 +66,8 @@ services:
       - migrations
       - tournaments
     volumes:
-      - ./tournaments:/app/tournaments
-      - ./usermodel:/app/tournaments/user
+      - ./tournaments:/app/
+      - ./usermodel:/app/user
     env_file:
       - .env
 
@@ -86,8 +86,8 @@ services:
     ports:
       - 5557:5555
     volumes:
-      - ./tournaments:/app/tournaments
-      - ./usermodel:/app/tournaments/user
+      - ./tournaments:/app/
+      - ./usermodel:/app/user
     env_file:
       - .env
 
@@ -119,9 +119,9 @@ services:
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -d transcendence -U transcendence"]
       interval: 10s
-      timeout: 60s
+      timeout: 10s
       retries: 5
-      start_period: 80s 
+      start_period: 10s 
 
   gateway:
     restart: always
@@ -149,8 +149,8 @@ services:
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/metrics"]
       interval: 10s
-      timeout: 10s
-      start_period: 10s
+      timeout: 20s
+      start_period: 40s
       retries: 3
 
   usermanagement:
@@ -172,8 +172,8 @@ services:
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/metrics"]
       interval: 10s
-      timeout: 10s
-      start_period: 10s
+      timeout: 20s
+      start_period: 40s
       retries: 3
 
   chat:
@@ -221,9 +221,9 @@ services:
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/metrics"]
       interval: 10s
-      timeout: 10s
-      start_period: 10s
-      retries: 3
+      timeout: 20s
+      start_period: 40s
+      retries: 5
 
   # Monitoring Container
 
@@ -377,7 +377,7 @@ services:
      context: ./blockchain
    container_name: blockchain
    ports:
-     - "8545:8545"
+     - "0.0.0.0:8545:8545"
    env_file:
      - .env
    restart: always
@@ -398,7 +398,7 @@ services:
     build:
       context: ./frontend
     ports:
-      - "8000:8000"
+      - "0.0.0.0:8000:8000"
     volumes:
       - ./usermanagement/profile_pictures/:/usr/share/nginx/html/profile_pictures
 

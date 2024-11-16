@@ -1,62 +1,46 @@
-
+<!-- App.vue -->
 <template>
   <div id="app">
-    <!-- <div style="width: 100%; height: 100%; background: #FF9670; border-bottom-left-radius: 20px; border--right-radius: 20px"></div> -->
-    <nav class="navbar navbar-expand-lg " v-if="!isNav()">
-      <!-- <img src="/src/images/Logo.png" alt="Logo" style="margin-left:15px; width: 65px; height: auto;"> -->
-        <h2 style="margin-left: 180px; margin-right: 180px;">Pong</h2>
-        <ul class="navbar-nav">
-          <li class="nav-item">
-            <router-link to="/play" class="nav-link1">{{ $t('message.home')}}</router-link>
-          </li>
-         <!-- Conditionally display Login or Logout based on isAuthenticated -->
-        <li class="nav-item" v-if="!this.isAuthenticated">
-          <router-link to="/login" class="nav-link1">{{ $t('message.login')}}</router-link>
-        </li>
-        <li class="nav-item" v-else>
-          <a style="cursor: pointer;" @click="logout" class="nav-link1">{{ $t('message.logout')}}</a>
-        </li>
-          <li class="nav-item">
-            <router-link to="/select-game" class="nav-link1">{{ $t('message.play')}}</router-link>
-          </li>
-          <li class="nav-item">
-            <router-link to="/dashboard" class="nav-link1">{{ $t('message.dashboard')}}</router-link>
-          </li>
-          <li class="nav-item">
-            <router-link to="/profile" class="nav-link1">{{ $t('message.profile')}}</router-link>
-          </li>
-          <li class="nav-item">
-            <router-link :to="userGameStatsLink" class="nav-link1">
-              {{ $t('message.gamestats') }}
-            </router-link>
-          </li>
-          <li class="nav-item">
-            <router-link to="/chat" class="nav-link1">{{ $t('message.chat')}}</router-link>
-          </li>
-          <select class="form-select form-select-sm" v-model="selectedLang" @change="changeLang">
-            <option value="en">English</option>
-            <option value="es">Español</option>
-            <option value="fr">French</option>
-          </select>
-        </ul>
-    </nav>
+    <!-- Only render Navigation when data is fully loaded -->
+    <div v-if="!isNav()" style="z-index: 1;">
+      <Navigation 
+        :username="username" 
+        :points="points" 
+        :profile_picture_url="profile_picture_url"
+        @mounted="onNavMounted" 
+      />
+    </div>
     <div :class="{ 'content-wrapper': !isNav() }">
-      <RouterView />
+      <RouterView
+       />
     </div>
   </div>
 </template>
 
-
 <script>
-  import axios from './utils/axiosConfig';
-  const ORIGIN_IP = import.meta.env.VITE_VUE_APP_ORIGIN_IP || 'localhost';
+import Navigation from './components/Nav.vue';
+import axios from './utils/axiosConfig';
 
-  export default {
-    data(){
-      return {
-        selectedLang: 'en',
-        isAuthenticated: false,
-      };
+const ORIGIN_IP = import.meta.env.VITE_VUE_APP_ORIGIN_IP || 'localhost';
+
+export default {
+  components: { Navigation },
+  data() {
+    return {
+      selectedLang: 'en',
+      isAuthenticated: false,
+      username: null,
+      points: 0,
+      profile_picture_url: '/assets/images/default-profile.jpeg',
+      isDataLoaded: false,  // flag to check if data is loaded before mounting Navigation
+    };
+  },
+  watch: {
+    $route() {
+      // Ensure profile picture is updated on route changes
+      if (!this.isNav() && this.isDataLoaded) {
+        this.updateProfilePicture();
+      }
     },
     computed: {
     userGameStatsLink() {
@@ -92,23 +76,75 @@
             localStorage.setItem('id', response.data.data.id);
             localStorage.setItem('username', response.data.data.username);
           }
+  },
+  methods: {
+    isCentered() {
+      return ['/login', '/register', '/forgot-password'].includes(this.$route.path);
+    },
+    isNav() {
+      const nonNavPaths = ['/', '/game', '/game-online', '/login', '/register', '/forgot-password'];
+      return nonNavPaths.includes(this.$route.path) || this.$route.name === 'NotFound';
+    },
+    changeLang() {
+      this.$i18n.locale = this.selectedLang;
+    },
+    checkAuthStatus() {
+      axios.get(`https://${ORIGIN_IP}:8000/api/user/is_logged_in/`)
+        .then(response => {
+          this.isAuthenticated = response.status === 200;
         })
         .catch(error => {
-          if (error.response && error.response.status === 401) {
-            // User is not authenticated
-            console.log(error.response);
-            this.isAuthenticated = false;
-          } else {
-            // Handle other errors (e.g., network issues)
-            console.error("Error checking auth status:", error);
-          }
+          this.isAuthenticated = error.response && error.response.status === 401 ? false : this.isAuthenticated;
+          console.error("Error checking auth status:", error);
         });
-      },
     },
     mounted() {
       this.checkAuthStatus();
+    async loadUserData() {
+      // Simulate async data loading, checking localStorage for required info
+      while (!localStorage.getItem('username') )
+      {//|| !localStorage.getItem('points')) {
+        await new Promise(resolve => setTimeout(resolve, 100));
+      }
+      this.username = localStorage.getItem('username');
+      this.points = localStorage.getItem('points');
+      await this.getPoints();
+      await this.updateProfilePicture();
+      this.isDataLoaded = true;
     },
-  }
+    async updateProfilePicture() {
+      try {
+        const response = await axios.get(`https://${ORIGIN_IP}:8000/api/user/get_profile_picture_url/${this.username}/`);
+        this.profile_picture_url = response.data.data.profile_picture_url;
+      } catch (error) {
+        console.error("Error fetching profile picture:", error);
+      }
+    },
+    async getPoints() {
+      try {
+        const response = await axios.get(`https://${this.$router.ORIGIN_IP}:8000/api/user/get_profile/${this.username}/`)
+        const data = response.data.data;
+          // Asegurarse de que 'data' tenga las propiedades necesarias
+        if (data) {
+          this.points = data.puntos;
+        }
+      } catch (error) {
+        console.error("Error fetching user points:", error);
+      }
+    },
+    onNavMounted() {
+      this.$nextTick(() => {
+        if (this.$refs.Navigation) {
+          this.$refs.Navigation.getProfilePicture();
+        }
+      });
+    },
+  },
+  async mounted() {
+    // this.checkAuthStatus();
+    await this.loadUserData();  // Load user data before rendering Navigation
+  },
+};
 </script>
 
 <style scoped>
@@ -118,61 +154,11 @@
   height: 100vh;
   width: 100%;
 }
-
-nav {
-  flex-shrink: 0; 
-}
-.navbar {
-  background: #FF9670;/*rgb(182 201 205 / 60%); */
-  backdrop-filter: blur(10px); 
-  box-shadow: 0 5px 6px rgba(0, 0, 0, 0.1); 
-  margin-left: 10px;
-  margin-right: 10px;
-  margin-top: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  border-radius: 5px;
-}
-
 .content-wrapper { 
   flex-grow: 1;  
   display: flex; 
   justify-content: center; 
   align-items: center; 
 }
-
-.footer {
-  flex-shrink: 0; 
-  width: 100%;
-  background-color: #96c1ce;
-}
-
-
-.nav-link4:hover{
-  font-weight: bold;
-}
-.nav-link3:hover{
-  font-weight: bold;
-
-}
-.nav-link2:hover{
-  font-weight: bold;
-
-}
-.nav-link1:hover{
-  font-weight: bold;
-
-}
-.nav-link1, .nav-link2, .nav-link3, .nav-link4 {
-  color: black; 
-  text-decoration: none; 
-}
-
-.navbar-nav {
-  display: flex;
-  gap: 20px; 
-  margin-right: 20px;
-}
-
+.footer { flex-shrink: 0; background-color: #96c1ce; }
 </style>

@@ -5,7 +5,7 @@ set -o nounset
 
 rm -f './celerybeat.pid'
 
-cd app
+cd /app
 python manage.py makemigrations user
 python manage.py makemigrations tournamentsapp
 python manage.py migrate

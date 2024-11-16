@@ -1,11 +1,8 @@
-FROM python:3.13.0b4-bookworm
+FROM eavedillo/transcendence:latest
 
 WORKDIR /app
 
 COPY . .
-
-RUN pip install -r requirements.txt
-RUN apt-get update -y && apt-get install -y postgresql-client
 
 RUN chmod +x start.sh
 

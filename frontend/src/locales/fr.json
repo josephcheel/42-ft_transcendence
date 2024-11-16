@@ -1,22 +1,49 @@
 {
-    "message": {
-        "home": "Accueil",
-        "login": "Connexion",
-        "enter": "Entrer",
-        "play": "Jouer",
-        "dashboard": "Tableau de bord",
-        "profile": "Profil",
-        "chat": "Chat",
-        "register": "S'inscrire",
+    "login": {
+        "forget_pass": "Mot de passe oublié",
+        "no_account": "Vous n'avez pas de compte ?",
+        "enter": "Entrer"
+    },
+    "register": {
         "register_title": "Créer un compte",
-        "name": "Prénom",
-        "lastname": "Nom de famille",
+        "alreadyAcc": "Vous avez déjà un compte ?"
+    },
+    "general": {
         "username": "Nom d'utilisateur",
         "password": "Mot de passe",
+        "register": "S'inscrire",
+        "login": "Se connecter",
+        "name": "Prénom",
+        "lastname": "Nom de famille",
         "confirm_pass": "Confirmer le mot de passe",
-        "alreadyAcc": "Vous avez déjà un compte ?",
-        "no_account": "Vous n'avez pas de compte ?",
-        "forget_pass": "Mot de passe oublié",
+        "email": "E-mail",
+        "username_tournament": "Nom d'utilisateur pour le tournoi",
+        "picprofile": "Image de profil"
+    },
+    "friends": {
+        "friends_title": "Mes amis",
+        "placeholder_search": "Rechercher des amis",
+        "requests_title": "Demandes d'ami"
+    },
+    "tournaments": {
+        "create_tournament": "Créer un tournoi",
+        "tournament_name": "Nom du tournoi",
+        "placehold_name": "Entrez le nom du tournoi",
+        "tournament_date": "Date de début",
+        "max_goals": "Objectifs maximum",
+        "speed": "Vitesse",
+        "add_player": "Ajouter un joueur",
+        "placehold_playername": "Entrez le nom du joueur",
+        "add": "Ajouter",
+        "create": "Créer",
+        "your_tournaments": "Vos tournois",
+        "upcoming": "Prochains matchs de tournoi",
+        "check_list": "Consultez le calendrier de vos prochains matchs et restez prêt.",
+        "round": "Tour",
+        "pending_tournaments": "Tournois en attente",
+        "check_inv": "Examinez et acceptez les invitations pour rejoindre des tournois."
+    },
+    "games": {
         "local_match": "Match local",
         "explain_local_match": "Jouer contre un invité sur le même clavier",
         "simple_match": "Match en ligne",
@@ -25,9 +52,26 @@
         "explain_friend_match": "Rejoindre ou créer un match avec un ami",
         "send": "Envoyer",
         "tournament": "Tournoi",
-        "explain_tournament": "Créer un tournoi pour 16 joueurs",
+        "explain_tournament": "Créer un tournoi pour 16 joueurs"
+    },
+    "message": {
+        "home": "Accueil",
+        "links": {
+            "home": "Accueil",
+            "login": "Connexion",
+            "logout": "Déconnexion",
+            "register": "Inscription",
+            "games": "Jeux",
+            "settings": "Paramètres",
+            "language": "Langue",
+            "friends": "Amis",
+            "history": "Historique",
+            "profile": "Profil",
+            "play": "Jouer",
+            "stats": "Statistiques"
+        },
         "email": "E-mail",
-        "reset_pass": "Restaurer votre mot de passe",
+        "reset_pass": "Réinitialiser votre mot de passe",
         "name_placeholder": "prénom",
         "lastname_placeholder": "nom de famille",
         "username_placeholder": "nom d'utilisateur",
@@ -35,5 +79,7 @@
         "confirm_pass_placeholder": "confirmer le mot de passe",
         "logout": "Se déconnecter",
         "gamestats": "Statistiques de jeu"
+        "logout": "Déconnexion"
+
     }
 }

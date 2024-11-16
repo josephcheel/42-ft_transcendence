@@ -5,7 +5,7 @@
       <img id="profile-picture" :src="user.profile_picture_url" class="rounded-circle img-fluid profile-picture" alt="User Image" />
     </div>
     <div class="mb-3" v-else>
-      <label for="imageUpload" class="form-label">Profile Image</label>
+      <label for="imageUpload" class="form-label">{{ $t('general.picprofile')}}</label>
       <input type="file" class="form-control" id="imageUpload" @change="onImageChange">
     </div>
 
@@ -14,30 +14,30 @@
 
       <!-- Campos de información del usuario -->
       <div v-if="!isEditing">
-        <p class="form-label"><strong>Name:</strong> {{ user.first_name }}</p>
-        <p class="form-label"><strong>Last Name:</strong> {{ user.last_name }}</p>
-        <p class="form-label"><strong>Username:</strong> {{ user.username }}</p>
-        <p class="form-label"><strong>Tournament Username:</strong> {{ user.tournament_name }}</p>
+        <p class="form-label"><strong>{{ $t('general.name')}}:</strong> {{ user.first_name }}</p>
+        <p class="form-label"><strong>{{ $t('general.lastname')}}:</strong> {{ user.last_name }}</p>
+        <p class="form-label"><strong>{{ $t('general.username')}}:</strong> {{ user.username }}</p>
+        <p class="form-label"><strong>{{ $t('general.username_tournament')}}:</strong> {{ user.tournament_name }}</p>
       </div>
 
       <!-- Campos editables -->
       <div v-else>
         <div class="mb-3">
-          <label for="firstName" class="form-label">First Name</label>
+          <label for="firstName" class="form-label">{{ $t('general.name')}}</label>
           <input type="text" class="form-control" v-model="user.first_name" id="firstName">
         </div>
         <div class="mb-3">
-          <label for="lastName" class="form-label">Last Name</label>
+          <label for="lastName" class="form-label">{{ $t('general.lastname')}}</label>
           <input type="text" class="form-control" v-model="user.last_name" id="lastName">
         </div>
         <div class="mb-3">
-          <label for="tournamentName" class="form-label">Tournament Username</label>
+          <label for="tournamentName" class="form-label">{{ $t('general.username_tournament')}}</label>
           <input type="text" class="form-control" v-model="user.tournament_name" id="tournamentName">
         </div>
       </div>
 
       <!-- Botón para alternar entre modo de edición y visualización -->
-      <div class="text-center">
+      <div v-if="editDisplay" class="text-center">
         <button class="btn btn-primary" @click="toggleEdit">
           {{ isEditing ? 'Save' : 'Edit' }}
         </button>
@@ -93,7 +93,13 @@ export default {
       
     }
 },
-
+  props: {
+    editDisplay: {
+      type: Boolean,
+      required: true,
+      default: true
+    }
+  },
   methods: {
     toggleEdit() {
       if (this.isEditing){

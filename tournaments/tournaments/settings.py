@@ -20,6 +20,8 @@ from corsheaders.defaults import default_headers
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 LOG_FILE = os.environ.get("TOURNAMENT_LOG", "tournament.log")
+ORIGIN_IP = os.environ.get("ORIGIN_IP", "localhost")
+
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
@@ -32,15 +34,15 @@ SECRET_KEY = os.environ.get(
 DEBUG = os.environ.get('DEBUG', 'true') == 'True'
 
 ALLOWED_HOSTS = ['localhost', 'users', 'tournaments',
-                 'tournamentsapp', 'blockchain', '127.0.0.1', 'gateway']
+                 'tournamentsapp', 'blockchain', '127.0.0.1', 'gateway', ORIGIN_IP]
 
 CSRF_TRUSTED_ORIGINS = [
-    'https://localhost:8000',  # Your frontend origin
+    f'https://{ORIGIN_IP}:8000',  # Your frontend origin
 ]
 
 
 CORS_ALLOWED_ORIGINS = [
-    "https://localhost:8000",
+    f'https://{ORIGIN_IP}:8000',
 ]
 
 CORS_ALLOW_CREDENTIALS = True

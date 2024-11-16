@@ -3,12 +3,12 @@
 	  <h1>Home Page</h1>
 	  <p>Bienvenido a la página de inicio.</p>
 	</div> -->
-
 	<div class="container-fluid d-flex justify-content-center align-items-center " style="max-width: 400px; width: 100%;">
 				<router-link id="play-button" class="btn btn-primary w-100" to="/select-game">PLAY!</router-link>
 	</div>
 </template>
-<style scoped>
+<style >
+
 #play-button {
 	font-size: 40px !important;
 }

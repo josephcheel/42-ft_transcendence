@@ -3,6 +3,7 @@ from tournamentsapp.models import Matches
 from datetime import datetime
 from django.db import OperationalError
 from django.http import JsonResponse
+from django.db.models import Q
 import json
 import logging
 from django.db.models import Q
@@ -14,6 +15,7 @@ logger.setLevel(logging.DEBUG)
 def list_matches(request, username=None):
 	logger.debug(request.user)
 	try:
+
 #		try:
 #			player = User.objects.get(username=player)
 #		except User.DoesNotExist:
@@ -28,12 +30,13 @@ def list_matches(request, username=None):
 		matches_data = Matches.objects.filter(
     		Q(player_id_1=player.id) | Q(player_id_2=player.id)
 )
+
 		matches_list = list(matches_data.values())
 		for match in matches_list:
 			for key, value in match.items():
 				if isinstance(value, datetime):
 					match[key] = value.isoformat()
 		data = json.dumps(matches_list)
-		return JsonResponse({'status': 'success', 'message': 'List of tournaments', 'data': data}, status=200)
+		return JsonResponse({'status': 'success', 'message': 'List of matches', 'data': data}, status=200)
 	except OperationalError:
 		return JsonResponse({'status': 'error', 'message': 'Internal error', 'data': None}, status=500)

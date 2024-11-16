@@ -29,7 +29,6 @@ from tournamentsapp.views.edit_tournament import edit_tournament
 
 
 urlpatterns = [
-    path('list/',list_tournaments),
     path('open_tournament/',open_tournament),
     path('edit_tournament/',edit_tournament),
     path('accept_invitation/',accept_invitation),

@@ -3,7 +3,7 @@
 set -o errexit
 set -o nounset
 
-cd app
+cd /app
 python manage.py makemigrations user
 python manage.py makemigrations tournamentsapp
 python manage.py migrate

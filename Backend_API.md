@@ -2,7 +2,7 @@
 | Section | Links |
 |---------|-------|
 | [User](#user) | [create_user](#create_user) <br> [login_user](#login_user) <br> [logout_user](#logout_user) <br> [is_logged_in](#is_logged_in) <br> [list_users](#list_users) <br> [user_status](#user_status) <br> [send_friend_request](#send_friend_request)<br> [change_friendship_status](#change_friendship_status)<br> [get_friends](#get_friends)<br> [update_user](#update_user) <br> [get_profile_picture_url](#get_profile_picture_url)<br> [upload_picture](#upload_picture) <br> [get_profile](#get_profile)|
-|[Tournaments](#tournaments)| [open_tournament](#open_tournament) <br> [accept_invitation](#accept_invitation) <br> [close_tournament](#close_tournament) <br> [start_match](#start_match) <br>[finish_match](#finish_match)|
+|[Tournaments](#tournaments)| [open_tournament](#open_tournament) <br> [accept_invitation](#accept_invitation) <br> [close_tournament](#close_tournament) <br> [start_match](#start_match) <br>[finish_match](#finish_match) <br> [list_tournaments](#list_tournaments) <br> [list_matches](#list_matches) <br> [list_invitations](#list_invitations)|
 
 All API calls will return a json response and the corresponding code
 
@@ -145,8 +145,7 @@ You need to call /user/upload_picture/ and upload a a form with a key/value pair
 
 | Use | Methods | Request Data | Response Data | Return Values|
 | --- | --- | --- | ---| ---|
-| Gets a user profile information| GET | username OR user_id  | first_name, last_name, username, tournament_name, is_online, profile_picture_url |  200,400,401,404, 405, 500|
-
+| Gets a user profile information| GET | username OR user_id  | puntos, first_name, last_name, username, tournament_name, is_online, profile_picture_url |  200,400,401,404, 405, 500|
 
 [Back to Top](#table-of-contents)
 
@@ -158,7 +157,7 @@ You need to call /user/upload_picture/ and upload a a form with a key/value pair
 
 | Use | Methods | Request Data | Response Data | Return Values|
 | --- | --- | --- | ---| ---|
-| Creates a tournament and sends invitation to all players  | POST | 'date_start', <BR> 'max_players', <BR> 'cost', <BR> 'price_1', <BR> 'price_2', <BR> 'price_3', <BR> 'players':[username1, username2, ...]	 | None |  200 (tournament created), 400 (incorrect data), 404 (user not in database), 500|
+| Creates a tournament and sends invitation to all players  | POST | 'name',<BR> 'winning_points', <BR> 'date_start', <BR> 'max_players', <BR> 'cost', <BR> 'price_1', <BR> 'price_2', <BR> 'price_3', <BR> 'players':[username1, username2, ...]	 | None |  200 (tournament created), 400 (incorrect data), 404 (user not in database), 500|
 
 [Back to Top](#table-of-contents)
 
@@ -180,12 +179,29 @@ You need to call /user/upload_picture/ and upload a a form with a key/value pair
 ### start_match
 | Use | Methods | Request Data | Response Data | Return Values|
 | --- | --- | --- | ---| ---|
-|When the first player access to the match| POST | 'tournament_id' | None |  200 (invitation accepted), 400 (incorrect data), 404 (user not in database), 500|
+|When the first player access to the match| POST | 'match_id' | None |  200 (invitation accepted), 400 (incorrect data), 404 (user not in database), 500|
 
 [Back to Top](#table-of-contents)
 
 ### finish_match
 | Use | Methods | Request Data | Response Data | Return Values|
 | --- | --- | --- | ---| ---|
-|When the match finishes, informs who is the winner| POST | 'match_id' 'winner' 'looser' | None |  200 (Match finished successfully), 400 (he match has already been played), 404 (user not in database), 500|
+|When the match finishes, informs who is the winner| POST | 'match_id' 'winner' 'winner_points' 'looser' 'looser_points' | None |  200 (Match finished successfully), 400 (he match has already been played), 404 (user not in database), 500|
 
+[Back to Top](#table-of-contents)
+
+### list_tournaments
+| Use | Methods | Request Data | Response Data | Return Values|
+| --- | --- | --- | ---| ---|
+|Returns a list of tournaments from registered user| GET | None | None |  200 (List of tournaments cereatedy), 500 (Internal error)|
+
+### list_matches
+| Use | Methods | Request Data | Response Data | Return Values|
+| --- | --- | --- | ---| ---|
+|Returns a list of matches from registered user | GET | None | None |  200 (List of matches cereated), 500 (Internal error)|
+
+
+### list_matches
+| Use | Methods | Request Data | Response Data | Return Values|
+| --- | --- | --- | ---| ---|
+|Returns a list of invitations from registered user | GET | None | None |  200 (List of invitations cereated), 500 (Internal error)|

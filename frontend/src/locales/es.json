@@ -1,34 +1,88 @@
 {
-    "message": {
-        "home": "Inicio",
-        "login": "Inicio Sesión",
-        "enter": "Entrar",
-        "play": "Jugar",
-        "dashboard": "Resultados",
-        "profile": "Perfil",
-        "chat": "Chat",
-        "register": "Registro",
-        "register_title": "Crea una cuenta",
+    "login": {
+        "forget_pass": "¿Olvidaste tu contraseña?",
+        "no_account": "¿No tienes una cuenta?",
+        "enter": "Entrar"
+    },
+    "register": {
+        "register_title": "Crear una cuenta",
+        "alreadyAcc": "¿Ya tienes una cuenta?"
+    },
+    "general": {
+        "username": "Nombre de usuario",
+        "password": "Contraseña",
+        "register": "Registrarse",
+        "login": "Iniciar sesión",
         "name": "Nombre",
         "lastname": "Apellido",
-        "username": "Usuario",
-        "password": "Contraseña",
-        "confirm_pass": "Confirmar Contraseña",
-        "alreadyAcc": "Ya tienes una cuenta?",
-        "no_account": "Todavia no tienes cuenta?",
-        "forget_pass": "Has olvidado la contraseña?",
-        "local_match": "Partido Local",
-        "explain_local_match": "Juega con invitado en el mismo teclado",
-        "simple_match": "Partido simple",
-        "explain_simple_match": "Juega online contra un usuario aleatorio",
-        "friend_match": "Partido con amigos",
-        "explain_friend_match": "Envía una invitación para jugar contra un amigo",
+        "confirm_pass": "Confirmar contraseña",
+        "email": "Correo electrónico",
+        "username_tournament": "Nombre de usuario para el torneo",
+        "picprofile": "Imagen de perfil"
+    },
+    "friends": {
+        "friends_title": "Mis amigos",
+        "placeholder_search": "Buscar amigos",
+        "requests_title": "Solicitudes de amistad"
+    },
+    "tournaments": {
+        "create_tournament": "Crear un torneo",
+        "tournament_name": "Nombre del torneo",
+        "placehold_name": "Ingresa el nombre del torneo",
+        "tournament_date": "Fecha de inicio",
+        "max_goals": "Goles máximos",
+        "speed": "Velocidad",
+        "add_player": "Agregar jugador",
+        "placehold_playername": "Ingresa el nombre del jugador",
+        "add": "Agregar",
+        "create": "Crear",
+        "your_tournaments": "Tus torneos",
+        "upcoming": "Próximos partidos del torneo",
+        "check_list": "Consulta el calendario de tus próximos partidos y mantente preparado.",
+        "round": "Ronda",
+        "pending_tournaments": "Torneos pendientes",
+        "check_inv": "Revisa y acepta invitaciones para unirte a torneos."
+    },
+    "games": {
+        "local_match": "Partida local",
+        "explain_local_match": "Jugar contra un invitado en el mismo teclado",
+        "simple_match": "Partida en línea",
+        "explain_simple_match": "Jugar en línea contra un jugador aleatorio",
+        "friend_match": "Partida con amigos",
+        "explain_friend_match": "Unirse o crear una partida con un amigo",
         "send": "Enviar",
         "tournament": "Torneo",
+
         "explain_tournament": "Crea un torneo para 16 personas",
         "email": "Correo",
         "reset_pass": "Restablece tu contraseña",
         "logout": "Cerrar Sesión",
-        "gamestats": "Estadísticas de Juego"
-    }
+        "gamestats": "Estadísticas de Juego
+        "explain_tournament": "Crear un torneo para 16 jugadores"
+    },
+    "message": {
+        "home": "Inicio",
+        "links": {
+            "home": "Inicio",
+            "login": "Iniciar sesión",
+            "logout": "Cerrar sesión",
+            "register": "Registrarse",
+            "games": "Juegos",
+            "settings": "Configuración",
+            "language": "Idioma",
+            "friends": "Amigos",
+            "history": "Historial",
+            "profile": "Perfil",
+            "play": "Jugar",
+            "stats": "Estadísticas"
+        },
+        "email": "Correo electrónico",
+        "reset_pass": "Restablecer tu contraseña",
+        "name_placeholder": "nombre",
+        "lastname_placeholder": "apellido",
+        "username_placeholder": "nombre de usuario",
+        "password_placeholder": "contraseña",
+        "confirm_pass_placeholder": "confirmar contraseña",
+        "logout": "Cerrar sesión"
+  }
 }
