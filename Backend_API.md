@@ -108,7 +108,7 @@ Set tournament name to username by default, user can later change the tournament
 
 | Use | Methods | Request Data | Response Data | Return Values|
 | --- | --- | --- | ---| ---|
-| Updates user fields: first_name, last_name, tournament_name | POST | first_name, last_name, tournament_name | None |  200,400,401,405, 500|
+| Updates user fields: first_name, last_name, tournament_name, language | POST | first_name, last_name, tournament_name, language | None |  200,400,401,405, 500|
 
 
 [Back to Top](#table-of-contents)
@@ -145,7 +145,7 @@ You need to call /user/upload_picture/ and upload a a form with a key/value pair
 
 | Use | Methods | Request Data | Response Data | Return Values|
 | --- | --- | --- | ---| ---|
-| Gets a user profile information| GET | username  | puntos, first_name, last_name, username, tournament_name, is_online, profile_picture_url |  200,400,401,404, 405, 500|
+| Gets a user profile information| GET | username  | lang, puntos, first_name, last_name, username, tournament_name, is_online, profile_picture_url |  200,400,401,404, 405, 500|
 
 
 [Back to Top](#table-of-contents)

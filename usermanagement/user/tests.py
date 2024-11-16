@@ -677,6 +677,8 @@ class getUserProfile(TestCase):
             'username': 'TestUser',
             'first_name': 'Luis',
             'last_name': 'Soto',
+            'lang': 'en',
+            'puntos': 1000
             }
         self.response = self.client.get(reverse('get_profile',args=[self.user.username]))
         self.check_json()
@@ -691,6 +693,8 @@ class getUserProfile(TestCase):
             'username': 'TestUser2',
             'first_name': 'Luis',
             'last_name': 'Soto',
+            'lang': 'en',
+            'puntos': 1000
             }
         self.response = self.client.get(reverse('get_profile',args=[self.user2.username]))
         self.check_json()

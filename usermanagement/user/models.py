@@ -9,6 +9,20 @@ from django.contrib.auth.models import AbstractUser
 
 
 class User(AbstractUser):
+    EN_CHOICE = 'en'
+    ES_CHOICE = 'es'
+    FR_CHOICE = 'fr'
+    LANG_CHOICES = [
+        (EN_CHOICE, "en"),
+        (ES_CHOICE, "es"),
+        (FR_CHOICE, "fr"),
+
+    ]
+    language = models.CharField(    
+        max_length=2,
+        choices=LANG_CHOICES,
+        default=EN_CHOICE,
+    )
     lowercase_username =  models.CharField(max_length=100, null=True)
     tournament_name = models.CharField(max_length=100, null = True)
     puntos = models.IntegerField(default=1000)
@@ -23,12 +37,15 @@ class User(AbstractUser):
 
     def update_fields(self, **kwargs):
         for field in kwargs:
-            if field in ['first_name', 'last_name', 'tournament_name'] and hasattr(self, field):
+            if field in ['first_name', 'last_name', 'tournament_name', 'language'] and hasattr(self, field):
+                if field == 'language':
+                    if kwargs[field] not in ['en', 'es', 'fr']:
+                        continue
                 setattr(self, field, kwargs[field])
         self.save()
 
     def get_all(self):
-        return {'puntos': self.puntos, 'first_name': self.first_name, 'last_name': self.last_name, 'username' : self.username ,"tournament_name" : self.tournament_name, 'is_online' : self.userstatus.is_online, 'profile_picture_url' : self.userprofilepic.picture.url}
+        return {'lang': self.language,'puntos': self.puntos, 'first_name': self.first_name, 'last_name': self.last_name, 'username' : self.username ,"tournament_name" : self.tournament_name, 'is_online' : self.userstatus.is_online, 'profile_picture_url' : self.userprofilepic.picture.url}
 
 
 User = get_user_model()
