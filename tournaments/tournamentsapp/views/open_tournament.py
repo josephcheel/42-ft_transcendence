@@ -22,7 +22,7 @@ def open_tournament(request):
 	data = request.data
 
 	received_date_start = datetime.fromisoformat(str(data.get('date_start')))
-	if received_date_start < datetime.now():
+	if received_date_start < timezone.now():
 		return JsonResponse({'status': 'error', 'message': 'Invalid start date', 'data': None}, status=400)
 
 #	if data.get('max_players') & 1:

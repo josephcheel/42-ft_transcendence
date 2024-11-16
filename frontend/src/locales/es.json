@@ -57,8 +57,7 @@
         "email": "Correo",
         "reset_pass": "Restablece tu contraseña",
         "logout": "Cerrar Sesión",
-        "gamestats": "Estadísticas de Juego
-        "explain_tournament": "Crear un torneo para 16 jugadores"
+        "gamestats": "Estadísticas de Juego"
     },
     "message": {
         "home": "Inicio",
