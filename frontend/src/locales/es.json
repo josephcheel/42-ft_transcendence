@@ -52,7 +52,12 @@
         "explain_friend_match": "Unirse o crear una partida con un amigo",
         "send": "Enviar",
         "tournament": "Torneo",
-        "explain_tournament": "Crear un torneo para 16 jugadores"
+
+        "explain_tournament": "Crea un torneo para 16 personas",
+        "email": "Correo",
+        "reset_pass": "Restablece tu contraseña",
+        "logout": "Cerrar Sesión",
+        "gamestats": "Estadísticas de Juego"
     },
     "message": {
         "home": "Inicio",
@@ -78,5 +83,5 @@
         "password_placeholder": "contraseña",
         "confirm_pass_placeholder": "confirmar contraseña",
         "logout": "Cerrar sesión"
-    }
+  }
 }

@@ -6,7 +6,6 @@ axios.defaults.withCredentials = true;
 axios.interceptors.request.use(async config => {
     await fetchCSRFToken(); 
     const csrftoken = getCSRFToken(); 
-    console.log('CSRF Token:', csrftoken); 
     if (csrftoken) {
         config.headers['X-CSRFToken'] = csrftoken; 
     }

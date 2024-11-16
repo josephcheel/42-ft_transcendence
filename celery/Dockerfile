@@ -17,5 +17,5 @@ RUN sed -i 's/\r$//g' /start-flower
 RUN chmod +x /start-flower
 
 
-#ENTRYPOINT ["/entrypoint"]
-ENTRYPOINT [ "bash", "-c", "while true; do sleep 3306; done"]
+ENTRYPOINT ["/entrypoint"]
+#ENTRYPOINT [ "bash", "-c", "while true; do sleep 3306; done"]

@@ -27,7 +27,7 @@ class User(AbstractUser):
     tournament_name = models.CharField(max_length=100, null = True)
     puntos = models.IntegerField(default=1000)
     puntos_reservados = models.IntegerField(default=0)
-    ethereum_address = models.CharField(max_length=42, null=True)
+    ethereum_address = models.CharField(max_length=44, null=True)
     ethereum_private_key = models.CharField(max_length=66, null=True, blank=True)
     # Specify a unique related_name for the groups field
     groups = models.ManyToManyField(
@@ -45,7 +45,8 @@ class User(AbstractUser):
         self.save()
 
     def get_all(self):
-        return {'lang': self.language,'puntos': self.puntos, 'first_name': self.first_name, 'last_name': self.last_name, 'username' : self.username ,"tournament_name" : self.tournament_name, 'is_online' : self.userstatus.is_online, 'profile_picture_url' : self.userprofilepic.picture.url}
+
+        return {'lang': self.language,'puntos': self.puntos,'id': self.id, 'first_name': self.first_name, 'last_name': self.last_name, 'username' : self.username ,"tournament_name" : self.tournament_name, 'is_online' : self.userstatus.is_online, 'profile_picture_url' : self.userprofilepic.picture.url}
 
 
 User = get_user_model()

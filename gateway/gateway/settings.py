@@ -25,6 +25,7 @@ SECRET_KEY = os.environ.get(
 #CSRF_HEADER_NAME='csrftoken1'
 CSRF_TRUSTED_ORIGINS = [
     'https://' + ORIGIN_IP + ':8000',  # Your frontend origin
+    'https://localhost:8000',
 ]
 
 

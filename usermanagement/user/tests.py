@@ -148,7 +148,7 @@ class logInTest(TestCase):
     def test_user_is_logged_in(self):
         self.base_json['status'] = 'success'
         self.base_json['message'] = 'User is logged in'
-        self.base_json['data'] = None
+        self.base_json['data'] = {'id': 1, 'username': 'test1'}
 
         self.client.login(username=self.user1['username'], password=self.user1['password'])
         response = self.client.get(reverse(is_logged_in))
