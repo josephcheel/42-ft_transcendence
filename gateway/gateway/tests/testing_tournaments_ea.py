@@ -8,7 +8,8 @@ import random
 import pytz
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
-DOMAIN = '10.19.250.15'
+DOMAIN = 'localhost'
+#DOMAIN = '10.19.250.15'
 #DOMAIN = '192.168.40.44'
 EuropeZone = pytz.timezone('Europe/Madrid')
 
@@ -37,7 +38,7 @@ list_tournaments_url = f'https://{DOMAIN}:8000/api/tournaments/list_tournaments/
 start_match_url = f'https://{DOMAIN}:8000/api/tournaments/start_match/'
 total_players = 22
 total_matches = 100
-total_tournaments = 5
+total_tournaments = 10
 
 def get_request(session, url, csrf_token, data=None):
 	# Add CSRF token to the headers
@@ -241,7 +242,7 @@ def test_finish_tournament():
 				response = get_request(
 					mysessions[i], list_matches_by_tournament_id_url + f"{tournament_id}", csrf[i])
 				list_matches = json.loads(response.json()['data'])
-				while list_matches != []:
+				while any(match['status'] == 'not played' for match in list_matches):
 					for match in list_matches:
 						if match['status'] == 'not played':
 							player1 = match['player_id_1_id']
