@@ -107,7 +107,8 @@ export default {
   },
   async mounted() {
     // this.checkAuthStatus();
-    await this.loadUserData();  // Load user data before rendering Navigation
+    if (this.isNav())
+      await this.loadUserData();  // Load user data before rendering Navigation
   },
 };
 </script>
