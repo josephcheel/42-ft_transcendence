@@ -86,8 +86,6 @@ volumes:
 
 compile: ./frontend/package-lock.json 
 	@npm --prefix ./frontend install
-	@npm --prefix ./pong-game-server install
-	@npm --prefix ./pong-game-server install pm2 -g
 	@touch .exec_run_npm
 
 run_npm: .exec_run_npm

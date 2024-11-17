@@ -1,6 +1,6 @@
 import express from 'express';
-// import { createServer } from 'https';
-import { createServer } from 'http';
+import { createServer } from 'https';
+// import { createServer } from 'http';
 import { Server } from 'socket.io';
 import { dirname } from 'path';
 import path from 'path';
@@ -301,8 +301,8 @@ const keyFilePath = path.join(__dirname, 'selfsigned.key');
 
 // Read the files
 const serverOptions = {
-    // key: fs.readFileSync(keyFilePath),
-    // cert: fs.readFileSync(pemFilePath),
+    key: fs.readFileSync(keyFilePath),
+    cert: fs.readFileSync(pemFilePath),
 };
 
 const server = createServer(serverOptions, app);
