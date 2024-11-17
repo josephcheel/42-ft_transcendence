@@ -13,11 +13,11 @@
       <h5 class="card-title text-center">{{ isEditing ? $t('general.edit_profile') : $t('general.user_profile') }}</h5>
 
       <!-- Campos de información del usuario -->
-      <div v-if="!isEditing">
-        <p class="form-label"><strong>{{ $t('general.name')}}:</strong> {{ user.first_name }}</p>
-        <p class="form-label"><strong>{{ $t('general.lastname')}}:</strong> {{ user.last_name }}</p>
-        <p class="form-label"><strong>{{ $t('general.username')}}:</strong> {{ user.username }}</p>
-        <p class="form-label"><strong>{{ $t('general.username_tournament')}}:</strong> {{ user.tournament_name }}</p>
+      <div id="info" v-if="!isEditing" >
+        <p class="form-label"><strong>{{ $t('general.name')}}</strong> {{ user.first_name }}</p>
+        <p class="form-label"><strong>{{ $t('general.lastname')}}</strong> {{ user.last_name }}</p>
+        <p class="form-label"><strong>{{ $t('general.username')}}</strong> {{ user.username }}</p>
+        <p class="form-label"><strong>{{ $t('general.username_tournament')}}</strong> {{ user.tournament_name }}</p>
       </div>
 
       <!-- Campos editables -->
@@ -47,11 +47,23 @@
 </template>
 <style scoped>
 
+.text-center {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  
+}
+.btn-primary {
+  font-size: 0.8rem !important;
+  height: fit-content;
+}
+
 #profile-picture {
   width: 15vh;
   height: 15vh;
   border-radius: 50%;
-  border: 3px solid black;
+  /* border: 3px solid black; */
+  border : 3px solid rgba(255, 255, 255, 0.391);
   object-fit: cover; /* Ensures the image covers the entire area */
   object-position: center; /* Centers the image */
   background-color: #f0f0f0; /* Placeholder background color */
@@ -60,9 +72,22 @@
 .card {
   background-color: rgba(255, 255, 255, 0.379) !important;
 }
+
+.card-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
 .form-label {
   color: black !important;
   font-size: small !important;
+  /* font-family:system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif !important; */
+  font-family: 'Helvetica Neue' !important;
+}
+#info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
 }
 
 </style>
@@ -86,10 +111,10 @@ export default {
   mounted() {
     const username = localStorage.getItem('username');
     if (!username) {
-      this.$router.push({ path: '/', params: { currentView: 'Login' } });
+      // this.$router.push({ path: '/', params: { currentView: 'Login' } });
       // this.$router.push('/login'); // Redirigir al login si no está autenticado
     } else {
-      this.fetchUserProfile();
+      // this.fetchUserProfile();
     }
 },
   props: {
