@@ -1,35 +1,20 @@
 <template>
-<div id="notfound" class="d-flex justify-content-center align-items-center flex-column">
-    <h1 class="text-center">{{ $t('not_found.not_found')}}</h1>
-    <p class="text-center">{{ $t('not_found.explain_not_found')}}</p>
-</div>
-
-	<a id="goBack" @click="this.$router.go(-1)" class="btn btn-primary">{{ $t('not_found.go_back')}}</a>
-	<router-link id="goHome" to="/" class="btn btn-primary">{{ $t('not_found.go_home')}}</router-link>
-
-
-	<!-- </div> -->
-	<div ref="canvas"></div>
+		<div id="notfound" class="d-flex flex-column justify-content-center align-items-center vh-100 text-center">
+    <h1>{{ $t('not_found.not_found') }}</h1>
+    <p>{{ $t('not_found.explain_not_found') }}</p>
+    <div class="d-flex flex-column flex-sm-row gap-2 mt-3 w-100 justify-content-center">
+      <a id="goBack" @click="this.$router.go(-1)" class="btn btn-primary px-4">
+        {{ $t('not_found.go_back') }}
+      </a>
+      <router-link id="goHome" to="/" class="btn btn-primary px-4">
+        {{ $t('not_found.go_home') }}
+      </router-link>
+    </div>
+  </div>
+			<div ref="canvas"></div>
 </template>
 
 <style scoped>
-#goBack
-{
-	/* max-width: 300px; */
-	top: 65%;
-	left: 55%;
-	transform: translate(-50%, -50%);
-	color: rgb(255, 252, 252);
-	position: absolute;
-}
-#goHome {
-	max-width: 300px;
-	top: 65%;
-	left: 45%;
-	transform: translate(-50%, -50%);
-	color: rgb(255, 252, 252);
-	position: absolute;
-}
 #notfound {
 	font-family: 'Nokia Cellphone FC';
 	/* font-size: 2em; */
