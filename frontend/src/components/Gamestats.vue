@@ -1,10 +1,10 @@
 <template>
   <div class="container">
-    <h1>Game Stats for {{ this.$route.params.username }}</h1>
+    <h1>{{ $t('game_stats.game_stats')}} {{ this.$route.params.username }}</h1>
     <div class="row-container">
       <div class="stats-container">
         <div class="chart-container">
-          <h2>Win rate</h2>
+          <h2>{{ $t('game_stats.win_rate')}}</h2>
           <div class="canvas-wrapper">
             <canvas class="canvas" ref="pieChart" height="400" width="400"></canvas>
             <div class="win-percent">
@@ -12,9 +12,9 @@
             </div>
           </div>
           <div class="win-stats">
-            <p v-if="this.matchList.length">Wins: {{ this.matchList.filter(match => match.winner_id_id ===
+            <p v-if="this.matchList.length">{{ $t('game_stats.wins')}}: {{ this.matchList.filter(match => match.winner_id_id ===
               this.userId).length }}</p>
-            <p v-if="this.matchList.length">Losses: {{ this.matchList.filter(match => match.winner_id_id !==
+            <p v-if="this.matchList.length">{{ $t('game_stats.losses')}}: {{ this.matchList.filter(match => match.winner_id_id !==
               this.userId).length }}</p>
           </div>
         </div>

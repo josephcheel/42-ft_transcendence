@@ -2,16 +2,15 @@
 <div class="container-fluid d-flex justify-content-center align-items-center ">
   <div class="p-4" style="max-width: 400px; width: 100%;     ">
     <!-- <h3 class="text-center mb-4">{{ $t('message.login')}}</h3> -->
-    <h2 v-if="!display" id="subtitle"> Step into the next dimension of Pong
-    fully immersive, fast-paced, and in stunning 3D!</h2>
+    <h2 v-if="!display" id="subtitle">{{ $t('login.subtitle')}}</h2>
     <form  id="form" @submit.prevent="login">
       <div v-if="display" class="mb-3">
         <label for="user" class="form-label">{{ $t('general.username')}}</label>
-        <input v-model="user" type="text" class="form-control" id="user" placeholder="Enter your username" required>
+        <input v-model="user" type="text" class="form-control" id="user" :placeholder="$t('login.placehold_username')" required>
       </div>
       <div v-if="display" class="mb-3">
         <label for="password" class="form-label">{{ $t('general.password')}}</label>
-        <input v-model="psw" type="password" class="form-control" id="password" placeholder="Enter your password" required>
+        <input v-model="psw" type="password" class="form-control" id="password" :placeholder="$t('login.placehold_password')" required>
       </div>
       <button v-if="!display" v-on:click="display = !display"  class="btn btn-primary w-100 mt-4 login-button">{{ $t('general.login')}}</button>
       <button v-if="display" type="submit" class="btn btn-primary w-100 mt-4 login-button">{{ $t('login.enter')}}</button>

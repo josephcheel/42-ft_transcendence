@@ -2,8 +2,8 @@
   <div class="my-component">
   
 	<header>
-	  <h1 id="score">Score 0 - 0 </h1>
-    <h3 id="score" v-if="matchId && tournamentId === '' && !start"> Invite your friend to join! Use this match code: {{ matchId }}</h3>
+	  <h1 id="score">{{ $t('general.score')}} 0 - 0 </h1>
+    <h3 id="score" v-if="matchId && tournamentId === '' && !start"> {{ $t('general.game_explain')}}: {{ matchId }}</h3>
 	  <input type="checkbox" id="volume">
 		<img src="/assets/icons/mute.svg" alt="volume mute" id="mute">
 		<img src="/assets/icons/unmute.svg" alt="volume unmute" id="unmute">
@@ -28,7 +28,7 @@
 	  <!-- <img src="/assets/icons/line-md--loading-twotone-loop.svg" alt="loading"> -->
 	</div> 
 	<div class="waiting-screen" id="waiting-text">
-	  <h1>Waiting for players...</h1>
+	  <h1>{{ $t('general.waiting')}}...</h1>
 	</div>
   
 	<section> 

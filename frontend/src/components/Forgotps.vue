@@ -4,7 +4,7 @@
         <form @submit.prevent="test">
             <div class="mb-3">
                 <label for="email" class="form-label">{{ $t('message.email')}}</label>
-                <input v-model="mail" type="email" class="form-control" id="email" placeholder="Enter your email" required>
+                <input v-model="mail" type="email" class="form-control" id="email" :placeholder="$t('general.enter_email')" required>
             </div>
             <button type="submit" class="btn btn-primary w-100">{{ $t('message.send')}}</button>
             <div class="mt-3 text-center">

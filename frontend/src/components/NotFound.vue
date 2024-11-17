@@ -1,11 +1,11 @@
 <template>
 <div id="notfound" class="d-flex justify-content-center align-items-center flex-column">
-    <h1 class="text-center">Not Found</h1>
-    <p class="text-center">The page you are looking for could not be found.</p>
+    <h1 class="text-center">{{ $t('not_found.not_found')}}</h1>
+    <p class="text-center">{{ $t('not_found.explain_not_found')}}</p>
 </div>
 
-	<a id="goBack" @click="this.$router.go(-1)" class="btn btn-primary">Go Back</a>
-	<router-link id="goHome" to="/" class="btn btn-primary">Go Home</router-link>
+	<a id="goBack" @click="this.$router.go(-1)" class="btn btn-primary">{{ $t('not_found.go_back')}}</a>
+	<router-link id="goHome" to="/" class="btn btn-primary">{{ $t('not_found.go_home')}}</router-link>
 
 
 	<!-- </div> -->

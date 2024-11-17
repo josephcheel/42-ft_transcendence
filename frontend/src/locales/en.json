@@ -2,11 +2,20 @@
     "login": {
         "forget_pass": "Forgot password",
         "no_account": "Don't have an account?",
-        "enter": "Enter"
+        "enter": "Enter",
+        "subtitle" : "Step into the next dimension of Pong fully immersive, fast-paced, and in stunning 3D!",
+        "placehold_username" : "Enter your username",
+        "placehold_password" : "Enter your password"
     },
     "register": {
         "register_title": "Create an account",
         "alreadyAcc": "Already have an account?"
+    },
+    "game_stats":{
+        "game_stats": "Game Stats for",
+        "wins" : "Wins",
+        "losses": "Losses",
+        "win_rate": "Win Rate"
     },
     "general": {
         "username": "Username",
@@ -18,7 +27,13 @@
         "confirm_pass": "Confirm password",
         "email": "Email",
         "username_tournament": "Tournament Username",
-        "picprofile": "Profile image"
+        "picprofile": "Profile image",
+        "enter_email" : "Enter email",
+        "game_explain": "Invite your friend to join! Use this match code",
+        "score": "Score",
+        "waiting": "Waiting for players...",
+        "edit_profile": "Edit Profile",
+        "user_profile": "User Profile"
     },
     "friends": {
         "friends_title": "My Friends",
@@ -53,6 +68,12 @@
         "send": "Send",
         "tournament": "Tournament",
         "explain_tournament": "Create a tournament for 16 players"
+    },
+    "not_found": {
+        "not_found": "Not Found",
+        "explain_not_found": "The page you are looking for could not be found.",
+        "go_back" : "Go Back",
+        "go_home" : "Go Home"
     },
     "message": {
         "home": "Home",

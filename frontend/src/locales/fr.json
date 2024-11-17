@@ -2,57 +2,78 @@
     "login": {
         "forget_pass": "Mot de passe oublié",
         "no_account": "Vous n'avez pas de compte ?",
-        "enter": "Entrer"
+        "enter": "Entrer",
+        "subtitle" : "Entrez dans la prochaine dimension de Pong, totalement immersif, rapide et en 3D époustouflante !",
+        "placehold_username" : "Entrez votre nom d'utilisateur",
+        "placehold_password" : "Entrez votre mot de passe"
     },
     "register": {
         "register_title": "Créer un compte",
         "alreadyAcc": "Vous avez déjà un compte ?"
     },
+    "game_stats": {
+        "game_stats": "Statistiques de jeu pour",
+        "wins" : "Victoires",
+        "losses": "Défaites",
+        "win_rate": "Taux de victoire"
+    },
     "general": {
         "username": "Nom d'utilisateur",
         "password": "Mot de passe",
         "register": "S'inscrire",
-        "login": "Se connecter",
+        "login": "Connexion",
         "name": "Prénom",
-        "lastname": "Nom de famille",
+        "lastname": "Nom",
         "confirm_pass": "Confirmer le mot de passe",
-        "email": "E-mail",
+        "email": "Email",
         "username_tournament": "Nom d'utilisateur pour le tournoi",
-        "picprofile": "Image de profil"
+        "picprofile": "Image de profil",
+        "enter_email" : "Entrez votre email",
+        "game_explain": "Invitez votre ami à rejoindre ! Utilisez ce code de match",
+        "score": "Score",
+        "waiting": "En attente de joueurs...",
+        "edit_profile": "Modifier le profil",
+        "user_profile": "Profil de l'utilisateur"
     },
     "friends": {
         "friends_title": "Mes amis",
         "placeholder_search": "Rechercher des amis",
-        "requests_title": "Demandes d'ami"
+        "requests_title": "Demandes d'amis"
     },
     "tournaments": {
         "create_tournament": "Créer un tournoi",
         "tournament_name": "Nom du tournoi",
         "placehold_name": "Entrez le nom du tournoi",
         "tournament_date": "Date de début",
-        "max_goals": "Objectifs maximum",
+        "max_goals": "Nombre maximum de buts",
         "speed": "Vitesse",
         "add_player": "Ajouter un joueur",
         "placehold_playername": "Entrez le nom du joueur",
         "add": "Ajouter",
         "create": "Créer",
         "your_tournaments": "Vos tournois",
-        "upcoming": "Prochains matchs de tournoi",
-        "check_list": "Consultez le calendrier de vos prochains matchs et restez prêt.",
+        "upcoming": "Matchs de tournoi à venir",
+        "check_list": "Consultez le calendrier de vos matchs à venir et restez prêt.",
         "round": "Tour",
         "pending_tournaments": "Tournois en attente",
-        "check_inv": "Examinez et acceptez les invitations pour rejoindre des tournois."
+        "check_inv": "Vérifiez et acceptez les invitations pour rejoindre les tournois."
     },
     "games": {
         "local_match": "Match local",
-        "explain_local_match": "Jouer contre un invité sur le même clavier",
+        "explain_local_match": "Jouez contre un invité sur le même clavier",
         "simple_match": "Match en ligne",
-        "explain_simple_match": "Jouer en ligne contre un joueur aléatoire",
+        "explain_simple_match": "Jouez en ligne contre un joueur aléatoire",
         "friend_match": "Match entre amis",
-        "explain_friend_match": "Rejoindre ou créer un match avec un ami",
+        "explain_friend_match": "Rejoignez ou créez un match avec un ami",
         "send": "Envoyer",
         "tournament": "Tournoi",
-        "explain_tournament": "Créer un tournoi pour 16 joueurs"
+        "explain_tournament": "Créez un tournoi pour 16 joueurs"
+    },
+    "not_found": {
+        "not_found": "Introuvable",
+        "explain_not_found": "La page que vous recherchez est introuvable.",
+        "go_back" : "Retourner",
+        "go_home" : "Accueil"
     },
     "message": {
         "home": "Accueil",
@@ -70,14 +91,14 @@
             "play": "Jouer",
             "stats": "Statistiques"
         },
-        "email": "E-mail",
-        "reset_pass": "Réinitialiser votre mot de passe",
+        "email": "Email",
+        "reset_pass": "Réinitialisez votre mot de passe",
         "name_placeholder": "prénom",
-        "lastname_placeholder": "nom de famille",
+        "lastname_placeholder": "nom",
         "username_placeholder": "nom d'utilisateur",
         "password_placeholder": "mot de passe",
         "confirm_pass_placeholder": "confirmer le mot de passe",
-        "logout": "Se déconnecter",
+        "logout": "Déconnexion",
         "gamestats": "Statistiques de jeu"
     }
 }

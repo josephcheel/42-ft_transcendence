@@ -10,7 +10,7 @@
     </div>
 
     <div class="card-body">
-      <h5 class="card-title text-center">{{ isEditing ? 'Edit Profile' : 'User Profile' }}</h5>
+      <h5 class="card-title text-center">{{ isEditing ? $t('general.edit_profile') : $t('general.user_profile') }}</h5>
 
       <!-- Campos de información del usuario -->
       <div v-if="!isEditing">
