@@ -116,11 +116,28 @@ class Ball extends UserInput {
                     io.to(this.room).emit('endGame', 1);
                     io.to(this.room).emit('closeTheGame');
                     io.to(this.room).socketsLeave(this.room);
+                    let winner =  { username: undefined, points: 0 };
+                    let loser = { username: undefined, points: 0 };
                     for (let id in players)
                     {
                         if (players[id].room == this.room)
+                        {
+                            console.log('player1')
+                            console.log(players[id]);
+                            if (players[id].nb == 2)
+                            {
+                                winner.username = players[id].username;
+                                winner.points = this.score.player1;
+                            }
+                            else
+                            {
+                                loser.username   = players[id].username;
+                                loser.points = this.score.player2;
+                            }
                             delete players[id];
+                        }
                     }
+                    console.log('API CALL', {winner, loser} );
                     this.finished = true;
                 }
                 else
@@ -134,13 +151,34 @@ class Ball extends UserInput {
                     io.to(this.room).emit('endGame', 2);
                     io.to(this.room).emit('closeTheGame');
                     io.to(this.room).socketsLeave(this.room);
+                    let winner =  { username: undefined, points: 0 };
+                    let loser = { username: undefined, points: 0 };
                     for (let id in players)
                     {
                         if (players[id].room == this.room)
+                        {
+                            console.log('player2')
+                            console.log(players[id]);
+                            if (players[id].nb == 1)
+                            {
+                                winner.username = players[id].username;
+                                winner.points = this.score.player2;
+                            }
+                            else
+                            {
+                                loser.username   = players[id].username;
+                                loser.points = this.score.player1;
+                            }
                             delete players[id];
-                        // if (balls[this.room])
-                            // delete balls[this.room];
+                        }
                     }
+                    // let json = {winner: winner.username, looser: loser.username, winner_points: winner.points, looser_points: loser.points};
+                    // let response = axios.post(`https://${ORIGIN_IP}:8000/api/tournaments/match_finish`, json);
+                    // if (response.status === 200)
+                    // {
+                    //     console.log('200', { response });
+                    // }
+                    console.log('API CALL', {winner, loser});
                     this.finished = true;
                 }
                 else
@@ -189,7 +227,7 @@ class Paddle extends UserInput {
         this.connected = true;
         this.matchId = null;
         this.tournamentId = null;
-        this.usename = undefined;
+        this.username = undefined;
         this.ball = undefined;
     }
 
