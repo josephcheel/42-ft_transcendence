@@ -30,7 +30,7 @@ export default {
     return {
       selectedLang: 'en',
       isAuthenticated: false,
-      username: null,
+      username: '',
       points: 0,
       profile_picture_url: '/assets/images/default-profile.jpeg',
       isDataLoaded: false,  // flag to check if data is loaded before mounting Navigation

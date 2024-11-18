@@ -23,7 +23,7 @@
             <!-- Input para enviar invitación -->
             <div v-if="showFriendInput" class="col-lg-6 d-flex flex-column align-items-center justify-content-center">
               <input type="text" v-model="friendName" placeholder="Enter Match Id" class="form-control d-inline-block w-50" />
-              <button @click="sendInvitation" class="btn btn-success mt-2">{{ $t('games.send')}}</button>
+              <button @click="sendInvitation" class="btn btn-success mt-2">{{ $t('games.join')}}</button>
             </div>
         </div>
       </div>
@@ -49,16 +49,12 @@ export default {
       friendName: '',
     };
   },
-  mounted() {
-    const user = localStorage.getItem('username');
-    if(user) {
-      username.value = user;
-    } else {
-      // router.push({name: 'Login'})
-    }
-  },
   methods: {
     startLocalMatch() {
+      if (window.innerWidth <= 768) {
+        alert('Local matches are not supported on mobile devices.');
+        return;
+      }
       alert('Starting a local match...');
       this.$router.push({name: 'Game'});
     },
@@ -76,7 +72,7 @@ export default {
       }
     },
     sendInvitation() {
-      alert(`Invitation sent to ${this.friendName}`);
+      alert(`Created private match with code: ${this.friendName}`);
       this.goToMatch();
     },
     goToTournament() {

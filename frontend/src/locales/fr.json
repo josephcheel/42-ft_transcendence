@@ -65,7 +65,7 @@
         "explain_simple_match": "Jouez en ligne contre un joueur aléatoire",
         "friend_match": "Match entre amis",
         "explain_friend_match": "Rejoignez ou créez un match avec un ami",
-        "send": "Envoyer",
+        "join": "Rejoindre",
         "tournament": "Tournoi",
         "explain_tournament": "Créez un tournoi pour 16 joueurs"
     },
