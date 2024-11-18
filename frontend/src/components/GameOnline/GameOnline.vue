@@ -24,8 +24,10 @@
 	</header>
   
 	<div class="waiting-screen" id="loading">
-    <img src="/assets/icons/bouncing-ball.svg" height="100px" alt="loading">
+    <!-- <img src="/assets/icons/bouncing-ball (1).svg" height="100px" alt="loading"> -->
 	  <!-- <img src="/assets/icons/line-md--loading-twotone-loop.svg" alt="loading"> -->
+    <img src="/assets/icons/gooey-balls-2.svg" height="100px" alt="loading">
+    <!-- <img src="/assets/icons/pulse-multiple.svg" height="2000px" alt="loading"> -->
 	</div> 
 	<div class="waiting-screen" id="waiting-text">
 	  <h1>{{ $t('general.waiting')}}...</h1>
