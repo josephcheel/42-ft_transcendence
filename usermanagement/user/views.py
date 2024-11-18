@@ -33,7 +33,7 @@ def transfer_first_founds(user):
 	ganache_bank_account = web3.eth.accounts[0]
 	tx = {'from': ganache_bank_account,
 		  'to': user.ethereum_address,
-		  'value': web3.to_wei(10, 'ether'),
+		  'value': web3.to_wei(100, 'ether'),
 		  'gas': 21000,
 		  'gasPrice': Web3.to_wei('1', 'gwei'),
 		  'nonce': web3.eth.get_transaction_count(ganache_bank_account)}
