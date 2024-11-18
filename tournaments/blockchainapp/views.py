@@ -8,6 +8,10 @@ from tournamentsapp.models import Tournaments
 from tournamentsapp.wrappers import require_post, user_is_authenticated
 import tournaments.settings as settings
 import time
+import logging
+import json
+
+logger = logging.getLogger('django')
 # Create your views here.
 
 def execute_contract(tournament_id):
@@ -71,8 +75,8 @@ def make_transaction(request):
 	receiver = User.objects.get(username = receiver_id)
 	try:
 		try:
-			print ('paso Red blockchain:', settings.GANACHE_URL)
 			web3 = Web3(Web3.HTTPProvider(settings.GANACHE_URL))
+			logger.info('Connected to the blockchain')
 		except:
 			return JsonResponse({'status': 'error', 'message': 'Error connecting to the blockchain', 'data': None}, status=500)
 		account = user.ethereum_address
@@ -90,3 +94,29 @@ def make_transaction(request):
 		return JsonResponse({'status': 'success', 'message': 'Transaction made', 'data': tx_hash}, status=200)
 	except:
 		return JsonResponse({'status': 'error', 'message': 'Error making transaction', 'data': None}, status=405)
+
+@require_post
+@user_is_authenticated
+def get_results_from_blockchain(request):
+	user = User.objects.get(username = request.data("user"))
+	tournament_id = request.data("tournament_id")
+	try:
+		tournament = Tournaments.objects.get(id=tournament_id)
+		contract = tournament.hash
+		try:
+			web3 = Web3(Web3.HTTPProvider(settings.GANACHE_URL))
+			logger.info('Connected to the blockchain')
+		except:
+			return JsonResponse({'status': 'error', 'message': 'Error connecting to the blockchain', 'data': None}, status=500)
+		contract = web3.eth.contract(address=contract, abi=abi)
+		results = contract.functions.getTournamentResults().call()
+		my_data = json.dumps({
+			'first_place': results[0],
+			'second_place': results[1],
+			'third_place': results[2],
+			'organizer': results[3],
+			'start_date': results[4]
+		})
+		return JsonResponse({'status': 'success', 'message': 'Results obtained', 'data': my_data}, status=200)
+	except:
+		return JsonResponse({'status': 'error', 'message': 'Error obtaining results', 'data': None}, status=500)

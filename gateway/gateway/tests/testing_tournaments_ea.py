@@ -8,9 +8,9 @@ import random
 import pytz
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
-DOMAIN = 'localhost'
+#DOMAIN = 'localhost'
 #DOMAIN = '10.19.250.15'
-#DOMAIN = '192.168.40.44'
+DOMAIN = '192.168.40.44'
 EuropeZone = pytz.timezone('Europe/Madrid')
 
 def get_csrf_token(session, url):
@@ -36,6 +36,7 @@ list_matches_by_tournament_id_url = f'https://{DOMAIN}:8000/api/tournaments/list
 list_invitations = f'https://{DOMAIN}:8000/api/tournaments/list_invitations/'
 list_tournaments_url = f'https://{DOMAIN}:8000/api/tournaments/list_tournaments/'
 start_match_url = f'https://{DOMAIN}:8000/api/tournaments/start_match/'
+get_results_from_blockchain_url = f'https://{DOMAIN}:8000/api/blockchain/get_results_from_blockchain/'
 total_players = 22
 total_matches = 100
 total_tournaments = 10
@@ -303,7 +304,35 @@ def test_finish_tournament():
 						response = get_request(
                     			mysessions[i], list_matches_by_tournament_id_url + f"{tournament_id}", csrf[i])
 						list_matches = json.loads(response.json()['data'])
-
+	print("log out all players")
+	for i in range(1, total_players + 1):
+		user_data = {'username': f"test{i}", 'password': "test"}
+		response = send_request(mysessions[i], logout_url, csrf[i], user_data)
+		assert response.status_code == 200
+def get_data_from_contracts():
+	print("log in all players")
+	for i in range(1, total_players + 1):
+		user_data = {'username': f"test{i}", 'password': "test"}
+		response = send_request(mysessions[i], login_url, csrf[i], user_data)
+		assert response.status_code == 200
+	for i in range(1, total_players + 1):
+		for j in range(1, total_tournaments + 1):
+			response = get_request(
+				mysessions[i], list_tournaments_url + f"test{i}", csrf[i])
+			list_tournaments = json.loads(response.json()['data'])
+			if list_tournaments == []:
+				print(f"User test{i} has no tournaments")
+			else:
+				for tournament in list_tournaments:
+					if tournament['status'] == 'closed':
+						my_data = {
+							"tournament_id": tournament['id']
+						}
+						response = send_request(mysessions[i], get_results_from_blockchain, csrf[i], my_data)
+						print(f"User test{i} results from blockchain: {response.json()}")
+						assert response.status_code == 200
+						assert response.json()['status'] == 'success'
+						assert response.json()['message'] == 'Results obtained from blockchain'
 					
 
 def close_sessions():
@@ -318,4 +347,5 @@ if __name__ == "__main__":
 	test_accept_invitation()
 	test_close_tournament()
 	test_finish_tournament()
+	get_data_from_contracts()
 	close_sessions()
