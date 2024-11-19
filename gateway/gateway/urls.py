@@ -21,6 +21,7 @@ from .views import *
 internal_url=[
     path('user/<path:subpath>/', user, name='user'),
     path('tournaments/<path:subpath>/', tournaments, name='tournaments'),
+    path('blockchain/<path:subpath>/', tournaments, name='blockchain'),
     path('get_cookie/', get_cookie, name='get_cookie'),
 ]
 
