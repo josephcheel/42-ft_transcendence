@@ -48,8 +48,8 @@ def execute_contract(tournament_id):
 	tx_hash = web3.eth.send_raw_transaction(signed_tx.raw_transaction)
 	response = web3.eth.wait_for_transaction_receipt(tx_hash)
 	logger.info('Contract executed: %s', response)
-	contractAddress = response.contractAddress
-	tournament.hash = f"0x{contractAddress}"
+	contractAddress = response['to']
+	tournament.hash = contractAddress
 	tournament.save()
     #return JsonResponse({'status': 'success', 'message': 'Contract executed', 'data': tx_hash}, status=200)
 
