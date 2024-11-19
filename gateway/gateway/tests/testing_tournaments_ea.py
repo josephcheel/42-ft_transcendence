@@ -6,6 +6,7 @@ import urllib3
 import json
 import random
 import pytz
+import sys
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 #DOMAIN = 'localhost'
@@ -71,25 +72,43 @@ mysessions = {}
 csrf = {}
 
 #Test and create total_players users
-def test_register_user():
+
+def test_register_user(register = True):
+	print ("Registering / loging in all users")
 	for i in range(1, total_players + 1):
 		mysessions[i] = requests.Session()
 		mysessions[i].verify = False
 		csrf[i] = get_csrf_token(mysessions[i], csrf_url)
-		my_data = {'username': f"test{i}", 'password': "test", 'first_name': f"test{i}",  'last_name': f"Apellido{i}"}
-		response = send_request(mysessions[i], register_url, csrf[i], my_data)
-		if response.status_code == 201:
-			assert response.json()['status'] == 'success'
-			assert response.json()['message'] == 'User created successfully'
-		else:
-			assert response.status_code == 409
-			assert response.json()['status'] == 'error'
-			assert response.json()['message'] == 'User already Exists'
+		if register:
+			my_data = {'username': f"test{i}", 'password': "test", 'first_name': f"test{i}",  'last_name': f"Apellido{i}"}
+			response = send_request(mysessions[i], register_url, csrf[i], my_data)
+			if response.status_code == 201:
+				assert response.json()['status'] == 'success'
+				assert response.json()['message'] == 'User created successfully'
+				print(f"User test{i} created")
+			else:
+				assert response.status_code == 409
+				assert response.json()['status'] == 'error'
+				assert response.json()['message'] == 'User already Exists'
+				print(f"User test{i} already exists")
 		my_data = {'username': f"test{i}", 'password': "test"}
 		response = send_request(mysessions[i], login_url, csrf[i], my_data)
 		assert response.status_code == 200
 		assert response.json()['status'] == 'success'
 		assert response.json()['message'] == 'user is logged in'
+
+
+def test_logout_user():
+	print ("Logging out all users")
+	for i in range(1, total_players + 1):
+		user_data = {'username': f"test{i}", 'password': "test"}
+		response = send_request(mysessions[i], logout_url, csrf[i], user_data)
+		assert response.status_code == 200
+		assert response.json()['status'] == 'success'
+		assert response.json()['message'] == 'user is logged out'
+
+def test_get_profile():
+	for i in range(1, total_players + 1):
 		response = send_request(
 			mysessions[i], get_profile_url + '/' + f"test{i}", csrf[i])
 		print(f"User test{i} created and logged in with profile :{response.json()}")
@@ -99,10 +118,6 @@ def test_register_user():
 		assert response.json()['data']['username'] == f'test{i}'
 
 def play_match():
-	print("log in all players")
-	for i in range(1, total_players + 1):
-		my_data = {'username': f"test{i}", 'password': "test"}
-		response = send_request(mysessions[i], login_url, csrf[i], my_data)
 	for i in range(1, total_matches + 1):
 		user_nr1 = random.randint(1, total_players)
 		player1 = f"test{user_nr1}"
@@ -166,7 +181,8 @@ def test_create_tournament():
             'price_2': 500,
             'price_3': 250,
             'players': players, }
-		response = send_request(mysessions[4], create_tournament_url, csrf[4], my_data)
+		response = send_request(
+			mysessions[player_nr], create_tournament_url, csrf[player_nr], my_data)
 		print(f"test _torunament_{j} created {response.json()}")
 		assert response.status_code == 200
 		assert response.json()['status'] == 'success'
@@ -197,14 +213,9 @@ def test_accept_invitation():
 						assert response.status_code == 200
 						assert response.json()['status'] == 'success'
 						assert response.json()['message'] == 'Invitation accepted successfully'
-		user_data = {'username': f"test{i}", 'password': "test"}
-		response = send_request(mysessions[i], logout_url, csrf[i], user_data)
 
 def test_close_tournament():
 	for i in range(1, total_players + 1):
-		my_data = {'username': f"test{i}", 'password': "test"}
-		response = send_request(mysessions[i], login_url, csrf[i], my_data)
-		assert response.status_code == 200
 		response = get_request(mysessions[i], list_tournaments_url + f"test{i}", csrf[i])
 		print(f"User test{i} list of tournaments: {response.json()}")
 		list_tournaments = json.loads(response.json()['data'])
@@ -216,20 +227,15 @@ def test_close_tournament():
 					my_data = {
 					"tournament_id": tournament['id']
 					}
-					response = send_request(mysessions[4], close_tournament, csrf[4], my_data)
+					player_nr = tournament['player_id_id']
+					response = send_request(
+						mysessions[player_nr], close_tournament, csrf[player_nr], my_data)
 					print(f"Tournament {i} closed {response.json()}")
 					assert response.status_code == 200
 					assert response.json()['status'] == 'success'
 					assert response.json()['message'] == 'Tournament closed successfully'
-	user_data = {'username': f"test{i}", 'password': "test"}
-	response = send_request(mysessions[i], logout_url, csrf[i], user_data)
 
 def test_finish_tournament():
-	for i in range(1, total_players + 1):
-		user_data = {'username': f"test{i}", 'password': "test"}
-		response = send_request(mysessions[i], login_url, csrf[i], user_data)
-		assert response.status_code == 200
-
 	for i in range(1, total_players + 1):
 		response = get_request(
 			mysessions[i], list_tournaments_url + f"test{i}", csrf[i])
@@ -304,17 +310,8 @@ def test_finish_tournament():
 						response = get_request(
                     			mysessions[i], list_matches_by_tournament_id_url + f"{tournament_id}", csrf[i])
 						list_matches = json.loads(response.json()['data'])
-	print("log out all players")
-	for i in range(1, total_players + 1):
-		user_data = {'username': f"test{i}", 'password': "test"}
-		response = send_request(mysessions[i], logout_url, csrf[i], user_data)
-		assert response.status_code == 200
+
 def get_data_from_contracts():
-	print("log in all players")
-	for i in range(1, total_players + 1):
-		user_data = {'username': f"test{i}", 'password': "test"}
-		response = send_request(mysessions[i], login_url, csrf[i], user_data)
-		assert response.status_code == 200
 	for i in range(1, total_players + 1):
 		for j in range(1, total_tournaments + 1):
 			response = get_request(
@@ -328,7 +325,7 @@ def get_data_from_contracts():
 						my_data = {
 							"tournament_id": tournament['id']
 						}
-						response = send_request(mysessions[i], get_results_from_blockchain, csrf[i], my_data)
+						response = send_request(mysessions[i], get_results_from_blockchain_url, csrf[i], my_data)
 						print(f"User test{i} results from blockchain: {response.json()}")
 						assert response.status_code == 200
 						assert response.json()['status'] == 'success'
@@ -341,11 +338,37 @@ def close_sessions():
 
 # Main execution
 if __name__ == "__main__":
-	test_register_user()
-	play_match()
-	test_create_tournament()
-	test_accept_invitation()
-	test_close_tournament()
-	test_finish_tournament()
-	get_data_from_contracts()
-	close_sessions()
+	if len(sys.argv) == 1:
+		test_register_user(register=True)
+		play_match()
+		test_create_tournament()
+		test_accept_invitation()
+		test_close_tournament()
+		test_finish_tournament()
+		get_data_from_contracts()
+		test_logout_user()
+		close_sessions()
+	else:
+		if sys.argv[1] == 'match':
+			test_register_user()
+			play_match()
+			test_logout_user()
+			close_sessions()
+		elif sys.argv[1] == 'tournament':
+			test_register_user()
+			test_create_tournament()
+			test_accept_invitation()
+			test_close_tournament()
+			test_finish_tournament()
+			get_data_from_contracts()
+			test_logout_user()
+			close_sessions()
+		elif sys.argv[1] == 'list':
+			test_register_user()
+			test_get_profile()
+			get_data_from_contracts()
+			test_logout_user()
+			close_sessions()
+		else:
+			print("Invalid argument")
+			sys.exit(1)
