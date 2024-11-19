@@ -33,40 +33,40 @@ abi = [
 		"type": "function"
 	},
 	{
-		"anonymous": False,
+		"anonymous": false,
 		"inputs": [
 			{
-				"indexed": False,
+				"indexed": false,
 				"internalType": "string",
 				"name": "firstPlace",
 				"type": "string"
 			},
 			{
-				"indexed": False,
+				"indexed": false,
 				"internalType": "string",
 				"name": "secondPlace",
 				"type": "string"
 			},
 			{
-				"indexed": False,
+				"indexed": false,
 				"internalType": "string",
 				"name": "thirdPlace",
 				"type": "string"
 			},
 			{
-				"indexed": False,
+				"indexed": false,
 				"internalType": "string",
 				"name": "organizer",
 				"type": "string"
 			},
 			{
-				"indexed": False,
+				"indexed": false,
 				"internalType": "uint256",
 				"name": "startDate",
 				"type": "uint256"
 			},
 			{
-				"indexed": False,
+				"indexed": false,
 				"internalType": "address",
 				"name": "owner",
 				"type": "address"
