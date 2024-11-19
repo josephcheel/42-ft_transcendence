@@ -103,13 +103,31 @@ def get_results_from_blockchain(request):
 	tournament_id = data.get("tournament_id")
 	try:
 		tournament = Tournaments.objects.get(id=tournament_id)
-		contract = tournament.hash
 		try:
 			web3 = Web3(Web3.HTTPProvider(settings.GANACHE_URL))
 			logger.info('Connected to the blockchain')
 		except:
 			return JsonResponse({'status': 'error', 'message': 'Error connecting to the blockchain', 'data': None}, status=500)
-		contract = web3.eth.contract(address=contract, abi=abi)
+		contract_addr = tournament.hash
+
+		# ABI del contrato (exportada al compilar el contrato en Remix/Hardhat/Truffle)
+		abi = [
+			{
+				"inputs": [],
+				"name": "getTournamentResults",
+				"outputs": [
+					{"internalType": "string", "name": "firstPlace", "type": "string"},
+					{"internalType": "string", "name": "secondPlace", "type": "string"},
+					{"internalType": "string", "name": "thirdPlace", "type": "string"},
+					{"internalType": "string", "name": "organizer", "type": "string"},
+					{"internalType": "uint256", "name": "startDate", "type": "uint256"},
+					{"internalType": "address", "name": "owner", "type": "address"},
+				],
+				"stateMutability": "view",
+				"type": "function",
+			}
+		]
+		contract = web3.eth.contract(address=contract_addr, abi=abi)
 		results = contract.functions.getTournamentResults().call()
 		my_data = json.dumps({
 			'first_place': results[0],
