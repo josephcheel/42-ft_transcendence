@@ -115,22 +115,7 @@ def get_results_from_blockchain(request):
 
 		logger.info('Contract address: %s', contract_addr)
 		# ABI del contrato (exportada al compilar el contrato en Remix/Hardhat/Truffle)
-		abi = [
-			{
-				"inputs": [],
-				"name": "getTournamentResults",
-				"outputs": [
-					{"internalType": "string", "name": "firstPlace", "type": "string"},
-					{"internalType": "string", "name": "secondPlace", "type": "string"},
-					{"internalType": "string", "name": "thirdPlace", "type": "string"},
-					{"internalType": "string", "name": "organizer", "type": "string"},
-					{"internalType": "uint256", "name": "startDate", "type": "uint256"},
-					{"internalType": "address", "name": "owner", "type": "address"},
-				],
-				"stateMutability": "view",
-				"type": "function",
-			}
-		]
+
 		contract = web3.eth.contract(address=contract_addr, abi=abi)
 		logger.info('Contract: %s', contract)
 		results = contract.functions.getTournamentResults().call()
