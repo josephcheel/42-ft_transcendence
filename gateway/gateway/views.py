@@ -62,6 +62,11 @@ def handle_request(request, internal_url, subpath):
 def tournaments(request, subpath):
     return handle_request(request, "tournaments:8000/tournaments/", subpath)
 
+
+@ensure_csrf_cookie
+def blockchain(request, subpath):
+    return handle_request(request, "tournaments:8000/blockchain/", subpath)
+
 @ensure_csrf_cookie
 def user(request, subpath):
     return handle_request(request, "usermanagement:8000/user/", subpath)
