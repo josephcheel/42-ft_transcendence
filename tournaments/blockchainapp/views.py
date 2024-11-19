@@ -47,7 +47,7 @@ def execute_contract(tournament_id):
 	signed_tx = web3.eth.account.sign_transaction(tx, private_key=key)
 	tx_hash = web3.eth.send_raw_transaction(signed_tx.raw_transaction)
 	web3.eth.wait_for_transaction_receipt(tx_hash)
-	tournament.hash = tx_hash
+	tournament.hash = f"0x{tx_hash}"
 	tournament.save()
     #return JsonResponse({'status': 'success', 'message': 'Contract executed', 'data': tx_hash}, status=200)
 
@@ -110,7 +110,7 @@ def get_results_from_blockchain(request):
 			logger.info('Connected to the blockchain')
 		except:
 			return JsonResponse({'status': 'error', 'message': 'Error connecting to the blockchain', 'data': None}, status=500)
-		contract_addr = "0x"+tournament.hash
+		contract_addr = tournament.hash
 		if not Web3.is_address(contract_addr):
 			logger.error("Invalid contract address: %s", contract_addr)
 			return JsonResponse({'status': 'error', 'message': 'Invalid contract address', 'data': None}, status=400)
