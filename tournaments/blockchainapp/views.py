@@ -47,7 +47,7 @@ def execute_contract(tournament_id):
 	signed_tx = web3.eth.account.sign_transaction(tx, private_key=key)
 	tx_hash = web3.eth.send_raw_transaction(signed_tx.raw_transaction)
 	response = web3.eth.wait_for_transaction_receipt(tx_hash)
-	print(response)
+	logger.info('Contract executed: %s', response)
 	contractAddress = response.contractAddress
 	tournament.hash = f"0x{contractAddress}"
 	tournament.save()
