@@ -5,7 +5,7 @@ from blockchainapp.contracts.abi import abi
 from blockchainapp.contracts.bytecode import bytecode
 from user.models import User
 from tournamentsapp.models import Tournaments
-from tournamentsapp.wrappers import require_post, user_is_authenticated
+from tournamentsapp.wrappers import require_post, user_is_authenticated, validate_json
 import tournaments.settings as settings
 import time
 import logging
@@ -97,6 +97,7 @@ def make_transaction(request):
 
 @require_post
 @user_is_authenticated
+@validate_json
 def get_results_from_blockchain(request):
 	data = request.data	
 	tournament_id = data.get("tournament_id")
