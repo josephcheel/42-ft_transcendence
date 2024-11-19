@@ -46,8 +46,10 @@ def execute_contract(tournament_id):
 	key = user.ethereum_private_key
 	signed_tx = web3.eth.account.sign_transaction(tx, private_key=key)
 	tx_hash = web3.eth.send_raw_transaction(signed_tx.raw_transaction)
-	web3.eth.wait_for_transaction_receipt(tx_hash)
-	tournament.hash = f"0x{tx_hash}"
+	response = web3.eth.wait_for_transaction_receipt(tx_hash)
+	print(response)
+	contractAddress = response.contractAddress
+	tournament.hash = f"0x{contractAddress}"
 	tournament.save()
     #return JsonResponse({'status': 'success', 'message': 'Contract executed', 'data': tx_hash}, status=200)
 
