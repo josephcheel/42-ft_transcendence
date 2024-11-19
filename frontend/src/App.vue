@@ -76,6 +76,7 @@ export default {
       await this.getPoints();
       await this.updateProfilePicture();
       this.isDataLoaded = true;
+      this.$i18n.locale = this.selectedLang;
     },
     async updateProfilePicture() {
       try {
@@ -92,6 +93,8 @@ export default {
           // Asegurarse de que 'data' tenga las propiedades necesarias
         if (data) {
           this.points = data.puntos;
+          this.selectedLang = data.lang;
+          //console.log(data)
         }
       } catch (error) {
         console.error("Error fetching user points:", error);

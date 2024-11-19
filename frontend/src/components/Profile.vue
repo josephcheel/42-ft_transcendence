@@ -18,6 +18,7 @@
         <p class="form-label"><strong>{{ $t('general.lastname')}}</strong> {{ user.last_name }}</p>
         <p class="form-label"><strong>{{ $t('general.username')}}</strong> {{ user.username }}</p>
         <p class="form-label"><strong>{{ $t('general.username_tournament')}}</strong> {{ user.tournament_name }}</p>
+        <p class="form-label"><strong>Lang</strong> {{ user.lang_text }}</p>
       </div>
 
       <!-- Campos editables -->
@@ -33,6 +34,14 @@
         <div class="mb-3">
           <label for="tournamentName" class="form-label">{{ $t('general.username_tournament')}}</label>
           <input type="text" class="form-control" v-model="user.tournament_name" id="tournamentName">
+        </div>
+        <div class="mb-3">
+          <label for="lang" class="form-label">Lang</label>
+          <div class="dropdown-menu" style="display: block; position: relative;">
+            <a class="dropdown-item" :class="{ active: user.lang === 'en' }" @click="changeLang('en');">English</a>
+            <a class="dropdown-item" :class="{ active: user.lang === 'es' }" @click="changeLang('es');">Spanish</a>
+            <a class="dropdown-item" :class="{ active: user.lang === 'fr' }" @click="changeLang('fr');">French</a>
+          </div>
         </div>
       </div>
 
@@ -103,7 +112,9 @@ export default {
         last_name: "",
         username: "",
         tournament_name: "",
-        profile_picture_url: "/assets/images/default-profile.jpeg"
+        profile_picture_url: "/assets/images/default-profile.jpeg",
+        lang: "",
+        lang_text: ""
       },
       selectedImage: null,
     };
@@ -135,6 +146,18 @@ export default {
       this.isEditing = !this.isEditing;
     },
 
+    changeLang(lang){
+      this.user.lang = lang;
+      if(lang == "en")
+        this.user.lang_text = "English"
+      if(lang == "fr")
+        this.user.lang_text = "French"
+      else
+        this.user.lang_text = "Spanish"
+
+
+    },
+
     onImageChange(event) {
       const file = event.target.files[0];
       if (file) {
@@ -163,6 +186,7 @@ export default {
             this.user.last_name = data.last_name || '';
             this.user.username = data.username || '';
             this.user.tournament_name = data.tournament_name || '';
+            this.user.lang = data.lang || '';
           } else {
             console.error("No user profile data received");
           }
@@ -185,9 +209,11 @@ export default {
         await axios.post(`https://${this.$router.ORIGIN_IP}:8000/api/user/update_user/`, {
           first_name: this.user.first_name,
           last_name: this.user.last_name,
-          tournament_name: this.user.tournament_name
+          tournament_name: this.user.tournament_name,
+          lang: this.user.lang
         });
         console.log('User profile updated successfully.');
+        this.$i18n.locale = this.user.lang;
       } catch (error) {
         console.error("Error updating user profile:", error);
       }
