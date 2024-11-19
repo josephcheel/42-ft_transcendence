@@ -109,7 +109,7 @@ def get_results_from_blockchain(request):
 		except:
 			return JsonResponse({'status': 'error', 'message': 'Error connecting to the blockchain', 'data': None}, status=500)
 		contract_addr = tournament.hash
-
+		logger.info('Contract address: %s', contract_addr)
 		# ABI del contrato (exportada al compilar el contrato en Remix/Hardhat/Truffle)
 		abi = [
 			{
@@ -127,7 +127,8 @@ def get_results_from_blockchain(request):
 				"type": "function",
 			}
 		]
-		contract = web3.eth.contract(address=contract_addr, abi=abi)
+		contract = web3.eth.contract(address=contract_addr, abi=json.loads(abi))
+		logger.info('Contract: %s', contract)
 		results = contract.functions.getTournamentResults().call()
 		my_data = json.dumps({
 			'first_place': results[0],
