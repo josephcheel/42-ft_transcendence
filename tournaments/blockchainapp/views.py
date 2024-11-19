@@ -98,8 +98,8 @@ def make_transaction(request):
 @require_post
 @user_is_authenticated
 def get_results_from_blockchain(request):
-	user = User.objects.get(username = request.data("user"))
-	tournament_id = request.data("tournament_id")
+	data = request.data	
+	tournament_id = data.get("tournament_id")
 	try:
 		tournament = Tournaments.objects.get(id=tournament_id)
 		contract = tournament.hash
