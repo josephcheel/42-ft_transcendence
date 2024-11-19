@@ -25,9 +25,9 @@ def execute_contract(tournament_id):
 	# Leer el contrato
 	account =user.ethereum_address
 	contract = web3.eth.contract(address=account, abi=abi)
-	first_place = tournament.id_winner.tournament_name
-	second_place = tournament.id_second.tournament_name
-	third_place = tournament.id_third.tournament_name
+	first_place = "Nobody" if tournament.id_winner == None else tournament.id_winner.tournament_name
+	second_place = "Nobody" if tournament.id_second == None else tournament.id_second.tournament_name
+	third_place = "Nobody" if tournament.id_third == None else tournament.id_third.tournament_name
 	organizer = tournament.player_id.tournament_name
 	start_date = tournament.date_start
 	print ('arguments: ', first_place, second_place, third_place, organizer, start_date)
