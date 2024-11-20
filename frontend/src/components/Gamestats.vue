@@ -67,6 +67,12 @@
               <p class="player-name mb-1">{{ match.opponentProfile ? match.opponentProfile.username : 'Loading...' }}</p>
               <p v-if="match.tournament_id > 0" class="round small">{{ match.round }}</p>
             </div>
+            <button
+              class="btn btn-primary btn-sm"
+              @clik="handleButtonClik(match)"
+            >
+              {{ $t('game_stats.detail')}}
+            </button>
           </div>
           <div v-else >
               No matches found

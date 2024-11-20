@@ -15,7 +15,8 @@
         "game_stats": "Game Stats for",
         "wins" : "Wins",
         "losses": "Losses",
-        "win_rate": "Win Rate"
+        "win_rate": "Win Rate",
+        "detail": "Detail"
     },
     "general": {
         "username": "Username",

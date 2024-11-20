@@ -15,7 +15,8 @@
         "game_stats": "Estadísticas de juego para",
         "wins" : "Victorias",
         "losses": "Derrotas",
-        "win_rate": "Tasa de victorias"
+        "win_rate": "Tasa de victorias",
+        "detail": "Detalle"
     },
     "general": {
         "username": "Nombre de usuario",
