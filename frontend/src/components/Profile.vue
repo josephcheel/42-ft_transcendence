@@ -123,7 +123,6 @@ export default {
     const username = localStorage.getItem('username');
     if (!username) {
       this.$router.push({ path: '/', params: { currentView: 'Login' } });
-      // this.$router.push('/login'); // Redirigir al login si no está autenticado
     } else {
       this.fetchUserProfile();
     }
