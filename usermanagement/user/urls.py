@@ -18,6 +18,7 @@ urlpatterns = [
     path('get_profile_picture_url/<str:username>/', get_profile_picture_url, name='get_profile_picture'),
     path('upload_picture/', upload_picture, name='upload_picture'),
     path('get_profile/<str:username>/', get_profile, name='get_profile'),
+    path('check_user/', check_user, name='check_user'),
 
 ]
 
