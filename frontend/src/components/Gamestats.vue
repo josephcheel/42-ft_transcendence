@@ -3,7 +3,7 @@
  
   <div class="row">
     <!-- Stats Container -->
-    <div class="col-12 col-lg-8">
+    <div class="col-12 col-lg-7">
       <div class="card">
         <h1 class="text-center">
         {{ $t('game_stats.game_stats')}} {{ this.$route.params.username }}
@@ -38,7 +38,7 @@
       </div>
     </div>
     <!-- Dashboard -->
-    <div class="col-12 col-lg-4">
+    <div class="col-12 col-lg-5">
       <div class="card">
       <div class="p-3 border rounded bg-light" style="max-height:700px; overflow-y: auto;">
         <div class="row g-3">
@@ -67,6 +67,12 @@
               <p class="player-name mb-1">{{ match.opponentProfile ? match.opponentProfile.username : 'Loading...' }}</p>
               <p v-if="match.tournament_id > 0" class="round small">{{ match.round }}</p>
             </div>
+            <button
+              class="btn btn-primary ms-auto"
+              @click="handleButtonClick(match)"
+            >
+              {{ $t('game_stats.detail')}}
+            </button>
           </div>
           <div v-else >
               No matches found
@@ -76,8 +82,27 @@
     </div>
     </div>
   </div>
-</div>
 
+
+<!-- prueba pop-up para detalles partido-->
+
+  <div class="modal fade" id="matchDetailsModal" tabindex="-1" aria-labelledby="matchDetailsModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="matchDetailsModalLabel">{{ $t('game_stats.match_details') }}</h5>
+          </div>
+          <div class="modal-body">
+            <p>{{ matchDetails.winnerId }}</p>
+            <p>{{ matchDetails.pointsWinner }}</p>
+            <p>{{ matchDetails.looserId }}</p>
+            <p>{{ matchDetails.pointsLooser }}</p>
+            <p>{{ matchDetails.dateTime }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
 </template>
 
@@ -108,10 +133,30 @@ export default {
         "third place": { wins: 0, losses: 0 },
         "qualified": { wins: 0, losses: 0 },
       },
+      matchDetails: {
+        winnerId: '',
+        pointsWinner: '',
+        looserId: '',
+        pointsLooser: '',
+        dateTime: ''
+      },
       barChartInstance : null,
     }
   },
   methods: {
+    handleButtonClick(match) {
+      // Set match details
+      this.matchDetails.winnerId = match.winner_id;
+      this.matchDetails.pointsWinner = match.points_winner;
+      this.matchDetails.looserId = match.looser_id;
+      this.matchDetails.pointsLooser = match.points_looser;
+      this.matchDetails.dateTime = match.date_time;
+
+      // Show modal
+      const modal = new bootstrap.Modal(document.getElementById('matchDetailsModal'));
+      modal.show();
+    },
+
     resetData() {
       if (this.barChartInstance) {
         this.barChartInstance.destroy();
