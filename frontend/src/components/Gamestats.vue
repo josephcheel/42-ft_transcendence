@@ -1,43 +1,84 @@
 <template>
-  <div class="container">
-    <h1>{{ $t('game_stats.game_stats')}} {{ this.$route.params.username }}</h1>
-    <div class="row-container">
-      <div class="stats-container">
-        <div class="chart-container">
-          <h2>{{ $t('game_stats.win_rate')}}</h2>
-          <div class="canvas-wrapper">
+<div class="container">
+ 
+  <div class="row">
+    <!-- Stats Container -->
+    <div class="col-12 col-lg-8">
+      <div class="card">
+        <h1 class="text-center">
+        {{ $t('game_stats.game_stats')}} {{ this.$route.params.username }}
+        </h1>
+        <h2 class="text-center">{{ $t('game_stats.win_rate') }}</h2>
+        <div class="d-flex flex-column align-items-center">
+          <div class="position-relative">
             <canvas class="canvas" ref="pieChart" height="400" width="400"></canvas>
-            <div class="win-percent">
+            <div class="win-percent position-absolute top-50 start-50 translate-middle">
               {{ this.userWinPercentage }}%
             </div>
           </div>
-          <div class="win-stats">
-            <p v-if="this.matchList.length">{{ $t('game_stats.wins')}}: {{ this.matchList.filter(match => match.winner_id_id ===
-              this.userId).length }}</p>
-            <p v-if="this.matchList.length">{{ $t('game_stats.losses')}}: {{ this.matchList.filter(match => match.winner_id_id !==
-              this.userId).length }}</p>
+          <div class="win-stats  text-center">
+            <h4 v-if="this.matchList.length">
+              {{ $t('game_stats.wins') }} : {{ this.matchList.filter(match => match.winner_id_id === this.userId).length }} 
+            </h4>
+            <h4 v-else>
+              No win matches found
+            </h4>
+            <h4 v-if="this.matchList.length">
+              {{ $t('game_stats.losses') }}: {{ this.matchList.filter(match => match.winner_id_id !== this.userId).length }}
+            </h4>
+            <h4 v-else>
+              No lost matches found
+            </h4>
           </div>
         </div>
-        <div class="tournaments-stats">
-          <canvas ref="barChart" height="400" width="600"></canvas>
-        </div>
+        
+          <div class="tournaments-stats">
+            <canvas  ref="barChart" height="400" width="600"></canvas>
+          </div>
       </div>
-      <div class="dashboard">
-        <div v-for="(match, id) in matchList" :key="id" class="match-box" :class="{
-          'player-won': match.winner_id_id === this.userId,
-          'other-won': match.winner_id_id !== this.userId
-        }">
-          <img class="opponentPicture" :src="match.opponentProfile && match.opponentProfile.profile_picture_url
-            ? match.opponentProfile.profile_picture_url
-            : '/profile_pictures/default.jpeg'" alt="Profile picture" height="100" width="100">
-          <div class="match-info" @click="goToGameStats(match.opponentProfile.username)">
-            <p class="player-name">{{ match.opponentProfile ? match.opponentProfile.username : 'Loading...' }}</p>
-            <p v-if="match.tournament_id > 0" class="round">{{ match.round }}</p>
+    </div>
+    <!-- Dashboard -->
+    <div class="col-12 col-lg-4">
+      <div class="card">
+      <div class="p-3 border rounded bg-light" style="max-height:700px; overflow-y: auto;">
+        <div class="row g-3">
+          
+          <div 
+            v-if="matchList.length"
+            v-for="(match, id) in matchList"
+            :key="id"
+            class="col-12 match-box p-3 border rounded d-flex align-items-center"
+            :class="{
+              'bg-success text-white': match.winner_id_id === this.userId,
+              'bg-danger text-white': match.winner_id_id !== this.userId
+            }"
+          >
+            <img
+              id="profile-picture"
+              class="rounded-circle me-3"
+              :src="match.opponentProfile && match.opponentProfile.profile_picture_url
+                ? match.opponentProfile.profile_picture_url
+                : '/profile_pictures/default.jpeg'"
+              alt="Profile picture"
+              height="100"
+              width="100"
+            />
+            <div class="match-info" @click="goToGameStats(match.opponentProfile.username)">
+              <p class="player-name mb-1">{{ match.opponentProfile ? match.opponentProfile.username : 'Loading...' }}</p>
+              <p v-if="match.tournament_id > 0" class="round small">{{ match.round }}</p>
+            </div>
           </div>
+          <div v-else >
+              No matches found
+            </div>
         </div>
       </div>
     </div>
+    </div>
   </div>
+</div>
+
+
 </template>
 
 <script>
@@ -262,6 +303,17 @@ export default {
 </script>
 
 <style scoped>
+#profile-picture {
+  width: 15vh;
+  height: 15vh;
+  border-radius: 50%;
+  object-fit: cover; /* Ensures the image covers the entire area */
+  object-position: center; /* Centers the image */
+  background-color: #f0f0f0; /* Placeholder background color */
+}
+.rounded-circle {
+	border : 2px solid rgba(255, 255, 255, 0.391);
+  }
 .container {
   display: flex;
   flex-direction: column;
@@ -277,9 +329,9 @@ export default {
   margin: 0 auto;
 }
 
-canvas {
+/* canvas {
   border: 1px solid #ccc;
-}
+} */
 
 .match-box {
   display: flex;
