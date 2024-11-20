@@ -1,5 +1,5 @@
 <template>
-  <div class="card mx-auto" style="width: 18rem;">
+  <div class="card mx-auto mt-5" style="width: 18rem;">
     <!-- Mostrar la imagen o el campo de carga de archivo según el modo -->
     <div class="text-center mt-3" v-if="!isEditing">
       <img id="profile-picture" :src="user.profile_picture_url" class="rounded-circle img-fluid profile-picture" alt="User Image" />
@@ -18,7 +18,7 @@
         <p class="form-label"><strong>{{ $t('general.lastname')}}</strong> {{ user.last_name }}</p>
         <p class="form-label"><strong>{{ $t('general.username')}}</strong> {{ user.username }}</p>
         <p class="form-label"><strong>{{ $t('general.username_tournament')}}</strong> {{ user.tournament_name }}</p>
-        <p class="form-label"><strong>Lang</strong> {{ user.lang_text }}</p>
+        <p class="form-label"><strong>{{ $t('general.language') }}</strong> {{ user.lang_text }}</p>
       </div>
 
       <!-- Campos editables -->
@@ -46,7 +46,7 @@
       </div>
 
       <!-- Botón para alternar entre modo de edición y visualización -->
-      <div v-if="editDisplay" class="text-center">
+      <div v-if="editProfile" class="text-center">
         <button class="btn btn-primary" @click="toggleEdit">
           {{ isEditing ? 'Save' : 'Edit' }}
         </button>
@@ -129,10 +129,15 @@ export default {
     }
 },
   props: {
-    editDisplay: {
+    editProfile: {
       type: Boolean,
       required: true,
       default: true
+    },
+    username: {
+      type: String,
+      required: false,
+      default: ''
     }
   },
   methods: {
@@ -150,7 +155,7 @@ export default {
       this.user.lang = lang;
       if(lang == "en")
         this.user.lang_text = "English"
-      if(lang == "fr")
+      else if(lang == "fr")
         this.user.lang_text = "French"
       else
         this.user.lang_text = "Spanish"
@@ -170,30 +175,34 @@ export default {
       }
     },
     async fetchUserProfile() {
-      const username = localStorage.getItem('username');
-    
-      if (!username) {
-        console.error("No username found in localStorage");
-        return; // Salir si no hay nombre de usuario
+      if (this.username) {
+        this.user.username = this.username;
+      } else {
+       this.user.username = localStorage.getItem('username');
+       if (!this.user.username) {
+         console.error("No username found in localStorage");
+         return; // Salir si no hay nombre de usuario
+       }
       }
       axios
-        .get(`https://${this.$router.ORIGIN_IP}:8000/api/user/get_profile/${username}/`)
+        .get(`https://${this.$router.ORIGIN_IP}:8000/api/user/get_profile/${this.user.username}/`)
         .then((response) => {
           const data = response.data.data;
+          console.log("User profile data:", data);
           // Asegurarse de que 'data' tenga las propiedades necesarias
           if (data) {
             this.user.first_name = data.first_name || '';
             this.user.last_name = data.last_name || '';
             this.user.username = data.username || '';
             this.user.tournament_name = data.tournament_name || '';
-            this.user.lang = data.lang || '';
+            this.changeLang(data.lang);
           } else {
             console.error("No user profile data received");
           }
         })
 
     axios
-      .get(`https://${this.$router.ORIGIN_IP}:8000/api/user/get_profile_picture_url/${username}/`)
+      .get(`https://${this.$router.ORIGIN_IP}:8000/api/user/get_profile_picture_url/${this.user.username}/`)
       .then((response) => {
         const pict = response.data.data;
         const url = pict.profile_picture_url;
@@ -210,7 +219,7 @@ export default {
           first_name: this.user.first_name,
           last_name: this.user.last_name,
           tournament_name: this.user.tournament_name,
-          lang: this.user.lang
+          language: this.user.lang
         });
         console.log('User profile updated successfully.');
         this.$i18n.locale = this.user.lang;
