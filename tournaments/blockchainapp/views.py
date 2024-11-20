@@ -26,15 +26,14 @@ def execute_contract(tournament_id):
 	account =user.ethereum_address
 #	with open("./contracts/abi.json", "r") as file:
 #		abi = json.load(file)
-	contract = web3.eth.contract(address=account, abi=abi)
+	contract = web3.eth.contract(address=account, abi=abi, bytecode=bytecode)
 	first_place = "Nobody" if tournament.id_winner == None else tournament.id_winner.tournament_name
 	second_place = "Nobody" if tournament.id_second == None else tournament.id_second.tournament_name
 	third_place = "Nobody" if tournament.id_third == None else tournament.id_third.tournament_name
 	organizer = tournament.player_id.tournament_name
 	start_date = tournament.date_start
-	print ('arguments: ', first_place, second_place, third_place, organizer, start_date)
-	transaction = contract.functions.setTournamentResults(
-		first_place, second_place, third_place, organizer, int(time.mktime(start_date.timetuple()))).call()
+#	transaction = contract.functions.setTournamentResults(
+#		first_place, second_place, third_place, organizer, int(time.mktime(start_date.timetuple()))).call()
 	# Ejecutar la función del contrato
 #	contract.functions.setGreeting
 	tx = contract.functions.setTournamentResults(first_place, second_place, third_place, organizer, int(time.mktime(start_date.timetuple()))).build_transaction({
@@ -113,7 +112,7 @@ def get_results_from_blockchain(request):
 		except:
 			return JsonResponse({'status': 'error', 'message': 'Error connecting to the blockchain', 'data': None}, status=500)
 		contract_addr = tournament.hash
-		logger.info(Web3.eth.get_code(contract_addr))
+		logger.info(web3.eth.get_code(contract_addr))
 		if not Web3.is_address(contract_addr):
 			logger.error("Invalid contract address: %s", contract_addr)
 			return JsonResponse({'status': 'error', 'message': 'Invalid contract address', 'data': None}, status=400)
