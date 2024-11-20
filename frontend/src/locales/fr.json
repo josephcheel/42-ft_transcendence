@@ -33,7 +33,8 @@
         "score": "Score",
         "waiting": "En attente de joueurs...",
         "edit_profile": "Modifier le profil",
-        "user_profile": "Profil de l'utilisateur"
+        "user_profile": "Profil de l'utilisateur",
+        "language": "Langue"
     },
     "friends": {
         "friends_title": "Mes amis",

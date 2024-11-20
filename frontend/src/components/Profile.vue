@@ -1,5 +1,5 @@
 <template>
-  <div class="card mx-auto mt-5" style="width: 18rem;">
+  <div class="card mx-auto mt-3" style="width: 18rem;">
     <!-- Mostrar la imagen o el campo de carga de archivo según el modo -->
     <div class="text-center mt-3" v-if="!isEditing">
       <img id="profile-picture" :src="user.profile_picture_url" class="rounded-circle img-fluid profile-picture" alt="User Image" />
@@ -36,7 +36,7 @@
           <input type="text" class="form-control" v-model="user.tournament_name" id="tournamentName">
         </div>
         <div class="mb-3">
-          <label for="lang" class="form-label">Lang</label>
+          <label for="lang" class="form-label">{{ $t('general.language') }}</label>
           <div class="dropdown-menu" style="display: block; position: relative;">
             <a class="dropdown-item" :class="{ active: user.lang === 'en' }" @click="changeLang('en');">English</a>
             <a class="dropdown-item" :class="{ active: user.lang === 'es' }" @click="changeLang('es');">Español</a>
@@ -220,7 +220,6 @@ export default {
           first_name: this.user.first_name,
           last_name: this.user.last_name,
           tournament_name: this.user.tournament_name,
-          language: this.user.lang
           language: this.user.lang
         });
         console.log('User profile updated successfully.');
