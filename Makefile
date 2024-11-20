@@ -113,11 +113,11 @@ volumes:
 	@touch $(LOG_FILES)
 
 compile: ./frontend/package-lock.json 
-	@cp .env ./frontend/.env
 	@npm --prefix ./frontend install
 	@touch .exec_run_npm
 
 run_npm: .exec_run_npm
+	@cp .env ./frontend/.env
 	@npm --prefix ./frontend run build
 
 del_vol:rm_vol
