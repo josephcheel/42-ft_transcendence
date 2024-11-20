@@ -5,7 +5,7 @@
 <div class="container mt-5">
   <div class="row">
     <!-- First Row - Two Columns -->
-    <div class="col-md-8  mb-3">
+    <div class="col-md-8  mb-3 order-2 order-md-1">
 		  <div class="card">
 			<div class="card-body">
 			  <h1 class="card-title">My Friends</h1>
@@ -73,10 +73,10 @@
 			</div>
 	</div>
     </div>
-    <div class="col-md-4 mb-3">
+    <div class="col-md-4 mb-3  order-1 order-md-2">
 		<Profile
 		class="p-3 border bg-light" 
-		:editDisplay="editDisplay"
+		:editProfile="editProfile"
 		/>
       <!-- <div class="p-3 border bg-light">Column 2</div> -->
     </div>
@@ -133,7 +133,7 @@
 	name: 'Friends',
 	data() {
 	  return {
-		editDisplay: false,
+		editProfile: false,
 		searchQuery: '',
 		showModal: true,
 		newFriendName: '',
