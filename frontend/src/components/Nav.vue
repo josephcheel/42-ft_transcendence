@@ -79,6 +79,12 @@
 	</nav>
   </template>
   <style scoped>
+  .navbar-toggler-icon {
+	 padding-right: 1vh;
+  }
+  .navbar-toggler {
+		border: 0px;
+  }
   .rounded-circle {
 	border : 2px solid rgba(255, 255, 255, 0.391);
   }
