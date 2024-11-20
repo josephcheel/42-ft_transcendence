@@ -413,6 +413,8 @@ services:
     restart: always
     ports:
       - 0.0.0.0:4000:4000
+    volumes:
+      - ${LOGSTASH_FOLDER}:/var/log/
 
 volumes:
   certs:
