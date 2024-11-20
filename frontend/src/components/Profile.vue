@@ -39,8 +39,8 @@
           <label for="lang" class="form-label">Lang</label>
           <div class="dropdown-menu" style="display: block; position: relative;">
             <a class="dropdown-item" :class="{ active: user.lang === 'en' }" @click="changeLang('en');">English</a>
-            <a class="dropdown-item" :class="{ active: user.lang === 'es' }" @click="changeLang('es');">Spanish</a>
-            <a class="dropdown-item" :class="{ active: user.lang === 'fr' }" @click="changeLang('fr');">French</a>
+            <a class="dropdown-item" :class="{ active: user.lang === 'es' }" @click="changeLang('es');">Español</a>
+            <a class="dropdown-item" :class="{ active: user.lang === 'fr' }" @click="changeLang('fr');">Français</a>
           </div>
         </div>
       </div>
@@ -153,14 +153,14 @@ export default {
 
     changeLang(lang){
       this.user.lang = lang;
-      if(lang == "en")
+    },
+    changeLangText(){
+      if(this.user.lang === "en")
         this.user.lang_text = "English"
-      else if(lang == "fr")
-        this.user.lang_text = "French"
-      else
-        this.user.lang_text = "Spanish"
-
-
+      else if(this.user.lang === "fr")
+        this.user.lang_text = "Français"
+      if(this.user.lang === "es")
+        this.user.lang_text = "Español"
     },
 
     onImageChange(event) {
@@ -195,7 +195,8 @@ export default {
             this.user.last_name = data.last_name || '';
             this.user.username = data.username || '';
             this.user.tournament_name = data.tournament_name || '';
-            this.changeLang(data.lang);
+            this.user.lang = data.lang || '';
+            this.changeLangText()
           } else {
             console.error("No user profile data received");
           }
@@ -220,9 +221,11 @@ export default {
           last_name: this.user.last_name,
           tournament_name: this.user.tournament_name,
           language: this.user.lang
+          language: this.user.lang
         });
         console.log('User profile updated successfully.');
         this.$i18n.locale = this.user.lang;
+        this.changeLangText()
       } catch (error) {
         console.error("Error updating user profile:", error);
       }
