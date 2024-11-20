@@ -78,6 +78,7 @@ export default {
 			this.my_username = localStorage.getItem('username')
 		this.initClient(this.my_username, this.matchId, this.tournamentId);
 		this.initThree();
+		this.setVolume();
 	},
 	beforeUnmount() {
 		cancelAnimationFrame(this.animationFrameIdanimate);
@@ -87,6 +88,19 @@ export default {
 	  methods: {
 		getQuery() {
 			return this.$route.query;
+		},
+		setVolume()
+		{
+			if (localStorage.getItem('volume') === 'muted')
+			{
+				document.getElementById('volume').checked = true;
+				this.listener.setMasterVolume(0);
+			}
+			else
+			{
+				document.getElementById('volume').checked = false;
+				this.listener.setMasterVolume(0.5);
+			}
 		},
 		initThree() {
 		
@@ -126,9 +140,15 @@ export default {
 			document.getElementById('volume').addEventListener('change', () => {
 				const volumeButton =  document.getElementById('volume');
 				if (volumeButton.checked)
+				{
 					this.listener.setMasterVolume(0);
+					localStorage.setItem('volume', 'mute');
+				}
 				else
+				{
 					this.listener.setMasterVolume(0.5);
+					localStorage.setItem('volume', 'unmute');
+				}	
 			});
 
 			/* Paddle for the player */

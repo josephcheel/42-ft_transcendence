@@ -256,12 +256,26 @@ export default {
 	
 	mounted() {
 		this.initThree();
+		this.setVolume()
 	},
 	beforeUnmount() {
 		cancelAnimationFrame(this.animationFrameIdanimate);
 		this.renderer.dispose();
 	},
 	methods: {
+		setVolume()
+		{
+			if (localStorage.getItem('volume') === 'muted')
+			{
+				document.getElementById('volume').checked = true;
+				this.listener.setMasterVolume(0);
+			}
+			else
+			{
+				document.getElementById('volume').checked = false;
+				this.listener.setMasterVolume(0.5);
+			}
+		},
 		initThree(){
 			this.scene = markRaw(new Scene());
 			this.camera = markRaw(new PerspectiveCamera(this.fov, this.aspect.width / this.aspect.height, 0.1, 1000));
@@ -276,9 +290,15 @@ export default {
 			document.getElementById('volume').addEventListener('change', () => {
 				const volumeButton = document.getElementById('volume');
 				if (volumeButton.checked)
+				{
 					this.listener.setMasterVolume(0);
+					localStorage.setItem('volume', 'muted');
+				}
 				else
+				{
 					this.listener.setMasterVolume(0.5);
+					localStorage.setItem('volume', 'unmuted');
+				}
 			});
 
 			window.addEventListener('resize', () => {
