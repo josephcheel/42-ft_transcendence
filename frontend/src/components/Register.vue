@@ -92,7 +92,7 @@
       if (type === "error") {
         document.getElementById('toast-body').style.color = 'rgb(255, 111, 0)';
       } else if (type === "success") {
-        document.getElementById('toast-body').style.color = 'rgb(117, 255, 168)';
+        document.getElementById('toast-body').style.color = 'rgb(65, 168, 96)';
       }
       toastMsg.value = message;
       isToastVisible.value = true;
@@ -151,8 +151,11 @@
 
 
 <style scoped>
+
 #mytoast {
   position: absolute;
+  background-color: rgba(255, 255, 255, 0.968) !important;
+  border: 0px;
 }
 #toast-body {
     transition: opacity 2s ease-in-out;

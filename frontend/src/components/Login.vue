@@ -21,7 +21,7 @@
     </div>
     <div
         id="mytoast"
-        class="toast-message toast card mt-3"
+        class="card toast-message toast  mt-3"
         role="alert"
         aria-live="assertive"
         aria-atomic="true"
@@ -38,8 +38,11 @@
 
 </template>
 <style scoped>
+
   #mytoast {
     position: absolute;
+    background-color: rgba(255, 255, 255, 0.968) !important;
+    border: 0px;
   }
   #toast-body {
     transition: opacity 2s ease-in-out;
@@ -157,6 +160,9 @@
         hideToast() {
           this.isToastVisible = false;
         },
+        changeLanguage(lang) {
+          this.$i18n.locale = lang;
+        },
     }
 }
 </script>
@@ -201,6 +207,18 @@
             switch (response.status) {
                 case 200:
                   localStorage.setItem('username', user.value)
+                  axios
+                  .get(`https://${ORIGIN_IP}:8000/api/user/get_profile/${user.value}/`)
+                  .then((response) => {
+                    const data = response.data.data;
+                    console.log("User profile data:", data);
+                    // Asegurarse de que 'data' tenga las propiedades necesarias
+                    if (data) {
+                      this.changeLanguage(data.lang);
+                    } else {
+                      console.error("No user profile data received");
+                    }
+                  })
                   router.push('/play').then(() => {
                     window.location.reload()
                   });
@@ -211,6 +229,7 @@
                   break;
               }
         } catch (error) {
+            console.log(error)
             switch (error.response.status) {
               case 401:
                   showToast("The username or password is incorrect");
