@@ -26,7 +26,7 @@ def execute_contract(tournament_id):
 	account =user.ethereum_address
 #	with open("./contracts/abi.json", "r") as file:
 #		abi = json.load(file)
-	contract = web3.eth.contract(address=account, abi=abi, bytecode=bytecode)
+	contract = web3.eth.contract(abi=abi, bytecode=bytecode)
 	first_place = "Nobody" if tournament.id_winner == None else tournament.id_winner.tournament_name
 	second_place = "Nobody" if tournament.id_second == None else tournament.id_second.tournament_name
 	third_place = "Nobody" if tournament.id_third == None else tournament.id_third.tournament_name
@@ -36,7 +36,7 @@ def execute_contract(tournament_id):
 #		first_place, second_place, third_place, organizer, int(time.mktime(start_date.timetuple()))).call()
 	# Ejecutar la función del contrato
 #	contract.functions.setGreeting
-	tx = contract.functions.setTournamentResults(first_place, second_place, third_place, organizer, int(time.mktime(start_date.timetuple()))).build_transaction({
+	tx = contract.constructor(first_place, second_place, third_place, organizer, int(time.mktime(start_date.timetuple()))).build_transaction({
 				'from': account,
 				'nonce': web3.eth.get_transaction_count(account),
 				'gas': 2000000,  # Límite de gas
@@ -121,7 +121,7 @@ def get_results_from_blockchain(request):
 		# ABI del contrato (exportada al compilar el contrato en Remix/Hardhat/Truffle)
 #		with open("./contracts/abi.json", "r") as file:
 #			abi = json.load(file)
-		contract = web3.eth.contract(address=contract_addr, abi=abi)
+		contract = web3.eth.contract(abi=abi, bytecode=bytecode)
 		logger.info('Contract: %s', contract)
 		results = contract.functions.getTournamentResults().call()
 		logger.info('Results: %s', results)
