@@ -113,6 +113,7 @@ def get_results_from_blockchain(request):
 		except:
 			return JsonResponse({'status': 'error', 'message': 'Error connecting to the blockchain', 'data': None}, status=500)
 		contract_addr = tournament.hash
+		logger.info(Web3.eth.get_code(contract_addr))
 		if not Web3.is_address(contract_addr):
 			logger.error("Invalid contract address: %s", contract_addr)
 			return JsonResponse({'status': 'error', 'message': 'Invalid contract address', 'data': None}, status=400)
@@ -124,6 +125,7 @@ def get_results_from_blockchain(request):
 		contract = web3.eth.contract(address=contract_addr, abi=abi)
 		logger.info('Contract: %s', contract)
 		results = contract.functions.getTournamentResults().call()
+		logger.info('Results: %s', results)
 		my_data = json.dumps({
 			'first_place': results[0],
 			'second_place': results[1],

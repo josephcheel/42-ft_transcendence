@@ -1,38 +1,5 @@
 abi = [
 	{
-		"inputs": [
-			{
-				"internalType": "string",
-				"name": "_firstPlace",
-				"type": "string"
-			},
-			{
-				"internalType": "string",
-				"name": "_secondPlace",
-				"type": "string"
-			},
-			{
-				"internalType": "string",
-				"name": "_thirdPlace",
-				"type": "string"
-			},
-			{
-				"internalType": "string",
-				"name": "_organizer",
-				"type": "string"
-			},
-			{
-				"internalType": "uint256",
-				"name": "_startDate",
-				"type": "uint256"
-			}
-		],
-		"name": "setTournamentResults",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
 		"anonymous": False,
 		"inputs": [
 			{
@@ -103,14 +70,42 @@ abi = [
 				"internalType": "uint256",
 				"name": "startDate",
 				"type": "uint256"
-			},
-			{
-				"internalType": "address",
-				"name": "owner",
-				"type": "address"
 			}
 		],
 		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "_firstPlace",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_secondPlace",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_thirdPlace",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_organizer",
+				"type": "string"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_startDate",
+				"type": "uint256"
+			}
+		],
+		"name": "setTournamentResults",
+		"outputs": [],
+		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
