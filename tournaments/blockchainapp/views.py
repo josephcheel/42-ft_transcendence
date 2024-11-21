@@ -104,34 +104,31 @@ def make_transaction(request):
 def get_results_from_blockchain(request):
 	data = request.data	
 	tournament_id = data.get("tournament_id")
+#	try:
+	tournament = Tournaments.objects.get(id=tournament_id)
 	try:
-		tournament = Tournaments.objects.get(id=tournament_id)
-		try:
-			web3 = Web3(Web3.HTTPProvider(settings.GANACHE_URL))
-			logger.info('Connected to the blockchain')
-		except:
-			return JsonResponse({'status': 'error', 'message': 'Error connecting to the blockchain', 'data': None}, status=500)
-		contract_addr = tournament.hash
-		logger.info(web3.eth.get_code(contract_addr))
-		if not Web3.is_address(contract_addr):
-			logger.error("Invalid contract address: %s", contract_addr)
-			return JsonResponse({'status': 'error', 'message': 'Invalid contract address', 'data': None}, status=400)
-
-		logger.info('Contract address: %s', contract_addr)
-		# ABI del contrato (exportada al compilar el contrato en Remix/Hardhat/Truffle)
-#		with open("./contracts/abi.json", "r") as file:
-#			abi = json.load(file)
-		contract = web3.eth.contract(abi=abi, bytecode=bytecode)
-		logger.info('Contract: %s', contract)
-		results = contract.functions.getTournamentResults().call()
-		logger.info('Results: %s', results)
-		my_data = json.dumps({
-			'first_place': results[0],
-			'second_place': results[1],
-			'third_place': results[2],
-			'organizer': results[3],
-			'start_date': results[4]
-		})
-		return JsonResponse({'status': 'success', 'message': 'Results obtained', 'data': my_data}, status=200)
+		web3 = Web3(Web3.HTTPProvider(settings.GANACHE_URL))
+		logger.info('Connected to the blockchain')
 	except:
-		return JsonResponse({'status': 'error', 'message': 'Error obtaining results', 'data': None}, status=500)
+		return JsonResponse({'status': 'error', 'message': 'Error connecting to the blockchain', 'data': None}, status=500)
+	contract_addr = tournament.hash
+	logger.info(web3.eth.get_code(contract_addr))
+	if not Web3.is_address(contract_addr):
+		logger.error("Invalid contract address: %s", contract_addr)
+		return JsonResponse({'status': 'error', 'message': 'Invalid contract address', 'data': None}, status=400)
+	logger.info('Contract address: %s', contract_addr)
+	# ABI del contrato (exportada al compilar el contrato en Remix/Hardhat/Truffle)
+	contract = web3.eth.contract(abi=abi, bytecode=bytecode)
+	logger.info('Contract: %s', contract)
+	results = contract.functions.getTournamentResults().call()
+	logger.info('Results: %s', results)
+	my_data = json.dumps({
+		'first_place': results[0],
+		'second_place': results[1],
+		'third_place': results[2],
+		'organizer': results[3],
+		'start_date': results[4]
+	})
+	return JsonResponse({'status': 'success', 'message': 'Results obtained', 'data': my_data}, status=200)
+#	except:
+#		return JsonResponse({'status': 'error', 'message': 'Error obtaining results', 'data': None}, status=500)
