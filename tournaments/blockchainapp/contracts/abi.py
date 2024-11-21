@@ -43,6 +43,39 @@ abi = [
 		"type": "event"
 	},
 	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "_firstPlace",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_secondPlace",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_thirdPlace",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_organizer",
+				"type": "string"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_startDate",
+				"type": "uint256"
+			}
+		],
+		"name": "setTournamentResults",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
 		"inputs": [],
 		"name": "getTournamentResults",
 		"outputs": [
@@ -78,39 +111,6 @@ abi = [
 			}
 		],
 		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "string",
-				"name": "_firstPlace",
-				"type": "string"
-			},
-			{
-				"internalType": "string",
-				"name": "_secondPlace",
-				"type": "string"
-			},
-			{
-				"internalType": "string",
-				"name": "_thirdPlace",
-				"type": "string"
-			},
-			{
-				"internalType": "string",
-				"name": "_organizer",
-				"type": "string"
-			},
-			{
-				"internalType": "uint256",
-				"name": "_startDate",
-				"type": "uint256"
-			}
-		],
-		"name": "setTournamentResults",
-		"outputs": [],
-		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
