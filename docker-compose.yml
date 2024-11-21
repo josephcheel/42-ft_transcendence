@@ -222,7 +222,6 @@ services:
       test: ["CMD", "curl", "-f", "http://localhost:8000/metrics"]
       interval: 10s
       timeout: 20s
-      start_period: 40s
       retries: 20
 
   # Monitoring Container
