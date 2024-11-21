@@ -1,39 +1,39 @@
-[
+abi = [
 	{
-		"anonymous": false,
+		"anonymous": False,
 		"inputs": [
 			{
-				"indexed": false,
+				"indexed": False,
 				"internalType": "string",
 				"name": "firstPlace",
 				"type": "string"
 			},
 			{
-				"indexed": false,
+				"indexed": False,
 				"internalType": "string",
 				"name": "secondPlace",
 				"type": "string"
 			},
 			{
-				"indexed": false,
+				"indexed": False,
 				"internalType": "string",
 				"name": "thirdPlace",
 				"type": "string"
 			},
 			{
-				"indexed": false,
+				"indexed": False,
 				"internalType": "string",
 				"name": "organizer",
 				"type": "string"
 			},
 			{
-				"indexed": false,
+				"indexed": False,
 				"internalType": "uint256",
 				"name": "startDate",
 				"type": "uint256"
 			},
 			{
-				"indexed": false,
+				"indexed": False,
 				"internalType": "address",
 				"name": "owner",
 				"type": "address"
