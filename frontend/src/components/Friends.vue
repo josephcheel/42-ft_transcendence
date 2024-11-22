@@ -55,7 +55,7 @@
 				</div>
 			</div>
 			<div class="col-md-4 mb-3">
-				<Profile class="p-3 border bg-light" :editDisplay="editDisplay" />
+				<Profile class="p-3 border bg-light" :editProfile="editProfile" />
 				<!-- <div class="p-3 border bg-light">Column 2</div> -->
 			</div>
 		</div>
@@ -128,7 +128,7 @@ export default {
 	name: 'Friends',
 	data() {
 		return {
-			editDisplay: false,
+			editProfile: false,
 			searchQuery: '',
 			showModal: true,
 			newFriendName: '',
