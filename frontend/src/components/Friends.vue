@@ -185,7 +185,6 @@ export default {
 			// Fetch friends from the server
 			try {
 				const response = await axios.get(`https://${this.$router.ORIGIN_IP}:8000/api/user/get_friends`);
-				console.log('Friends:', response.data.data);
 				this.friends = response.data.data;
 				this.filteredFriends = response.data.data;
 			} catch (error) {

@@ -1,92 +1,81 @@
 <template>
-<div class="container">
- 
-  <div class="row">
-    <!-- Stats Container -->
-    <div class="col-12 col-lg-7">
-      <div class="card">
-        <h1 class="text-center">
-        {{ $t('game_stats.game_stats')}} {{ this.$route.params.username }}
-        </h1>
-        <h2 class="text-center">{{ $t('game_stats.win_rate') }}</h2>
-        <div class="d-flex flex-column align-items-center">
-          <div class="position-relative">
-            <canvas class="canvas" ref="pieChart" height="400" width="400"></canvas>
-            <div class="win-percent position-absolute top-50 start-50 translate-middle">
-              {{ this.userWinPercentage }}%
+  <div class="container">
+
+    <div class="row">
+      <!-- Stats Container -->
+      <div class="col-12 col-lg-7">
+        <div class="card">
+          <h1 class="text-center">
+            {{ $t('game_stats.game_stats') }} {{ this.$route.params.username }}
+          </h1>
+          <h2 class="text-center">{{ $t('game_stats.win_rate') }}</h2>
+          <div class="d-flex flex-column align-items-center">
+            <div class="position-relative">
+              <canvas class="canvas" ref="pieChart" height="400" width="400"></canvas>
+              <div class="win-percent position-absolute top-50 start-50 translate-middle">
+                {{ this.userWinPercentage }}%
+              </div>
+            </div>
+            <div class="win-stats  text-center">
+              <h4 v-if="this.matchList.length">
+                {{ $t('game_stats.wins') }} : {{ this.matchList.filter(match => match.winner_id_id ===
+                  this.userId).length }}
+              </h4>
+              <h4 v-else>
+                No win matches found
+              </h4>
+              <h4 v-if="this.matchList.length">
+                {{ $t('game_stats.losses') }}: {{ this.matchList.filter(match => match.winner_id_id !==
+                  this.userId).length }}
+              </h4>
+              <h4 v-else>
+                No lost matches found
+              </h4>
             </div>
           </div>
-          <div class="win-stats  text-center">
-            <h4 v-if="this.matchList.length">
-              {{ $t('game_stats.wins') }} : {{ this.matchList.filter(match => match.winner_id_id === this.userId).length }} 
-            </h4>
-            <h4 v-else>
-              No win matches found
-            </h4>
-            <h4 v-if="this.matchList.length">
-              {{ $t('game_stats.losses') }}: {{ this.matchList.filter(match => match.winner_id_id !== this.userId).length }}
-            </h4>
-            <h4 v-else>
-              No lost matches found
-            </h4>
-          </div>
-        </div>
-        
+
           <div class="tournaments-stats">
-            <canvas  ref="barChart" height="400" width="600"></canvas>
+            <canvas ref="barChart" height="400" width="600"></canvas>
           </div>
+        </div>
       </div>
-    </div>
-    <!-- Dashboard -->
-    <div class="col-12 col-lg-5">
-      <div class="card">
-      <div class="p-3 border rounded bg-light" style="max-height:700px; overflow-y: auto;">
-        <div class="row g-3">
-          
-          <div 
-            v-if="matchList.length"
-            v-for="(match, id) in matchList"
-            :key="id"
-            class="col-12 match-box p-3 border rounded d-flex align-items-center"
-            :class="{
-              'bg-success text-white': match.winner_id_id === this.userId,
-              'bg-danger text-white': match.winner_id_id !== this.userId
-            }"
-          >
-            <img
-              id="profile-picture"
-              class="rounded-circle me-3"
-              :src="match.opponentProfile && match.opponentProfile.profile_picture_url
-                ? match.opponentProfile.profile_picture_url
-                : '/profile_pictures/default.jpeg'"
-              alt="Profile picture"
-              height="100"
-              width="100"
-            />
-            <div class="match-info" @click="goToGameStats(match.opponentProfile.username)">
-              <p class="player-name mb-1">{{ match.opponentProfile ? match.opponentProfile.username : 'Loading...' }}</p>
-              <p v-if="match.tournament_id > 0" class="round small">{{ match.round }}</p>
+      <!-- Dashboard -->
+      <div class="col-12 col-lg-5">
+        <div class="card">
+          <div class="p-3 border rounded bg-light" style="max-height:700px; overflow-y: auto;">
+            <div class="row g-3">
+
+              <div v-if="matchList.length" v-for="(match, id) in matchList" :key="id"
+                class="col-12 match-box p-3 border rounded d-flex align-items-center" :class="{
+                  'bg-success text-white': match.winner_id_id === this.userId,
+                  'bg-danger text-white': match.winner_id_id !== this.userId
+                }">
+                <img id="profile-picture" class="rounded-circle me-3" :src="match.opponentProfile && match.opponentProfile.profile_picture_url
+                  ? match.opponentProfile.profile_picture_url
+                  : '/profile_pictures/default.jpeg'" alt="Profile picture" height="100" width="100" />
+                <div class="match-info" @click="goToGameStats(match.opponentProfile.username)">
+                  <p class="player-name mb-1">{{ match.opponentProfile ? match.opponentProfile.username : 'Loading...'
+                    }}</p>
+                  <p v-if="match.tournament_id > 0" class="round small">{{ match.round }}</p>
+                </div>
+                <button class="btn btn-primary ms-auto" @click="handleButtonClick(match)">
+                  {{ $t('game_stats.detail') }}
+                </button>
+              </div>
+              <div v-else>
+                No matches found
+              </div>
             </div>
-            <button
-              class="btn btn-primary ms-auto"
-              @click="handleButtonClick(match)"
-            >
-              {{ $t('game_stats.detail')}}
-            </button>
           </div>
-          <div v-else >
-              No matches found
-            </div>
         </div>
       </div>
     </div>
-    </div>
-  </div>
 
 
-<!-- prueba pop-up para detalles partido-->
+    <!-- prueba pop-up para detalles partido-->
 
-  <div class="modal fade" id="matchDetailsModal" tabindex="-1" aria-labelledby="matchDetailsModalLabel" aria-hidden="true">
+    <div class="modal fade" id="matchDetailsModal" tabindex="-1" aria-labelledby="matchDetailsModalLabel"
+      aria-hidden="true">
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
@@ -140,7 +129,7 @@ export default {
         pointsLooser: '',
         dateTime: ''
       },
-      barChartInstance : null,
+      barChartInstance: null,
     }
   },
   methods: {
@@ -189,10 +178,11 @@ export default {
         if (!this.matchList.length) {
           return;
         }
-
+        // player id 2 might be null if it was an uneven tournament, so those matches are closed without being played, we can ignore them.
+        this.matchList = this.matchList.filter(match => match.player_id_2_id !== null && 
+        (match.points_winner !== null && match.points_looser !== null && match.status === "played"));
         // gets oponent profiles into the match list
         this.processMatchList();
-        console.log(this.roundStats.final);
         this.getOpponentProfiles();
         this.renderChart();
         this.renderBarChart();
@@ -321,10 +311,14 @@ export default {
         const opponentId = match.player_id_1_id === this.userId
           ? match.player_id_2_id
           : match.player_id_1_id;
-
         // Fetch the opponent's profile and attach it to the match object
-        const opponentResponse = await axios.get(`https://${this.$router.ORIGIN_IP}:8000/api/user/get_profile/${opponentId}/`);
-        match.opponentProfile = opponentResponse.data.data;
+        try {
+          const opponentResponse = await axios.get(`https://${this.$router.ORIGIN_IP}:8000/api/user/get_profile/${opponentId}/`);
+          match.opponentProfile = opponentResponse.data.data;
+        }
+        catch (error) {
+          console.error("Error fetching opponent profile:", error);
+        }
       });
     },
 
@@ -352,13 +346,18 @@ export default {
   width: 15vh;
   height: 15vh;
   border-radius: 50%;
-  object-fit: cover; /* Ensures the image covers the entire area */
-  object-position: center; /* Centers the image */
-  background-color: #f0f0f0; /* Placeholder background color */
+  object-fit: cover;
+  /* Ensures the image covers the entire area */
+  object-position: center;
+  /* Centers the image */
+  background-color: #f0f0f0;
+  /* Placeholder background color */
 }
+
 .rounded-circle {
-	border : 2px solid rgba(255, 255, 255, 0.391);
-  }
+  border: 2px solid rgba(255, 255, 255, 0.391);
+}
+
 .container {
   display: flex;
   flex-direction: column;
