@@ -1,7 +1,6 @@
 from django.urls import path
 from django.conf.urls.static import static
 from .views import *
-
 handler404 = custom_404_view
 
 urlpatterns = [
@@ -14,6 +13,7 @@ urlpatterns = [
     path('send_friend_request/', send_friend_request, name='send_friend_request'),
     path('change_friendship_status/', change_friendship_status, name='change_friendship_status'),
     path('get_friends/', get_friends, name='get_friends'),
+    path('get_pending_friendships/', get_pending_friendships, name='get_pending_friendships'),
     path('update_user/', update_user, name='update_user'),
     path('get_profile_picture_url/<str:username>/', get_profile_picture_url, name='get_profile_picture'),
     path('upload_picture/', upload_picture, name='upload_picture'),

@@ -262,7 +262,7 @@ export default {
       const ctx = this.$refs.barChart.getContext('2d');
 
       this.barChartInstance = new Chart(ctx, {
-        type: 'bar', 
+        type: 'bar',
         data: {
           labels: ['Final', 'Semifinal', 'Third place', 'Qualified'],
           datasets: [

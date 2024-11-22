@@ -17,7 +17,8 @@
         "losses": "Défaites",
         "win_rate": "Taux de victoire",
         "detail": "Détail",
-        "match_details": "détails du match"
+        "match_details": "détails du match",
+        "no_matches": "Aucun match joué pour l'instant"
     },
     "general": {
         "username": "Nom d'utilisateur",

@@ -206,6 +206,10 @@ def user_status(request):
 @exception_handler
 def send_friend_request(request):
     user2 = User.objects.get(username=request.friend)
+    if user2 == request.user:
+        return JsonResponse({'status' : 'error',
+                'message' : "Can't send friend request to yourself",
+                'data' : None}, status=400)
     if Friendship.are_friends(request.user, user2):
         return JsonResponse({'status' : 'error',
                 'message' : "Users are already friends",
@@ -231,6 +235,11 @@ def change_friendship_status(request):
                             'message' : "Users have no friendship",
                             'data' : None}, status= 404)
     friendship = friendship.first()
+    if status == Friendship.DECLINED_CHOICE:
+        friendship.delete()
+        return JsonResponse({'status' : 'success',
+                'message' : "Friendship declined",
+                'data' : None}, status=200)
     friendship.status = status
     friendship.save()
     return JsonResponse({'status' : 'success',
@@ -238,7 +247,14 @@ def change_friendship_status(request):
             'data' : None}, status=200)
 
 #Gets all friends
-
+@require_auth
+@require_get
+@exception_handler
+def get_pending_friendships(request):
+    friends = Friendship.get_pending_requests(request.user)
+    return JsonResponse({'status' : 'success',
+                'message' : "Got all friends",
+                'data' : friends}, status=200)
 
 @require_auth
 @require_get

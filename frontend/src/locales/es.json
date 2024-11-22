@@ -17,7 +17,8 @@
         "losses": "Derrotas",
         "win_rate": "Tasa de victorias",
         "detail": "Detalle",
-        "match_details": "Detalles del partido"
+        "match_details": "Detalles del partido",
+        "no_matches": "Aún no has jugado partidas"
     },
     "general": {
         "username": "Nombre de usuario",
