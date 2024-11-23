@@ -50,7 +50,9 @@ def execute_contract(web3:Web3, wallet, private_key):
 	organizer = "tesst1"
 	start_date_iso = datetime.now(EuropeZone).isoformat()
 	start_date = datetime.fromisoformat(start_date_iso)
-	tx = contract.constructor(first_place, second_place, third_place, organizer, int(start_date.timestamp())).build_transaction({
+	start_date_int = int(start_date.timestamp())
+	start_date_int = 12345
+	tx = contract.constructor(first_place, second_place, third_place, organizer, start_date_int).build_transaction({
             'from': wallet,
         				'nonce': web3.eth.get_transaction_count(wallet),
         				'gas': 2000000,  # Límite de gas
@@ -83,8 +85,8 @@ def get_data_from_contract(web3, contract_addr):
 #	for log in logs:
 #	    event_data = contract.events.DataUpdated().processLog(log)
 #	    print("The daata event is:", event_data['args'])
-	results = contract.functions.getTournamentResults().call()
-	('Results: %s', results)
+	dato1,dato2,dato3,dato4,dato5,dato6 = contract.functions.getTournamentResults().call()
+	print('Results: %s', results)
 	my_data = json.dumps({
 		'first_place': results[0],
 		'second_place': results[1],
