@@ -30,7 +30,8 @@
 											class="rounded-circle" />
 
 										<!-- Username -->
-										<span style="margin-left: 10px; flex-grow: 1;">
+										<span @click="goToUser(friend.username)"
+											style="cursor: pointer; margin-left: 10px; flex-grow: 1;">
 											{{ friend.username }}
 										</span>
 
@@ -41,8 +42,9 @@
 											style="width: 10px; height: 10px; border-radius: 50%; margin-right: 10px; display: inline-block;"></span>
 
 										<!-- Decline Button -->
-										<button @click="changeFriendship(friend.username, 'declined')" class="btn btn-close"
-											title="Decline" aria-label="Close" style="padding: 0;"></button>
+										<button @click="changeFriendship(friend.username, 'declined')"
+											class="btn btn-close" title="Decline" aria-label="Close"
+											style="padding: 0;"></button>
 									</div>
 								</li>
 
@@ -78,11 +80,13 @@
 													class="rounded-circle" />
 
 												<!-- Username -->
-												<span style="margin-left: 10px; flex-grow: 1;">
+												<span @click="goToUser(request.username)" style="cursor: pointer; margin-left: 10px; flex-grow: 1;">
 													{{ request.username }}
 												</span>
-												<button @click="changeFriendship(request.username, 'accepted')" class="accept">Accept</button>
-												<button @click="changeFriendship(request.username, 'declined')" class="decline">Decline</button>
+												<button @click="changeFriendship(request.username, 'accepted')"
+													class="accept">Accept</button>
+												<button @click="changeFriendship(request.username, 'declined')"
+													class="decline">Decline</button>
 											</div>
 										</li>
 									</ul>
@@ -115,7 +119,8 @@
 					</div>
 				</div>
 				<div class="modal-footer">
-					<button type="button" class="btn btn-primary" data-bs-dismiss="modal" @click="addFriend">Add Friend</button>
+					<button type="button" class="btn btn-primary" data-bs-dismiss="modal" @click="addFriend">Add
+						Friend</button>
 				</div>
 			</div>
 		</div>
@@ -208,9 +213,12 @@ export default {
 			});
 			this.getAll();
 		},
-		getAll(){
+		getAll() {
 			this.getFriends();
 			this.getFriendsRequest();
+		},
+		goToUser(username) {
+			this.$router.push(`/profile/${username}`);
 		}
 	},
 	mounted() {
@@ -287,26 +295,26 @@ export default {
 }
 
 button.accept {
-  background-color: #4caf50; 
-  color: white;
+	background-color: #4caf50;
+	color: white;
 }
 
 button.accept:hover {
-  background-color: #45a049;
+	background-color: #45a049;
 }
 
 button.decline {
-  background-color: #f44336; 
-  color: white;
+	background-color: #f44336;
+	color: white;
 }
 
 ul {
-  list-style-type: none; 
-  padding: 0; 
-  margin: 0;
+	list-style-type: none;
+	padding: 0;
+	margin: 0;
 }
 
 li {
-  margin: 10px 0;
+	margin: 10px 0;
 }
 </style>
