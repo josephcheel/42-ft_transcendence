@@ -120,8 +120,7 @@ services:
       test: ["CMD-SHELL", "pg_isready -d transcendence -U transcendence"]
       interval: 10s
       timeout: 10s
-      retries: 5
-      start_period: 10s 
+      retries: 50 
 
   gateway:
     restart: always
@@ -150,7 +149,6 @@ services:
       test: ["CMD", "curl", "-f", "http://localhost:8000/metrics"]
       interval: 10s
       timeout: 20s
-      start_period: 40s
       retries: 3
 
   usermanagement:
@@ -173,7 +171,6 @@ services:
       test: ["CMD", "curl", "-f", "http://localhost:8000/metrics"]
       interval: 10s
       timeout: 20s
-      start_period: 40s
       retries: 3
 
   chat:
@@ -258,8 +255,6 @@ services:
       interval: 10s    
       timeout: 10s       
       retries: 3
-      start_period: 10s            
-
 
 
   es01:
