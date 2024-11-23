@@ -111,7 +111,7 @@ def get_results_from_blockchain(request):
 		logger.info('Connected to the blockchain')
 	except:
 		return JsonResponse({'status': 'error', 'message': 'Error connecting to the blockchain', 'data': None}, status=500)
-	contract_addr = Web3.to_checksum_address(tournament.hash)
+	contract_addr = web3.to_checksum_address(tournament.hash)
 	logger.info(web3.eth.get_code(contract_addr))
 	if not Web3.is_address(contract_addr):
 		logger.error("Invalid contract address: %s", contract_addr)
