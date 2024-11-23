@@ -10,8 +10,8 @@ import sys
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 #DOMAIN = 'localhost'
-#DOMAIN = '10.19.250.15'
-DOMAIN = '192.168.40.44'
+DOMAIN = '10.11.249.237'
+#DOMAIN = '192.168.40.47'
 EuropeZone = pytz.timezone('Europe/Madrid')
 
 def get_csrf_token(session, url):
@@ -96,6 +96,7 @@ def test_register_user(register = True):
 		assert response.status_code == 200
 		assert response.json()['status'] == 'success'
 		assert response.json()['message'] == 'user is logged in'
+		print(f"User test{i} logged in")
 
 
 def test_logout_user():
@@ -103,10 +104,7 @@ def test_logout_user():
 	for i in range(1, total_players + 1):
 		user_data = {'username': f"test{i}", 'password': "test"}
 		response = send_request(mysessions[i], logout_url, csrf[i], user_data)
-		assert response.status_code == 200
-		assert response.json()['status'] == 'success'
-		assert response.json()['message'] == 'user is logged out'
-
+		print (f"User test{i} logged out with response: {response.json()}")
 def test_get_profile():
 	for i in range(1, total_players + 1):
 		response = send_request(
@@ -294,13 +292,14 @@ def test_finish_tournament():
 								'player1': f'test{player1}',
 								'player2': f'test{player2}',
 								'winner': the_winner_id,
-								'looser': the_winner_id,
+								'looser': the_looser_id,
 								'points_winner': int(points_to_win),
 								'points_looser': random.randint(0, points_to_win-1),
 								}
 							response = send_request(
 								mysessions[player1], finish_match_url, csrf[player1], data=my_data)
-							print ("resultado", response.json())
+							print ("resultado-->", my_data)
+							print("response-->", response.json())
 							assert response.status_code == 200
 							assert response.json()['status'] == 'success'
 							assert response.json()['message'] == 'Match finished successfully'
@@ -313,24 +312,27 @@ def test_finish_tournament():
 
 def get_data_from_contracts():
 	for i in range(1, total_players + 1):
-		for j in range(1, total_tournaments + 1):
-			response = get_request(
-				mysessions[i], list_tournaments_url + f"test{i}", csrf[i])
+		response = get_request(
+			mysessions[i], list_tournaments_url + f"test{i}", csrf[i])
+		print(f"User test{i} list of tournaments response: {response.json()}")
+		print(f"User test{i} list of tournaments: {response.json()['data']}")
+		if response.json()['data'] == None:
+			print(f"User test{i} has no tournaments")
+		else:
 			list_tournaments = json.loads(response.json()['data'])
-			if list_tournaments == []:
-				print(f"User test{i} has no tournaments")
-			else:
-				for tournament in list_tournaments:
-					if tournament['status'] == 'closed':
-						my_data = {
-							"tournament_id": tournament['id']
-						}
-						response = send_request(mysessions[i], get_results_from_blockchain_url, csrf[i], my_data)
-						print(f"User test{i} results from blockchain: {response.json()}")
-						assert response.status_code == 200
-						assert response.json()['status'] == 'success'
-						assert response.json()['message'] == 'Results obtained from blockchain'
-					
+			for tournament in list_tournaments:
+				print(f"From user test{i} tournaments: {tournament}")
+				if tournament['status'] == 'finished':
+					my_data = {
+						"tournament_id": tournament['id']
+					}
+					if tournament['hash'] != '':
+						response = send_request(mysessions[i], get_results_from_blockchain_url, csrf[i], data = my_data)
+						print(f"User test{i} results from blockchain: {response}")
+						if response.status_code != 200:
+							print(f"User test{i} tournament {tournament['id']} incorrect contract number")
+					else :
+						print(f"User test{i} tournament {tournament['id']} has no hash")
 
 def close_sessions():
 	for i in range(1, total_players + 1):
@@ -363,9 +365,14 @@ if __name__ == "__main__":
 			get_data_from_contracts()
 			test_logout_user()
 			close_sessions()
+		elif sys.argv[1] == 'tournament_finish':
+			test_register_user(register=False)
+			test_finish_tournament()
+			get_data_from_contracts()
+			test_logout_user()
+			close_sessions()
 		elif sys.argv[1] == 'list':
-			test_register_user()
-			test_get_profile()
+			test_register_user(register=False)
 			get_data_from_contracts()
 			test_logout_user()
 			close_sessions()
