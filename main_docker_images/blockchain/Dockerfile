@@ -1,8 +1,10 @@
 # node:alpine will be our base image to create this image
-FROM node:latest
+FROM node:16
 # Set the /app directory as working directory
 WORKDIR /app
 #Install ganache-cli globally
+RUN npm install uNetworking/uWebSockets.js#v20.48.0
+RUN npm install -g --unsafe-perm ganache-cli
 RUN npm install -g --unsafe-perm ganache
 RUN npm install -g --unsafe-perm truffle
 RUN npm install -g punycode
