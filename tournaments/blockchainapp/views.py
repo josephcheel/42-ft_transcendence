@@ -24,19 +24,9 @@ def execute_contract(tournament_id):
 		return JsonResponse({'status': 'error', 'message': 'Error connecting to the blockchain', 'data': None}, status=500)
 	# Leer el contrato
 	account =user.ethereum_address
-#	with open("./contracts/abi.json", "r") as file:
-#		abi = json.load(file)
+	#deploy_contract(web3, account, key)
 	contract = web3.eth.contract(abi=abi, bytecode=bytecode)
-	first_place = "Nobody" if tournament.id_winner == None else tournament.id_winner.tournament_name
-	second_place = "Nobody" if tournament.id_second == None else tournament.id_second.tournament_name
-	third_place = "Nobody" if tournament.id_third == None else tournament.id_third.tournament_name
-	organizer = tournament.player_id.tournament_name
-	start_date = tournament.date_start
-#	transaction = contract.functions.setTournamentResults(
-#		first_place, second_place, third_place, organizer, int(time.mktime(start_date.timetuple()))).call()
-	# Ejecutar la función del contrato
-#	contract.functions.setGreeting
-	tx = contract.functions.get_Tournament(first_place, second_place, third_place, organizer, int(time.mktime(start_date.timetuple()))).build_transaction({
+	tx = contract.constructor().build_transaction({
 				'from': account,
 				'nonce': web3.eth.get_transaction_count(account),
 				'gas': 2000000,  # Límite de gas
@@ -46,11 +36,29 @@ def execute_contract(tournament_id):
 	signed_tx = web3.eth.account.sign_transaction(tx, private_key=key)
 	tx_hash = web3.eth.send_raw_transaction(signed_tx.raw_transaction)
 	response = web3.eth.wait_for_transaction_receipt(tx_hash)
-	logger.info('Contract executed: %s', response)
+	logger.info('Contract deployed: %s', response)
 	contractAddress = response['contractAddress']
-	tournament.hash = contractAddress.lower()
+	tournament.hash = contractAddress
 	tournament.save()
-    #return JsonResponse({'status': 'success', 'message': 'Contract executed', 'data': tx_hash}, status=200)
+	#retrieve data from the tournament	
+	first_place = "Nobody" if tournament.id_winner == None else tournament.id_winner.tournament_name
+	second_place = "Nobody" if tournament.id_second == None else tournament.id_second.tournament_name
+	third_place = "Nobody" if tournament.id_third == None else tournament.id_third.tournament_name
+	organizer = tournament.player_id.tournament_name
+	start_date = tournament.date_start
+	# Ejecutar la función del contrato
+	tx = contract.functions.set_Tournament(first_place, second_place, third_place, organizer, int(time.mktime(start_date.timetuple()))).build_transaction({
+				'from': account,
+				'to': contractAddress,
+				'nonce': web3.eth.get_transaction_count(account),
+				'gas': 2000000,  # Límite de gas
+				'gasPrice': web3.to_wei('20', 'gwei')  # Precio del gas
+			})
+	key = user.ethereum_private_key
+	signed_tx = web3.eth.account.sign_transaction(tx, private_key=key)
+	tx_hash = web3.eth.send_raw_transaction(signed_tx.raw_transaction)
+	response = web3.eth.wait_for_transaction_receipt(tx_hash)
+	logger.info('Contract executed: %s', response)
 
 def get_balance_from_web3(wallet):
 	try:
