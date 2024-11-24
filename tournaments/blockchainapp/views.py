@@ -128,7 +128,7 @@ def get_results_from_blockchain(request):
 	contract = web3.eth.contract(address = contract_addr, abi = abi)
 	logger.info('Contract: %s', contract)
 	results = contract.functions.get_Tournament().call()
-	logger.info('Results: %s', results)
+	logger.info('Results from blockchain are %s', results[0], results[1], results[2], results[3], results[4])
 	my_data = json.dumps({
 		'first_place': results[0],
 		'second_place': results[1],
