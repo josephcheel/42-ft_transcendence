@@ -328,7 +328,7 @@ def get_data_from_contracts():
 					}
 					if tournament['hash'] != '':
 						response = send_request(mysessions[i], get_results_from_blockchain_url, csrf[i], data = my_data)
-						print(f"User test{i} results from blockchain: {response}")
+						print(f"User test{i} results from blockchain: {response.json()['data']}")
 						if response.status_code != 200:
 							print(f"User test{i} tournament {tournament['id']} incorrect contract number")
 					else :

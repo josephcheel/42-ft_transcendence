@@ -13,7 +13,7 @@ contract SimpleStorage {
     first = _first;
     second = _second;
     third = _third;
-    third = _owner;
+    owner = _owner;
     myVariable = x;
   }
 
