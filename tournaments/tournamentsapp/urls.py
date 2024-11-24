@@ -23,7 +23,7 @@ from tournamentsapp.tasks.finish_tournament import finish_tournament
 from tournamentsapp.views.start_match import start_match
 from tournamentsapp.views.finish_match import finish_match
 from tournamentsapp.views.list_tournaments import list_tournaments
-from tournamentsapp.views.list_matches import list_matches, list_matches_by_tournament_id
+from tournamentsapp.views.list_matches import list_matches, list_matches_by_tournament_id, list_not_played_matches
 from tournamentsapp.views.list_invitations import list_invitations
 from tournamentsapp.views.edit_tournament import edit_tournament
 
@@ -38,6 +38,8 @@ urlpatterns = [
     path('finish_match/', finish_match),
     path('list_tournaments/<str:username>/', list_tournaments, name = 'list_tournaments'),
     path('list_matches/<str:username>/', list_matches, name='list_matches'),
+    path('list_not_played_matches/<str:username>/',
+         list_not_played_matches, name='list_not_played_matches'),
     path('list_matches_by_tournament_id/<str:tournament_id>/',
          list_matches_by_tournament_id, name='list_matches_by_tournament_id'),
     path('list_invitations/<str:username>/', list_invitations, name = 'list_invitations'),
