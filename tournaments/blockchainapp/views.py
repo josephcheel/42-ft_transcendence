@@ -36,7 +36,7 @@ def execute_contract(tournament_id):
 #		first_place, second_place, third_place, organizer, int(time.mktime(start_date.timetuple()))).call()
 	# Ejecutar la función del contrato
 #	contract.functions.setGreeting
-	tx = contract.constructor(first_place, second_place, third_place, organizer, int(time.mktime(start_date.timetuple()))).build_transaction({
+	tx = contract.functions.get_Tournament(first_place, second_place, third_place, organizer, int(time.mktime(start_date.timetuple()))).build_transaction({
 				'from': account,
 				'nonce': web3.eth.get_transaction_count(account),
 				'gas': 2000000,  # Límite de gas
@@ -112,7 +112,6 @@ def get_results_from_blockchain(request):
 	except:
 		return JsonResponse({'status': 'error', 'message': 'Error connecting to the blockchain', 'data': None}, status=500)
 	contract_addr = web3.to_checksum_address(tournament.hash)
-	logger.info(web3.eth.get_code(contract_addr))
 	if not Web3.is_address(contract_addr):
 		logger.error("Invalid contract address: %s", contract_addr)
 		return JsonResponse({'status': 'error', 'message': 'Invalid contract address', 'data': None}, status=400)
@@ -120,7 +119,7 @@ def get_results_from_blockchain(request):
 	# ABI del contrato (exportada al compilar el contrato en Remix/Hardhat/Truffle)
 	contract = web3.eth.contract(address = contract_addr, abi = abi)
 	logger.info('Contract: %s', contract)
-	results = contract.functions.getTournamentResults().call()
+	results = contract.functions.get_Tournament().call()
 	logger.info('Results: %s', results)
 	my_data = json.dumps({
 		'first_place': results[0],
