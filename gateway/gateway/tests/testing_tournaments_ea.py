@@ -199,9 +199,11 @@ def test_accept_invitation():
 		if invitation_list == []:
 			print(f"User test{i} has no invitations")
 		else:
+			n=0
 			for invitation in invitation_list:
 				print ("La invitacion es:  ", invitation)
-				if random.uniform(0, 1) >0.3:
+				if random.uniform(0, 1) >0.3 or n < 4:
+					n = n + 1
 					if invitation['status'] == 'ignored':
 						my_data = {
 						'tournament_id': invitation['tournament_id_id']
