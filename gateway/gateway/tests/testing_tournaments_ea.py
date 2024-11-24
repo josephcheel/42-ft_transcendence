@@ -33,6 +33,7 @@ accept_invitation = f'https://{DOMAIN}:8000/api/tournaments/accept_invitation/'
 close_tournament = f'https://{DOMAIN}:8000/api/tournaments/close/'
 finish_match_url = f'https://{DOMAIN}:8000/api/tournaments/finish_match/'
 list_matches_url = f'https://{DOMAIN}:8000/api/tournaments/list_matches/'
+list_not_played_matches_url = f'https://{DOMAIN}:8000/api/tournaments/list_not_played_matches/'
 list_matches_by_tournament_id_url = f'https://{DOMAIN}:8000/api/tournaments/list_matches_by_tournament_id/'
 list_invitations = f'https://{DOMAIN}:8000/api/tournaments/list_invitations/'
 list_tournaments_url = f'https://{DOMAIN}:8000/api/tournaments/list_tournaments/'
@@ -296,6 +297,7 @@ def test_finish_tournament():
 								'points_winner': int(points_to_win),
 								'points_looser': random.randint(0, points_to_win-1),
 								}
+							print("my_data------------------------------>", my_data['points_winner'])
 							response = send_request(
 								mysessions[player1], finish_match_url, csrf[player1], data=my_data)
 							print ("resultado-->", my_data)
@@ -333,6 +335,14 @@ def get_data_from_contracts():
 							print(f"User test{i} tournament {tournament['id']} incorrect contract number")
 					else :
 						print(f"User test{i} tournament {tournament['id']} has no hash")
+def list_matches_not_played():
+	for i in range(1, total_players + 1):
+		response = get_request(
+			mysessions[i], list_not_played_matches_url + f"test{i}", csrf[i])
+		print(f"User test{i} list of matches not played: {response.json()}")
+		assert response.status_code == 200
+		assert response.json()['status'] == 'success'
+		assert response.json()['message'] == 'List of matches'
 
 def close_sessions():
 	for i in range(1, total_players + 1):
@@ -374,6 +384,8 @@ if __name__ == "__main__":
 		elif sys.argv[1] == 'list':
 			test_register_user(register=False)
 			get_data_from_contracts()
+			list_matches_not_played()
+			list_matches()
 			test_logout_user()
 			close_sessions()
 		else:
