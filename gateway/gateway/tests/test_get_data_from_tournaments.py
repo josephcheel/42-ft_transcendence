@@ -7,7 +7,8 @@ import time
 from datetime import datetime
 
 EuropeZone = pytz.timezone('Europe/Madrid')
-DOMAIN = 'http://10.11.249.237:8545/'
+DOMAIN = 'http://192.168.40.47:8545/'
+#DOMAIN = 'http://10.11.249.237:8545/'
 bank_private_key = "0x4f3edf983ac636a65a842ce7c78d9aa706d3b113bce9c46f30d7d21715b23b1d"
 
 def connect_to_blockchain():
@@ -41,8 +42,24 @@ def create_account(web3:Web3):
 	print("Balance new account: ",web3.eth.get_balance(address_account))
 	return address_account, private_key
 
+def deploy_contract(web3:Web3, wallet, private_key):
+	contract = web3.eth.contract(abi=abi, bytecode=bytecode)
+	tx = contract.constructor().build_transaction({
+			'from': wallet,
+			'nonce': web3.eth.get_transaction_count(wallet),
+			'gas': 2000000,  # Límite de gas
+			'gasPrice': web3.to_wei('20', 'gwei')  # Precio del gas
+		})
+	signed_tx = web3.eth.account.sign_transaction(tx, private_key=private_key)
+	tx_hash = web3.eth.send_raw_transaction(signed_tx.raw_transaction)
+	response = web3.eth.wait_for_transaction_receipt(tx_hash)
+	print ('Contract deployed: %s', response)
+	contractAddress = response['contractAddress'].lower()
+	print(contractAddress)
+	contract_addr = web3.to_checksum_address(contractAddress)
+	return contract_addr
 
-def execute_contract(web3:Web3, wallet, private_key):
+def execute_contract(web3:Web3, wallet, private_key, contract_addr):
 	contract = web3.eth.contract(abi=abi, bytecode=bytecode)
 	first_place = "test1"
 	second_place = "test2"
@@ -52,20 +69,23 @@ def execute_contract(web3:Web3, wallet, private_key):
 	start_date = datetime.fromisoformat(start_date_iso)
 	start_date_int = int(start_date.timestamp())
 	start_date_int = 12345
-	tx = contract.constructor(first_place, second_place, third_place, organizer, start_date_int).build_transaction({
+	#tx = contract.functions.set_tournament(first_place, second_place, third_place, organizer, start_date_int).build_transaction({
+	tx = contract.functions.set(first_place, second_place, third_place, organizer, start_date_int).build_transaction({
             'from': wallet,
-        				'nonce': web3.eth.get_transaction_count(wallet),
-        				'gas': 2000000,  # Límite de gas
-        				'gasPrice': web3.to_wei('20', 'gwei')  # Precio del gas
+			'to': contract_addr,
+        	'nonce': web3.eth.get_transaction_count(wallet),
+        	'gas': 2000000,  # Límite de gas
+        	'gasPrice': web3.to_wei('20', 'gwei')  # Precio del gas
         })
 	signed_tx = web3.eth.account.sign_transaction(tx, private_key=private_key)
 	tx_hash = web3.eth.send_raw_transaction(signed_tx.raw_transaction)
 	response = web3.eth.wait_for_transaction_receipt(tx_hash)
-	print ('Contract executed: %s', response)
-	contractAddress = response['contractAddress'].lower()
-	print(contractAddress)
-	contract_addr = web3.to_checksum_address(contractAddress)
-	return contract_addr
+	transaction_hash = response['transactionHash'].hex()
+	print('Transaction hash: %s', transaction_hash)
+
+#	print(contractAddress)
+#	contract_addr = web3.to_checksum_address(contractAddress)
+	return transaction_hash
 
 def get_data_from_contract(web3, contract_addr):
 	if not web3.is_address(contract_addr):
@@ -85,7 +105,7 @@ def get_data_from_contract(web3, contract_addr):
 #	for log in logs:
 #	    event_data = contract.events.DataUpdated().processLog(log)
 #	    print("The daata event is:", event_data['args'])
-	dato1,dato2,dato3,dato4,dato5,dato6 = contract.functions.getTournamentResults().call()
+	results = contract.functions.get().call()
 	print('Results: %s', results)
 	my_data = json.dumps({
 		'first_place': results[0],
@@ -98,5 +118,6 @@ def get_data_from_contract(web3, contract_addr):
 
 web3 = connect_to_blockchain()
 wallet, private_key = create_account(web3)
-contract_addr = execute_contract(web3, wallet, private_key)
+contract_addr = deploy_contract(web3, wallet, private_key)
+contract_transaction = execute_contract(web3, wallet, private_key, contract_addr)
 get_data_from_contract(web3, contract_addr)

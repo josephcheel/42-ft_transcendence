@@ -10,8 +10,8 @@ import sys
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 #DOMAIN = 'localhost'
-DOMAIN = '10.11.249.237'
-#DOMAIN = '192.168.40.47'
+#DOMAIN = '10.11.249.237'
+DOMAIN = '192.168.40.47'
 EuropeZone = pytz.timezone('Europe/Madrid')
 
 def get_csrf_token(session, url):
@@ -378,4 +378,5 @@ if __name__ == "__main__":
 			close_sessions()
 		else:
 			print("Invalid argument")
+			print("Arguments are:<none>, match, tournament, tournament_finish, list")
 			sys.exit(1)
