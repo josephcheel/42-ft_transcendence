@@ -11,7 +11,8 @@ import sys
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 #DOMAIN = 'localhost'
 #DOMAIN = '10.11.249.237'
-DOMAIN = '192.168.40.47'
+#DOMAIN = '192.168.40.47'
+DOMAIN = "10.0.0.22"
 EuropeZone = pytz.timezone('Europe/Madrid')
 
 def get_csrf_token(session, url):

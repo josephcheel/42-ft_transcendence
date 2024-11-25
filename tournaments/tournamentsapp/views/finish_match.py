@@ -48,7 +48,7 @@ def finish_match(request):
 		return JsonResponse({'status': 'error', 'message': 'The match has already been played', 'data': None}, status=400)
 	match.winner_id = winner
 	match.looser_id = looser
-	match.points_winner = data.get('winner_points')
+	match.points_winner = data.get('points_winner')
 	match.points_looser = data.get('points_looser')
 	match.status = StatusMatches.PLAYED.value
 	match.save()
