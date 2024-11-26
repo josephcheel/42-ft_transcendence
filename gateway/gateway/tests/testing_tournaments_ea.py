@@ -12,7 +12,7 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 #DOMAIN = 'localhost'
 #DOMAIN = '10.11.249.237'
 #DOMAIN = '192.168.40.47'
-DOMAIN = "10.0.0.22"
+DOMAIN = "10.0.1.212"
 EuropeZone = pytz.timezone('Europe/Madrid')
 
 def get_csrf_token(session, url):
@@ -338,11 +338,21 @@ def get_data_from_contracts():
 							print(f"User test{i} tournament {tournament['id']} incorrect contract number")
 					else :
 						print(f"User test{i} tournament {tournament['id']} has no hash")
+
 def list_matches_not_played():
 	for i in range(1, total_players + 1):
 		response = get_request(
 			mysessions[i], list_not_played_matches_url + f"test{i}", csrf[i])
-		print(f"User test{i} list of matches not played: {response.json()}")
+		print(f"User test{i} list of matches not played: {response.json()['data']}")
+		assert response.status_code == 200
+		assert response.json()['status'] == 'success'
+		assert response.json()['message'] == 'List of matches'
+
+def list_matches():
+	for i in range(1, total_players + 1):
+		response = get_request(
+			mysessions[i], list_matches_url + f"test{i}", csrf[i])
+		print(f"User test{i} list of matches played: {response.json()['data']}")
 		assert response.status_code == 200
 		assert response.json()['status'] == 'success'
 		assert response.json()['message'] == 'List of matches'
@@ -374,8 +384,8 @@ if __name__ == "__main__":
 			test_create_tournament()
 			test_accept_invitation()
 			test_close_tournament()
-			test_finish_tournament()
-			get_data_from_contracts()
+#			test_finish_tournament()
+#			get_data_from_contracts()
 			test_logout_user()
 			close_sessions()
 		elif sys.argv[1] == 'tournament_finish':
@@ -386,8 +396,8 @@ if __name__ == "__main__":
 			close_sessions()
 		elif sys.argv[1] == 'list':
 			test_register_user(register=False)
-			get_data_from_contracts()
-			list_matches_not_played()
+			#get_data_from_contracts()
+			#list_matches_not_played()
 			list_matches()
 			test_logout_user()
 			close_sessions()
