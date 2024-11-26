@@ -26,7 +26,7 @@ def list_matches(request, username=None):
 			player = User.objects.get(username=request.user)
 		matches_data = Matches.objects.filter(
                     (Q(player_id_1=player.id) | Q(player_id_2=player.id)) & Q(player_id_2__isnull=False),
-					status__in=[StatusMatches.PLAYED, StatusMatches.NEXT_ROUND_ASSIGNED])
+					status__in=[StatusMatches.PLAYED.value, StatusMatches.NEXT_ROUND_ASSIGNED.value])
     #player = request.user.username
 		matches_list = list(matches_data.values())
 		for match in matches_list:
@@ -70,7 +70,7 @@ def list_not_played_matches(request, username=None):
 			player = User.objects.get(username=request.user)
 		matches_data = Matches.objects.filter(
                     Q(player_id_1=player.id) | Q(player_id_2=player.id),
-               		status=StatusMatches.NOT_PLAYED)
+               		status=StatusMatches.NOT_PLAYED.value)
     # player = request.user.username
 		matches_list = list(matches_data.values())
 		for match in matches_list:
