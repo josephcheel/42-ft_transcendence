@@ -15,7 +15,10 @@
         "game_stats": "Game Stats for",
         "wins" : "Wins",
         "losses": "Losses",
-        "win_rate": "Win Rate"
+        "win_rate": "Win Rate",
+        "detail": "Detail",
+        "match_details": "Match details",
+        "no_matches": "No matches played yet"
     },
     "general": {
         "username": "Username",
@@ -33,7 +36,8 @@
         "score": "Score",
         "waiting": "Waiting for players...",
         "edit_profile": "Edit Profile",
-        "user_profile": "User Profile"
+        "user_profile": "User Profile",
+        "language": "Language"
     },
     "friends": {
         "friends_title": "My Friends",
@@ -65,7 +69,7 @@
         "explain_simple_match": "Play on-line vs a random player",
         "friend_match": "Friend Match",
         "explain_friend_match": "Join or create a match with a friend",
-        "send": "Send",
+        "join": "join",
         "tournament": "Tournament",
         "explain_tournament": "Create a tournament for 16 players"
     },

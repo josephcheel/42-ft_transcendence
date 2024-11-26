@@ -1,5 +1,5 @@
 <template>
-		<div  class="card container-fluid">
+		<div  class="card container-fluid mt-4">
 			<div class="row">
 					<!-- Form to create a new tournament -->
 					<form  @submit.prevent="createTournament" class="col col-md-6 bg-light p-4">

@@ -59,7 +59,7 @@ export default {
 			endText: undefined,
 			matchId: '',
 			tournamentId: '',
-
+			playerNb: undefined,
 			username1 : 'username',
 			profile_picture_url1: '/profile_pictures/default.jpeg',
 			username2: 'username',
@@ -78,6 +78,7 @@ export default {
 			this.my_username = localStorage.getItem('username')
 		this.initClient(this.my_username, this.matchId, this.tournamentId);
 		this.initThree();
+		this.setVolume();
 	},
 	beforeUnmount() {
 		cancelAnimationFrame(this.animationFrameIdanimate);
@@ -87,6 +88,19 @@ export default {
 	  methods: {
 		getQuery() {
 			return this.$route.query;
+		},
+		setVolume()
+		{
+			if (localStorage.getItem('volume') === 'muted')
+			{
+				document.getElementById('volume').checked = true;
+				this.listener.setMasterVolume(0);
+			}
+			else
+			{
+				document.getElementById('volume').checked = false;
+				this.listener.setMasterVolume(0.5);
+			}
 		},
 		initThree() {
 		
@@ -126,9 +140,15 @@ export default {
 			document.getElementById('volume').addEventListener('change', () => {
 				const volumeButton =  document.getElementById('volume');
 				if (volumeButton.checked)
+				{
 					this.listener.setMasterVolume(0);
+					localStorage.setItem('volume', 'mute');
+				}
 				else
+				{
 					this.listener.setMasterVolume(0.5);
+					localStorage.setItem('volume', 'unmute');
+				}	
 			});
 
 			/* Paddle for the player */
@@ -144,9 +164,12 @@ export default {
 			this.ball.position.set(0, 0, 0);
 
 			new Stadium(this.scene);
-			const clouds = new Clouds(this.scene);
-			clouds.addGameClouds(this.scene);
 
+			const clouds = new Clouds(this.scene);
+			if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) === false)
+			{
+				clouds.addGameClouds(this.scene);
+			}
 			this.controls = new OrbitControls(this.camera, this.renderer.domElement)
 			this.controls.enableDamping = true
 
@@ -196,6 +219,7 @@ export default {
 			{
 				this.camera.position.set(-50, 70, 0);
 			// camera.lookAt(new THREE.Vector3(0, 0, 0));
+				
 			}
 			else if (playerNb === 2)
 			{
@@ -245,6 +269,7 @@ export default {
 		
 			if (this.PLAYER)
 				this.visibleFollowPlayer(this.PLAYER)
+			// if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) === false)
 			this.controls.update();
 			this.renderer.render(this.scene, this.camera);
 		},
@@ -379,9 +404,19 @@ export default {
 						keys[i].style.visibility = 'visible';
 					this.before_start_light()
 					if (players.player1.id == this.socket.id)
-						this.visibleFollowPlayer(1)
+					{
+						this.visibleFollowPlayer(1);
+						if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent))
+							this.changeCameraPosition(1);
+						this.playerNb = 1;
+					}
 					else if (players.player2.id == this.socket.id)
-						this.visibleFollowPlayer(2)
+					{
+						this.visibleFollowPlayer(2);
+						if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent))
+							this.changeCameraPosition(2);
+						this.playerNb = 2;
+					}
 
 				});
 			
@@ -419,8 +454,17 @@ export default {
 					// 	// camera.position.set(-60, 5, 0);
 					// 	PlayerNb = 2;
 					// }
+					// data.player1.id === this.socket.id ? this.playerNb = 1 : this.playerNb = 2;
 					
+					// if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
 
+					// 	if (this.playerNb == 2)
+					// 		this.changeCameraPosition(1);
+					// 	else if (this.playerNb == 1)
+					// 		this.changeCameraPosition(2);
+						
+					// }
+					console.log('Game started', data);
 					this.start = true;
 					let elements = document.getElementsByClassName('waiting-screen');
 			
@@ -511,6 +555,12 @@ export default {
 					case 'W':
 						this.keys.w.pressed = true;
 						break;
+					case 'ArrowDown':
+						this.keys.s.pressed = true;
+						break;
+					case 'ArrowUp':
+						this.keys.w.pressed = true;
+						break;
 					}
 					this.socket.emit('userInput', { down: this.keys.s.pressed, up: this.keys.w.pressed });
 				});
@@ -529,79 +579,87 @@ export default {
 					case 'W':
 						this.keys.w.pressed = false;
 						break;
+					case 'ArrowDown':
+						this.keys.s.pressed = false;
+						break;
+					case 'ArrowUp':
+						this.keys.w.pressed = false;
+						break;
 					}
 					this.socket.emit('userInput', { down: this.keys.s.pressed, up: this.keys.w.pressed });
 				});
 				
 				
 					document.getElementById('down-mobile-button').addEventListener('touchstart', () => {
-						if (PlayerNb !== 1) return;
+						if (this.playerNb !== 1) return;
 						this.socket.emit('userInput', { down: false, up: true });
-					});
+					}, { passive: true });
 					document.getElementById('down-mobile-button').addEventListener('touchend', () => {
-						if (PlayerNb !== 1) return;
+						if (this.playerNb !== 1) return;
 						this.socket.emit('userInput', { down: false, up: false });
-					});
+					}, { passive: true });
 					document.getElementById('up-mobile-button').addEventListener('touchstart', () => {
-						if (PlayerNb !== 1) return;
+						if (this.playerNb !== 1) return;
 						this.socket.emit('userInput', { down: true, up: false });
-					});
+					}, { passive: true });
 					document.getElementById('up-mobile-button').addEventListener('touchend', () => {
-						if (PlayerNb !== 1) return;
+						if (this.playerNb !== 1) return;
 						this.socket.emit('userInput', { down: false, up: false });
-					});
+					}, { passive: true });
 					document.getElementById('down-mobile-button').addEventListener('touchstart', () => {
-						if (PlayerNb !== 2) return;
+						if (this.playerNb !== 2) return;
 						this.socket.emit('userInput', { down: true, up: false });
-					});
+					}, { passive: true });
 					document.getElementById('down-mobile-button').addEventListener('touchend', () => {
-						if (PlayerNb !== 2) return;
+						if (this.playerNb !== 2) return;
 						this.socket.emit('userInput', { down: false, up: false });
-					});
+					}, { passive: true });
 					document.getElementById('up-mobile-button').addEventListener('touchstart', () => {
-						if (PlayerNb !== 2) return;
+						if (this.playerNb !== 2) return;
 						this.socket.emit('userInput', { down: false, up: true });
-					});
+					}, { passive: true });
 					document.getElementById('up-mobile-button').addEventListener('touchend', () => {
-						if (PlayerNb !== 2) return;
+						if (this.playerNb !== 2) return;
 						this.socket.emit('userInput', { down: false, up: false });
-					});
+					}, { passive: true });
 				
 				if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
 					document.getElementById('up-mobile-button').style.visibility = 'visible';
 					document.getElementById('down-mobile-button').style.visibility = 'visible';
+					
 					document.getElementById('down-mobile-button').addEventListener('touchstart', () => {
-						if (PlayerNb !== 1) return;
+						if (this.playerNb !== 1) return;
 						this.socket.emit('userInput', { down: false, up: true });
-					});
+					}, { passive: true });
 					document.getElementById('down-mobile-button').addEventListener('touchend', () => {
-						if (PlayerNb !== 1) return;
+						if (this.playerNb !== 1) return;
 						this.socket.emit('userInput', { down: false, up: false });
-					});
+					}, { passive: true });
 					document.getElementById('up-mobile-button').addEventListener('touchstart', () => {
-						if (PlayerNb !== 1) return;
+						if (this.playerNb !== 1) return;
 						this.socket.emit('userInput', { down: true, up: false });
-					});
+					}, { passive: true });
 					document.getElementById('up-mobile-button').addEventListener('touchend', () => {
-						if (PlayerNb !== 1) return;
+						if (this.playerNb !== 1) return;
 						this.socket.emit('userInput', { down: false, up: false });
-					});
+					}, { passive: true });
 					document.getElementById('down-mobile-button').addEventListener('touchstart', () => {
-						if (PlayerNb !== 2) return;
+						if (this.playerNb !== 2) return;
 						this.socket.emit('userInput', { down: true, up: false });
-					});
+					}, { passive: true });
 					document.getElementById('down-mobile-button').addEventListener('touchend', () => {
-						if (PlayerNb !== 2) return;
+						if (this.playerNb !== 2) return;
 						this.socket.emit('userInput', { down: false, up: false });
-					});
+					}, { passive: true });
 					document.getElementById('up-mobile-button').addEventListener('touchstart', () => {
-						if (PlayerNb !== 2) return;
+						if (this.playerNb !== 2) return;
 						this.socket.emit('userInput', { down: false, up: true });
-					});
+					}, { passive: true });
 					document.getElementById('up-mobile-button').addEventListener('touchend', () => {
-						if (PlayerNb !== 2) return;
+						if (this.playerNb !== 2) return;
 						this.socket.emit('userInput', { down: false, up: false });
-					});
+					}, { passive: true });
+
 				}
 			});
 		},

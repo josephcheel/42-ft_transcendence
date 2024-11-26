@@ -30,7 +30,7 @@ export default {
     return {
       selectedLang: 'en',
       isAuthenticated: false,
-      username: null,
+      username: '',
       points: 0,
       profile_picture_url: '/assets/images/default-profile.jpeg',
       isDataLoaded: false,  // flag to check if data is loaded before mounting Navigation
@@ -76,6 +76,7 @@ export default {
       await this.getPoints();
       await this.updateProfilePicture();
       this.isDataLoaded = true;
+      this.$i18n.locale = this.selectedLang;
     },
     async updateProfilePicture() {
       try {
@@ -92,6 +93,8 @@ export default {
           // Asegurarse de que 'data' tenga las propiedades necesarias
         if (data) {
           this.points = data.puntos;
+          this.selectedLang = data.lang;
+          //console.log(data)
         }
       } catch (error) {
         console.error("Error fetching user points:", error);
@@ -107,7 +110,8 @@ export default {
   },
   async mounted() {
     // this.checkAuthStatus();
-    await this.loadUserData();  // Load user data before rendering Navigation
+    if (this.isNav())
+      await this.loadUserData();  // Load user data before rendering Navigation
   },
 };
 </script>

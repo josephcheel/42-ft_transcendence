@@ -1,6 +1,6 @@
 import express from 'express';
-// import { createServer } from 'https';
-import { createServer } from 'http';
+import { createServer } from 'https';
+// import { createServer } from 'http';
 import { Server } from 'socket.io';
 import { dirname } from 'path';
 import path from 'path';
@@ -11,9 +11,11 @@ import cookieParser from 'cookie-parser';
 import cookie from 'cookie';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
+import { genSalt, hash } from 'bcrypt';
 /* VARIABLES */
 const MAX_GOALS = 5;
-const MAX_SPEED = 70;
+const MIN_SPEED = 25;
+const MAX_SPEED = 50;
 
 const sleep = async (ms)  => {
     await new Promise(resolve => {
@@ -97,6 +99,8 @@ class Ball extends UserInput {
         this.boundaries = { x: 50, y: 25 };
         this.score = { player1: 0, player2: 0 };
         this.finished = false;
+        this.startDate = new Date().toISOString();;
+        this.endDate = undefined;
     }
     async update(deltaTime) {
         const displacement = this.velocity.clone().multiplyScalar(deltaTime);
@@ -114,14 +118,35 @@ class Ball extends UserInput {
                 if (this.score.player1 === MAX_GOALS)
                 {
                     io.to(this.room).emit('endGame', 1);
-                    io.to(this.room).emit('closeTheGame');
-                    io.to(this.room).socketsLeave(this.room);
-                    for (let id in players)
-                    {
-                        if (players[id].room == this.room)
-                            delete players[id];
-                    }
                     this.finished = true;
+                    this.endDate = new Date().toISOString();
+                    setTimeout(() => {
+                        io.to(this.room).emit('closeTheGame');
+                        io.to(this.room).socketsLeave(this.room);
+                        let winner =  { username: undefined, points: 0 };
+                        let loser = { username: undefined, points: 0 };
+                        for (let id in players)
+                        {
+                            if (players[id].room == this.room)
+                            {
+                                console.log('player1')
+                                console.log(players[id]);
+                                if (players[id].nb == 2)
+                                {
+                                    winner.username = players[id].username;
+                                    winner.points = this.score.player1;
+                                }
+                                else
+                                {
+                                    loser.username   = players[id].username;
+                                    loser.points = this.score.player2;
+                                }
+                                delete players[id];
+                            }
+                        }
+                        console.log('API CALL', {winner, loser} );
+                        // this.finished = true;
+                    }, 5000);
                 }
                 else
                     io.to(this.room).emit('goal_scored',{PlayerNb: 1,score: this.score });
@@ -132,16 +157,41 @@ class Ball extends UserInput {
                 if (this.score.player2 === MAX_GOALS)
                 {
                     io.to(this.room).emit('endGame', 2);
-                    io.to(this.room).emit('closeTheGame');
-                    io.to(this.room).socketsLeave(this.room);
-                    for (let id in players)
-                    {
-                        if (players[id].room == this.room)
-                            delete players[id];
-                        // if (balls[this.room])
-                            // delete balls[this.room];
-                    }
                     this.finished = true;
+                    this.endDate = new Date().toISOString();
+                    setTimeout(() => {
+                        io.to(this.room).emit('closeTheGame');
+                        io.to(this.room).socketsLeave(this.room);
+                        let winner =  { username: undefined, points: 0 };
+                        let loser = { username: undefined, points: 0 };
+                        for (let id in players)
+                        {
+                            if (players[id].room == this.room)
+                            {
+                                console.log('player2')
+                                console.log(players[id]);
+                                if (players[id].nb == 1)
+                                {
+                                    winner.username = players[id].username;
+                                    winner.points = this.score.player2;
+                                }
+                                else
+                                {
+                                    loser.username   = players[id].username;
+                                    loser.points = this.score.player1;
+                                }
+                                delete players[id];
+                            }
+                        }
+                        // let json = {winner: winner.username, looser: loser.username, winner_points: winner.points, looser_points: loser.points};
+                        // let response = axios.post(`https://${ORIGIN_IP}:8000/api/tournaments/match_finish`, json);
+                        // if (response.status === 200)
+                        // {
+                        //     console.log('200', { response });
+                        // }
+                        console.log('API CALL', {winner, loser});
+                        // this.finished = true;
+                    }, 5000);
                 }
                 else
                 io.to(this.room).emit('goal_scored', {PlayerNb: 2,score: this.score });
@@ -151,8 +201,17 @@ class Ball extends UserInput {
                 newPosition.x = 0;
                 newPosition.y = 0;
                 newPosition.z = 0;
+                
                 this.velocity.x *= -1;
-                this.speed 
+                if (Math.abs(this.velocity.x) > MIN_SPEED)
+                {
+                    if (this.velocity.x < 0)
+                        this.velocity.x = -MIN_SPEED;
+                    else if (this.velocity.x > 0)
+                        this.velocity.x = MIN_SPEED;
+                }
+                this.velocity.z = (Math.random() * 10) * (Math.random() < 0.5 ? -1 : 1);
+                // console.log('VELOCITY AFTER GOAL', this.velocity);
                 this.isGoal = false;
                 this.position.copy(newPosition);
                 io.to(this.room).emit('continue_after_goal');
@@ -189,8 +248,10 @@ class Paddle extends UserInput {
         this.connected = true;
         this.matchId = null;
         this.tournamentId = null;
-        this.usename = undefined;
+        this.username = undefined;
         this.ball = undefined;
+        this.up = false;
+        this.down = false;
     }
 
     PaddleLimits() {
@@ -213,36 +274,6 @@ class Paddle extends UserInput {
         const paddleTop = this.position.z + this.depth / 2;
         const paddleBottom = this.position.z - this.depth / 2;
     
-        if (ball.position.x - ball.radius <= paddleRight &&
-            ball.position.x + ball.radius >= paddleLeft &&
-            ball.position.z - ball.radius <= paddleTop &&
-            ball.position.z + ball.radius >= paddleBottom) {
-            
-            // Determine collision side
-            if (Math.abs(ball.position.x - paddleLeft) < ball.radius || 
-                Math.abs(ball.position.x - paddleRight) < ball.radius) {
-                    io.to(this.room).emit('colision-paddle');
-                this.ball.velocity *= 10;
-                return 1; // Collision on X-axis
-            } else {
-                
-                io.to(this.room).emit('colision-paddle');
-                console.log(this.ball)
-                this.ball.velocity *= 10;
-                console.log(this.ball)
-                return 2; // Collision on Z-axis
-            }
-        }
-    
-        return 0; // No collision
-    }
-    
-    handleCollision4(ball) {
-        const paddleLeft = this.position.x - this.width / 2;
-        const paddleRight = this.position.x + this.width / 2;
-        const paddleTop = this.position.z + this.depth / 2;
-        const paddleBottom = this.position.z - this.depth / 2;
-    
         const ballLeft = ball.position.x - ball.radius;
         const ballRight = ball.position.x + ball.radius;
         const ballTop = ball.position.z + ball.radius;
@@ -258,14 +289,52 @@ class Paddle extends UserInput {
     
             // Determine collision side based on the smaller overlap
             if (overlapX < overlapZ) {
+                console.log('BALL VELOCITY COLLISION', this.ball.ball.velocity);
+                io.to(this.room).emit('colision-paddle');
+                if (this.up === false && this.down === false)
+                {
+                    this.ball.ball.velocity.z = Math.random() * 50 * (Math.random() < 0.5 ? -1 : 1);
+                    console.log('BALL VELOCITY CHANGE TRAYECTORIA COLLISION', this.ball.ball.velocity);
+                }
                 this.ball.ball.velocity.multiplyScalar(-1);
-                this.ball.ball.velocity.multiplyScalar(1.5);
+                // this.ball.ball.velocity.multiplyScalar(1.5);
+                if (this.ball.ball.velocity.x > 0)
+                {
+                    this.ball.ball.position.x += 1;
+                }
+                else if (this.ball.ball.velocity.x < 0)
+                {
+                    this.ball.ball.position.x -= 1;
+                }
+                if (Math.abs(this.ball.ball.velocity.x) < MAX_SPEED)
+                {
+                    if (this.ball.ball.velocity.x < 0)
+                        this.ball.ball.velocity.x = -MAX_SPEED;
+                    else if (this.ball.ball.velocity.x > 0)
+                        this.ball.ball.velocity.x = MAX_SPEED;
+                }
                 // Collision on X-axis
                 return 1; // Collision on X-axis
             } else {
-                console.log(this.ball)
+                console.log('BALL VELOCITY COLLISION', this.ball.ball.velocity);
+                io.to(this.room).emit('colision-paddle');
                 this.ball.ball.velocity.multiplyScalar(-1);
-                this.ball.ball.velocity.multiplyScalar(1.5);
+                // TEST IF THIS WORKS FINE, WHEN COLLIDING Z AXIS THE BALL SHOULD MOVE AWAY FROM THE PADDLE 1 UNIT 
+                // if (this.ball.ball.velocity.z > 0)
+                // {
+                //     this.ball.ball.position.z += 1;
+                // }
+                // else if (this.ball.ball.velocity.z < 0)
+                // {
+                //     this.ball.ball.position.z -= 1;
+                // }
+                if (Math.abs(this.ball.ball.velocity.x) < MAX_SPEED)
+                {
+                    if (this.ball.ball.velocity.x < 0)
+                        this.ball.ball.velocity.x = -MAX_SPEED;
+                    else if (this.ball.ball.velocity.x > 0)
+                        this.ball.ball.velocity.x = MAX_SPEED;
+                }
                 // Collision on Z-axis
                 return 2; // Collision on Z-axis
             }
@@ -301,8 +370,8 @@ const keyFilePath = path.join(__dirname, 'selfsigned.key');
 
 // Read the files
 const serverOptions = {
-    // key: fs.readFileSync(keyFilePath),
-    // cert: fs.readFileSync(pemFilePath),
+    key: fs.readFileSync(keyFilePath),
+    cert: fs.readFileSync(pemFilePath),
 };
 
 const server = createServer(serverOptions, app);
@@ -338,18 +407,19 @@ function GameLoop()
     
             if (balls[players[playerId].room])
             {
-                switch (players[playerId].handleCollision4(balls[players[playerId].room].ball))
-                {
-                    case 1:
-                        // balls[players[playerId].room].ball.velocity.x *= -1;
-                        // balls[players[playerId].room].ball.velocity.multiplyScalar(10);
-                        // balls[pl]
-                        break;
-                    case 2:
-                        // balls[players[playerId].room].ball.velocity.z *= -1;
-                        // balls[players[playerId].room].ball.velocity.multiplyScalar(10);
-                        break;
-                }
+                players[playerId].handleCollision(balls[players[playerId].room].ball)
+                // switch (players[playerId].handleCollision(balls[players[playerId].room].ball))
+                // {
+                //     case 1:
+                //         // balls[players[playerId].room].ball.velocity.x *= -1;
+                //         // balls[players[playerId].room].ball.velocity.multiplyScalar(10);
+                //         // balls[pl]
+                //         break;
+                //     case 2:
+                //         // balls[players[playerId].room].ball.velocity.z *= -1;
+                //         // balls[players[playerId].room].ball.velocity.multiplyScalar(10);
+                //         break;
+                // }
             }
             io.to(players[playerId].room).emit('updatePlayer', { id: playerId , z: players[playerId].position.z, nb: players[playerId].nb });
     }       
@@ -399,7 +469,8 @@ async function startCountdown(room, player1, player2) {
   
 async function startGame(room, socketId, KeyPlayer1) {
     await startCountdown(room, socketId, KeyPlayer1);
-    balls[room].ball.velocity = new Vector3(1, 0, (Math.random() * 1).toFixed(2)).multiplyScalar(balls[room].ball.speed);
+    let turn = Math.random() < 0.5 ? 1 : -1;
+    balls[room].ball.velocity = new Vector3(turn, 0, (Math.random() * 1).toFixed(2)).multiplyScalar(MIN_SPEED);
     io.to(room).emit('startGame', { player1: players[socketId], player2: players[KeyPlayer1], ball: balls[room] });
 }
 
@@ -455,6 +526,7 @@ io.on("connection", (socket) => {
         players[socket.id].tournamentId = tournamentId;
         players[socket.id].username = username;
 
+
         let pairedPlayerId = null;
         for (let id in players) {
             if (id !== socket.id) {
@@ -468,6 +540,10 @@ io.on("connection", (socket) => {
 
         if (pairedPlayerId) {
             // Pair the players in the same match/tournament
+            if (players[socket.id].tournamentId !== null)
+            {
+                // send start_match to the tournament server
+            }
             const room = players[pairedPlayerId].room;
             players[socket.id].room = room;
             players[socket.id].nb = 2;
@@ -496,6 +572,10 @@ io.on("connection", (socket) => {
             // console.log('PLAYERS:', players);
         } else {
             // No available player with the same match/tournament ID, make this player wait
+            if (players[socket.id].tournamentId !== null)
+            {
+                // send start_match to the tournament server
+            }
             const room = crypto.randomUUID(); // Generate a random room ID
             players[socket.id].position = new Vector3(centerDistanceToPaddle, 0, 0);
             players[socket.id].id = socket.id;
@@ -528,11 +608,11 @@ io.on("connection", (socket) => {
 
 app.use(cookieParser());
 
-// app.use(express.static(path.join()));
+app.use('/socket-io-admin', express.static(path.join(__dirname, 'node_modules/@socket.io/admin-ui/ui/dist')));
 
-// app.get('/', (req, res) => {
-//     res.sendFile(path.join(__dirname, 'index.html'));
-// });
+app.get('/socket-io-admin', (req, res) => {
+    res.sendFile(path.join(__dirname, '/node_modules/@socket.io/admin-ui/ui/dist/index.html'));
+});
 
 app.get('*', (req, res) => {
     res.send(`
@@ -553,5 +633,32 @@ server.listen(port, '0.0.0.0', () => {
     console.log(`Server running on port ${port}`);
 });
 
-instrument(io, { auth: false });
+const SOCKET_IO_ADMIN_USERNAME = (process.env.SOCKET_IO_ADMIN_USERNAME || 'admin').trim();
+const SOCKET_IO_ADMIN_PASSWORD = (process.env.SOCKET_IO_ADMIN_PASSWORD || 'changeit').trim();
+const SOCKET_IO_ADMIN_MODE = (process.env.SOCKET_IO_ADMIN_MODE || 'production').trim();
 
+async function generatePassword() {
+    try {
+        const salt = await genSalt(10);
+        const hashedPassword = await hash(SOCKET_IO_ADMIN_PASSWORD, salt);
+        return hashedPassword;
+    } catch (err) {
+        console.error("Error generating password hash:", err);
+        return '$2b$10$heqvAkYMez.Va6Et2uXInOnkCT6/uQj1brkrbyG3LpopDklcq7ZOS'; // Fallback password set to 'changeit'
+    }
+}
+
+async function socket_io_admin() {
+    const password = await generatePassword();
+    console.log('Password after:', password);
+    instrument(io, {
+        auth: {
+            type: "basic",
+            username: SOCKET_IO_ADMIN_USERNAME,
+            password: password,
+        },
+       mode : SOCKET_IO_ADMIN_MODE,
+    });
+}
+
+socket_io_admin();

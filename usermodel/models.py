@@ -27,7 +27,7 @@ class User(AbstractUser):
     tournament_name = models.CharField(max_length=100, null = True)
     puntos = models.IntegerField(default=1000)
     puntos_reservados = models.IntegerField(default=0)
-    ethereum_address = models.CharField(max_length=42, null=True)
+    ethereum_address = models.CharField(max_length=44, null=True)
     ethereum_private_key = models.CharField(max_length=66, null=True, blank=True)
     # Specify a unique related_name for the groups field
     groups = models.ManyToManyField(
@@ -45,7 +45,8 @@ class User(AbstractUser):
         self.save()
 
     def get_all(self):
-        return {'lang': self.language,'puntos': self.puntos, 'first_name': self.first_name, 'last_name': self.last_name, 'username' : self.username ,"tournament_name" : self.tournament_name, 'is_online' : self.userstatus.is_online, 'profile_picture_url' : self.userprofilepic.picture.url}
+
+        return {'lang': self.language,'puntos': self.puntos,'id': self.id, 'first_name': self.first_name, 'last_name': self.last_name, 'username' : self.username ,"tournament_name" : self.tournament_name, 'is_online' : self.userstatus.is_online, 'profile_picture_url' : self.userprofilepic.picture.url}
 
 
 User = get_user_model()
@@ -89,19 +90,19 @@ class Friendship(models.Model):
     STATUS_STRING = {v: k for k, v in STATUS_CHOICES}
 
     status = models.PositiveSmallIntegerField(choices=STATUS_CHOICES, default=PENDING_CHOICE)
+    sender = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        related_name="sent_friend_requests",
+        on_delete=models.CASCADE,
+        default=None
+    )
     users = models.ManyToManyField(settings.AUTH_USER_MODEL)
 
     @staticmethod
-    def add_friendship(user1, user2):
-        friends = Friendship()
-        friends.save()
-        friends.users.add(user1, user2)
-
-    @staticmethod
-    def remove_friendship(user1, user2):
-        friendship = Friendship.objects.filter(users=user1).filter(users=user2).first()
-        if friendship:
-            friendship.delete()
+    def add_friendship(sender, user2):
+        friendship = Friendship.objects.create(sender=sender)
+        friendship.users.add(sender, user2)
+        
     
     @staticmethod
     def are_friends(user1, user2):
@@ -112,18 +113,30 @@ class Friendship(models.Model):
         return Friendship.objects.filter(users=user1).filter(users=user2)
     
     @staticmethod
+    def get_pending_requests(user):
+        friendships = Friendship.objects.filter(users=user) 
+        pending_requests = []
+        for friendship in friendships:
+            if friendship.sender != user and friendship.status == Friendship.PENDING_CHOICE:
+                pending_requests.append({
+                    'friendship_id': friendship.id,
+                    'username': friendship.sender.username,
+                    'profile_picture_url' : friendship.sender.userprofilepic.picture.url
+                }) 
+        return pending_requests
+
+    @staticmethod
     def get_friends(user):
         friendships =Friendship.objects.filter(users=user) 
         friends_list = []
         for friendship in friendships:
             friend = friendship.users.exclude(id=user.id).first()
-            if friend:
-                friends_list.append({
-                    'username': friend.username,
-                    'friendship': friendship.get_status_display(),
-                    'is_online' : friend.userstatus.is_online
-
-                }) 
+            if friend and friendship.status == Friendship.ACCEPTED_CHOICE:
+                    friends_list.append({
+                        'username': friend.username,
+                        'is_online' : friend.userstatus.is_online,
+                        'profile_picture_url' : friend.userprofilepic.picture.url
+                    })
         return friends_list
     
     @classmethod

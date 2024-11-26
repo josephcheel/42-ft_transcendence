@@ -36,17 +36,16 @@
 			<li class="nav-item">
 				<router-link :class="`nav-link ${isActive('/friends')}`" to="/friends">{{ $t('message.links.friends') }}</router-link>
 			</li>
-			<li class="nav-item dropdown">
+			<!-- <li class="nav-item dropdown">
 				<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-					Language
+					{{ $t('message.links.language') }}
 				</a>
 				<ul class="dropdown-menu" aria-labelledby="navbarDropdown" >
 					<li><a class="dropdown-item" @click="changeLang('en');">English</a></li>
 					<li><a class="dropdown-item" @click="changeLang('es');">Español</a></li>
 					<li><a class="dropdown-item" @click="changeLang('fr')">Français</a></li>
-					<!-- Add more languages here -->
 				</ul>
-			</li>
+			</li> -->
 			
 			<li id="user-info" class="nav-item d-flex justify-content-center">
 				<div class="row text-center">
@@ -80,6 +79,12 @@
 	</nav>
   </template>
   <style scoped>
+  .navbar-toggler-icon {
+	 padding-right: 1vh;
+  }
+  .navbar-toggler {
+		border: 0px;
+  }
   .rounded-circle {
 	border : 2px solid rgba(255, 255, 255, 0.391);
   }
@@ -202,6 +207,7 @@
         axios.post(`https://${this.$router.ORIGIN_IP}:8000/api/user/logout_user/`).then((response) => {
           if (response.status === 200)
           {
+			this.$i18n.locale = 'en';
 			this.$router.push('/');
 			console.log(response);
           }

@@ -15,7 +15,10 @@
         "game_stats": "Statistiques de jeu pour",
         "wins" : "Victoires",
         "losses": "Défaites",
-        "win_rate": "Taux de victoire"
+        "win_rate": "Taux de victoire",
+        "detail": "Détail",
+        "match_details": "détails du match",
+        "no_matches": "Aucun match joué pour l'instant"
     },
     "general": {
         "username": "Nom d'utilisateur",
@@ -33,7 +36,8 @@
         "score": "Score",
         "waiting": "En attente de joueurs...",
         "edit_profile": "Modifier le profil",
-        "user_profile": "Profil de l'utilisateur"
+        "user_profile": "Profil de l'utilisateur",
+        "language": "Langue"
     },
     "friends": {
         "friends_title": "Mes amis",
@@ -65,7 +69,7 @@
         "explain_simple_match": "Jouez en ligne contre un joueur aléatoire",
         "friend_match": "Match entre amis",
         "explain_friend_match": "Rejoignez ou créez un match avec un ami",
-        "send": "Envoyer",
+        "join": "Rejoindre",
         "tournament": "Tournoi",
         "explain_tournament": "Créez un tournoi pour 16 joueurs"
     },

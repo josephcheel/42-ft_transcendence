@@ -8,6 +8,7 @@ import Chat from '../components/chat/chatLayout.vue'
 import Dashboard from '../components/Dashboard.vue'
 import GameSelection from '../components/GameSelection.vue'
 import Profile from '../components/Profile.vue'
+import PublicProfile from '../components/PublicProfile.vue'
 import Game from '../components/game/Game.vue'
 import Home from '../components/Home.vue'
 import GameOnline from '../components/GameOnline/GameOnline.vue'
@@ -67,7 +68,13 @@ const routes = [
   {
     path: '/profile/',
     name: 'Profile',
-    component: Profile
+    component: Profile,
+  },
+  {
+    path: '/profile/:username',
+    name: 'PublicProfile',
+    component: PublicProfile,
+    props: true, // Allows `username` to be passed as a prop
   },
   {
     path: '/game',
@@ -132,7 +139,7 @@ router.beforeResolve (async (to, from, next) => {
   //   }
   // }
 
-  if (to.path === '/' || to.path === '/game') {
+  if (to.path === '/' || to.path === '/game' || to.path === '/game-online') {
     document.body.style.overflow = 'hidden';
   }
   else {

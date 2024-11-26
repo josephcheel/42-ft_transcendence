@@ -1,5 +1,5 @@
 <template>
-  <div class="card mx-auto" style="width: 18rem;">
+  <div class="card mx-auto mt-3" style="width: 18rem;">
     <!-- Mostrar la imagen o el campo de carga de archivo según el modo -->
     <div class="text-center mt-3" v-if="!isEditing">
       <img id="profile-picture" :src="user.profile_picture_url" class="rounded-circle img-fluid profile-picture" alt="User Image" />
@@ -13,11 +13,12 @@
       <h5 class="card-title text-center">{{ isEditing ? $t('general.edit_profile') : $t('general.user_profile') }}</h5>
 
       <!-- Campos de información del usuario -->
-      <div v-if="!isEditing">
-        <p class="form-label"><strong>{{ $t('general.name')}}:</strong> {{ user.first_name }}</p>
-        <p class="form-label"><strong>{{ $t('general.lastname')}}:</strong> {{ user.last_name }}</p>
-        <p class="form-label"><strong>{{ $t('general.username')}}:</strong> {{ user.username }}</p>
-        <p class="form-label"><strong>{{ $t('general.username_tournament')}}:</strong> {{ user.tournament_name }}</p>
+      <div id="info" v-if="!isEditing" >
+        <p class="form-label"><strong>{{ $t('general.name')}}</strong> {{ user.first_name }}</p>
+        <p class="form-label"><strong>{{ $t('general.lastname')}}</strong> {{ user.last_name }}</p>
+        <p class="form-label"><strong>{{ $t('general.username')}}</strong> {{ user.username }}</p>
+        <p class="form-label"><strong>{{ $t('general.username_tournament')}}</strong> {{ user.tournament_name }}</p>
+        <p class="form-label"><strong>{{ $t('general.language') }}</strong> {{ user.lang_text }}</p>
       </div>
 
       <!-- Campos editables -->
@@ -34,10 +35,18 @@
           <label for="tournamentName" class="form-label">{{ $t('general.username_tournament')}}</label>
           <input type="text" class="form-control" v-model="user.tournament_name" id="tournamentName">
         </div>
+        <div class="mb-3">
+          <label for="lang" class="form-label">{{ $t('general.language') }}</label>
+          <div class="dropdown-menu" style="display: block; position: relative;">
+            <a class="dropdown-item" :class="{ active: user.lang === 'en' }" @click="changeLang('en');">English</a>
+            <a class="dropdown-item" :class="{ active: user.lang === 'es' }" @click="changeLang('es');">Español</a>
+            <a class="dropdown-item" :class="{ active: user.lang === 'fr' }" @click="changeLang('fr');">Français</a>
+          </div>
+        </div>
       </div>
 
       <!-- Botón para alternar entre modo de edición y visualización -->
-      <div v-if="editDisplay" class="text-center">
+      <div v-if="editProfile" class="text-center">
         <button class="btn btn-primary" @click="toggleEdit">
           {{ isEditing ? 'Save' : 'Edit' }}
         </button>
@@ -47,11 +56,23 @@
 </template>
 <style scoped>
 
+.text-center {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  
+}
+.btn-primary {
+  font-size: 0.8rem !important;
+  height: fit-content;
+}
+
 #profile-picture {
   width: 15vh;
   height: 15vh;
   border-radius: 50%;
-  border: 3px solid black;
+  /* border: 3px solid black; */
+  border : 3px solid rgba(255, 255, 255, 0.391);
   object-fit: cover; /* Ensures the image covers the entire area */
   object-position: center; /* Centers the image */
   background-color: #f0f0f0; /* Placeholder background color */
@@ -60,9 +81,22 @@
 .card {
   background-color: rgba(255, 255, 255, 0.379) !important;
 }
+
+.card-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
 .form-label {
   color: black !important;
   font-size: small !important;
+  /* font-family:system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif !important; */
+  font-family: 'Helvetica Neue' !important;
+}
+#info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
 }
 
 </style>
@@ -78,7 +112,9 @@ export default {
         last_name: "",
         username: "",
         tournament_name: "",
-        profile_picture_url: "/assets/images/default-profile.jpeg"
+        profile_picture_url: "/assets/images/default-profile.jpeg",
+        lang: "",
+        lang_text: ""
       },
       selectedImage: null,
     };
@@ -87,16 +123,20 @@ export default {
     const username = localStorage.getItem('username');
     if (!username) {
       this.$router.push({ path: '/', params: { currentView: 'Login' } });
-      // this.$router.push('/login'); // Redirigir al login si no está autenticado
     } else {
       this.fetchUserProfile();
     }
 },
   props: {
-    editDisplay: {
+    editProfile: {
       type: Boolean,
       required: true,
       default: true
+    },
+    username: {
+      type: String,
+      required: false,
+      default: ''
     }
   },
   methods: {
@@ -108,6 +148,18 @@ export default {
         }
       }
       this.isEditing = !this.isEditing;
+    },
+
+    changeLang(lang){
+      this.user.lang = lang;
+    },
+    changeLangText(){
+      if(this.user.lang === "en")
+        this.user.lang_text = "English"
+      else if(this.user.lang === "fr")
+        this.user.lang_text = "Français"
+      if(this.user.lang === "es")
+        this.user.lang_text = "Español"
     },
 
     onImageChange(event) {
@@ -122,29 +174,35 @@ export default {
       }
     },
     async fetchUserProfile() {
-      const username = localStorage.getItem('username');
-    
-      if (!username) {
-        console.error("No username found in localStorage");
-        return; // Salir si no hay nombre de usuario
+      if (this.username) {
+        this.user.username = this.username;
+      } else {
+       this.user.username = localStorage.getItem('username');
+       if (!this.user.username) {
+         console.error("No username found in localStorage");
+         return; // Salir si no hay nombre de usuario
+       }
       }
       axios
-        .get(`https://${this.$router.ORIGIN_IP}:8000/api/user/get_profile/${username}/`)
+        .get(`https://${this.$router.ORIGIN_IP}:8000/api/user/get_profile/${this.user.username}/`)
         .then((response) => {
           const data = response.data.data;
+          console.log("User profile data:", data);
           // Asegurarse de que 'data' tenga las propiedades necesarias
           if (data) {
             this.user.first_name = data.first_name || '';
             this.user.last_name = data.last_name || '';
             this.user.username = data.username || '';
             this.user.tournament_name = data.tournament_name || '';
+            this.user.lang = data.lang || '';
+            this.changeLangText()
           } else {
             console.error("No user profile data received");
           }
         })
 
     axios
-      .get(`https://${this.$router.ORIGIN_IP}:8000/api/user/get_profile_picture_url/${username}/`)
+      .get(`https://${this.$router.ORIGIN_IP}:8000/api/user/get_profile_picture_url/${this.user.username}/`)
       .then((response) => {
         const pict = response.data.data;
         const url = pict.profile_picture_url;
@@ -160,9 +218,12 @@ export default {
         await axios.post(`https://${this.$router.ORIGIN_IP}:8000/api/user/update_user/`, {
           first_name: this.user.first_name,
           last_name: this.user.last_name,
-          tournament_name: this.user.tournament_name
+          tournament_name: this.user.tournament_name,
+          language: this.user.lang
         });
         console.log('User profile updated successfully.');
+        this.$i18n.locale = this.user.lang;
+        this.changeLangText()
       } catch (error) {
         console.error("Error updating user profile:", error);
       }

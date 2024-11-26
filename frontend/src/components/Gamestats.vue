@@ -1,43 +1,98 @@
 <template>
   <div class="container">
-    <h1>{{ $t('game_stats.game_stats')}} {{ this.$route.params.username }}</h1>
-    <div class="row-container">
-      <div class="stats-container">
-        <div class="chart-container">
-          <h2>{{ $t('game_stats.win_rate')}}</h2>
-          <div class="canvas-wrapper">
-            <canvas class="canvas" ref="pieChart" height="400" width="400"></canvas>
-            <div class="win-percent">
-              {{ this.userWinPercentage }}%
+
+    <div class="row">
+      <!-- Stats Container -->
+      <div class="col-12 col-lg-7">
+        <div class="card">
+          <h1 class="text-center">
+            {{ $t('game_stats.game_stats') }} {{ this.$route.params.username }}
+          </h1>
+          <h2 class="text-center">{{ $t('game_stats.win_rate') }}</h2>
+          <div class="d-flex flex-column align-items-center">
+            <div class="position-relative">
+              <canvas class="canvas" ref="pieChart" height="400" width="400"></canvas>
+              <div class="win-percent position-absolute top-50 start-50 translate-middle">
+                {{ this.userWinPercentage }}%
+              </div>
+            </div>
+            <div class="win-stats  text-center">
+              <h4 v-if="this.matchList.length">
+                {{ $t('game_stats.wins') }} : {{ this.matchList.filter(match => match.winner_id_id ===
+                  this.userId).length }}
+              </h4>
+              <h4 v-else>
+                No win matches found
+              </h4>
+              <h4 v-if="this.matchList.length">
+                {{ $t('game_stats.losses') }}: {{ this.matchList.filter(match => match.winner_id_id !==
+                  this.userId).length }}
+              </h4>
+              <h4 v-else>
+                No lost matches found
+              </h4>
             </div>
           </div>
-          <div class="win-stats">
-            <p v-if="this.matchList.length">{{ $t('game_stats.wins')}}: {{ this.matchList.filter(match => match.winner_id_id ===
-              this.userId).length }}</p>
-            <p v-if="this.matchList.length">{{ $t('game_stats.losses')}}: {{ this.matchList.filter(match => match.winner_id_id !==
-              this.userId).length }}</p>
+
+          <div class="tournaments-stats">
+            <canvas ref="barChart" height="400" width="600"></canvas>
           </div>
         </div>
-        <div class="tournaments-stats">
-          <canvas ref="barChart" height="400" width="600"></canvas>
+      </div>
+      <!-- Dashboard -->
+      <div class="col-12 col-lg-5">
+        <div class="card">
+          <div class="p-3 border rounded bg-light" style="max-height:700px; overflow-y: auto;">
+            <div class="row g-3">
+
+              <div v-if="matchList.length" v-for="(match, id) in matchList" :key="id"
+                class="col-12 match-box p-3 border rounded d-flex align-items-center" :class="{
+                  'bg-success text-white': match.winner_id_id === this.userId,
+                  'bg-danger text-white': match.winner_id_id !== this.userId
+                }">
+                <img id="profile-picture" class="rounded-circle me-3" :src="match.opponentProfile && match.opponentProfile.profile_picture_url
+                  ? match.opponentProfile.profile_picture_url
+                  : '/profile_pictures/default.jpeg'" alt="Profile picture" height="100" width="100" />
+                <div class="match-info" @click="goToGameStats(match.opponentProfile.username)">
+                  <p class="player-name mb-1">{{ match.opponentProfile ? match.opponentProfile.username : 'Loading...'
+                    }}</p>
+                  <p v-if="match.tournament_id > 0" class="round small">{{ match.round }}</p>
+                </div>
+                <button class="btn btn-primary ms-auto" @click="handleButtonClick(match)">
+                  {{ $t('game_stats.detail') }}
+                </button>
+              </div>
+              <div v-else>
+                No matches found
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-      <div class="dashboard">
-        <div v-for="(match, id) in matchList" :key="id" class="match-box" :class="{
-          'player-won': match.winner_id_id === this.userId,
-          'other-won': match.winner_id_id !== this.userId
-        }">
-          <img class="opponentPicture" :src="match.opponentProfile && match.opponentProfile.profile_picture_url
-            ? match.opponentProfile.profile_picture_url
-            : '/profile_pictures/default.jpeg'" alt="Profile picture" height="100" width="100">
-          <div class="match-info" @click="goToGameStats(match.opponentProfile.username)">
-            <p class="player-name">{{ match.opponentProfile ? match.opponentProfile.username : 'Loading...' }}</p>
-            <p v-if="match.tournament_id > 0" class="round">{{ match.round }}</p>
+    </div>
+
+
+    <!-- prueba pop-up para detalles partido-->
+
+    <div class="modal fade" id="matchDetailsModal" tabindex="-1" aria-labelledby="matchDetailsModalLabel"
+      aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="matchDetailsModalLabel">{{ $t('game_stats.match_details') }}</h5>
+          </div>
+          <div class="modal-body">
+            <p>{{ matchDetails.winnerId }}</p>
+            <p>{{ matchDetails.pointsWinner }}</p>
+            <p>{{ matchDetails.looserId }}</p>
+            <p>{{ matchDetails.pointsLooser }}</p>
+            <p>{{ matchDetails.dateTime }}</p>
           </div>
         </div>
       </div>
     </div>
   </div>
+
 </template>
 
 <script>
@@ -67,10 +122,30 @@ export default {
         "third place": { wins: 0, losses: 0 },
         "qualified": { wins: 0, losses: 0 },
       },
-      barChartInstance : null,
+      matchDetails: {
+        winnerId: '',
+        pointsWinner: '',
+        looserId: '',
+        pointsLooser: '',
+        dateTime: ''
+      },
+      barChartInstance: null,
     }
   },
   methods: {
+    handleButtonClick(match) {
+      // Set match details
+      this.matchDetails.winnerId = match.winner_id;
+      this.matchDetails.pointsWinner = match.points_winner;
+      this.matchDetails.looserId = match.looser_id;
+      this.matchDetails.pointsLooser = match.points_looser;
+      this.matchDetails.dateTime = match.date_time;
+
+      // Show modal
+      const modal = new bootstrap.Modal(document.getElementById('matchDetailsModal'));
+      modal.show();
+    },
+
     resetData() {
       if (this.barChartInstance) {
         this.barChartInstance.destroy();
@@ -103,10 +178,11 @@ export default {
         if (!this.matchList.length) {
           return;
         }
-
+        // player id 2 might be null if it was an uneven tournament, so those matches are closed without being played, we can ignore them.
+        this.matchList = this.matchList.filter(match => match.player_id_2_id !== null && 
+        (match.points_winner !== null && match.points_looser !== null && match.status === "played"));
         // gets oponent profiles into the match list
         this.processMatchList();
-        console.log(this.roundStats.final);
         this.getOpponentProfiles();
         this.renderChart();
         this.renderBarChart();
@@ -176,7 +252,7 @@ export default {
       const ctx = this.$refs.barChart.getContext('2d');
 
       this.barChartInstance = new Chart(ctx, {
-        type: 'bar', 
+        type: 'bar',
         data: {
           labels: ['Final', 'Semifinal', 'Third place', 'Qualified'],
           datasets: [
@@ -235,10 +311,14 @@ export default {
         const opponentId = match.player_id_1_id === this.userId
           ? match.player_id_2_id
           : match.player_id_1_id;
-
         // Fetch the opponent's profile and attach it to the match object
-        const opponentResponse = await axios.get(`https://${this.$router.ORIGIN_IP}:8000/api/user/get_profile/${opponentId}/`);
-        match.opponentProfile = opponentResponse.data.data;
+        try {
+          const opponentResponse = await axios.get(`https://${this.$router.ORIGIN_IP}:8000/api/user/get_profile/${opponentId}/`);
+          match.opponentProfile = opponentResponse.data.data;
+        }
+        catch (error) {
+          console.error("Error fetching opponent profile:", error);
+        }
       });
     },
 
@@ -262,6 +342,22 @@ export default {
 </script>
 
 <style scoped>
+#profile-picture {
+  width: 15vh;
+  height: 15vh;
+  border-radius: 50%;
+  object-fit: cover;
+  /* Ensures the image covers the entire area */
+  object-position: center;
+  /* Centers the image */
+  background-color: #f0f0f0;
+  /* Placeholder background color */
+}
+
+.rounded-circle {
+  border: 2px solid rgba(255, 255, 255, 0.391);
+}
+
 .container {
   display: flex;
   flex-direction: column;
@@ -277,9 +373,9 @@ export default {
   margin: 0 auto;
 }
 
-canvas {
+/* canvas {
   border: 1px solid #ccc;
-}
+} */
 
 .match-box {
   display: flex;
