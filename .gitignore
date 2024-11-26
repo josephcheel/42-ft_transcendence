@@ -17,8 +17,8 @@ node_modules/
 dist/
 bin/
 lib/
-celery-beat-schedule
-celerybeat-schedule
+celery-beat-schedule*
+celerybeat-schedule*
 django-selfsigned*
 cookies*
 frontend/.env
