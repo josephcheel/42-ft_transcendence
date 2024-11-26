@@ -36,9 +36,9 @@ list_matches_by_tournament_id_url = f'https://{DOMAIN}:8000/api/tournaments/list
 list_invitations = f'https://{DOMAIN}:8000/api/tournaments/list_invitations/'
 list_tournaments_url = f'https://{DOMAIN}:8000/api/tournaments/list_tournaments/'
 start_match_url = f'https://{DOMAIN}:8000/api/tournaments/start_match/'
-total_players = 22
-total_matches = 100
-total_tournaments = 10
+total_players = 16
+total_matches = 45
+total_tournaments = 3
 
 def get_request(session, url, csrf_token, data=None):
 	# Add CSRF token to the headers

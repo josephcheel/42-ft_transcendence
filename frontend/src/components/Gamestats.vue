@@ -133,17 +133,24 @@ export default {
     }
   },
   methods: {
-    handleButtonClick(match) {
-      // Set match details
-      this.matchDetails.winnerId = match.winner_id;
-      this.matchDetails.pointsWinner = match.points_winner;
-      this.matchDetails.looserId = match.looser_id;
-      this.matchDetails.pointsLooser = match.points_looser;
-      this.matchDetails.dateTime = match.date_time;
-
-      // Show modal
-      const modal = new bootstrap.Modal(document.getElementById('matchDetailsModal'));
-      modal.show();
+    async handleButtonClick(match) {
+      try{
+        const usersLists = await axios.get(`https://${this.$router.ORIGIN_IP}:8000/api/user/list_users/`);
+        for (let index = 0; index < usersLists.data.data.length; index++) {
+          if (Number(usersLists.data.data[index].id) === Number(match.winner_id_id))
+            this.matchDetails.winnerId = usersLists.data.data[index].username;
+          if (Number(usersLists.data.data[index].id) === Number(match.looser_id_id))
+            this.matchDetails.looserId = usersLists.data.data[index].username;
+        }
+        this.matchDetails.pointsWinner = match.points_winner;
+        this.matchDetails.pointsLooser = match.points_looser;
+        this.matchDetails.dateTime = match.date_time;
+        const modal = new bootstrap.Modal(document.getElementById('matchDetailsModal'));
+        modal.show();
+      }
+      catch (error) {
+        console.error("Error listing users", error);
+      }
     },
 
     resetData() {
