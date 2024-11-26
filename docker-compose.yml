@@ -121,6 +121,7 @@ services:
       interval: 10s
       timeout: 10s
       retries: 50 
+      start_period: 10s
 
   gateway:
     restart: always
@@ -149,6 +150,7 @@ services:
       test: ["CMD", "curl", "-f", "http://localhost:8000/metrics"]
       interval: 10s
       timeout: 20s
+      start_period: 40s
       retries: 3
 
   usermanagement:
@@ -171,6 +173,7 @@ services:
       test: ["CMD", "curl", "-f", "http://localhost:8000/metrics"]
       interval: 10s
       timeout: 20s
+      start_period: 40s
       retries: 3
 
   chat:
@@ -219,6 +222,7 @@ services:
       test: ["CMD", "curl", "-f", "http://localhost:8000/metrics"]
       interval: 10s
       timeout: 20s
+      start_period: 40s
       retries: 20
 
   # Monitoring Container
@@ -253,8 +257,9 @@ services:
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
       interval: 10s    
-      timeout: 10s       
+      timeout: 10s
       retries: 3
+      start_period: 10s
 
 
   es01:
