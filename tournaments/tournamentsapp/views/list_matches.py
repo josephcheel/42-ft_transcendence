@@ -25,8 +25,8 @@ def list_matches(request, username=None):
 		else:	
 			player = User.objects.get(username=request.user)
 		matches_data = Matches.objects.filter(
-                    Q(player_id_1=player.id) | Q(player_id_2=player.id), 
-					Q(status=StatusMatches.PLAYED) | Q(status=StatusMatches.NEXT_ROUND_ASSIGNED))
+                    (Q(player_id_1=player.id) | Q(player_id_2=player.id)) & Q(player_id_2__isnull=False),
+					status__in=[StatusMatches.PLAYED, StatusMatches.NEXT_ROUND_ASSIGNED])
     #player = request.user.username
 		matches_list = list(matches_data.values())
 		for match in matches_list:
