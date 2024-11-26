@@ -14,6 +14,18 @@ json response format:
     'data' : None / 'Data'
 
 }
+
+## Testing 
+There is a script to create users matches and tournemants
+python gateway/gateway/tests/testing_tournaments_ea.py {ip.address} {operation}[optional]
+
+possible operations are:
+[none]: will do a complete test
+match: will create matches
+tournament: will create tournaments without finishing
+tournament_finish: will fiish tournaments
+list: will test the listing calls
+
 ## User
 
 user/[subpath]
