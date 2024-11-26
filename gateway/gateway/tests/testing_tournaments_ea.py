@@ -9,10 +9,10 @@ import pytz
 import sys
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
-#DOMAIN = 'localhost'
+DOMAIN = 'localhost'
 #DOMAIN = '10.11.249.237'
 #DOMAIN = '192.168.40.47'
-DOMAIN = "10.0.1.212"
+#DOMAIN = "10.0.1.212"
 EuropeZone = pytz.timezone('Europe/Madrid')
 
 def get_csrf_token(session, url):
@@ -363,7 +363,9 @@ def close_sessions():
 
 # Main execution
 if __name__ == "__main__":
-	if len(sys.argv) == 1:
+	if len(sys.argv) >= 1:
+		DOMAIN = sys.argv[1]
+	if len(sys.argv) == 2:
 		test_register_user(register=True)
 		play_match()
 		test_create_tournament()
@@ -374,12 +376,12 @@ if __name__ == "__main__":
 		test_logout_user()
 		close_sessions()
 	else:
-		if sys.argv[1] == 'match':
+		if sys.argv[2] == 'match':
 			test_register_user()
 			play_match()
 			test_logout_user()
 			close_sessions()
-		elif sys.argv[1] == 'tournament':
+		elif sys.argv[2] == 'tournament':
 			test_register_user()
 			test_create_tournament()
 			test_accept_invitation()
@@ -388,16 +390,16 @@ if __name__ == "__main__":
 #			get_data_from_contracts()
 			test_logout_user()
 			close_sessions()
-		elif sys.argv[1] == 'tournament_finish':
+		elif sys.argv[2] == 'tournament_finish':
 			test_register_user(register=False)
 			test_finish_tournament()
 			get_data_from_contracts()
 			test_logout_user()
 			close_sessions()
-		elif sys.argv[1] == 'list':
+		elif sys.argv[2] == 'list':
 			test_register_user(register=False)
-			#get_data_from_contracts()
-			#list_matches_not_played()
+			get_data_from_contracts()
+			list_matches_not_played()
 			list_matches()
 			test_logout_user()
 			close_sessions()

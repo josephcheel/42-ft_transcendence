@@ -214,12 +214,22 @@ You need to call /user/upload_picture/ and upload a a form with a key/value pair
 |Returns a list of tournaments from registered user| GET | None | None |  200 (List of tournaments cereatedy), 500 (Internal error)|
 
 ### list_matches
+You need to call /tournaments/list_matches/{username}
+
 | Use | Methods | Request Data | Response Data | Return Values|
 | --- | --- | --- | ---| ---|
 |Returns a list of matches from registered user | GET | None | None |  200 (List of matches cereated), 500 (Internal error)|
 
 
-### list_matches
+### list_matches_by_tournament_id
+You need to call /tournaments/list_matches_by_tournament_id/{username}
 | Use | Methods | Request Data | Response Data | Return Values|
 | --- | --- | --- | ---| ---|
-|Returns a list of invitations from registered user | GET | None | None |  200 (List of invitations cereated), 500 (Internal error)|
+|Returns a list of invitations from registered user | GET | None | None |  200 (List of matches cereated), 500 (Internal error)|
+
+
+### list_not_played_matches
+You need to call /tournaments/list_not_played_matches/{username}
+| Use | Methods | Request Data | Response Data | Return Values|
+| --- | --- | --- | ---| ---|
+|Returns a list of invitations from registered user | GET | None | None |  200 (List of matches cereated), 500 (Internal error)|
