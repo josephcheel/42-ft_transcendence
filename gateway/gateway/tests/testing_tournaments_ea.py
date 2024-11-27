@@ -39,6 +39,7 @@ list_matches_by_tournament_id_url = f'https://{DOMAIN}:8000/api/tournaments/list
 list_invitations = f'https://{DOMAIN}:8000/api/tournaments/list_invitations/'
 list_tournaments_url = f'https://{DOMAIN}:8000/api/tournaments/list_tournaments/'
 start_match_url = f'https://{DOMAIN}:8000/api/tournaments/start_match/'
+get_results_from_blockchain_url = f'https://{DOMAIN}:8000/api/blockchainapp/get_results_from_blockchain/'
 total_players = 16
 total_matches = 45
 total_tournaments = 3

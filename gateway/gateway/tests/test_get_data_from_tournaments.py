@@ -4,10 +4,11 @@ from bytecode import bytecode
 import json
 import pytz
 import time
+import sys
 from datetime import datetime
 
 EuropeZone = pytz.timezone('Europe/Madrid')
-DOMAIN = 'http://192.168.40.47:8545/'
+
 #DOMAIN = 'http://10.11.249.237:8545/'
 bank_private_key = "0x4f3edf983ac636a65a842ce7c78d9aa706d3b113bce9c46f30d7d21715b23b1d"
 
@@ -116,8 +117,13 @@ def get_data_from_contract(web3, contract_addr):
 	})
 	print ('Results obtained', my_data)
 
-web3 = connect_to_blockchain()
-wallet, private_key = create_account(web3)
-contract_addr = deploy_contract(web3, wallet, private_key)
-contract_transaction = execute_contract(web3, wallet, private_key, contract_addr)
-get_data_from_contract(web3, contract_addr)
+if len(sys.argv) == 2:
+	DOMAIN = sys.argv[1]
+	DOMAIN = f'http://{DOMAIN}:8545/'
+	web3 = connect_to_blockchain()
+	wallet, private_key = create_account(web3)
+	contract_addr = deploy_contract(web3, wallet, private_key)
+	contract_transaction = execute_contract(web3, wallet, private_key, contract_addr)
+	get_data_from_contract(web3, contract_addr)
+else:
+	print ("Only the IP argument accepted")
