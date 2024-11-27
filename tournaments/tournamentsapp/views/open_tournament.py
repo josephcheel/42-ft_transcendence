@@ -8,6 +8,7 @@ from tournamentsapp.status_options import StatusTournaments, StatusInvitations
 from tournaments.settings import TIME_DELTA
 from django.views.decorators.csrf import csrf_exempt
 import logging
+import uuid
 
 from user.models import User
 
@@ -69,7 +70,8 @@ def open_tournament(request):
 		id_winner = None,
 		id_second = None,
 		id_third = None,
-		status=StatusTournaments.OPEN_TOURNAMENT.value)
+		status=StatusTournaments.OPEN_TOURNAMENT.value,
+		UUID = uuid.uuid4())
 	for player in data_players:
 		player_reg = User.objects.get(username=player)
 		Invitations.objects.create(tournament_id=tournament_created, player_id=player_reg, status=StatusInvitations.INVITATION_IGNORED.value)

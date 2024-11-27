@@ -55,7 +55,7 @@ class Tournaments(models.Model):
 	status = models.CharField(
 		max_length=8, choices=StatusTournaments.choices, default=StatusTournaments.OPEN_TOURNAMENT)
 	current_round = models.IntegerField()
-	hash_previus = models.CharField(max_length=256)
+	UUID = models.CharField(max_length=256)
 	hash = models.CharField(max_length=256)
 #	groups = models.ManyToManyField('user_groups',related_name='users_db_Group', blank=True)
 #	user_permissions = models.ManyToManyField('user_permissions',related_name='users_db_Permission', blank=True)
@@ -87,3 +87,5 @@ class Matches(models.Model):
 	round = models.CharField(max_length=11, choices=Rounds.choices, default=Rounds.QUALIFIED_ROUND.value, null = True)
 	number_round = models.IntegerField()
 	status = models.CharField(max_length=20, choices=StatusMatches.choices, default=StatusMatches.NOT_PLAYED.value)
+	match_UUID = models.CharField(max_length=256)
+	tournament_UUID = models.CharField(max_length=256)

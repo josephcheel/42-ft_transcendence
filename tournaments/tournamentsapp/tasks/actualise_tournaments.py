@@ -5,6 +5,7 @@ from tournamentsapp.status_options import StatusMatches, Rounds
 from .finish_tournament import finish_tournament
 from celery import shared_task
 from tournaments.settings import TIME_DELTA
+import uuid
 
 @shared_task
 def actualise_tournament(match_id):
@@ -30,7 +31,9 @@ def actualise_tournament(match_id):
 					date_time=tournament.last_match_date + timedelta(minutes=TIME_DELTA), 
 					round=Rounds.THIRD_PLACE_ROUND.value,
 					number_round=1,
-					points_winner=tournament.winning_points)
+					points_winner=tournament.winning_points,
+					match_UUID = uuid.uuid4(),
+					tournament_UUID = tournament.UUID)
 				Matches.objects.create(
 					tournament_id=mymatch.tournament_id,
 					player_id_1=next_match[0].winner_id, 
@@ -38,7 +41,9 @@ def actualise_tournament(match_id):
 					date_time=tournament.last_match_date + timedelta(minutes=TIME_DELTA * 2), 
 					round=Rounds.FINAL_ROUND.value, 
 					number_round=1,
-					points_winner=tournament.winning_points)
+					points_winner=tournament.winning_points,
+					match_UUID = uuid.uuid4(),
+					tournament_UUID = tournament.UUID)
 				next_match[0].status = StatusMatches.NEXT_ROUND_ASSIGNED.value
 				next_match[1].status = StatusMatches.NEXT_ROUND_ASSIGNED.value
 				tournament.last_match_date += timedelta(minutes=TIME_DELTA * 2)
@@ -59,7 +64,9 @@ def actualise_tournament(match_id):
 				    date_time=tournament.last_match_date + timedelta(minutes=TIME_DELTA), 
 					round=ronda_siguiente, 
 					number_round=tournament.current_round - 1,
-					points_winner=tournament.winning_points)
+					points_winner=tournament.winning_points,
+					match_UUID = uuid.uuid4(),
+					tournament_UUID = tournament.UUID)
 				next_match[0].status = StatusMatches.NEXT_ROUND_ASSIGNED.value
 				next_match[0].save()
 				next_match[1].status = StatusMatches.NEXT_ROUND_ASSIGNED.value

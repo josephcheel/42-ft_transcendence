@@ -6,7 +6,7 @@ from datetime import timedelta
 from django.utils import timezone
 from tournaments.settings import TIME_DELTA
 import math
-
+import uuid
 from user.models import User
 
 @require_post
@@ -49,7 +49,9 @@ def close_tournament(request):
 				player_id_1 = tournament_players[0].player_id,
 				points_winner = tournament.winning_points,
 				player_id_2 = tournament_players[1].player_id,
-				round=Rounds.FINAL_ROUND.value)
+				round=Rounds.FINAL_ROUND.value,
+				match_UUID = uuid.uuid4(),
+				tournament_UUID = tournament.UUID)
 			tournament_players[0].player_id.puntos_reservados -= tournament.cost
 			tournament_players[0].player_id.save()
 			tournament_players[1].player_id.puntos_reservados -= tournament.cost
@@ -63,7 +65,9 @@ def close_tournament(request):
 				player_id_1 = tournament_players[0].player_id,
 				player_id_2 = tournament_players[1].player_id,
 				points_winner=tournament.winning_points,
-				round=Rounds.SEMIFINAL_ROUND.value)
+				round=Rounds.SEMIFINAL_ROUND.value,
+				match_UUID = uuid.uuid4(),
+				tournament_UUID = tournament.UUID)
 			tournament_players[0].player_id.puntos_reservados -= tournament.cost
 			tournament_players[0].player_id.save()
 			tournament_players[1].player_id.puntos_reservados -= tournament.cost
@@ -76,7 +80,9 @@ def close_tournament(request):
 				player_id_1=tournament_players[2].player_id,
 				player_id_2=tournament_players[3].player_id,
 				points_winner=tournament.winning_points,
-				round=Rounds.SEMIFINAL_ROUND.value)
+				round=Rounds.SEMIFINAL_ROUND.value,
+				match_UUID = uuid.uuid4(),
+				tournament_UUID = tournament.UUID)
 			tournament_players[2].player_id.puntos_reservados -= tournament.cost
 			tournament_players[2].player_id.save()
 			tournament_players[3].player_id.puntos_reservados -= tournament.cost
@@ -107,7 +113,9 @@ def close_tournament(request):
                     points_winner=tournament.winning_points,
 					round=Rounds.QUALIFIED_ROUND.value,
 					number_round = current_round + extra_round,
-					status=status)
+					status=status,
+					match_UUID = uuid.uuid4(),
+					tournament_UUID = tournament.UUID)
 				next_match_date += timedelta(minutes=TIME_DELTA)
 			tournament.current_round = current_round + extra_round
 	tournament.last_match_date =  next_match_date
