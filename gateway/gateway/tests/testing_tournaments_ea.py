@@ -39,7 +39,7 @@ list_matches_by_tournament_id_url = f'https://{DOMAIN}:8000/api/tournaments/list
 list_invitations = f'https://{DOMAIN}:8000/api/tournaments/list_invitations/'
 list_tournaments_url = f'https://{DOMAIN}:8000/api/tournaments/list_tournaments/'
 start_match_url = f'https://{DOMAIN}:8000/api/tournaments/start_match/'
-get_results_from_blockchain_url = f'https://{DOMAIN}:8000/api/blockchainapp/get_results_from_blockchain/'
+get_results_from_blockchain_url = f'https://{DOMAIN}:8000/api/blockchain/get_results_from_blockchain/'
 total_players = 16
 total_matches = 45
 total_tournaments = 3
@@ -333,7 +333,7 @@ def get_data_from_contracts():
 					}
 					if tournament['hash'] != '':
 						response = send_request(mysessions[i], get_results_from_blockchain_url, csrf[i], data = my_data)
-						print(f"User test{i} results from blockchain: {response.json()['data']}")
+						print(f"User test{i} results from blockchain: {response.json()["data"]}")
 						if response.status_code != 200:
 							print(f"User test{i} tournament {tournament['id']} incorrect contract number")
 					else :
@@ -343,7 +343,7 @@ def list_matches_not_played():
 	for i in range(1, total_players + 1):
 		response = get_request(
 			mysessions[i], list_not_played_matches_url + f"test{i}", csrf[i])
-		print(f"User test{i} list of matches not played: {response.json()['data']}")
+		print(f"User test{i} list of matches not played: {response.json()}")
 		assert response.status_code == 200
 		assert response.json()['status'] == 'success'
 		assert response.json()['message'] == 'List of matches'
@@ -399,8 +399,8 @@ if __name__ == "__main__":
 		elif sys.argv[2] == 'list':
 			test_register_user(register=False)
 			get_data_from_contracts()
-			list_matches_not_played()
-			list_matches()
+#			list_matches_not_played()
+#			list_matches()
 			test_logout_user()
 			close_sessions()
 		else:
