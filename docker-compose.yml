@@ -298,8 +298,7 @@ services:
     labels:
       co.elastic.logs/module: logstash
     container_name: logstash
-#    user: root
-
+    user: '0'
     volumes:
       - certs:/usr/share/logstash/certs
       - ./ELK/logstash:/usr/share/logstash/pipeline:ro
