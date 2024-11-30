@@ -176,27 +176,6 @@ services:
       start_period: 40s
       retries: 3
 
-  chat:
-    restart: always
-
-    depends_on:
-      migrations:
-        condition: service_started
-      db:
-        condition: service_healthy
-    container_name: chat
-    build: ./chat
-    volumes:
-      - ${LOGSTASH_FOLDER}${TOURNAMENT_LOG}:/var/log/${TOURNAMENT_LOG}
-      - ${DJANGO_SCRIPT}:/start.sh
-      - ./chat:/app
-
-    env_file:
-      - .env
-    environment:
-      - APP=chatapp
-      - DEBUG=${DEBUG}
-
   tournaments:
     depends_on:
       usermanagement:
