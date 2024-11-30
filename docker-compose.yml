@@ -5,7 +5,8 @@ networks:
 
 services:
   setup:
-    image: docker.elastic.co/elasticsearch/elasticsearch:${STACK_VERSION}
+    image: luised2094/setup:latest
+    container_name: setup
     volumes:
       - certs:/usr/share/elasticsearch/config/certs
       - ./setup/setup_script.sh:/setup_script.sh
@@ -22,8 +23,8 @@ services:
       bash /setup_script.sh
     healthcheck:
       test: ["CMD-SHELL", "[ -f config/certs/es01/es01.crt ]"]
-      interval: 1s
-      timeout: 5s
+      interval: 10s
+      timeout: 10s
       retries: 120
   redis:
     image: 'redis:6.2-alpine'
@@ -32,7 +33,7 @@ services:
       test: ["CMD", "redis-cli", "ping"]
       interval: 10s
       timeout: 10s
-      retries: 3
+      retries: 120
       start_period: 5s   
     
   celery_worker:
@@ -120,7 +121,7 @@ services:
       test: ["CMD-SHELL", "pg_isready -d transcendence -U transcendence"]
       interval: 10s
       timeout: 10s
-      retries: 50 
+      retries: 120 
       start_period: 10s
 
   gateway:
@@ -149,9 +150,9 @@ services:
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/metrics"]
       interval: 10s
-      timeout: 20s
-      start_period: 40s
-      retries: 3
+      timeout: 10s
+      retries: 120 
+      start_period: 10s
 
   usermanagement:
     restart: always
@@ -172,9 +173,9 @@ services:
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/metrics"]
       interval: 10s
-      timeout: 20s
-      start_period: 40s
-      retries: 3
+      timeout: 10s
+      retries: 120 
+      start_period: 10s
 
   tournaments:
     depends_on:
@@ -200,9 +201,9 @@ services:
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/metrics"]
       interval: 10s
-      timeout: 20s
-      start_period: 40s
-      retries: 20
+      timeout: 10s
+      retries: 120 
+      start_period: 10s
 
   # Monitoring Container
 
@@ -235,9 +236,9 @@ services:
       - grafana-data:/var/lib/grafana
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
-      interval: 10s    
+      interval: 10s
       timeout: 10s
-      retries: 3
+      retries: 120 
       start_period: 10s
 
 
@@ -284,7 +285,8 @@ services:
         ]
       interval: 10s
       timeout: 10s
-      retries: 120
+      retries: 120 
+      start_period: 10s
 
   logstash:
     restart: always
@@ -344,7 +346,8 @@ services:
         ]
       interval: 10s
       timeout: 10s
-      retries: 120
+      retries: 120 
+      start_period: 10s
 
   blockchain:
    depends_on:
@@ -392,6 +395,7 @@ services:
       - 0.0.0.0:4000:4000
     volumes:
       - ${LOGSTASH_FOLDER}:/var/log/
+
 
 volumes:
   certs:

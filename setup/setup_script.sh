@@ -1,6 +1,6 @@
 #!/bin/bash
 
-apt-get update -y  && apt-get upgrade -y && apt install jq -y
+#apt-get update -y  && apt-get upgrade -y && apt install jq -y
 
 bash -c '
         if [ x${ELASTIC_PASSWORD} == x ]; then
@@ -39,11 +39,13 @@ bash -c '
         chown -R root:root config/certs;
         find . -type d -exec chmod 750 \{\} \;;
         find . -type f -exec chmod 640 \{\} \;;
+
+        echo "Waiting for Elasticsearch availability"
+        until curl -s --cacert config/certs/ca/ca.crt https://es01:9200 | grep -q "missing authentication credentials"; do sleep 1; done
+        bash /ELK_script.sh;
         
         echo "Waiting for grafana";
         until curl -s grafana:3000/api/health | grep "ok" -q; do sleep 1; done;
         bash  /grafana_script.sh;
-        echo "Waiting for Elasticsearch availability"
-        until curl -s --cacert config/certs/ca/ca.crt https://es01:9200 | grep -q "missing authentication credentials"; do sleep 1; done
-        bash /ELK_script.sh;
+
       '
