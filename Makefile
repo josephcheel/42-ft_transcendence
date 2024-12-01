@@ -42,8 +42,7 @@ stop :
 start : 
 	@$(COMPOSE) -f $(DOCKER_COMPOSE_FILE) start
 
-rebuild: rm_files volumes compile run_npm
-
+rebuild: stop rm_files volumes compile run_npm
 	@mkdir -p $(VOLUMES)
 	@touch $(LOG_FILES)
 	@$(COMPOSE) -f $(DOCKER_COMPOSE_FILE) up --build -d
