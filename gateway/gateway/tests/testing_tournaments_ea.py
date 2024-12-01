@@ -26,7 +26,7 @@ content_json_type = 'application/json'
 
 total_players = 16
 total_matches = 45
-total_tournaments = 3
+total_tournaments = 7
 
 def get_request(session, url, csrf_token, data=None):
 	# Add CSRF token to the headers
@@ -53,7 +53,35 @@ def send_request(session, url, csrf_token, data=None):
 	response = session.post(url, json=data, headers=headers)
 	return response
 
+def print_json_table(json_variable):
+	def print_dict(d, indent=0):
+		len_line = 0
+		pos_items = {}
+		first_item = d[0]
+		for key, value in first_item.items():
+			max_len = len(key)
+			for item in d.items():
+				max_len = max(max_len, len(str(item[0][key])))
+			pos_items[key] = max_len
+			print(key, ' ' * (pos_items[key] - len(key)), end='')
+		print ()
+		for key, value in d.items():
+			print_dict(value + + ' ' * (pos_items[key] - len(str(value))), end='')
+	if isinstance(json_variable, tuple):
+		print_dict(json_variable)
+	else:
+		print("Provided variable is not a JSON object")
 
+
+# Example usage
+json_table = []
+table = {'awwwwwwwwwwwwwwwww': 1,
+         'b': 233333333, 'd': 'lashbflawbflewb', 'e': 4}
+json_table.append(table)
+table = {'awwwwwwwwwwwwwwwww': 109,
+	'b': 23333, 'd': 'lashbflawbflewb', 'e': 48888888888}
+json_table.append(table)
+print_json_table(json_table)
 mysessions = {}
 csrf = {}
 
@@ -400,10 +428,10 @@ if __name__ == "__main__":
 			close_sessions()
 		elif sys.argv[2] == 'list':
 			test_register_user(register=False)
-			get_data_from_contracts()
-#			list_matches_not_played()
+#			get_data_from_contracts()
+			list_matches_not_played()
 #			list_matches()
-			test_logout_user()
+#			test_logout_user()
 			close_sessions()
 		else:
 			print("Invalid argument")
