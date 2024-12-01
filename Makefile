@@ -48,6 +48,7 @@ rebuild: stop rm_files volumes compile run_npm
 	@$(COMPOSE) -f $(DOCKER_COMPOSE_FILE) up --build -d
 
 rm_files:
+	@rm -rfd usermanagement/.migration_done
 	@rm -rfd frontend/dist/
 	@rm -rfd frontend/node_modules/
 	@rm -rfd pong-game-server/node_modules/

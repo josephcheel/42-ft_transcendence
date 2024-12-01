@@ -1,6 +1,6 @@
 #!/bin/sh
 
-while [ ! -f ./migration_done ]; do
+while [ ! -f ./.migration_done ]; do
   sleep 1
 done
 
