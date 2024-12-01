@@ -69,14 +69,28 @@ def list_not_played_matches(request, username=None):
 		else:
 			player = User.objects.get(username=request.user)
 		matches_data = Matches.objects.filter(
-                    Q(player_id_1=player.id) | Q(player_id_2=player.id),
-               		status=StatusMatches.NOT_PLAYED.value)
-    # player = request.user.username
-		matches_list = list(matches_data.values())
-		for match in matches_list:
-			for key, value in match.items():
-				if isinstance(value, datetime):
-					match[key] = value.isoformat()
+			Q(player_id_1=player.id) | Q(player_id_2=player.id),
+			status=StatusMatches.NOT_PLAYED.value)
+    	# player = request.user.username
+		matches_list = []
+		for match in matches_data:
+			match_dict = {
+				'id': match.id,
+				'player_id_1': match.player_id_1,
+				'player_id_2': match.player_id_2,
+				'tournament_id': match.tournament_id,
+				'tournament_name': match.tournament_id.name,
+				'tournament_owner': match.tournament_id.player_id.username,
+				'tournament_start': match.tournament_id.date_start.isoformat() if isinstance(match.tournament_id.date_start, datetime) else match.tournament_id.date_start,
+				'status': match.status,
+				'date_time_match': match.date_time.isoformat() if isinstance(match.date_time, datetime) else match.date_time,
+			}
+			matches_list.append(match_dict)
+#		matches_list = list(matches_data.values())
+#		for match in matches_list:
+#			for key, value in match.items():
+#				if isinstance(value, datetime):
+#					match[key] = value.isoformat()
 		data = json.dumps(matches_list)
 		return JsonResponse({'status': 'success', 'message': 'List of matches', 'data': data}, status=200)
 	except OperationalError:
