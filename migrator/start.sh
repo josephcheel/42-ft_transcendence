@@ -8,3 +8,4 @@ python usermanagement/manage.py makemigrations user
 python usermanagement/manage.py migrate
 
 echo "All migrations completed successfully."
+touch /app/usermanagement/migration_done
