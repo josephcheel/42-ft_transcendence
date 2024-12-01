@@ -60,28 +60,31 @@ def print_json_table(json_variable):
 		first_item = d[0]
 		for key, value in first_item.items():
 			max_len = len(key)
-			for item in d.items():
-				max_len = max(max_len, len(str(item[0][key])))
+			for item in d:
+				max_len = max(max_len, len(str(item[key])))
 			pos_items[key] = max_len
 			print(key, ' ' * (pos_items[key] - len(key)), end='')
 		print ()
-		for key, value in d.items():
-			print_dict(value + + ' ' * (pos_items[key] - len(str(value))), end='')
-	if isinstance(json_variable, tuple):
+		for item in d:
+			for key, value in item.items():
+				print(str(value) + ' ' * (pos_items[key] - len(str(value))+ 1), end='')
+			print()
+	if isinstance(json_variable, list):
 		print_dict(json_variable)
 	else:
 		print("Provided variable is not a JSON object")
 
 
 # Example usage
-json_table = []
-table = {'awwwwwwwwwwwwwwwww': 1,
-         'b': 233333333, 'd': 'lashbflawbflewb', 'e': 4}
-json_table.append(table)
-table = {'awwwwwwwwwwwwwwwww': 109,
-	'b': 23333, 'd': 'lashbflawbflewb', 'e': 48888888888}
-json_table.append(table)
-print_json_table(json_table)
+#json_table = []
+#table = {'awwwwwwwwwwwwwwwww': 5,
+#         'b': 233333333, 'd': 'lashbflawbflewb', 'e': 4}
+#json_table.append(table)
+#table = {'awwwwwwwwwwwwwwwww': 109,
+#	'b': 23333, 'd': 'lashbflawbflewb', 'e': 48888888888}
+#json_table.append(table)
+#print (type(json_table))
+#print_json_table(json_table)
 mysessions = {}
 csrf = {}
 
@@ -331,8 +334,7 @@ def get_data_from_contracts():
 	for i in range(1, total_players + 1):
 		response = get_request(
 			mysessions[i], list_tournaments_url + f"test{i}", csrf[i])
-		print(f"User test{i} list of tournaments response: {response.json()}")
-		print(f"User test{i} list of tournaments: {response.json()['data']}")
+		print(f"User test{i} list of tournaments:{response.json()['data']}")
 		if response.json()['data'] == None:
 			print(f"User test{i} has no tournaments")
 		else:
@@ -355,7 +357,7 @@ def list_matches_not_played():
 	for i in range(1, total_players + 1):
 		response = get_request(
 			mysessions[i], list_not_played_matches_url + f"test{i}", csrf[i])
-		print(f"User test{i} list of matches not played: {response.json()}")
+		print(f"User test{i} list of matches not played:{response.json()['data']}")
 		assert response.status_code == 200
 		assert response.json()['status'] == 'success'
 		assert response.json()['message'] == 'List of matches'
@@ -364,7 +366,7 @@ def list_matches():
 	for i in range(1, total_players + 1):
 		response = get_request(
 			mysessions[i], list_matches_url + f"test{i}", csrf[i])
-		print(f"User test{i} list of matches played: {response.json()['data']}")
+		print(f"User test{i} list of matches played:{response.json()['data']}")
 		assert response.status_code == 200
 		assert response.json()['status'] == 'success'
 		assert response.json()['message'] == 'List of matches'
@@ -428,10 +430,10 @@ if __name__ == "__main__":
 			close_sessions()
 		elif sys.argv[2] == 'list':
 			test_register_user(register=False)
-#			get_data_from_contracts()
+			get_data_from_contracts()
 			list_matches_not_played()
-#			list_matches()
-#			test_logout_user()
+			list_matches()
+			test_logout_user()
 			close_sessions()
 		else:
 			print("Invalid argument")
