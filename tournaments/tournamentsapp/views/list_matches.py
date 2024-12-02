@@ -80,19 +80,18 @@ def list_not_played_matches(request, username=None):
 		for match in matches_data:
 			try:
 				tournament = Tournaments.objects.get(id=match.tournament_id)
-				match_dict = {
-				'id': match.id,
-				'player_id_1': match.player_id_1 if match.player_id_1 else None,
-				'player_id_2': match.player_id_2 if match.player_id_2 else None,
-				'tournament_id': match.tournament_id,
-				'tournament_name': tournament.name,
-				'tournament_owner': tournament.player_id.username,
-				'tournament_start': tournament.date_start.isoformat() if isinstance(tournament.date_start, datetime) else match.tournament_id.date_start,
-				'status': match.status,
-				'match_UUID': match.match_UUID,
-				'tournament_UUID': match.tournament_UUID,
-				'date_time_match': match.date_time.isoformat() if isinstance(match.date_time, datetime) else match.date_time,
-				}
+				match_dict = {}
+				match_dict['id']= match.id
+				match_dict['player_id_1']= match.player_id_1.id if match.player_id_1 else None
+				match_dict['player_id_2']= match.player_id_2.id if match.player_id_2 else None
+				match_dict['tournament_id']= match.tournament_id
+				match_dict['tournament_name']= tournament.name
+				match_dict['tournament_owner']= tournament.player_id.username if tournament.player_id else None
+				match_dict['tournament_start']= tournament.date_start.isoformat() if isinstance(tournament.date_start, datetime) else match.tournament_id.date_start
+				match_dict['status']= match.status
+				match_dict['match_UUID']= match.match_UUID
+				match_dict['tournament_UUID']= match.tournament_UUID
+				match_dict['date_time_match']= match.date_time.isoformat() if isinstance(match.date_time, datetime) else match.date_time
 				matches_list.append(match_dict)
 			except:
 				None
