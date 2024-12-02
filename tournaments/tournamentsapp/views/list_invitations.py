@@ -23,11 +23,12 @@ def list_invitations(request,username):
 		invitation_list = []
 		for invitation in invitation_data:
 			invitation_list.append({
-				'tournament_id': invitation.tournament_id.id,
+				'tournament_id_id': invitation.tournament_id.id,
 				'tournament_name': invitation.tournament_id.name,
 				'tournament_owner': invitation.tournament_id.player_id.username,
 				'tournament_start': invitation.tournament_id.date_start.isoformat() if isinstance(invitation.tournament_id.date_start, datetime) else invitation.tournament_id.date_start,
-				'player_id': invitation.player_id.id,
+				'player_id_id': invitation.player_id.id,
+				'status': invitation.status,
 			})
 #		invitation_list = list(invitation_data.values())
 #		for invitation in invitation_list:
