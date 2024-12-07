@@ -62,7 +62,7 @@ services:
     command: /start-celerybeat
     container_name: celery_beat
     depends_on:
-      -celery_worker
+      - celery_worker
       - redis
       - db
       - migrations
