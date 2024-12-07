@@ -6,7 +6,7 @@ set -o nounset
 rm -f './celerybeat.pid'
 
 cd /app
-python manage.py makemigrations user
-python manage.py makemigrations tournamentsapp
-python manage.py migrate
+#python manage.py makemigrations user
+#python manage.py makemigrations tournamentsapp
+#python manage.py migrate
 celery -A tournaments beat -l INFO

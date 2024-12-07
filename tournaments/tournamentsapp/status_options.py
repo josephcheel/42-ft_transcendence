@@ -22,6 +22,7 @@ class StatusMatches(Enum):
 	NOT_PLAYED = "not played"
 	PLAYED = "played"
 	STARTED = "started"
+	ABORTED= "aborted"
 	NEXT_ROUND_ASSIGNED = "assigned"
 	WALKOVER = "walkover"
 	WAITING_PLAYER1 = "waiting player 1"

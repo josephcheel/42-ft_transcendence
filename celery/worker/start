@@ -4,7 +4,7 @@ set -o errexit
 set -o nounset
 
 cd /app
-python manage.py makemigrations user
-python manage.py makemigrations tournamentsapp
-python manage.py migrate
+#python manage.py makemigrations user
+#python manage.py makemigrations tournamentsapp
+#python manage.py migrate
 celery -A tournaments worker -l INFO

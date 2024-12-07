@@ -15,16 +15,24 @@ def actualise_tournament(match_id):
 		case Rounds.FINAL_ROUND.value:
 			tournament.id_winner = mymatch.winner_id
 			tournament.id_second = mymatch.looser_id
-			mymatch.status = StatusMatches.NEXT_ROUND_ASSIGNED.value
+			if mymatch.status != StatusMatches.ABORTED.value:
+				mymatch.status = StatusMatches.NEXT_ROUND_ASSIGNED.value
 			finish_tournament(tournament.id)
 		case Rounds.THIRD_PLACE_ROUND.value:
 			tournament.id_third = mymatch.winner_id
-			mymatch.status = StatusMatches.NEXT_ROUND_ASSIGNED.value
+			if mymatch.status != StatusMatches.ABORTED.value:
+				mymatch.status = StatusMatches.NEXT_ROUND_ASSIGNED.value
+			finalmatch = Matches.objects.filter(
+				tournament_id=mymatch.tournament_id, 
+				round=Rounds.FINAL_ROUND.value, 
+				status__in=[StatusMatches.PLAYED.value, StatusMatches.WALKOVER.value,StatusMatches.ABORTED.value])
+			if len(finalmatch) == 1:
+				finish_tournament(tournament.id)
 		case Rounds.SEMIFINAL_ROUND.value:
 			next_match = Matches.objects.filter(
-				tournament_id=mymatch.tournament_id, round=Rounds.SEMIFINAL_ROUND.value, status__in=[StatusMatches.PLAYED.value, StatusMatches.WALKOVER.value])
+				tournament_id=mymatch.tournament_id, round=Rounds.SEMIFINAL_ROUND.value, status__in=[StatusMatches.PLAYED.value, StatusMatches.WALKOVER.value, StatusMatches.ABORTED.value])
 			if len(next_match) == 2:
-				Matches.objects.create(
+				match_third = Matches.objects.create(
 					tournament_id=mymatch.tournament_id,
 					player_id_1=next_match[0].looser_id,
 					player_id_2=next_match[1].looser_id,
@@ -34,7 +42,7 @@ def actualise_tournament(match_id):
 					points_winner=tournament.winning_points,
 					match_UUID = uuid.uuid4(),
 					tournament_UUID = tournament.UUID)
-				Matches.objects.create(
+				match_final = Matches.objects.create(
 					tournament_id=mymatch.tournament_id,
 					player_id_1=next_match[0].winner_id, 
 					player_id_2=next_match[1].winner_id, 
@@ -49,6 +57,24 @@ def actualise_tournament(match_id):
 				tournament.last_match_date += timedelta(minutes=TIME_DELTA * 2)
 				tournament.current_round = 1
 				tournament.save()
+				if match_third.player_id_1 == None and match_third.player_id_2 == None:
+					match_third.status = StatusMatches.ABORTED.value
+					match_third.save()
+				elif match_final.player_id_1 is not None and match_final.player_id_2 == None:
+					match_final.status = StatusMatches.PLAYED.value
+					match_final.save()
+				else:
+					match_third.status = StatusMatches.NOT_PLAYED.value
+					match_final.save()
+				if match_final.player_id_1 == None and match_final.player_id_2 == None:
+					match_final.status = StatusMatches.ABORTED.value
+					match_final.save()
+				elif match_final.player_id_1 is not None and match_final.player_id_2 == None:
+					match_final.status = StatusMatches.PLAYED.value
+					match_final.save()
+				else:
+					match_final.status = StatusMatches.NOT_PLAYED.value
+					match_final.save()
 		case _:
 			next_match = Matches.objects.filter(
 				tournament_id=mymatch.tournament_id, number_round=tournament.current_round, status__in=[StatusMatches.PLAYED.value, StatusMatches.WALKOVER.value])

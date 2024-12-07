@@ -62,6 +62,7 @@ services:
     command: /start-celerybeat
     container_name: celery_beat
     depends_on:
+      -celery_worker
       - redis
       - db
       - migrations
@@ -80,6 +81,7 @@ services:
     command: /start-flower
     container_name: flower
     depends_on:
+      - celery_beat
       - redis
       - db
       - migrations
