@@ -54,6 +54,7 @@ def check_match_db_status():
 					if field.name != "id":  # Skip the ID field to avoid conflicts
 						setattr(new_match, field.name, getattr(mymatches[0], field.name))
 				new_match.round = Rounds.SEMIFINAL_ROUND.value if new_match.number_round == 3 else Rounds.QUALIFIED_ROUND.value
+				new_match.date_time = timezone.now() + timedelta(minutes=TIME_DELTA)
 				new_match.number_round -=1
 				new_match.save()
 				
