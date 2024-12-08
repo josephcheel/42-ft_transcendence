@@ -6,19 +6,23 @@ from .finish_tournament import finish_tournament
 from celery import shared_task
 from tournaments.settings import TIME_DELTA
 import uuid
+import logging
 
+logger = logging.getLogger('django')
 @shared_task
 def actualise_tournament(match_id):
 	mymatch = Matches.objects.get(id=match_id)
 	tournament = Tournaments.objects.get(id=mymatch.tournament_id)
 	match (mymatch.round):
 		case Rounds.FINAL_ROUND.value:
+			logger.info("Is Final round")
 			tournament.id_winner = mymatch.winner_id
 			tournament.id_second = mymatch.looser_id
 			if mymatch.status != StatusMatches.ABORTED.value:
 				mymatch.status = StatusMatches.NEXT_ROUND_ASSIGNED.value
 			finish_tournament(tournament.id)
 		case Rounds.THIRD_PLACE_ROUND.value:
+			logger.info("Is third place round")
 			tournament.id_third = mymatch.winner_id
 			if mymatch.status != StatusMatches.ABORTED.value:
 				mymatch.status = StatusMatches.NEXT_ROUND_ASSIGNED.value
@@ -29,6 +33,7 @@ def actualise_tournament(match_id):
 			if len(finalmatch) == 1:
 				finish_tournament(tournament.id)
 		case Rounds.SEMIFINAL_ROUND.value:
+			logger.info("Is semifinal round")
 			next_match = Matches.objects.filter(
 				tournament_id=mymatch.tournament_id, round=Rounds.SEMIFINAL_ROUND.value, status__in=[StatusMatches.PLAYED.value, StatusMatches.WALKOVER.value, StatusMatches.ABORTED.value])
 			if len(next_match) == 2:
@@ -76,9 +81,12 @@ def actualise_tournament(match_id):
 					match_final.status = StatusMatches.NOT_PLAYED.value
 					match_final.save()
 		case _:
+			logger.info("Is qualified round")
 			next_match = Matches.objects.filter(
 				tournament_id=mymatch.tournament_id, number_round=tournament.current_round, status__in=[StatusMatches.PLAYED.value, StatusMatches.WALKOVER.value])
+			logger.info(next_match)
 			while len(next_match) >= 2:
+				logger.info(next_match)
 				if tournament.current_round == 3:
 					ronda_siguiente = Rounds.SEMIFINAL_ROUND.value
 				else:

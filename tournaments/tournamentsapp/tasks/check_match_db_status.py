@@ -14,13 +14,13 @@ import logging
 logger = logging.getLogger('django')
 @shared_task
 def check_match_db_status():
-	matches_passed = Matches.objects.filter(date_time = timezone.now() + timedelta(minutes = TIME_DELTA), status = StatusMatches.NOT_PLAYED.value)
+	matches_passed = Matches.objects.filter(date_time__lt = timezone.now() + timedelta(minutes = TIME_DELTA), status = StatusMatches.NOT_PLAYED.value)
 	tournament_ids = []
 	if len(matches_passed) == 0:
 		logger.info('No matches to abort')
 		return None
 	for mymatch in matches_passed:
-		logger.info('Match to aborted: {mymatch.id}')
+		logger.info(f'Match to aborted: {mymatch.id}')
 		mymatch.winner_id = None
 		mymatch.looser_id = None
 		mymatch.status = StatusMatches.ABORTED.value
@@ -30,11 +30,13 @@ def check_match_db_status():
 		actualise_tournament(mymatch.id)
 	mymatches = Matches.objects.filter(tournament_id__in=tournament_ids, status__in=[
 						StatusMatches.PLAYED.value, StatusMatches.WALKOVER.value])
+	logger.info(f'longitud mymatches = {len(mymatches)}')
 	while len(mymatches) > 1:
 		logger.info("actualizo torneo")
 		actualise_tournament(mymatches[0].id)
 		mymatches = Matches.objects.filter(tournament_id__in=tournament_ids, status__in=[
 				StatusMatches.PLAYED.value, StatusMatches.WALKOVER.value])
+		logger.info(f'longitud mymatches = {len(mymatches)}')
 	mymatches = Matches.objects.filter(
 		tournament_id__in=tournament_ids, 
 		status__in=[StatusMatches.PLAYED.value, StatusMatches.WALKOVER.value])

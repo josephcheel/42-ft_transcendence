@@ -26,7 +26,7 @@ content_json_type = 'application/json'
 
 total_players = 16
 total_matches = 45
-total_tournaments = 3
+total_tournaments = 30
 
 def get_request(session, url, csrf_token, data=None):
 	# Add CSRF token to the headers
