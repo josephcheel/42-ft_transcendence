@@ -20,11 +20,21 @@ def list_invitations(request,username):
 		player = User.objects.get(username=username)
 		invitation_data = Invitations.objects.filter(player_id=player.id)
 		# Convert any datetime fields to string
-		invitation_list = list(invitation_data.values())
-		for invitation in invitation_list:
-			for key, value in invitation.items():
-				if isinstance(value, datetime):
-					invitation[key] = value.isoformat()
+		invitation_list = []
+		for invitation in invitation_data:
+			invitation_list.append({
+				'tournament_id_id': invitation.tournament_id.id,
+				'tournament_name': invitation.tournament_id.name,
+				'tournament_owner': invitation.tournament_id.player_id.username,
+				'tournament_start': invitation.tournament_id.date_start.isoformat() if isinstance(invitation.tournament_id.date_start, datetime) else invitation.tournament_id.date_start,
+				'player_id_id': invitation.player_id.id,
+				'status': invitation.status,
+			})
+#		invitation_list = list(invitation_data.values())
+#		for invitation in invitation_list:
+#			for key, value in invitation.items():
+#				if isinstance(value, datetime):
+#					invitation[key] = value.isoformat()
 		data = json.dumps(invitation_list)
 		return JsonResponse({'status': 'success', 'message': 'List of invitations cereated', 'data': data}, status=200)
 	except OperationalError:

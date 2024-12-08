@@ -14,6 +14,7 @@ import Home from '../components/Home.vue'
 import GameOnline from '../components/GameOnline/GameOnline.vue'
 import Gamestats from '../components/Gamestats.vue'
 import NotFound from '../components/NotFound.vue'
+import ListTournaments from '../components/ListTournaments.vue'
 
 import { isAuthorized } from '../utils/isAuthorized'
 import Tournaments from '../components/Tournaments.vue'
@@ -48,6 +49,11 @@ const routes = [
     path: '/chat',
     name: 'Chat',
     component: Chat
+  },
+  {
+    path: '/listtournaments',
+    name: 'ListTournaments',
+    component: ListTournaments
   },
   {
     path: '/gamestats/:username',

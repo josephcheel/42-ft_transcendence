@@ -62,6 +62,11 @@
         "pending_tournaments": "Torneos pendientes",
         "check_inv": "Revisa y acepta las invitaciones para unirte a los torneos."
     },
+    "listtournaments": {
+        "loading_tournaments": "Cargando torneos",
+        "list_tournaments": "Lista de torneos",
+        "empty_tournaments_list": "Lista de torneos vacia"
+    },
     "games": {
         "local_match": "Partida local",
         "explain_local_match": "Juega contra un invitado en el mismo teclado",

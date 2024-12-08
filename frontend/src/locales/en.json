@@ -62,6 +62,11 @@
         "pending_tournaments": "Pending Tournaments",
         "check_inv": "Review and accept invitations to join tournaments."
     },
+    "listtournaments": {
+        "loading_tournaments": "Loading tournaments",
+        "list_tournaments": "Tournament's list",
+        "empty_tournaments_list": "Empty tournament's list"
+    },
     "games": {
         "local_match": "Local Match",
         "explain_local_match": "Play vs guest player on the same keyboard",
