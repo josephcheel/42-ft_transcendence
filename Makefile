@@ -20,12 +20,18 @@ LIST_CURRENT_VOLUMES=$(shell docker volume ls -q)
 DOCKER_COMPOSE_FILE = ./docker-compose.yml
 VOLUMES = ${VOLUMES_FOLDER} ${CERTS_FOLDER} ${ESDATA_FOLDER} ${KIBANA_FOLDER} ${LOGSTASH_FOLDER} ${POSTGREE_FOLDER} ${PROMETHEUS_FOLDER} ${GRAFANA_FOLDER} ${BLOCKCHAIN_FOLDER} ${TOURNAMENTS_FOLDER}
 LOG_FILES =  $(addprefix ${LOGSTASH_FOLDER}, ${GATEWAY_LOG} ${USER_LOG} ${CHAT_LOG} ${MATCHES_LOG} ${TOURNAMENT_LOG})
+CERTS=selfsigned.crt selfsigned.key
 
 # Define targets
 all: build 
 
-build: 	| volumes compile run_npm
+build: 	| volumes compile run_npm build_certs
 	$(COMPOSE) -f $(DOCKER_COMPOSE_FILE) up --build -d
+
+build_certs: $(CERTS)
+
+$(CERTS):
+	./cert.sh
 
 down:
 	$(COMPOSE) -f $(DOCKER_COMPOSE_FILE) down
@@ -42,10 +48,7 @@ stop :
 start : 
 	@$(COMPOSE) -f $(DOCKER_COMPOSE_FILE) start
 
-rebuild: stop rm_files volumes compile run_npm
-	@mkdir -p $(VOLUMES)
-	@touch $(LOG_FILES)
-	@$(COMPOSE) -f $(DOCKER_COMPOSE_FILE) up --build -d
+rebuild: stop rm_files volumes compile run_npm build
 
 rm_files:
 	@rm -rfd usermanagement/.migration_done
@@ -145,4 +148,4 @@ fclean: clean rm_files
 re: fclean all
 
 
-.PHONY: all build up down restart logs clean re fclean volumes compile run_pm del_vol rm_vol debug
+.PHONY: all build up down restart logs clean re fclean volumes compile run_pm del_vol rm_vol debug build_certs

@@ -386,6 +386,8 @@ services:
       - "0.0.0.0:8000:8000"
     volumes:
       - ./usermanagement/profile_pictures/:/usr/share/nginx/html/profile_pictures
+      - ./selfsigned.crt:/etc/nginx/ssl/nginx-selfsigned.crt
+      - ./selfsigned.key:/etc/nginx/ssl/nginx-selfsigned.key
 
   #### Pong Game Server ####
   pong-game-server:
@@ -400,6 +402,11 @@ services:
       - 0.0.0.0:4000:4000
     volumes:
       - ${LOGSTASH_FOLDER}:/var/log/
+      - ./selfsigned.crt:/app/selfsigned.crt
+      - ./selfsigned.key:/app/selfsigned.key
+
+
+
 
 
 volumes:
