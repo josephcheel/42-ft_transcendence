@@ -44,10 +44,14 @@ services:
     command: /start-celeryworker
     container_name: celery_worker
     depends_on:
-      - redis
-      - db
-      - migrations
-      - tournaments
+      redis:
+        condition: service_started
+      tournaments:
+        condition: service_healthy
+      db:
+        condition: service_healthy
+      migrations:
+        condition: service_started
     volumes:
       - ./tournaments:/app/
       - ./usermodel:/app/user
@@ -62,11 +66,8 @@ services:
     command: /start-celerybeat
     container_name: celery_beat
     depends_on:
-      - celery_worker
-      - redis
-      - db
-      - migrations
-      - tournaments
+      celery_worker:
+        condition: service_started
     volumes:
       - ./tournaments:/app/
       - ./usermodel:/app/user
@@ -81,11 +82,10 @@ services:
     command: /start-flower
     container_name: flower
     depends_on:
-      - celery_beat
-      - redis
-      - db
-      - migrations
-      - tournaments
+      celery_beat:
+        condition: service_started
+      redis:
+        condition: service_healthy
     ports:
       - 5557:5555
     volumes:
