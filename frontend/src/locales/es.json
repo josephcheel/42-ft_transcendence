@@ -60,7 +60,15 @@
         "check_list": "Consulta el calendario de tus próximos partidos y prepárate.",
         "round": "Ronda",
         "pending_tournaments": "Torneos pendientes",
-        "check_inv": "Revisa y acepta las invitaciones para unirte a los torneos."
+        "check_inv": "Revisa y acepta las invitaciones para unirte a los torneos.",
+        "winner" : "Ganador",
+        "second" : "Segundo",
+        "third" : "Tercero"
+    },
+    "listtournaments": {
+        "loading_tournaments": "Cargando torneos",
+        "list_tournaments": "Lista de torneos",
+        "empty_tournaments_list": "Lista de torneos vacia"
     },
     "games": {
         "local_match": "Partida local",

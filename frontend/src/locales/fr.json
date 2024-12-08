@@ -60,7 +60,15 @@
         "check_list": "Consultez le calendrier de vos matchs à venir et restez prêt.",
         "round": "Tour",
         "pending_tournaments": "Tournois en attente",
-        "check_inv": "Vérifiez et acceptez les invitations pour rejoindre les tournois."
+        "check_inv": "Vérifiez et acceptez les invitations pour rejoindre les tournois.",
+        "winner": "Gagnant",
+        "second": "Deuxième",
+        "third": "Troisième"
+    },
+    "listtournaments": {
+        "loading_tournaments": "Chargement des tournois",
+        "list_tournaments": "Liste des tournois",
+        "empty_tournaments_list": "Liste des tournois vide"
     },
     "games": {
         "local_match": "Match local",
