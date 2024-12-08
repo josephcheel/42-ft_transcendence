@@ -60,7 +60,10 @@
         "check_list": "Check the schedule for your upcoming matches and stay prepared.",
         "round": "Round",
         "pending_tournaments": "Pending Tournaments",
-        "check_inv": "Review and accept invitations to join tournaments."
+        "check_inv": "Review and accept invitations to join tournaments.",
+        "winner": "Winner",
+        "second": "Second",
+        "third": "Third"
     },
     "listtournaments": {
         "loading_tournaments": "Loading tournaments",

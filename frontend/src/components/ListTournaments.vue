@@ -11,6 +11,9 @@
       <li v-for="tournament in tournaments" :key="tournament.id" class="list-group-item">
         <h5>{{ tournament.name }}</h5>
         <p><strong>{{ $t('tournaments.tournament_date')}}</strong> {{ tournament.date_start || "No especificada" }}</p>
+        <p><strong>{{ $t('tournaments.winner')}}</strong> {{ tournament.winner || "No especificada" }}</p>
+        <p><strong>{{ $t('tournaments.second')}}</strong> {{ tournament.second || "No especificada" }}</p>
+        <p><strong>{{ $t('tournaments.third')}}</strong> {{ tournament.third || "No especificada" }}</p>
       </li>
     </ul>
     <p v-else class="text-center">{{ $t('listtournaments.empty_tournaments_list')}}</p>
@@ -48,7 +51,7 @@ export default {
       this.error = null;
       const username = localStorage.getItem('username');
       try {
-        const response = await axios.get(`https://${this.$router.ORIGIN_IP}:8000/api/tournaments/list_tournaments/${username}/`);
+        const response = await axios.get(`https://${this.$router.ORIGIN_IP}:8000/api/tournaments/list_tournaments_status/${username}/`);
         if (response.data.status === "success") {
           this.tournaments = JSON.parse(response.data.data);
           console.log(response);
