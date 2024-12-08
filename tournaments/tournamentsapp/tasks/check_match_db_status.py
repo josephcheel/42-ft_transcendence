@@ -14,7 +14,7 @@ import logging
 logger = logging.getLogger('django')
 @shared_task
 def check_match_db_status():
-	matches_passed = Matches.objects.filter(date_time = timezone.now() + timedelta(minutes = TIME_DELTA, status = StatusMatches.NOT_PLAYED.value))
+	matches_passed = Matches.objects.filter(date_time = timezone.now() + timedelta(minutes = TIME_DELTA), status = StatusMatches.NOT_PLAYED.value)
 	tournament_ids = []
 	if len(matches_passed) == 0:
 		logger.info('No matches to abort')
@@ -31,6 +31,7 @@ def check_match_db_status():
 	mymatches = Matches.objects.filter(tournament_id__in=tournament_ids, status__in=[
 						StatusMatches.PLAYED.value, StatusMatches.WALKOVER.value])
 	while len(mymatches) > 1:
+		logger.info("actualizo torneo")
 		actualise_tournament(mymatches[0].id)
 		mymatches = Matches.objects.filter(tournament_id__in=tournament_ids, status__in=[
 				StatusMatches.PLAYED.value, StatusMatches.WALKOVER.value])
@@ -38,6 +39,7 @@ def check_match_db_status():
 		tournament_id__in=tournament_ids, 
 		status__in=[StatusMatches.PLAYED.value, StatusMatches.WALKOVER.value])
 	if len(mymatches) == 1:
+		logger.info("one match left without pair")
 		match (mymatches[0].round):
 			case 1:
 				if mymatches[0].round == Rounds.FINAL_ROUND.value and mymatches[0].status == StatusMatches.WALKOVER.value:
@@ -54,6 +56,7 @@ def check_match_db_status():
 					if field.name != "id":  # Skip the ID field to avoid conflicts
 						setattr(new_match, field.name, getattr(mymatches[0], field.name))
 				new_match.round = Rounds.SEMIFINAL_ROUND.value if new_match.number_round == 3 else Rounds.QUALIFIED_ROUND.value
+				new_match.date_time = timezone.now()
 				new_match.number_round -=1
 				new_match.save()
 				
