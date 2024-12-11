@@ -101,7 +101,8 @@
             "history": "Historique",
             "profile": "Profil",
             "play": "Jouer",
-            "stats": "Statistiques"
+            "stats": "Statistiques",
+            "listTournaments": "Mes tournois"
         },
         "email": "Email",
         "reset_pass": "Réinitialisez votre mot de passe",
