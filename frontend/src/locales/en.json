@@ -37,7 +37,11 @@
         "waiting": "Waiting for players...",
         "edit_profile": "Edit Profile",
         "user_profile": "User Profile",
-        "language": "Language"
+        "language": "Language",
+        "close": "close",
+        "alert": "NEXT MATCH",
+        "alert_text": "You have an incoming match"
+
     },
     "friends": {
         "friends_title": "My Friends",
