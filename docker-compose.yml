@@ -299,8 +299,8 @@ services:
     depends_on:
       es01:
         condition: service_healthy
-      kibana:
-        condition: service_healthy
+#      kibana:
+#        condition: service_healthy
     image: docker.elastic.co/logstash/logstash:${STACK_VERSION}
     labels:
       co.elastic.logs/module: logstash
@@ -318,41 +318,41 @@ services:
     env_file:
       - .env
 
-  kibana:
-    restart: always
-    depends_on:
-      es01:
-        condition: service_healthy
-    image: docker.elastic.co/kibana/kibana:${STACK_VERSION}
-    labels:
-      co.elastic.logs/module: kibana
-    volumes:
-      - certs:/usr/share/kibana/config/certs
-      - kibanadata:/usr/share/kibana/data
-
-    container_name: kibana
-    environment:
-      - SERVER_REWRITE_BASE_PATH=true
-      - SERVER_BASEPATH=/kibana 
-      - ELASTICSEARCH_HOSTS=https://es01:9200
-      - ELASTICSEARCH_USERNAME=kibana_system
-      - ELASTICSEARCH_PASSWORD=${KIBANA_PASSWORD}
-      - ELASTICSEARCH_SSL_CERTIFICATEAUTHORITIES=config/certs/ca/ca.crt
-      - XPACK_SECURITY_ENCRYPTIONKEY=${ENCRYPTION_KEY}
-      - XPACK_ENCRYPTEDSAVEDOBJECTS_ENCRYPTIONKEY=${ENCRYPTION_KEY}
-      - XPACK_REPORTING_ENCRYPTIONKEY=${ENCRYPTION_KEY}
-
-    mem_limit: ${KB_MEM_LIMIT}
-    healthcheck:
-      test:
-        [
-          "CMD-SHELL",
-          "curl -s -I http://localhost:5601 | grep -q 'HTTP/1.1 302 Found'",
-        ]
-      interval: 10s
-      timeout: 10s
-      retries: 120 
-      start_period: 10s
+#  kibana:
+#    restart: always
+#    depends_on:
+#      es01:
+#        condition: service_healthy
+#    image: docker.elastic.co/kibana/kibana:${STACK_VERSION}
+#    labels:
+#      co.elastic.logs/module: kibana
+#    volumes:
+#      - certs:/usr/share/kibana/config/certs
+#      - kibanadata:/usr/share/kibana/data
+#
+#    container_name: kibana
+#    environment:
+#      - SERVER_REWRITE_BASE_PATH=true
+#      - SERVER_BASEPATH=/kibana 
+#      - ELASTICSEARCH_HOSTS=https://es01:9200
+#      - ELASTICSEARCH_USERNAME=kibana_system
+#      - ELASTICSEARCH_PASSWORD=${KIBANA_PASSWORD}
+#      - ELASTICSEARCH_SSL_CERTIFICATEAUTHORITIES=config/certs/ca/ca.crt
+#      - XPACK_SECURITY_ENCRYPTIONKEY=${ENCRYPTION_KEY}
+#      - XPACK_ENCRYPTEDSAVEDOBJECTS_ENCRYPTIONKEY=${ENCRYPTION_KEY}
+#      - XPACK_REPORTING_ENCRYPTIONKEY=${ENCRYPTION_KEY}
+#
+#    mem_limit: ${KB_MEM_LIMIT}
+#    healthcheck:
+#      test:
+#        [
+#          "CMD-SHELL",
+#          "curl -s -I http://localhost:5601 | grep -q 'HTTP/1.1 302 Found'",
+#        ]
+#      interval: 10s
+#      timeout: 10s
+#      retries: 120 
+#      start_period: 10s
 
   blockchain:
    depends_on:
@@ -374,8 +374,8 @@ services:
     depends_on:
       gateway:
         condition: service_healthy
-      kibana:
-        condition: service_healthy
+#      kibana:
+#        condition: service_healthy
       grafana:
         condition: service_healthy
     env_file:
@@ -415,12 +415,12 @@ volumes:
       type: none
       device: ${ESDATA_FOLDER}
       o: bind
-  kibanadata:
-    driver: local
-    driver_opts:
-      type: none
-      device: ${KIBANA_FOLDER}
-      o: bind
+#  kibanadata:
+#    driver: local
+#    driver_opts:
+#      type: none
+#      device: ${KIBANA_FOLDER}
+#      o: bind
   logstashdata01:
     driver: local
     driver_opts:
