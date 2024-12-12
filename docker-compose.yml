@@ -10,10 +10,10 @@ services:
     volumes:
       - certs:/usr/share/elasticsearch/config/certs
       - ./setup/setup_script.sh:/setup_script.sh
-      - ./setup/grafana_script.sh:/grafana_script.sh
+#      - ./setup/grafana_script.sh:/grafana_script.sh
       - ./setup/ELK_script.sh:/ELK_script.sh
       - ./ELK:/ELK
-      - ./Grafana/gateway_dashboard.json:/gateway_dashboard.json
+#      - ./Grafana/gateway_dashboard.json:/gateway_dashboard.json
     user: "0"
     environment:
       - SLACK_HOOK=${SLACK_HOOK}
@@ -210,39 +210,39 @@ services:
   # Monitoring Container
 
 
-  prometheus:
-    image: prom/prometheus:v2.53.1
-    container_name: prometheus
-    command:
-      - '--config.file=/etc/prometheus/prometheus.yml'
-    volumes:
-      - ./Prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
-      - prometheus-data:/prometheus
-    depends_on:
-      gateway:
-        condition: service_healthy
-      usermanagement:
-        condition: service_healthy
-      tournaments:
-        condition: service_healthy
-
-  grafana:
-    image: grafana/grafana:11.1.1-ubuntu
-    container_name: grafana
-    environment:
-      - GF_SECURITY_ADMIN_PASSWORD=newadmin
-      - GF_SERVER_ROOT_URL=%(protocol)s://%(domain)s:%(http_port)s/grafana # Set to the internal URL
-      - GF_SERVER_SERVE_FROM_SUB_PATH=true
-      - GF_SERVER_HTTP_PORT=3000
-      - GF_LOG_LEVEL=warn
-    volumes:
-      - grafana-data:/var/lib/grafana
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
-      interval: 10s
-      timeout: 10s
-      retries: 120 
-      start_period: 10s
+#  prometheus:
+#    image: prom/prometheus:v2.53.1
+#    container_name: prometheus
+#    command:
+#      - '--config.file=/etc/prometheus/prometheus.yml'
+#    volumes:
+#      - ./Prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+#      - prometheus-data:/prometheus
+#    depends_on:
+#      gateway:
+#        condition: service_healthy
+#      usermanagement:
+#        condition: service_healthy
+#      tournaments:
+#        condition: service_healthy
+#
+#  grafana:
+#    image: grafana/grafana:11.1.1-ubuntu
+#    container_name: grafana
+#    environment:
+#      - GF_SECURITY_ADMIN_PASSWORD=newadmin
+#      - GF_SERVER_ROOT_URL=%(protocol)s://%(domain)s:%(http_port)s/grafana # Set to the internal URL
+#      - GF_SERVER_SERVE_FROM_SUB_PATH=true
+#      - GF_SERVER_HTTP_PORT=3000
+#      - GF_LOG_LEVEL=warn
+#    volumes:
+#      - grafana-data:/var/lib/grafana
+#    healthcheck:
+#      test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
+#      interval: 10s
+#      timeout: 10s
+#      retries: 120 
+#      start_period: 10s
 
 
   es01:
@@ -433,18 +433,18 @@ volumes:
       type: none
       device: ${POSTGREE_FOLDER}
       o: bind
-  prometheus-data:
-    driver: local
-    driver_opts:
-      type: none
-      device: ${PROMETHEUS_FOLDER}
-      o: bind
-  grafana-data:
-    driver: local
-    driver_opts:
-      type: none
-      device: ${GRAFANA_FOLDER}
-      o: bind
+#  prometheus-data:
+#    driver: local
+#    driver_opts:
+#      type: none
+#      device: ${PROMETHEUS_FOLDER}
+#      o: bind
+#  grafana-data:
+#    driver: local
+#    driver_opts:
+#      type: none
+#      device: ${GRAFANA_FOLDER}
+#      o: bind
   blockchain_data:
     driver: local
     driver_opts:
