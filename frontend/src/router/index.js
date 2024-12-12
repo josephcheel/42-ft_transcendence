@@ -4,7 +4,6 @@ import About from '../components/About.vue'
 import Login from '../components/Login.vue'
 import Forgotps from '../components/Forgotps.vue'
 import Register from '../components/Register.vue'
-import Chat from '../components/chat/chatLayout.vue'
 import Dashboard from '../components/Dashboard.vue'
 import GameSelection from '../components/GameSelection.vue'
 import Profile from '../components/Profile.vue'
@@ -19,6 +18,7 @@ import ListTournaments from '../components/ListTournaments.vue'
 import { isAuthorized } from '../utils/isAuthorized'
 import Tournaments from '../components/Tournaments.vue'
 import Friends from '../components/Friends.vue'
+import CreateTournament from '../components/CreateTournament.vue'
 const routes = [
   {
     path: '/',
@@ -44,11 +44,6 @@ const routes = [
     path: '/register',
     name: 'Register',
     component: Register
-  },
-  {
-    path: '/chat',
-    name: 'Chat',
-    component: Chat
   },
   {
     path: '/listtournaments',
@@ -101,6 +96,11 @@ const routes = [
     path: '/play',
     name: 'play',
     component: Play
+  },
+  {
+    path: '/tournaments/create',
+    name: 'CreateTournament',
+    component: CreateTournament
   },
   {
     path: '/tournaments',
