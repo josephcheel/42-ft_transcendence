@@ -4,28 +4,28 @@ networks:
     external: false
 
 services:
-  setup:
-    image: luised2094/setup:latest
-    container_name: setup
-    volumes:
-      - certs:/usr/share/elasticsearch/config/certs
-      - ./setup/setup_script.sh:/setup_script.sh
+#  setup:
+#    image: luised2094/setup:latest
+#    container_name: setup
+#    volumes:
+#      - certs:/usr/share/elasticsearch/config/certs
+#      - ./setup/setup_script.sh:/setup_script.sh
 #      - ./setup/grafana_script.sh:/grafana_script.sh
-      - ./setup/ELK_script.sh:/ELK_script.sh
-      - ./ELK:/ELK
+#      - ./setup/ELK_script.sh:/ELK_script.sh
+#      - ./ELK:/ELK
 #      - ./Grafana/gateway_dashboard.json:/gateway_dashboard.json
-    user: "0"
-    environment:
-      - SLACK_HOOK=${SLACK_HOOK}
-    env_file:
-      - .env
-    command: >
-      bash /setup_script.sh
-    healthcheck:
-      test: ["CMD-SHELL", "[ -f /usr/share/elasticsearch/config/certs/es01/es01.crt ]"]
-      interval: 10s
-      timeout: 10s
-      retries: 120
+#    user: "0"
+#    environment:
+#      - SLACK_HOOK=${SLACK_HOOK}
+#    env_file:
+#      - .env
+#    command: >
+#      bash /setup_script.sh
+#    healthcheck:
+#      test: ["CMD-SHELL", "[ -f /usr/share/elasticsearch/config/certs/es01/es01.crt ]"]
+#      interval: 10s
+#      timeout: 10s
+#      retries: 120
   redis:
     image: 'redis:6.2-alpine'
     container_name: redis
@@ -245,60 +245,60 @@ services:
 #      start_period: 10s
 
 
-  es01:
-    restart: always
-    depends_on:
-      setup:
-        condition: service_healthy
-    image: docker.elastic.co/elasticsearch/elasticsearch:${STACK_VERSION}
-    labels:
-      co.elastic.logs/module: elasticsearch
-    container_name: elasticsearch
-    volumes:
-      - certs:/usr/share/elasticsearch/config/certs
-      - esdata01:/usr/share/elasticsearch/data
-    environment:
-      - node.name=es01
-      - cluster.name=${CLUSTER_NAME}
-      - discovery.type=single-node
-      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
-      - bootstrap.memory_lock=true
-      - xpack.security.enabled=true
-      - xpack.security.http.ssl.enabled=true
-      - xpack.security.http.ssl.key=/usr/share/elasticsearch/config/certs/es01/es01.key
-      - xpack.security.http.ssl.certificate=/usr/share/elasticsearch/config/certs/es01/es01.crt
-      - xpack.security.http.ssl.certificate_authorities=/usr/share/elasticsearch/config/certs/ca/ca.crt
-      - xpack.security.transport.ssl.enabled=true
-      - xpack.security.transport.ssl.key=/usr/share/elasticsearch/config/certs/es01/es01.key
-      - xpack.security.transport.ssl.certificate=/usr/share/elasticsearch/config/certs/es01/es01.crt
-      - xpack.security.transport.ssl.certificate_authorities=/usr/share/elasticsearch/config/certs/ca/ca.crt
-      - xpack.security.transport.ssl.verification_mode=certificate
-      - xpack.license.self_generated.type=${LICENSE}
-    mem_limit: ${ES_MEM_LIMIT}
-    ulimits:
-      memlock:
-        soft: -1
-        hard: -1
-      nofile:
-        soft: 65536
-        hard: 65536
-    healthcheck:
-      test:
-        [
-          "CMD-SHELL",
-          "curl -s --cacert /usr/share/elasticsearch/config/certs/ca/ca.crt https://localhost:9200 | grep -q 'missing authentication credentials'",
-        ]
-      interval: 10s
-      timeout: 10s
-      retries: 120 
-      start_period: 10s
+#  es01:
+#    restart: always
+#    depends_on:
+#      setup:
+#        condition: service_healthy
+#    image: docker.elastic.co/elasticsearch/elasticsearch:${STACK_VERSION}
+#    labels:
+#      co.elastic.logs/module: elasticsearch
+#    container_name: elasticsearch
+#    volumes:
+#      - certs:/usr/share/elasticsearch/config/certs
+#      - esdata01:/usr/share/elasticsearch/data
+#    environment:
+#      - node.name=es01
+#      - cluster.name=${CLUSTER_NAME}
+#      - discovery.type=single-node
+#      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
+#      - bootstrap.memory_lock=true
+#      - xpack.security.enabled=true
+#      - xpack.security.http.ssl.enabled=true
+#      - xpack.security.http.ssl.key=/usr/share/elasticsearch/config/certs/es01/es01.key
+#      - xpack.security.http.ssl.certificate=/usr/share/elasticsearch/config/certs/es01/es01.crt
+#      - xpack.security.http.ssl.certificate_authorities=/usr/share/elasticsearch/config/certs/ca/ca.crt
+#      - xpack.security.transport.ssl.enabled=true
+#      - xpack.security.transport.ssl.key=/usr/share/elasticsearch/config/certs/es01/es01.key
+#      - xpack.security.transport.ssl.certificate=/usr/share/elasticsearch/config/certs/es01/es01.crt
+#      - xpack.security.transport.ssl.certificate_authorities=/usr/share/elasticsearch/config/certs/ca/ca.crt
+#      - xpack.security.transport.ssl.verification_mode=certificate
+#      - xpack.license.self_generated.type=${LICENSE}
+#    mem_limit: ${ES_MEM_LIMIT}
+#    ulimits:
+#      memlock:
+#        soft: -1
+#        hard: -1
+#      nofile:
+#        soft: 65536
+#        hard: 65536
+#    healthcheck:
+#      test:
+#        [
+#          "CMD-SHELL",
+#          "curl -s --cacert /usr/share/elasticsearch/config/certs/ca/ca.crt https://localhost:9200 | grep -q 'missing authentication credentials'",
+#        ]
+#      interval: 10s
+#      timeout: 10s
+#      retries: 120 
+#      start_period: 10s
 
   logstash:
     restart: always
 
     depends_on:
-      es01:
-        condition: service_healthy
+#      es01:
+#        condition: service_healthy
 #      kibana:
 #        condition: service_healthy
     image: docker.elastic.co/logstash/logstash:${STACK_VERSION}
@@ -409,12 +409,12 @@ volumes:
       type: none
       device: ${CERTS_FOLDER}
       o: bind
-  esdata01:
-    driver: local
-    driver_opts:
-      type: none
-      device: ${ESDATA_FOLDER}
-      o: bind
+#  esdata01:
+#    driver: local
+#    driver_opts:
+#      type: none
+#      device: ${ESDATA_FOLDER}
+#      o: bind
 #  kibanadata:
 #    driver: local
 #    driver_opts:
