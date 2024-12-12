@@ -1,5 +1,5 @@
 from tournamentsapp.wrappers import require_get, user_is_authenticated, exception_handler
-from tournaments.blockchainapp.views import get_results
+from blockchainapp.views import get_results
 from tournamentsapp.models import Tournaments
 from datetime import datetime
 from django.db import OperationalError
