@@ -296,7 +296,7 @@ services:
   logstash:
     restart: always
 
-    depends_on:
+#    depends_on:
 #      es01:
 #        condition: service_healthy
 #      kibana:
