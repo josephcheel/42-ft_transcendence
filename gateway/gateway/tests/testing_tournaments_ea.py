@@ -271,7 +271,7 @@ def test_finish_tournament():
 						if match['status'] == 'not played':
 							player1 = match['player_id_1_id']
 							player2 = match['player_id_2_id']
-							my_data = {'match_id': match['id']}
+							my_data = {'match_id': match['match_UUID']}
 							if not player1 is None and not player2 is None:
 								if random.choice([True, False]):
 									response = send_request(mysessions[int(player1)], start_match_url, csrf[int(player1)], my_data)
@@ -307,7 +307,7 @@ def test_finish_tournament():
 							if points_to_win == None:
 								points_to_win = 5
 							my_data = {
-								'match_id': match['id'],
+								'match_id': match['match_UUID'],
 								'player1': f'test{player1}',
 								'player2': f'test{player2}',
 								'winner': the_winner_id,
