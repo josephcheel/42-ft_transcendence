@@ -308,8 +308,8 @@ services:
     user: '0'
     volumes:
       - certs:/usr/share/logstash/certs
-      - ./ELK/logstash:/usr/share/logstash/pipeline:ro
-      - logstashdata01:/var/log
+#      - ./ELK/logstash:/usr/share/logstash/pipeline:ro
+#      - logstashdata01:/var/log
     environment:
       - xpack.monitoring.enabled=false
       - ELASTIC_USER=elastic
