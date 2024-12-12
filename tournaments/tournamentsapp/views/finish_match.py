@@ -11,7 +11,7 @@ from user.models import User
 @validate_json
 def finish_match(request):
 	data = request.data
-	match_id = request.data.get('match_id')
+	match_id = request.data.get('UUID')
 
 	if match_id < 0:
 		player1 = User.objects.get(username=data.get('winner'))

@@ -15,9 +15,9 @@ except:
 def start_match(request):
 	data = request.data
 	player = request.user
-	match_id = data.get('match_id')
+	match_id = data.get('UUID')
 	try:
-		mymatch = Matches.objects.get(id=match_id)
+		mymatch = Matches.objects.get(match_UUID=match_id)
 	except Matches.DoesNotExist:
 		return JsonResponse({'status': 'error', 'message': 'A match does not exist', 'data': None}, status=404)
 	if mymatch.player_id_1.id != player.id and mymatch.player_id_2.id != player.id: 
