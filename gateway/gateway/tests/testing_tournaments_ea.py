@@ -1,7 +1,5 @@
 import requests
 from datetime import datetime, timedelta
-from django.utils import timezone
-from django.utils import timezone
 import urllib3
 import json
 import random
