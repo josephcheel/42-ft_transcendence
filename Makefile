@@ -54,9 +54,6 @@ rm_files:
 	@rm -rfd usermanagement/.migration_done
 	@rm -rfd frontend/dist/
 	@rm -rfd frontend/node_modules/
-	@rm -rfd pong-game-server/node_modules/
-	@rm -rfd pong-game-server/bin/
-	@rm -rfd pong-game-server/lib/
 	@rm -f .exec_run_npm
 	@$(COMPOSE) -f $(DOCKER_COMPOSE_FILE) down --volumes
 	@sudo find . -type d -name 'migrations' -exec rm -r {} +
