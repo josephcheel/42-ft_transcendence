@@ -17,11 +17,80 @@ const MAX_GOALS = 5;
 const MIN_SPEED = 25;
 const MAX_SPEED = 50;
 
+const port = 4000;
+
+const app = express();
+const ORIGIN_IP = process.env.ORIGIN_IP || 'localhost';
+console.log('ORIGIN_IP:', ORIGIN_IP);
+
+app.use(cors({
+    origin: ["https://admin.socket.io", `http://${ORIGIN_IP}:5173`, `http://${ORIGIN_IP}:5174`, `https://${ORIGIN_IP}:8000`, 'https://miniature-journey-9gr5x5gxwvjfxqv-5173.app.github.dev'],
+    credentials: true
+}));
+
+// app.use(cors({
+//     origin: "*",
+//     // credentials: true
+// }));
+
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+// Load the SSL certificates
+const pemFilePath = path.join(__dirname, 'selfsigned.crt');
+const keyFilePath = path.join(__dirname, 'selfsigned.key');
+
+// Read the files
+const serverOptions = {
+    key: fs.readFileSync(keyFilePath),
+    cert: fs.readFileSync(pemFilePath),
+};
+
+const server = createServer(serverOptions, app);
+
+const io = new Server(server, {
+    cors: {
+        // origin: "*", 
+        origin: ["https://admin.socket.io", `http://${ORIGIN_IP}:5173`, `http://${ORIGIN_IP}:5174`, `https://${ORIGIN_IP}:8000`, 'https://miniature-journey-9gr5x5gxwvjfxqv-5173.app.github.dev'],
+        credentials: true
+    },
+    pingInterval: 2000, pingTimeout: 5000,
+});
+
+app.use(cookieParser());
+
+app.use('/socket-io-admin', express.static(path.join(__dirname, 'node_modules/@socket.io/admin-ui/ui/dist')));
+
+app.get('/socket-io-admin', (req, res) => {
+    res.sendFile(path.join(__dirname, '/node_modules/@socket.io/admin-ui/ui/dist/index.html'));
+});
+
+app.get('*', (req, res) => {
+    res.send(`
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <title>Socket.IO Server</title>
+        </head>
+        <body>
+          <h1>Welcome to Socket.IO Server</h1>
+          <p>WebSocket connection is handled separately!</p>
+        </body>
+      </html>
+    `);
+});
+
+server.listen(port, '0.0.0.0', () => {
+    console.log(`Server running on port ${port}`);
+});
+
 const sleep = async (ms) => {
     await new Promise(resolve => {
         return setTimeout(resolve, ms);
     });
 };
+
 class Vector3 {
     constructor(x, y, z) {
         this.x = x;
@@ -70,12 +139,9 @@ class Vector3 {
 
 }
 
-function finishMatch(matchId, winner, winnerPoints, looser, looserPoints) {
-    // Get the session ID cookie manually (replace 'sessionid' with the actual cookie name)
-    const sessionId = document.cookie.replace(/(?:(?:^|.*;\s*)sessionid\s*=\s*([^;]*).*$)|^.*$/, "$1");
-  
+function finishMatch(matchId, winner, winnerPoints, looser, looserPoints, sessionId) {
     // Make the POST request using fetch API
-    fetch(`https://${this.$router.ORIGIN_IP}/api/tournaments/finish_match`, {
+    fetch(`http://tournaments:8000/tournaments/finish_match/`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json', // Set content type to JSON
@@ -100,19 +166,19 @@ function finishMatch(matchId, winner, winnerPoints, looser, looserPoints) {
     .then(data => {
       // Success response (200)
       console.log('Match finished successfully:', data);
-      this.$toast.success('Match finished successfully!');
+    //   this.$toast.success('Match finished successfully!');
       // Optionally, navigate to another page after finishing the match
-      this.$router.push('/tournaments'); // Redirect to tournaments page
+    //   this.$router.push('/tournaments'); // Redirect to tournaments page
     })
     .catch(error => {
       // Handle errors
       if (error.message === 'Something went wrong') {
         console.error('The match has already been played or there was a server issue.');
-        this.$toast.error('The match has already been played or there was a server issue.');
+        // this.$toast.error('The match has already been played or there was a server issue.');
       } else {
         // Handle network errors or unexpected issues
         console.error('An unexpected error occurred:', error.message);
-        this.$toast.error('An unexpected error occurred. Please try again.');
+        // this.$toast.error('An unexpected error occurred. Please try again.');
       }
     });
   }
@@ -160,7 +226,7 @@ class Ball extends UserInput {
                     setTimeout(() => {
                         io.to(this.room).emit('closeTheGame');
                         io.to(this.room).socketsLeave(this.room);
-                        let winner = { username: undefined, points: 0 };
+                        let winner = { username: undefined, points: 0};
                         let loser = { username: undefined, points: 0 };
                         let match_uuid = undefined;
                         let sessionid = undefined
@@ -182,7 +248,7 @@ class Ball extends UserInput {
                             }
                         }
                         console.log('API CALL', { winner, loser });
-                        finishMatch(match_uuid, winner.username, winner.points, loser.username, loser.points, sessionId)
+                        finishMatch(match_uuid, winner.username, winner.points, loser.username, loser.points, sessionid)
                     }, 5000);
                 }
                 else
@@ -368,53 +434,14 @@ class Paddle extends UserInput {
     }
 }
 
-const port = 4000;
 
-const app = express();
-const ORIGIN_IP = process.env.ORIGIN_IP || 'localhost';
-console.log('ORIGIN_IP:', ORIGIN_IP);
-
-app.use(cors({
-    origin: ["https://admin.socket.io", `http://${ORIGIN_IP}:5173`, `http://${ORIGIN_IP}:5174`, `https://${ORIGIN_IP}:8000`, 'https://miniature-journey-9gr5x5gxwvjfxqv-5173.app.github.dev'],
-    credentials: true
-}));
-
-// app.use(cors({
-//     origin: "*",
-//     // credentials: true
-// }));
-
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-
-// Load the SSL certificates
-const pemFilePath = path.join(__dirname, 'selfsigned.crt');
-const keyFilePath = path.join(__dirname, 'selfsigned.key');
-
-// Read the files
-const serverOptions = {
-    key: fs.readFileSync(keyFilePath),
-    cert: fs.readFileSync(pemFilePath),
-};
-
-const server = createServer(serverOptions, app);
-
-const io = new Server(server, {
-    cors: {
-        // origin: "*", 
-        origin: ["https://admin.socket.io", `http://${ORIGIN_IP}:5173`, `http://${ORIGIN_IP}:5174`, `https://${ORIGIN_IP}:8000`, 'https://miniature-journey-9gr5x5gxwvjfxqv-5173.app.github.dev'],
-        credentials: true
-    },
-    pingInterval: 2000, pingTimeout: 5000,
-});
 
 var players = {};
 var balls = {};
 const centerDistanceToPaddle = 45;
 
 
-let s = false;
+
 let lastTickTime = Date.now();
 
 function GameLoop() {
@@ -550,7 +577,7 @@ io.on("connection", (socket) => {
                 }
             }
         }
-
+       
         if (pairedPlayerId) {
             // Pair the players in the same match/tournament
             if (players[socket.id].tournamentId !== null) {
@@ -570,8 +597,18 @@ io.on("connection", (socket) => {
 
             players[pairedPlayerId].ball = balls[room];
             players[socket.id].ball = balls[room];
-            // Join the room for both players
+            let cookiesHeader = socket.request.headers.cookie;
+            if (cookiesHeader) {
+                // Parse the cookies using the cookie library
+                const cookies = cookie.parse(cookiesHeader);  // This returns an object
+                
+                players[socket.id].sessionId = cookies.sessionid;  // Access the sessionid cookie  
+                console.log('SessionID:', players[socket.id].sessionId);  // Log sessionid value
+            } else {
+                console.log('No cookies found');
+            }
             socket.join(room);
+       
             setCookie(socket, pairedPlayerId);
 
             // Start the game
@@ -593,10 +630,18 @@ io.on("connection", (socket) => {
             players[socket.id].room = room;
             players[socket.id].nb = 1;
             players[socket.id].isWaiting = true;
-            // let cookies = socket.request.headers.cookie;
-            let parsedCookies = socket.request.cookies;
-            players[socket.id].sessionId = parsedCookies.sessionid;
-            console.log('sessionid',  players[socket.id].sessionId);
+            
+            let cookiesHeader = socket.request.headers.cookie;
+            if (cookiesHeader) {
+                // Parse the cookies using the cookie library
+                const cookies = cookie.parse(cookiesHeader);  // This returns an object
+                
+                players[socket.id].sessionId = cookies.sessionid;  // Access the sessionid cookie  
+                console.log('SessionID:', players[socket.id].sessionId);  // Log sessionid value
+            } else {
+                console.log('No cookies found');
+            }
+       
             socket.join(room);
         }
     }
@@ -618,32 +663,7 @@ io.on("connection", (socket) => {
     });
 });
 
-app.use(cookieParser());
 
-app.use('/socket-io-admin', express.static(path.join(__dirname, 'node_modules/@socket.io/admin-ui/ui/dist')));
-
-app.get('/socket-io-admin', (req, res) => {
-    res.sendFile(path.join(__dirname, '/node_modules/@socket.io/admin-ui/ui/dist/index.html'));
-});
-
-app.get('*', (req, res) => {
-    res.send(`
-      <!DOCTYPE html>
-      <html>
-        <head>
-          <title>Socket.IO Server</title>
-        </head>
-        <body>
-          <h1>Welcome to Socket.IO Server</h1>
-          <p>WebSocket connection is handled separately!</p>
-        </body>
-      </html>
-    `);
-});
-
-server.listen(port, '0.0.0.0', () => {
-    console.log(`Server running on port ${port}`);
-});
 
 const SOCKET_IO_ADMIN_USERNAME = (process.env.SOCKET_IO_ADMIN_USERNAME || 'admin').trim();
 const SOCKET_IO_ADMIN_PASSWORD = (process.env.SOCKET_IO_ADMIN_PASSWORD || 'changeit').trim();
