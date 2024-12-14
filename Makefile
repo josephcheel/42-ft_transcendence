@@ -49,6 +49,7 @@ start :
 	@$(COMPOSE) -f $(DOCKER_COMPOSE_FILE) start
 
 rebuild: stop rm_files volumes compile run_npm build
+	@echo "$(GREEN_COLOR)Rebuilding containers...$(RESET_COLOR)"
 
 rm_files:
 	@rm -rfd usermanagement/.migration_done
@@ -145,4 +146,4 @@ fclean: clean rm_files
 re: fclean all
 
 
-.PHONY: all build up down restart logs clean re fclean volumes compile run_pm del_vol rm_vol debug build_certs
+.PHONY: all build up down restart logs clean re fclean volumes compile run_pm del_vol rm_vol debug build_certs rebuild
