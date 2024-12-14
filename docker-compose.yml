@@ -110,7 +110,8 @@ services:
   db:
     container_name: db
     restart: always
-    image: postgres:13
+    build: ./database 
+    #image: postgres:13
     environment:
       POSTGRES_DB: transcendence
       POSTGRES_USER: transcendence
@@ -414,22 +415,22 @@ services:
 volumes:
   certs:
     driver: local
-    driver_opts:
-      type: none
-      device: ${CERTS_FOLDER}
-      o: bind
+    #driver_opts:
+     # type: none
+     # device: ${CERTS_FOLDER}
+     # o: bind
   esdata01:
     driver: local
-    driver_opts:
-      type: none
-      device: ${ESDATA_FOLDER}
-      o: bind
+    #driver_opts:
+     # type: none
+     # device: ${ESDATA_FOLDER}
+     # o: bind
   kibanadata:
     driver: local
-    driver_opts:
-      type: none
-      device: ${KIBANA_FOLDER}
-      o: bind
+    #driver_opts:
+     # type: none
+     # device: ${KIBANA_FOLDER}
+     # o: bind
   logstashdata01:
     driver: local
     driver_opts:
@@ -438,32 +439,32 @@ volumes:
       o: bind
   postgres-data:
     driver: local
-    driver_opts:
-      type: none
-      device: ${POSTGREE_FOLDER}
-      o: bind
+    #driver_opts:
+      #type: none
+      #device: ${POSTGREE_FOLDER}
+      #o: bind
   prometheus-data:
     driver: local
-    driver_opts:
-      type: none
-      device: ${PROMETHEUS_FOLDER}
-      o: bind
+    #driver_opts:
+    #  type: none
+    #  device: ${PROMETHEUS_FOLDER}
+    #  o: bind
   grafana-data:
     driver: local
-    driver_opts:
-      type: none
-      device: ${GRAFANA_FOLDER}
-      o: bind
+    #driver_opts:
+    #  type: none
+     # device: ${GRAFANA_FOLDER}
+     # o: bind
   blockchain_data:
     driver: local
-    driver_opts:
-      type: none
-      device: ${BLOCKCHAIN_FOLDER}
-      o: bind
+    #driver_opts:
+     # type: none
+     # device: ${BLOCKCHAIN_FOLDER}
+     # o: bind
   shared:
     driver: local
-    driver_opts:
-      type: none
-      device: ${SHARED_FOLDER}
-      o: bind
+    #driver_opts:
+      #type: none
+      #device: ${SHARED_FOLDER}
+      #o: bind
   
