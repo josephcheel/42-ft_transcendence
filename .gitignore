@@ -1,3 +1,5 @@
+selfsigned.crt
+selfsigned.key
 *migrations*
 *pycache*
 volumes*

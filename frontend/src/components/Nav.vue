@@ -28,7 +28,7 @@
 				<!-- <router-link :class="`nav-link ${isActive('')}`" to="/stats">{{ $t('message.links.stats') }}</router-link> -->
 			</li>
 			<li class="nav-item">
-				<router-link :class="`nav-link ${isActive('')}`" to="/history">{{ $t('message.links.history') }}</router-link>
+				<router-link :class="`nav-link ${isActive('')}`" to="/listtournaments">{{ $t('message.links.listTournaments') }}</router-link>
 			</li>
 			<li class="nav-item">
 				<router-link :class="`nav-link ${isActive('/select-game')}`" to="/select-game">{{ $t('message.links.games') }}</router-link>
@@ -69,7 +69,6 @@
 			</a>
 			<ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
 				<li><router-link :class="`dropdown-item ${isActive('')}`" to="/profile">{{ $t('message.links.profile') }}</router-link></li>
-				<li><router-link :class="`dropdown-item ${isActive('')}`" to="/settings">{{ $t('message.links.settings') }}</router-link></li>
 				<li><a class="dropdown-item" @click="logout">{{ $t('message.links.logout')}}</a></li>
 			</ul>
 		</div>

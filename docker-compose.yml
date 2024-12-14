@@ -234,7 +234,7 @@ services:
       - GF_SERVER_ROOT_URL=%(protocol)s://%(domain)s:%(http_port)s/grafana # Set to the internal URL
       - GF_SERVER_SERVE_FROM_SUB_PATH=true
       - GF_SERVER_HTTP_PORT=3000
-      - GF_LOG_LEVEL=warn
+#      - GF_LOG_LEVEL=warn
     volumes:
       - grafana-data:/var/lib/grafana
     healthcheck:
@@ -258,6 +258,7 @@ services:
       - certs:/usr/share/elasticsearch/config/certs
       - esdata01:/usr/share/elasticsearch/data
     environment:
+#      - LOG_LEVEL=warn
       - node.name=es01
       - cluster.name=${CLUSTER_NAME}
       - discovery.type=single-node
@@ -331,6 +332,7 @@ services:
 
     container_name: kibana
     environment:
+#      - LOGGING_LEVEL=warn
       - SERVER_REWRITE_BASE_PATH=true
       - SERVER_BASEPATH=/kibana 
       - ELASTICSEARCH_HOSTS=https://es01:9200
@@ -385,6 +387,8 @@ services:
       - "0.0.0.0:8000:8000"
     volumes:
       - ./usermanagement/profile_pictures/:/usr/share/nginx/html/profile_pictures
+      - ./selfsigned.crt:/etc/nginx/ssl/nginx-selfsigned.crt
+      - ./selfsigned.key:/etc/nginx/ssl/nginx-selfsigned.key
 
   #### Pong Game Server ####
   pong-game-server:
@@ -399,6 +403,11 @@ services:
       - 0.0.0.0:4000:4000
     volumes:
       - ${LOGSTASH_FOLDER}:/var/log/
+      - ./selfsigned.crt:/app/selfsigned.crt
+      - ./selfsigned.key:/app/selfsigned.key
+
+
+
 
 
 volumes:

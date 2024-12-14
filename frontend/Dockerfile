@@ -19,10 +19,10 @@ RUN mkdir -p /etc/nginx/ssl/
 
 RUN apk add --no-cache openssl vim curl iputils
 
-RUN openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
-  -keyout /etc/nginx/ssl/nginx-selfsigned.key \
-  -out /etc/nginx/ssl/nginx-selfsigned.crt \
-  -subj "/C=ES/ST=Barcelona/L=Barcelona/O=Transcendence/OU=Frontend/CN=localhost"
+#RUN openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
+ # -keyout /etc/nginx/ssl/nginx-selfsigned.key \
+ # -out /etc/nginx/ssl/nginx-selfsigned.crt \
+ # -subj "/C=ES/ST=Barcelona/L=Barcelona/O=Transcendence/OU=Frontend/CN=localhost"
 
 COPY /dist /usr/share/nginx/html
 #COPY --from=build /app/dist /usr/share/nginx/html

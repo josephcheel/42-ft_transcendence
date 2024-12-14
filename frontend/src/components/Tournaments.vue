@@ -1,62 +1,33 @@
 <template>
+	
 		<div  class="card container-fluid mt-4">
 			<div class="row">
+				
 					<!-- Form to create a new tournament -->
-					<form  @submit.prevent="createTournament" class="col col-md-6 bg-light p-4">
-						<h1 class="titles mb-4">{{ $t('tournaments.create_tournament')}}</h1>
-						<!-- <p>Set up your own tournament with just a few details. Fill out the form below to get started.</p> -->
-						<div class="d-flex flex-column flex-md-row mb-3">
-							<div class="me-md-3 mb-3 mb-md-0 col-12 col-md-6">
-								<label for="tournament-name" class="form-label">{{ $t('tournaments.create_tournament')}}</label>
-								<input v-model="name" type="text" maxlength="15" class="form-control" id="tournament-name" :placeholder="$t('tournaments.placehold_name')" required>
+					<div id="your-tournaments"class="col col-md-6 bg-light p-4">
+						<section class="col d-flex justify-content-center  ">
+							<h1 class="titles">{{ $t('tournaments.create_tournament')}}</h1>
+							<router-link id="play-button" class="btn btn-primary w-100" to="/tournaments/create">{{ $t('tournaments.create_tournament')}}!</router-link>
+						</section>
+						<section class="col mt-4">
+							<h2 class="h4"> Manage your tournaments </h2>
+							<p class="text-muted">start your created tournaments</p>
+							<div class="list-group overflow-auto" style="max-height: 150px;">
+								
+								<div v-if="my_tournaments.length" v-for="tournament in my_tournaments" class="list-group-item d-flex justify-content-between align-items-center">
+									{{ tournament.name }} - {{ new Date(tournament.date_start).toLocaleString() }}
+									<div>
+										<button class="btn btn-primary" @click="closeTournament(tournament.id)" title="Accept" style="padding: 15px;">
+											start
+										</button>
+									</div>
+								</div>
+								<div v-else class="list-group-item d-flex justify-content-center align-items-center text-center text-muted" style="padding: 40px;">
+									No tournaments created yet
+								</div>
 							</div>
-							<div class="me-md-3 col-12 col-md-6">
-								<label for="date" class="form-label">{{ $t('tournaments.tournament_date')}}</label>
-								<input v-model="date" type="datetime-local" class="form-control form-date" id="date" required>
-							</div>
-						</div>
-
-						<div class="mb-3">
-							<label for="maxGoals"  class="form-label">{{ $t('tournaments.max_goals')}}  {{ this.maxGoalsValue}}</label>
-							<input v-model="maxGoalsValue" spellcheck="false" type="range" min="1" max="10" class="form-range" id="maxGoals" required>
-						</div>
-						<div class="mb-3">
-							<label for="Speed" class="form-label">{{ $t('tournaments.speed')}} {{ this.speedLevelText }}</label>
-							<input v-model="speedLevelValue" spellcheck="false" @input="getLevelSpeed" type="range" min="1" max="3" class="form-range" id="Speed" required>
-						</div>
-						<div class="mb-3">
-							<label for="player-username" class="form-label">{{ $t('tournaments.add_player')}}</label>
-							<div class="d-flex">
-							<input 
-								v-model="newPlayerName" 
-								type="text" 
-								id="player-username" 
-								class="form-control me-2" 
-								:placeholder="$t('tournaments.placehold_playername')"
-								@keyup.enter="addPlayer($event)"
-							/>
-							<button id="add-button" @click="addPlayer" type="button" class="btn btn-primary">{{ $t('tournaments.add')}}</button>
-							</div>
-
-							<!-- List of added players with delete button -->
-							<div class="mt-3">
-							<span 
-								v-for="(player, index) in players" 
-								:key="index" 
-								class="badge bg-primary text-white me-2 p-2 rounded-pill d-inline-flex align-items-center mt-2"
-							>
-								{{ player }}
-								<button 
-								type="button"
-								@click="removePlayer(index)" 
-								class="btn-close btn-close-white ms-2" 
-								aria-label="Remove"
-								></button>
-							</span>
-							</div>
-						</div>
-						<button type="button" @click="createTournament" class="btn btn-primary w-100">{{ $t('tournaments.create')}}</button> 
-					</form>
+						</section>
+					</div>
 					<div id="your-tournaments"class="col col-md-6 bg-light p-4">
 						<h1 class="titles">{{ $t('tournaments.your_tournaments')}}</h1>
 						<!-- Section 1: Upcoming Tournaments -->
@@ -65,60 +36,22 @@
 							<p class="text-muted">{{ $t('tournaments.check_list')}}</p>
 							<div class="overflow-auto" style="max-height: 150px;">
 							<ul class="list-group">
-								<li id="matches" class="list-group-item">
+								<li v-for="match in matches" id="matches" class="list-group-item" @click="goToMatch(match.match_UUID, match.tournament_UUID)">
 									<div class="row">
 										<div class="col">
-											<!-- <h5><strong>Name:</strong></h5> -->
-											<h3>example</h3>
+											<h3>{{ match.tournament_name }}</h3>
 										</div>
 										<div class="col">
 											<h5>{{ $t('tournaments.round')}}</h5>
-											<h4><strong>4</strong></h4>
+											<h4><strong>{{ match.round }}</strong></h4>
 										</div>
 										<div class="col">
 											<h5>{{ $t('tournaments.max_goals')}}</h5>
-											<h4><strong>5</strong></h4>
+											<h4><strong>{{ match.points_winner }}</strong></h4>
 										</div>
 										<div class="col">
-											<p id="datetime"><strong> 3/11/2025 11:30PM</strong></p>
-										</div>
-									</div>
-								</li>
-								<li id="matches" class="list-group-item">
-									<div class="row">
-										<div class="col">
-											<!-- <h5><strong>Name:</strong></h5> -->
-											<h3>example</h3>
-										</div>
-										<div class="col">
-											<h5>{{ $t('tournaments.round')}}</h5>
-											<h4><strong>4</strong></h4>
-										</div>
-										<div class="col">
-											<h5>{{ $t('tournaments.max_goals')}}</h5>
-											<h4><strong>5</strong></h4>
-										</div>
-										<div class="col">
-											<p id="datetime"><strong> 3/11/2025 11:30PM</strong></p>
-										</div>
-									</div>
-								</li>
-								<li id="matches" class="list-group-item">
-									<div class="row">
-										<div class="col">
-											<!-- <h5><strong>Name:</strong></h5> -->
-											<h3>example</h3>
-										</div>
-										<div class="col">
-											<h5>{{ $t('tournaments.round')}}</h5>
-											<h4><strong>4</strong></h4>
-										</div>
-										<div class="col">
-											<h5>{{ $t('tournaments.max_goals')}}</h5>
-											<h4><strong>5</strong></h4>
-										</div>
-										<div class="col">
-											<p id="datetime"><strong> 3/11/2025 11:30PM</strong></p>
+											<p id="datetime"><strong> {{ new Date(match.date_time_match).toLocaleString()  }}</strong></p> 
+											<!-- 3/11/2025 11:30PM -->
 										</div>
 									</div>
 								</li>
@@ -130,11 +63,12 @@
 							<h2 class="h4">{{ $t('tournaments.pending_tournaments')}}</h2>
 							<p class="text-muted">{{ $t('tournaments.check_inv')}}</p>
 							<div class="list-group overflow-auto" style="max-height: 150px;">
-								<div class="list-group-item d-flex justify-content-between align-items-center">
-									Tournament Y - Date
+
+								<div v-for="invitation in filteredInvitations" class="list-group-item d-flex justify-content-between align-items-center">
+									{{ invitation.tournament_name }} - {{ new Date(invitation.tournament_start).toISOString() }}
 									<div>
 										<button class="btn btn-link" title="Accept" style="padding: 15px;">
-											<img @click="acceptTournament" src="/assets/icons/check.svg" alt="Accept" width="24" height="24">
+											<img @click="acceptTournament(invitation.tournament_id_id)" src="/assets/icons/check.svg" alt="Accept" width="24" height="24">
 										</button>
 										<button @click="declineTournament" class="btn btn-close" title="Decline" aria-label="Close" style="padding: 0;"></button>
 									</div>
@@ -157,15 +91,31 @@ export default {
 			speedLevelText: 'Normal',
 			players: [],
 			date : undefined,
+			my_tournaments: [],
+			invitations: [],
+			matches: [],
 		}
 	},
-	onMounted() {
-		const name = ref();
-		const date = ref();
-		const maxGoalsValue = ref();
-		const speedLevelValue = ref();
+	computed: {
+ 	 filteredInvitations() {
+		return this.invitations.filter(invitation => invitation.status === 'ignored');
+	}
+	},
+	mounted() {
+		// const name = ref();
+		// const date = ref();
+		// const maxGoalsValue = ref();
+		// const speedLevelValue = ref();
+		// const router = useRouter();
 		
-		const router = useRouter();
+		const username = localStorage.getItem('username')
+		this.getMyTournaments(username);
+		this.getInvitations(username);
+		this.getMatches(username);
+		console.log('invitations', this.invitations, 'length', this.invitations.length);
+
+		console.log('my tournaments', this.my_tournaments, 'length', this.my_tournaments.length);
+		// console.log('username', username);
 	},
 	methods: {
 		getLevelSpeed() {
@@ -251,12 +201,81 @@ export default {
 			}
 			
 		},
-		acceptTournament() {
-			alert('Tournament accepted');
+		async acceptTournament(tournamentId) {
+			try {
+				const response = await axios.post(`https://${this.$router.ORIGIN_IP}:8000/api/tournaments/accept_invitation/`, { tournament_id: tournamentId }, {
+					headers: {
+						'Content-Type': 'application/json'
+					}
+				});
+				console.log(response);
+				this.$router.go(0);
+			}
+			catch (error) {
+				console.log(error);
+			}
 		},
-		declineTournament() {
+		async declineTournament() {
 			alert('Tournament declined');
 		},
+		async getInvitations(username) {
+			// Get the invitations for the user
+			try {
+				const response = await axios.get(`https://${this.$router.ORIGIN_IP}:8000/api/tournaments/list_invitations/${username}/`)
+				this.invitations = JSON.parse(response.data.data);
+				console.log('invitations', this.invitations, 'length', this.invitations.length);
+			}
+			catch (error) {
+				console.log(error);
+			}
+		},
+		async getMyTournaments(username) {
+			// Get the tournaments created by the user
+			try {
+				const response = await axios.get(`https://${this.$router.ORIGIN_IP}:8000/api/tournaments/list_tournaments/${username}/`)
+				this.my_tournaments = JSON.parse(response.data.data);
+				console.log('my tournaments', this.my_tournaments, 'length', this.my_tournaments.length);	
+			}
+			catch (error) {
+				console.log(error);
+			}
+		},
+		async closeTournament(tournamentId) {
+			// Close the tournament
+			try {
+				const response = await axios.post(`https://${this.$router.ORIGIN_IP}:8000/api/tournaments/close/`, { tournament_id: tournamentId }, {
+					headers: {
+						'Content-Type': 'application/json'
+					}
+				});
+				console.log(response);
+				this.$router.go(0);
+			}
+			catch (error) {
+				console.log(error);
+			}
+		},
+		async getMatches(username) {
+			// Get the matches for the user
+			try {
+				const response = await axios.get(`https://${this.$router.ORIGIN_IP}:8000/api/tournaments/list_not_played_matches/${username}/`)
+				this.matches = JSON.parse(response.data.data);
+				console.log('my matches', this.matches, 'length', this.matches.length);
+			}
+			catch (error) {
+				console.log(error);
+			}
+		},
+		goToMatch(matchUUID, tournamentUUID) {
+			console.log('matchUUID', matchUUID, 'tournamentUUID', tournamentUUID);
+			this.$router.push({ 
+				path: '/game-online', 
+				query: { 
+					'match-id': matchUUID, 
+					'tournament-id': tournamentUUID 
+				}
+				});
+		}
 	},
 }
 </script>
