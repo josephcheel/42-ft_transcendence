@@ -271,7 +271,7 @@ def test_finish_tournament():
 						if match['status'] == 'not played':
 							player1 = match['player_id_1_id']
 							player2 = match['player_id_2_id']
-							my_data = {'match_id': match['id']}
+							my_data = {'match_id': match['match_UUID']}
 							if not player1 is None and not player2 is None:
 								if random.choice([True, False]):
 									response = send_request(mysessions[int(player1)], start_match_url, csrf[int(player1)], my_data)
@@ -307,7 +307,7 @@ def test_finish_tournament():
 							if points_to_win == None:
 								points_to_win = 5
 							my_data = {
-								'match_id': match['id'],
+								'match_id': match['match_UUID'],
 								'player1': f'test{player1}',
 								'player2': f'test{player2}',
 								'winner': the_winner_id,
@@ -371,6 +371,15 @@ def list_matches():
 		assert response.json()['status'] == 'success'
 		assert response.json()['message'] == 'List of matches'
 
+def get_next_matches():
+	for i in range(1, total_players + 1):
+		response = get_request(
+			mysessions[i], get_next_match_url + f"test{i}", csrf[i])
+		print(f"User test{i} next match:{response.json()['data']}")
+		assert response.status_code == 200
+		assert response.json()['status'] == 'success'
+		assert response.json()['message'] == 'Next match'
+
 def close_sessions():
 	for i in range(1, total_players + 1):
 		mysessions[i].close()
@@ -391,6 +400,7 @@ if __name__ == "__main__":
 		close_tournament = f'https://{DOMAIN}:8000/api/tournaments/close/'
 		finish_match_url = f'https://{DOMAIN}:8000/api/tournaments/finish_match/'
 		list_matches_url = f'https://{DOMAIN}:8000/api/tournaments/list_matches/'
+		get_next_match_url = f'https://{DOMAIN}:8000/api/tournaments/get_next_match/'
 		list_not_played_matches_url = f'https://{DOMAIN}:8000/api/tournaments/list_not_played_matches/'
 		list_matches_by_tournament_id_url = f'https://{DOMAIN}:8000/api/tournaments/list_matches_by_tournament_id/'
 		list_invitations = f'https://{DOMAIN}:8000/api/tournaments/list_invitations/'
@@ -433,6 +443,7 @@ if __name__ == "__main__":
 			get_data_from_contracts()
 			list_matches_not_played()
 			list_matches()
+			get_next_matches()
 			test_logout_user()
 			close_sessions()
 		else:
