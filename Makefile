@@ -25,7 +25,7 @@ CERTS=selfsigned.crt selfsigned.key
 # Define targets
 all: build 
 
-build: 	| volumes compile run_npm build_certs
+build: 	| volumes build_certs #compile run_npm 
 	$(COMPOSE) -f $(DOCKER_COMPOSE_FILE) up --build -d
 
 build_certs: $(CERTS)
@@ -57,10 +57,10 @@ rm_files:
 	@rm -rfd frontend/node_modules/
 	@rm -f .exec_run_npm
 	@$(COMPOSE) -f $(DOCKER_COMPOSE_FILE) down --volumes
-	@sudo find . -type d -name 'migrations' -exec rm -r {} +
-	@sudo find . -type d -name '__pycache__' -exec rm -r {} +
-	@sudo find . -type f -name 'db.sqlite3' -exec rm {} +
-	@sudo rm -rf $(VOLUMES)
+	@find . -type d -name 'migrations' -exec rm -r {} +
+	@find . -type d -name '__pycache__' -exec rm -r {} +
+	@find . -type f -name 'db.sqlite3' -exec rm {} +
+	@rm -rf $(VOLUMES)
 
 
 # Use 'make debug' to 'docker exec' a container 
@@ -132,18 +132,19 @@ rm_vol:
     else \
         echo "No Docker volumes to remove"; \
     fi
-	sudo find . -type d -name 'migrations' -exec find {} -type f -delete \;
-	sudo find . -type d -name '_pycache_' -exec rm -r {} +
-	sudo find . -type f -name 'db.sqlite3' -exec rm {} +
+	find . -type d -name 'migrations' -exec find {} -type f -delete \;
+	find . -type d -name '_pycache_' -exec rm -r {} +
+	find . -type f -name 'db.sqlite3' -exec rm {} +
 
 clean: stop
 	
 fclean: clean rm_files
 	@$(COMPOSE) -f $(DOCKER_COMPOSE_FILE) down --rmi all --volumes
 	@docker system prune -af 
-	@sudo rm -rf $(VOLUMES)
+	@rm -rf $(VOLUMES)
 
 re: fclean all
 
 
 .PHONY: all build up down restart logs clean re fclean volumes compile run_pm del_vol rm_vol debug build_certs rebuild
+
