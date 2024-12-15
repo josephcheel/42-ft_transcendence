@@ -383,6 +383,16 @@ export default {
 			});
 			this.socket.on('connect', () => {
 				console.log('Connected to server');
+				if (matchId && tournamentId)
+				{
+					axios.post(`https://${this.$router.ORIGIN_IP}/api/tournaments/start_match`, {"UUID": matchId})
+					.then(response => {
+						console.log('Match started successfully:', response.data);
+					  })
+					  .catch(error => {
+						this.$router.push('/tournaments');
+					});				 
+				}
 				this.socket.on('set-cookie', (cookies) => {
 					console.log('Setting cookies', cookies);
 					for (let cookie of cookies) {
@@ -390,6 +400,7 @@ export default {
 							document.cookie = `${cookie.name}=${cookie.value}; path=${cookie.options.path}; expires=${cookie.options.expires}`;
 					}
 					document.cookie = `playerId=${this.socket.id}; path=/;`;
+
 				});
 				this.socket.on('countdown-3', (players) => {
 					console.log('countdown-3', players);

@@ -12,6 +12,31 @@
     </div>
 
     <div :class="{ 'content-wrapper': !isNav() }">
+      <div
+      class="modal fade"
+      id="exampleModalCenter"
+      tabindex="-1"
+      role="dialog"
+      aria-labelledby="exampleModalCenterTitle"
+      aria-hidden="true"
+      ref="exampleModal">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLongTitle">{{ $t('general.alert')}}</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            {{ $t('general.alert_text')}}: {{ tname }}
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ $t('general.close')}}</button>
+          </div>
+        </div>
+      </div>
+    </div>
       <RouterView
        />
     </div>
@@ -31,7 +56,9 @@ export default {
       selectedLang: 'en',
       isAuthenticated: false,
       username: '',
+      match: 0,
       points: 0,
+      tname: '',
       profile_picture_url: '/assets/images/default-profile.jpeg',
       isDataLoaded: false,  // flag to check if data is loaded before mounting Navigation
     };
@@ -45,6 +72,12 @@ export default {
     },
   },
   methods: {
+    openModal() {
+      const modalElement = this.$refs.exampleModal;
+      const modalInstance = new bootstrap.Modal(modalElement);
+      modalInstance.show();
+    },
+
     isCentered() {
       return ['/login', '/register', '/forgot-password'].includes(this.$route.path);
     },
@@ -112,6 +145,20 @@ export default {
     // this.checkAuthStatus();
     if (this.isNav())
       await this.loadUserData();  // Load user data before rendering Navigation
+    if(localStorage.getItem('username')){
+      axios
+      .get(`https://${ORIGIN_IP}:8000/api/tournaments/list_not_played_matches/${localStorage.getItem('username')}/`)
+      .then((response) => {
+        var data = response.data.data;
+        data = JSON.parse(data);
+        if (this.match != data[0].id && data.length > 0) {
+          this.tname = data[0].tournament_name;
+          this.openModal();
+          this.match = data[0].id;
+        }
+      })
+    }
+
   },
 };
 </script>
