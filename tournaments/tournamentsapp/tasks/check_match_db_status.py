@@ -14,7 +14,7 @@ import logging
 logger = logging.getLogger('django')
 @shared_task
 def check_match_db_status():
-	matches_passed = Matches.objects.filter(date_time = timezone.now() + timedelta(minutes = TIME_DELTA), status = StatusMatches.NOT_PLAYED.value)
+	matches_passed = Matches.objects.filter(date_time__lt = timezone.now() + timedelta(minutes = TIME_DELTA), status = StatusMatches.NOT_PLAYED.value)
 	tournament_ids = []
 	if matches_passed.count() == 0:
 		logger.info('No matches to abort')
@@ -30,17 +30,19 @@ def check_match_db_status():
 		actualise_tournament(mymatch.id)
 	mymatches = Matches.objects.filter(tournament_id__in=tournament_ids, status__in=[
 						StatusMatches.PLAYED.value, StatusMatches.WALKOVER.value])
-	logger.info(f'longitud mymatches = {len(mymatches)}')
-	while len(mymatches) > 1:
+	for mymatch in mymatches: 
+		logger.info(f'longitud mymatches = {mymatch.id} --- {mymatch.status}')
+	while mymatches.count() > 1:
 		logger.info("actualizo torneo")
 		actualise_tournament(mymatches[0].id)
 		mymatches = Matches.objects.filter(tournament_id__in=tournament_ids, status__in=[
 				StatusMatches.PLAYED.value, StatusMatches.WALKOVER.value])
-		logger.info(f'longitud mymatches = {len(mymatches)}')
+	    for mymatch in mymatches: 
+		    logger.info(f'longitud mymatches )= {mymatch.id} --- {mymatch.status}---{number_round}')
 	mymatches = Matches.objects.filter(
 		tournament_id__in=tournament_ids, 
 		status__in=[StatusMatches.PLAYED.value, StatusMatches.WALKOVER.value])
-	if len(mymatches) == 1:
+	if mymatches.count() == 1:
 		logger.info("one match left without pair")
 		match (mymatches[0].round):
 			case 1:
@@ -53,12 +55,11 @@ def check_match_db_status():
 			case 2:
 				actualise_tournament(mymatches[0].id)
 			case _:
-				new_match = Matches.objects.create()
+				new_match = Matches.objects.create(date_time = timezone.now() + timedelta(minutes=TIME_DELTA))
 				for field in mymatches[0]._meta.fields:
 					if field.name != "id":  # Skip the ID field to avoid conflicts
 						setattr(new_match, field.name, getattr(mymatches[0], field.name))
 				new_match.round = Rounds.SEMIFINAL_ROUND.value if new_match.number_round == 3 else Rounds.QUALIFIED_ROUND.value
-				new_match.date_time = timezone.now() + timedelta(minutes=TIME_DELTA)
 				new_match.number_round -=1
 				new_match.save()
 				

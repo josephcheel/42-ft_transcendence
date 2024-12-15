@@ -1,13 +1,13 @@
-#FROM node:18 AS build
+FROM node:18 AS build
 
-#WORKDIR /app
+WORKDIR /app
 
 #COPY .env ./
-#COPY package*.json ./
-#RUN npm install
-#COPY . .
+COPY package*.json ./
+RUN npm install
+COPY . .
 
-#RUN npm run build
+RUN npm run build
 
 FROM nginx:alpine
 
@@ -18,14 +18,15 @@ COPY . .
 RUN mkdir -p /etc/nginx/ssl/
 
 RUN apk add --no-cache openssl vim curl iputils
-#COPY --from=build /app/dist /usr/share/nginx/html
+#COPY /dist /usr/share/nginx/html
+COPY --from=build /app/dist /usr/share/nginx/html
 # Update package index and install prerequisites
 # Install dependencies and Node.js
-RUN apk add --no-cache nodejs npm
-RUN npm --prefix ./ install
-RUN npm --prefix ./ run build
+#RUN apk add --no-cache nodejs npm
+#RUN npm --prefix ./ install
+#RUN npm --prefix ./ run build
 
-RUN cp -rf ./dist/* /usr/share/nginx/html
+#RUN cp -rf ./dist/* /usr/share/nginx/html
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 EXPOSE 80
