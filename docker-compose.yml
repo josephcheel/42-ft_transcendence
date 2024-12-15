@@ -439,10 +439,10 @@ volumes:
       o: bind
   postgres-data:
     driver: local
-      #driver_opts:
-      #type: none
-         #device: ${POSTGREE_FOLDER}
-         #o: bind
+    driver_opts:
+      type: none
+      device: ${POSTGREE_FOLDER}
+      o: bind
   prometheus-data:
     driver: local
       #driver_opts:
