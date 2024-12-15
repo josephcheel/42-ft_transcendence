@@ -36,7 +36,7 @@ def actualise_tournament(match_id):
 			logger.info("Is semifinal round")
 			next_match = Matches.objects.filter(
 				tournament_id=mymatch.tournament_id, round=Rounds.SEMIFINAL_ROUND.value, status__in=[StatusMatches.PLAYED.value, StatusMatches.WALKOVER.value, StatusMatches.ABORTED.value])
-			if len(next_match) == 2:
+			if next_match.count() == 2:
 				match_third = Matches.objects.create(
 					tournament_id=mymatch.tournament_id,
 					player_id_1=next_match[0].looser_id,
@@ -81,12 +81,15 @@ def actualise_tournament(match_id):
 					match_final.status = StatusMatches.NOT_PLAYED.value
 					match_final.save()
 		case _:
-			logger.info("Is qualified round")
+			logger.debug("Is qualified round")
 			next_match = Matches.objects.filter(
 				tournament_id=mymatch.tournament_id, number_round=tournament.current_round, status__in=[StatusMatches.PLAYED.value, StatusMatches.WALKOVER.value])
-			logger.info(next_match)
-			while len(next_match) >= 2:
-				logger.info(next_match)
+			logger.debug(f"next_matches: {next_match.count()}")
+			get_out = 0
+			while next_match.count() >= 2 and get_out<10:
+				get_out += 1     
+				for mymatch in next_match:
+					logger.info(f"nextmatches:{mymatch.id} -- {mymatch.status} -- {mymatch.number_round}")
 				if tournament.current_round == 3:
 					ronda_siguiente = Rounds.SEMIFINAL_ROUND.value
 				else:
@@ -108,7 +111,7 @@ def actualise_tournament(match_id):
 				tournament.last_match_date += timedelta(minutes=TIME_DELTA)
 				matches_not_played = Matches.objects.filter(
 						tournament_id=mymatch.tournament_id, number_round=tournament.current_round, status__in=[StatusMatches.NOT_PLAYED.value, StatusMatches.WALKOVER.value])
-				if len(matches_not_played) == 0:
+				if matches_not_played.count() == 0:
 					tournament.current_round -= 1
 				tournament.save()
 				next_match = Matches.objects.filter(tournament_id=mymatch.tournament_id, round=Rounds.QUALIFIED_ROUND.value, status__in=[
