@@ -37,7 +37,10 @@
         "waiting": "Esperando jugadores...",
         "edit_profile": "Editar perfil",
         "user_profile": "Perfil de usuario",
-         "language": "Idioma"
+         "language": "Idioma",
+         "close": "Cerrar",
+         "alert": "Próximo partido",
+         "alert_text": "Tienes un partido por jugar del torneo"
     },
     "friends": {
         "friends_title": "Mis amigos",

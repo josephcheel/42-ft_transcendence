@@ -49,3 +49,5 @@ bash -c '
         bash  /grafana_script.sh;
 
       '
+
+echo "All done!"
