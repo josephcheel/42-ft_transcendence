@@ -37,8 +37,8 @@ def check_match_db_status():
 		actualise_tournament(mymatches[0].id)
 		mymatches = Matches.objects.filter(tournament_id__in=tournament_ids, status__in=[
 				StatusMatches.PLAYED.value, StatusMatches.WALKOVER.value])
-	    for mymatch in mymatches: 
-		    logger.info(f'longitud mymatches )= {mymatch.id} --- {mymatch.status}---{number_round}')
+		for mymatch in mymatches: 
+		    logger.info(f'longitud mymatch )= {mymatch.id} --- {mymatch.status}---{nmymatch.umber_round}')
 	mymatches = Matches.objects.filter(
 		tournament_id__in=tournament_ids, 
 		status__in=[StatusMatches.PLAYED.value, StatusMatches.WALKOVER.value])
