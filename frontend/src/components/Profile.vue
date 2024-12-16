@@ -87,11 +87,11 @@
   font-weight: bold;
 }
 
+
 .form-label {
   color: black !important;
   font-size: small !important;
-  /* font-family:system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif !important; */
- 
+  font-family: 'Roboto' !important;
 }
 #info {
   display: flex;

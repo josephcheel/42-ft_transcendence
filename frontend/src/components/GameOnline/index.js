@@ -385,7 +385,7 @@ export default {
 				console.log('Connected to server');
 				if (matchId && tournamentId)
 				{
-					axios.post(`https://${this.$router.ORIGIN_IP}/api/tournaments/start_match`, {"UUID": matchId})
+					axios.post(`https://${this.$router.ORIGIN_IP}:8000/api/tournaments/start_match/`, {"UUID": matchId})
 					.then(response => {
 						console.log('Match started successfully:', response.data);
 					  })
@@ -543,7 +543,10 @@ export default {
 					this.endGame();
 				});
 				this.socket.on('closeTheGame', () => {
-					location.reload();
+					if (this.matchId && this.tournamentId)
+						this.$router.push(`/tournaments`);
+					else 
+						location.reload();
 				});
 				this.socket.on('colision-paddle', () => {
 					this.playPaddleCollision();

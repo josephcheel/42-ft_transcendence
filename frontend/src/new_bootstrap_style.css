@@ -4,6 +4,12 @@
 	src: url('/assets/fonts/nokiafc22.ttf') format('truetype');
 }
 
+@font-face {
+  font-family: 'Roboto';
+  
+  src: url('/assets/fonts/Roboto-Medium.ttf') format('truetype');
+}
+
 .btn-primary {
   font-family: 'Nokia Cellphone FC' !important;
   font-size: 16px !important;
