@@ -295,7 +295,7 @@ class Ball extends UserInput {
                                 delete players[id];
                             }
                         }
-                        // let json = {winner: winner.username, looser: loser.username, winner_points: winner.points, looser_points: loser.points};
+                        // let json = {winner: winner.username, looser: loser.username, points_winner: winner.points, points_looser: loser.points};
                         // let response = axios.post(`https://${ORIGIN_IP}:8000/api/tournaments/match_finish`, json);
                         // if (response.status === 200)
                         // {

@@ -216,7 +216,7 @@ You need to call /user/upload_picture/ and upload a a form with a key/value pair
 ### finish_match
 | Use | Methods | Request Data | Response Data | Return Values|
 | --- | --- | --- | ---| ---|
-|When the match finishes, informs who is the winner| POST | 'match_id' 'winner' 'winner_points' 'looser' 'looser_points' | None |  200 (Match finished successfully), 400 (he match has already been played), 404 (user not in database), 500|
+|When the match finishes, informs who is the winner| POST | 'match_id' 'winner' 'points_winner' 'looser' 'points_looser' | None |  200 (Match finished successfully), 400 (he match has already been played), 404 (user not in database), 500|
 
 [Back to Top](#table-of-contents)
 

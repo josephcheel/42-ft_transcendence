@@ -138,7 +138,7 @@ def play_match():
 		while player1 == player2:
 			player2 = f"test{random.randint(1, total_players)}"
 		winning_points = 5
-		looser_points = random.randint(0, winning_points-1)
+		points_looser = random.randint(0, winning_points-1)
 		if random.choice([True, False]):
 			my_data = {
 				'match_id': -1,
@@ -147,9 +147,9 @@ def play_match():
 				'winner': player1,
 				'looser': player2,
 				'points_winner': winning_points,
-				'points_looser': looser_points,
+				'points_looser': points_looser,
 			}
-			text_to_print = f"Played match {i} between {player1} and {player2}, result:  {player1}:{winning_points} - {player2}:{looser_points}"
+			text_to_print = f"Played match {i} between {player1} and {player2}, result:  {player1}:{winning_points} - {player2}:{points_looser}"
 		else:
 			my_data = {
 				'match_id': -1,
@@ -158,9 +158,9 @@ def play_match():
 				'winner': player2,
 				'looser': player1,
 				'points_winner': winning_points,
-				'points_looser': looser_points,
+				'points_looser': points_looser,
 			}
-			#text_to_print = f"Played match {i} between {player1} and {player2}, result:  {player2}:{winning_points} - {player1}:{looser_points}"
+			#text_to_print = f"Played match {i} between {player1} and {player2}, result:  {player2}:{winning_points} - {player1}:{points_looser}"
 		response = send_request(mysessions[user_nr1], finish_match_url, csrf[user_nr1], data = my_data)
 		#print(text_to_print, "-------", response.json())
 		assert response.status_code == 200
