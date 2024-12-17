@@ -305,7 +305,7 @@ def test_finish_tournament():
 							if points_to_win == None:
 								points_to_win = 5
 							my_data = {
-								'match_id': match['match_UUID'],
+								'UUID': match['match_UUID'],
 								'player1': f'test{player1}',
 								'player2': f'test{player2}',
 								'winner': the_winner_id,
