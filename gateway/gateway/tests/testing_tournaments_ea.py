@@ -422,7 +422,7 @@ if __name__ == "__main__":
 			test_logout_user()
 			close_sessions()
 		elif sys.argv[2] == 'tournament':
-			tournament = 30
+			tournament = 3
 			test_register_user()
 			test_create_tournament()
 			test_accept_invitation()
