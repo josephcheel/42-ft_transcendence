@@ -1,7 +1,7 @@
 # tournamentsapp/tasks.py
 from __future__ import absolute_import
 from celery import shared_task
-from tournamentsapp.models import Matches
+from tournamentsapp.models import Matches, Tournaments
 from datetime import timedelta
 from django.utils import timezone
 from tournaments.settings import TIME_DELTA
@@ -27,7 +27,19 @@ def check_match_db_status():
 		mymatch.save()
 		if mymatch.tournament_id not in tournament_ids:
 			tournament_ids.append(mymatch.tournament_id)
-		actualise_tournament(mymatch.id)
+	for mytournament_id in tournament_ids:
+		mytournament = Tournaments.objects.get(id=mytournament_id)
+		mymatches = Matches.objects.filter(tournament_id=mytournament_id, status__in=[StatusMatches.NOT_PLAYED.value])
+		if mymatches.count() == 0:
+			actualise_tournament(mymatch.id)
+
+
+
+"""			##**********************************************
+	mymatches = Matches.objects.filter(tournament_id=mymatch.tournament_id, status__in=[
+						StatusMatches.NOT_PLAYED.value])
+	if mymatches.count() == 0:
+			actualise_tournament(mymatch.id)
 	mymatches = Matches.objects.filter(tournament_id__in=tournament_ids, status__in=[
 						StatusMatches.PLAYED.value, StatusMatches.WALKOVER.value])
 	logger.info(f'longitud mymatches = {len(mymatches)}')
@@ -64,3 +76,4 @@ def check_match_db_status():
 				
 
 	return None
+"""
