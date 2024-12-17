@@ -42,7 +42,7 @@ def close_tournament(request):
 	tournament.save()
 	if extra_round > 0:
 		extra_round = 1
-	next_match_date = CreateMatches(tournament_id, tournament_players, extra_round)
+	next_match_date = CreateMatches(tournament_id, tournament_players, extra_round, current_round)
 	tournament.last_match_date =  next_match_date
 	tournament.save()
 	tournament_players = Invitations.objects.filter(tournament_id=tournament_id)
