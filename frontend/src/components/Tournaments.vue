@@ -1,12 +1,13 @@
 <template>
 	
 		<div  class="card container-fluid mt-4">
+			<img @click="this.$router.go(-1)" src="/assets/icons/reply.svg" alt="go back" id="goBackIcon" class="mt-3 me-3 clickable-icon" style="z-index: 1">
 			<div class="row">
 				
 					<!-- Form to create a new tournament -->
 					<div id="your-tournaments"class="col col-md-6 bg-light p-4">
 						<section class="col d-flex justify-content-center  ">
-							<h1 class="titles">{{ $t('tournaments.create_tournament')}}</h1>
+							<!-- <h1 class="titles">{{ $t('tournaments.create_tournament')}}</h1> -->
 							<router-link id="play-button" class="btn btn-primary w-100" to="/tournaments/create">{{ $t('tournaments.create_tournament')}}!</router-link>
 						</section>
 						<section class="col mt-4">
@@ -36,7 +37,7 @@
 							<p class="text-muted">{{ $t('tournaments.check_list')}}</p>
 							<div class="overflow-auto" style="max-height: 150px;">
 							<ul class="list-group">
-								<li v-for="match in matches" id="matches" class="list-group-item" @click="goToMatch(match.match_UUID, match.tournament_UUID)">
+								<li v-if="matches.lenght" v-for="match in matches" id="matches" class="list-group-item" @click="goToMatch(match.match_UUID, match.tournament_UUID)">
 									<div class="row">
 										<div class="col">
 											<h3>{{ match.tournament_name }}</h3>
@@ -55,6 +56,9 @@
 										</div>
 									</div>
 								</li>
+								<div v-else class="list-group-item d-flex justify-content-center align-items-center text-center text-muted" style="padding: 40px;">
+									No matches to play in the future!
+								</div>
 							</ul>
 						</div>
 						</section>
@@ -64,7 +68,7 @@
 							<p class="text-muted">{{ $t('tournaments.check_inv')}}</p>
 							<div class="list-group overflow-auto" style="max-height: 150px;">
 
-								<div v-for="invitation in filteredInvitations" class="list-group-item d-flex justify-content-between align-items-center">
+								<div v-if="filteredInvitations.length" v-for="invitation in filteredInvitations" class="list-group-item d-flex justify-content-between align-items-center">
 									{{ invitation.tournament_name }} - {{ new Date(invitation.tournament_start).toISOString() }}
 									<div>
 										<button class="btn btn-link" title="Accept" style="padding: 15px;">
@@ -72,6 +76,9 @@
 										</button>
 										<button @click="declineTournament" class="btn btn-close" title="Decline" aria-label="Close" style="padding: 0;"></button>
 									</div>
+								</div>
+								<div v-else class="list-group-item d-flex justify-content-center align-items-center text-center text-muted" style="padding: 40px;">
+									No invitations to play any tournament
 								</div>
 							</div>
 						</section>
@@ -370,4 +377,13 @@ background:  linear-gradient(90deg, #f8dcb4 0%, #f7a5a5 100%)
 .titles {
 	font-family: "SUSE";
 }
+.clickable-icon {
+  transition: transform 0.3s ease-in-out;  /* Smooth transition for scaling */
+  cursor: pointer;  /* Change cursor to clickable hand */
+}
+
+.clickable-icon:hover {
+  transform: scale(1.2);  /* Increase size by 20% when hovered */
+}
+
 </style>

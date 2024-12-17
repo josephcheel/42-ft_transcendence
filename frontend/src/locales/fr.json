@@ -37,7 +37,10 @@
         "waiting": "En attente de joueurs...",
         "edit_profile": "Modifier le profil",
         "user_profile": "Profil de l'utilisateur",
-        "language": "Langue"
+        "language": "Langue",
+        "close": "Fermer",
+        "alert": "Prochain match",
+        "alert_text": "Vous avez un jeu à jouer"
     },
     "friends": {
         "friends_title": "Mes amis",

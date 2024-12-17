@@ -1,6 +1,7 @@
 <template>
-		<div  class="card container-fluid mt-4">
-			<div class="row">
+	<div  class="card container-fluid mt-4">
+		<img @click="this.$router.go(-1)" src="/assets/icons/reply.svg" alt="go back" id="goBackIcon" class="mt-3 me-3 clickable-icon" style="z-index: 1">
+		<div class="row">
 					<!-- Form to create a new tournament -->
 					<form  @submit.prevent="createTournament" class="col col-md-12 bg-light p-4">
 						<h1 class="titles mb-4">{{ $t('tournaments.create_tournament')}}</h1>
@@ -14,15 +15,6 @@
 								<label for="date" class="form-label">{{ $t('tournaments.tournament_date')}}</label>
 								<input v-model="date" type="datetime-local" class="form-control form-date" id="date" required>
 							</div>
-						</div>
-
-						<div class="mb-3">
-							<label for="maxGoals"  class="form-label">{{ $t('tournaments.max_goals')}}  {{ this.maxGoalsValue}}</label>
-							<input v-model="maxGoalsValue" spellcheck="false" type="range" min="1" max="10" class="form-range" id="maxGoals" required>
-						</div>
-						<div class="mb-3">
-							<label for="Speed" class="form-label">{{ $t('tournaments.speed')}} {{ this.speedLevelText }}</label>
-							<input v-model="speedLevelValue" spellcheck="false" @input="getLevelSpeed" type="range" min="1" max="3" class="form-range" id="Speed" required>
 						</div>
 						<div class="mb-3">
 							<label for="player-username" class="form-label">{{ $t('tournaments.add_player')}}</label>
@@ -260,4 +252,13 @@ background:  linear-gradient(90deg, #f8dcb4 0%, #f7a5a5 100%)
 .titles {
 	font-family: "SUSE";
 }
+.clickable-icon {
+  transition: transform 0.3s ease-in-out;  /* Smooth transition for scaling */
+  cursor: pointer;  /* Change cursor to clickable hand */
+}
+
+.clickable-icon:hover {
+  transform: scale(1.2);  /* Increase size by 20% when hovered */
+}
+
 </style>

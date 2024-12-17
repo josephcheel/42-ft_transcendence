@@ -3,10 +3,10 @@
 
 
 	<div class="container mt-5">
-		<div class="row">
+		<div class="row align-items-center ">
 			<!-- First Row - Two Columns -->
-			<div class="col-md-8  mb-3">
-				<div class="card">
+			<div class="col-12 col-md-8 mb-3 order-2 order-md-1 mb-3">
+				<div class="card ">
 					<div class="card-body">
 						<h1 class="card-title">My Friends</h1>
 						<!-- Search Input -->
@@ -56,7 +56,7 @@
 					</div>
 				</div>
 			</div>
-			<div class="col-md-4 mb-3">
+			<div class="col-12 col-md-4 mb-3 order-1 order-md-2">
 				<Profile class="p-3 border bg-light" :editProfile="editProfile" />
 				<!-- <div class="p-3 border bg-light">Column 2</div> -->
 			</div>
