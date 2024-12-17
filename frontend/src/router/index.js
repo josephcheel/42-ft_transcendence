@@ -130,9 +130,14 @@ router.ORIGIN_IP = import.meta.env.VITE_VUE_APP_ORIGIN_IP || 'localhost';
 router.beforeResolve (async (to, from, next) => {
  
   
-  const isLoggedIn = await isAuthorized(router.ORIGIN_IP); // Accessing ORIGIN_IP
-  const isUsername = await isUsernameLocalStorage();
-  const user = await checkUser(router.ORIGIN_IP);
+  let isLoggedIn = await isAuthorized(router.ORIGIN_IP); // Accessing ORIGIN_IP
+  
+  let isUsername = await isUsernameLocalStorage();
+  let user = null;
+
+  if (isUsername)
+    user = await checkUser(router.ORIGIN_IP);
+
   console.log("Is logged in: ", isLoggedIn);
   if (to.path === '/')
   {
@@ -148,7 +153,6 @@ router.beforeResolve (async (to, from, next) => {
     }
   
   }
-
 
   if (to.path === '/' || to.path === '/game' || to.path === '/game-online') {
     document.body.style.overflow = 'hidden';
