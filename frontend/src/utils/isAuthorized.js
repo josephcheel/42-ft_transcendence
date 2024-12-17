@@ -80,5 +80,38 @@ export async function isAuthorized(ORIGIN_IP) {
         console.error("Error checking login status:", error.message);
         return false; // Return false on error
     }
+
+}
+
+export async function isUsernameLocalStorage() {
+    if (localStorage.getItem("username") === null || localStorage.getItem("username") === "" || localStorage.getItem("username") === undefined) {
+        return false;
+    }
+    return true;
+}
+
+
+export async function checkUser(ORIGIN_IP) {
+    if (!ORIGIN_IP) {
+        console.error("Invalid IP address.");
+        return false; // Returning directly is sufficient here
+    }
+
+    try {
+        const response = await axios.post(`https://${ORIGIN_IP}:8000/api/user/check_user/`, { username: localStorage.getItem("username") });
+        
+        // Ensure response structure is correct
+        const is_same = response.data.data.is_same;
+
+        if (is_same === true) {
+            return true;
+        }
+        return false;
+
+    } catch (error) {
+        console.error("Error checking login status:", error.message);
+        return false;
+    }
+    
 }
 
