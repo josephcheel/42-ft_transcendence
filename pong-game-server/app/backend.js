@@ -152,9 +152,9 @@ function finishMatch(matchId, winner, winnerPoints, looser, looserPoints, sessio
       body: JSON.stringify({
         match_id: matchId,
         winner: winner,
-        winner_points: winnerPoints,
+        points_winner: winnerPoints,
         looser: looser,
-        looser_points: looserPoints
+        points_looser: looserPoints
       })
     })
     .then(response => {
