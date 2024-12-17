@@ -588,7 +588,7 @@ io.on("connection", (socket) => {
         for (let id in players) {
             if (id !== socket.id) {
                 const otherPlayer = players[id];
-                if (otherPlayer.isWaiting && otherPlayer.matchId === matchId && otherPlayer.tournamentId === tournamentId) {
+                if (otherPlayer.isWaiting && otherPlayer.matchId === matchId && otherPlayer.tournamentId === tournamentId && username !== otherPlayer.username) {
                     pairedPlayerId = id;
                     break;
                 }
