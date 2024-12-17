@@ -5,6 +5,7 @@ class StatusTournaments(Enum):
 	CLOSED_TOURNAMENT = "closed"
 	FINISHED_TOURNAMENT = "finished"
 	CREATE_NEXT_ROUND = "next round"
+	ABORTED = "aborted"
 
 	@classmethod
 	def choices(cls):

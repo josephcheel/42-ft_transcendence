@@ -5,8 +5,7 @@ from tournamentsapp.models import Matches, Tournaments
 from datetime import timedelta
 from django.utils import timezone
 from tournaments.settings import TIME_DELTA
-from tournamentsapp.status_options import StatusMatches
-from tournamentsapp.status_options import Rounds
+from tournamentsapp.status_options import StatusMatches, StatusTournaments
 from tournamentsapp.tasks.actualise_tournaments import actualise_tournament
 import uuid
 import logging
@@ -17,10 +16,10 @@ def check_match_db_status():
 	matches_passed = Matches.objects.filter(date_time__lt = timezone.now() + timedelta(minutes = TIME_DELTA), status = StatusMatches.NOT_PLAYED.value)
 	tournament_ids = []
 	if matches_passed.count() == 0:
-		logger.info('No matches to abort')
+		logger.debug('No matches to abort')
 		return None
 	for mymatch in matches_passed:
-		logger.info(f'Match to aborted: {mymatch.id}')
+		logger.debug(f'Match to aborted: {mymatch.id}')
 		mymatch.winner_id = None
 		mymatch.looser_id = None
 		mymatch.status = StatusMatches.ABORTED.value
@@ -31,7 +30,9 @@ def check_match_db_status():
 		mytournament = Tournaments.objects.get(id=mytournament_id)
 		mymatches = Matches.objects.filter(tournament_id=mytournament_id, status__in=[StatusMatches.NOT_PLAYED.value])
 		if mymatches.count() == 0:
-			actualise_tournament(mymatch.id)
+			logger.debug(f'tournament passed to create next round: {mymatch.id}')
+			mytournament.status = StatusTournaments.CREATE_NEXT_ROUND.value
+			actualise_tournament(mymatch.mytournament_id)
 
 
 
