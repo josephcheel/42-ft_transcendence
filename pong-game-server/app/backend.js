@@ -243,7 +243,7 @@ class Ball extends UserInput {
                                 if (players[id].nb == 2) {
                                     winner.username = players[id].username;
                                     winner.points = this.score.player1;
-                                    if (players[id].matchId)
+                                    if (players[id].matchId && players[id].tournamentId)
                                         match_uuid = players[id].matchId;
                                     sessionid = players[id].sessionId;
                                     csrftoken = players[id].csrftoken;
@@ -283,7 +283,7 @@ class Ball extends UserInput {
                                 if (players[id].nb == 1) {
                                     winner.username = players[id].username;
                                     winner.points = this.score.player2;
-                                    if (players[id].matchId)
+                                    if (players[id].matchId && players[id].tournamentId)
                                         match_uuid = players[id].matchId;
                                     sessionid = players[id].sessionId;
                                     csrftoken = players[id].csrftoken;
