@@ -141,7 +141,7 @@ def play_match():
 		looser_points = random.randint(0, winning_points-1)
 		if random.choice([True, False]):
 			my_data = {
-				'match_id': -1,
+				'UUID': -1,
 				'player1': player1,
 				'player2': player2,
 				'winner': player1,
@@ -152,7 +152,7 @@ def play_match():
 			text_to_print = f"Played match {i} between {player1} and {player2}, result:  {player1}:{winning_points} - {player2}:{looser_points}"
 		else:
 			my_data = {
-				'match_id': -1,
+				'UUID': -1,
 				'player1': player1,
 				'player2': player2,
 				'winner': player2,
