@@ -147,7 +147,7 @@ export default {
   },
   async mounted() {
     // this.checkAuthStatus();
-    if (this.isNav())
+    if (!this.isNav())
       await this.loadUserData();  // Load user data before rendering Navigation
     if(localStorage.getItem('username')){
       axios
