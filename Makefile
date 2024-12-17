@@ -25,7 +25,7 @@ CERTS=selfsigned.crt selfsigned.key
 # Define targets
 all: build 
 
-build: 	| volumes compile run_npm build_certs
+build: 	| volumes build_certs copy_env #compile copy_env 
 	$(COMPOSE) -f $(DOCKER_COMPOSE_FILE) up --build -d
 
 build_certs: $(CERTS)
@@ -48,7 +48,7 @@ stop :
 start : 
 	@$(COMPOSE) -f $(DOCKER_COMPOSE_FILE) start
 
-rebuild: stop rm_files volumes compile run_npm build
+rebuild: stop rm_files volumes compile copy_env build
 	@echo "$(GREEN_COLOR)Rebuilding containers...$(RESET_COLOR)"
 
 rm_files:
@@ -57,10 +57,10 @@ rm_files:
 	@rm -rfd frontend/node_modules/
 	@rm -f .exec_run_npm
 	@$(COMPOSE) -f $(DOCKER_COMPOSE_FILE) down --volumes
-	@sudo find . -type d -name 'migrations' -exec rm -r {} +
-	@sudo find . -type d -name '__pycache__' -exec rm -r {} +
-	@sudo find . -type f -name 'db.sqlite3' -exec rm {} +
-	@sudo rm -rf $(VOLUMES)
+	@find . -type d -name 'migrations' -exec rm -r {} +
+	@find . -type d -name '__pycache__' -exec rm -r {} +
+	@find . -type f -name 'db.sqlite3' -exec rm {} +
+	@rm -rf $(VOLUMES)
 
 
 # Use 'make debug' to 'docker exec' a container 
@@ -95,7 +95,7 @@ help:
 	@echo "$(GREEN_COLOR)  debug$(RESET_COLOR)         - Starts a bash shell (or sh as fallback) in a specified container."
 	@echo "$(GREEN_COLOR)  volumes$(RESET_COLOR)       - Creates necessary volume directories and log files."
 	@echo "$(GREEN_COLOR)  compile$(RESET_COLOR)       - Installs frontend dependencies using npm."
-	@echo "$(GREEN_COLOR)  run_npm$(RESET_COLOR)       - Builds the frontend project using npm."
+	@echo "$(GREEN_COLOR)  copy_env$(RESET_COLOR)       - Builds the frontend project using npm."
 	@echo "$(GREEN_COLOR)  del_vol$(RESET_COLOR)       - Deletes Docker volumes and certain temporary files."
 	@echo "$(GREEN_COLOR)  rm_vol$(RESET_COLOR)        - Removes Docker volumes and cleans up migrations and caches."
 	@echo "$(GREEN_COLOR)  clean$(RESET_COLOR)         - Stops running containers."
@@ -117,10 +117,11 @@ compile: ./frontend/package-lock.json
 	@npm --prefix ./frontend install
 	@touch .exec_run_npm
 
-run_npm: .exec_run_npm
+copy_env:
 	@cp .env ./frontend/.env
-	@npm --prefix ./frontend run build
-
+	@echo modifying .env ${IP_ADDR}
+	@sed -i "s/^INT_IP_ADDR=changeme/IP_ADDR=${IP_ADDR}/" ./frontend/.env
+	
 del_vol:rm_vol
 	@echo Deleting Volumes DIR
 	@suifeq ($(MAKECMDGOALS), debug)
@@ -132,18 +133,19 @@ rm_vol:
     else \
         echo "No Docker volumes to remove"; \
     fi
-	sudo find . -type d -name 'migrations' -exec find {} -type f -delete \;
-	sudo find . -type d -name '_pycache_' -exec rm -r {} +
-	sudo find . -type f -name 'db.sqlite3' -exec rm {} +
+	find . -type d -name 'migrations' -exec find {} -type f -delete \;
+	find . -type d -name '_pycache_' -exec rm -r {} +
+	find . -type f -name 'db.sqlite3' -exec rm {} +
 
 clean: stop
 	
 fclean: clean rm_files
 	@$(COMPOSE) -f $(DOCKER_COMPOSE_FILE) down --rmi all --volumes
 	@docker system prune -af 
-	@sudo rm -rf $(VOLUMES)
+	@rm -rf $(VOLUMES)
 
 re: fclean all
 
 
 .PHONY: all build up down restart logs clean re fclean volumes compile run_pm del_vol rm_vol debug build_certs rebuild
+
