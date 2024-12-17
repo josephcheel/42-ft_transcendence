@@ -77,7 +77,6 @@ export async function isAuthorized(ORIGIN_IP) {
 
         return false; // Handle other status codes gracefully
     } catch (error) {
-        console.error("Error checking login status:", error.message);
         return false; // Return false on error
     }
 
