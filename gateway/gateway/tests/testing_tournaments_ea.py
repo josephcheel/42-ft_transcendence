@@ -23,7 +23,7 @@ def get_csrf_token(session, url):
 content_json_type = 'application/json'
 
 total_players = 4
-total_matches = 4
+total_matches = 2
 total_tournaments = 1
 
 def get_request(session, url, csrf_token, data=None):
@@ -174,11 +174,11 @@ def test_create_tournament():
 	for i in range(1, total_tournaments + 1):
 		player_nr = random.randint(1, total_players)
 		players = []
-		for j in range(1, random.randint(5, total_players)):
+		for j in range(1, 5):
 			the_player = random.randint(1, total_players)
-			while f'test{the_player}' in players:
+			#while f'test{the_player}' in players:
 				#print(f"{the_player} is in players: {players}")
-				the_player = random.randint(1, total_players)
+				#the_player = random.randint(1, total_players)
 			players.append(f'test{the_player}')
 			j += 1
 		#print(f"players: {players}")

@@ -548,6 +548,7 @@ export default {
 				this.socket.on('disconnect', () => {
 					console.log('Disconnected from server');
 					this.start = false;
+					axios.post(`https://${this.$router.ORIGIN_IP}:8000/api/tournaments/end_match/`, {"UUID": this.matchId})
 				});
 			
 				this.socket.on('roomLeft', (message) => {
