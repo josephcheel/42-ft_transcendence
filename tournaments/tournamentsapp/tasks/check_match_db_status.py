@@ -13,7 +13,7 @@ import logging
 logger = logging.getLogger('django')
 @shared_task
 def check_match_db_status():
-	matches_passed = Matches.objects.filter(date_time__lt = timezone.now() + timedelta(minutes = TIME_DELTA), status = StatusMatches.NOT_PLAYED.value)
+	matches_passed = Matches.objects.filter(date_time__gt = timezone.now() + timedelta(minutes = TIME_DELTA), status = StatusMatches.NOT_PLAYED.value)
 	tournament_ids = []
 	if matches_passed.count() == 0:
 		logger.debug('No matches to abort')
