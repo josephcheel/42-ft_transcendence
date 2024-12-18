@@ -14,8 +14,6 @@ logger = logging.getLogger('django')
 @require_post
 @validate_json
 def disconnect_user(request):
-	data = request.data
-	player = request.user
 	match_UUId = request.data.get('UUID')
 	mymatch = Matches.objects.get(match_UUID=match_UUId)
 	if mymatch.status == StatusMatches.WAITING_PLAYER1.value or mymatch.status == StatusMatches.WAITING_PLAYER2.value:
