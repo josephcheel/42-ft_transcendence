@@ -24,6 +24,7 @@ def check_match_db_status():
 			mymatch.points_looser = 0
 			mymatch.status = StatusMatches.PLAYED.value
 			mymatch.save()
+		actualise_tournament(mymatch[0].tournament_id)
 		return None
 	matches_passed = Matches.objects.filter(
 		date_time__lt=timezone.now() - timedelta(minutes=5),
@@ -36,6 +37,7 @@ def check_match_db_status():
 			mymatch.points_looser = 0
 			mymatch.status = StatusMatches.PLAYED.value
 			mymatch.save()
+		actualise_tournament(mymatch[0].tournament_id)
 		return None
 	matches_passed = Matches.objects.filter(
     	date_time__lt=timezone.now() - timedelta(minutes=5),
