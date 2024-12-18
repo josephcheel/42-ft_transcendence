@@ -13,6 +13,7 @@ from user.models import User
 def accept_invitation(request):
 	data = request.data
 	tournament = data.get("tournament_id")
+	status = data.get("status")
 	try:
 		tournament = Tournaments.objects.get(id=tournament)
 	except Tournaments.DoesNotExist:
@@ -30,8 +31,10 @@ def accept_invitation(request):
 		return JsonResponse({'status': 'error', 'message': 'You have not been invited to this tournament', 'data': None}, status=400)
 	if player.puntos < tournament.cost:
 		return JsonResponse({'status': 'error', 'message': 'You do not have enough points to accept the invitation', 'data': None}, status=400)
-	if invitation.status == StatusInvitations.INVITATION_ACCEPTED.value:
-		return JsonResponse({'status': 'error', 'message': 'The invitation has already been accepted', 'data': None}, status=400)
+	if not status:
+		invitation.status = StatusInvitations.INVITATION_REFUSED.value
+		invitation.save()
+		return JsonResponse({'status': 'success', 'message': 'The invitation has already been refused', 'data': None}, status=200)
 	player.puntos_reservados +=tournament.cost
 	player.puntos -= tournament.cost
 	player.save()
