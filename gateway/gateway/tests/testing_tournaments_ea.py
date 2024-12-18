@@ -445,6 +445,10 @@ if __name__ == "__main__":
 			get_next_matches()
 			test_logout_user()
 			close_sessions()
+		elif sys.argv[2] == "user":
+			test_register_user(register=True)
+			test_logout_user()
+			close_sessions()
 		else:
 			print("Invalid argument")
 			print("Arguments are:<none>, match, tournament, tournament_finish, list")

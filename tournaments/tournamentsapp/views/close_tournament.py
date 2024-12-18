@@ -38,7 +38,7 @@ def close_tournament(request):
 	player_nr = tournament_players.count()
 	extra_round, current_round = math.modf(math.log2(player_nr))
 
-	tournament.last_match_date = timezone.now() + timedelta(minutes=TIME_DELTA * 1.5 * pow(2, current_round + 1) / 2)
+	tournament.date_max_end = timezone.now() + timedelta(minutes=TIME_DELTA * 1.5 * pow(2, current_round + 1) / 2)
 	tournament.save()
 	if extra_round > 0:
 		extra_round = 1
