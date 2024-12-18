@@ -15,8 +15,7 @@ logger = logging.getLogger('django')
 def finish_match(request):
 	data = request.data
 	match_id = request.data.get('match_id')
-
-	if match_id < 0:
+	if type(match_id) == int and match_id < 0:
 		player1 = User.objects.get(username=data.get('winner'))
 		player2 = User.objects.get(username=data.get('looser'))
 		Matches.objects.create(
@@ -33,7 +32,7 @@ def finish_match(request):
 		)
 		return JsonResponse({'status': 'success', 'message': 'Match finished successfully', 'data': None}, status=200)
 	try:
-		match = Matches.objects.get(id=match_id)
+		match = Matches.objects.get(match_UUID=match_id)
 	except Matches.DoesNotExist:
 			return JsonResponse({'status': 'error', 'message': 'The match does not exist', 'data': None}, status=400)
 
