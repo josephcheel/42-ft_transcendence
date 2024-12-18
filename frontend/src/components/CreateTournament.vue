@@ -120,7 +120,7 @@ export default {
 				return;
 			}
 			// Handle the form data (for example, submitting it to a server or processing it)
-			alert("Tournament Created!");
+			
 			const tournament = {
 				name: this.name,
 				date_start: new Date(this.date).toISOString(),
@@ -145,18 +145,20 @@ export default {
 					}
 				});
 				
+				alert("Tournament Created!");
+				this.name = '';
+				this.date = '';
+				this.players = [];
+				
 				console.log(response);
 			}
 			catch (error) {
+				if (error.response.status === 400) {
+					alert(error.response.data.message);
+				}
 				console.log(error);
 			}
 			
-		},
-		acceptTournament() {
-			alert('Tournament accepted');
-		},
-		declineTournament() {
-			alert('Tournament declined');
 		},
 	},
 }
