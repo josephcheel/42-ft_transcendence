@@ -37,7 +37,6 @@ def list_tournaments_status(request, username):
 	try:
 		player = User.objects.get(username=username)
 		tournament_data = Tournaments.objects.filter(player_id=player.id)
-		tournament_data = Tournaments.objects.filter(player_id=player.id)
 		# Convert any datetime fields to string
 		tournament_list = list(tournament_data.values())
 		data_to_return = []
