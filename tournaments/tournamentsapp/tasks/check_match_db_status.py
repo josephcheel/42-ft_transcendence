@@ -32,7 +32,7 @@ def check_match_db_status():
 		if mymatches.count() == 0:
 			logger.debug(f'tournament passed to create next round: {mymatch.id}')
 			mytournament.status = StatusTournaments.CREATE_NEXT_ROUND.value
-			actualise_tournament(mymatch.mytournament_id)
+			actualise_tournament(mymatch.tournament_id)
 
 
 
