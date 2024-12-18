@@ -71,7 +71,9 @@ def list_not_played_matches(request, username=None):
 		try:
 			matches_data = Matches.objects.filter(
 				Q(player_id_1=player.id) | Q(player_id_2=player.id),
-				status=StatusMatches.NOT_PLAYED.value)
+				Q(status=StatusMatches.NOT_PLAYED.value) |
+				Q(status=StatusMatches.WAITING_PLAYER1.value) |
+				Q(status=StatusMatches.WAITING_PLAYER2.value))
 		except:
 			data = []
 			return JsonResponse({'status': 'success', 'message': 'List of matches', 'data': data}, status=200)
