@@ -3,7 +3,8 @@ import json
 from django.http import JsonResponse
 from tournamentsapp.status_options import StatusMatches
 from tournamentsapp.models import Matches
-
+from datetime import timedelta
+from django.utils import timezone
 try: 
 	from usermodel.models import User
 except:
@@ -19,9 +20,11 @@ def start_match(request):
 	try:
 		mymatch = Matches.objects.get(match_UUID=match_id)
 	except Matches.DoesNotExist:
-		return JsonResponse({'status': 'error', 'message': 'A match does not exist', 'data': None}, status=404)
+		return JsonResponse({'status': 'error', 'message': 'A match does not exist', 'data': None}, status=400)
+	if mymatch.date_time > timezone.now()- timedelta(minutes=1):
+		return JsonResponse({'status': 'error', 'message': 'the match can only start 1 minute before', 'data': None}, status=400)
 	if mymatch.player_id_1.id != player.id and mymatch.player_id_2.id != player.id: 
-		return JsonResponse({'status': 'error', 'message': 'You are not a player of this match', 'data': None}, status=403)
+		return JsonResponse({'status': 'error', 'message': 'You are not a player of this match', 'data': None}, status=400)
 	if mymatch.status == StatusMatches.PLAYED.value:
 		return JsonResponse({'status': 'error', 'message': 'The match has already been played', 'data': None}, status=400)
 	match player.id:
