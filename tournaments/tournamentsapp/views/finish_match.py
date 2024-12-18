@@ -61,9 +61,11 @@ def finish_match(request):
 		winner.puntos += 100
 		return JsonResponse({'status': 'error', 'message': 'Free play finished', 'data': None}, status=200)
 	mymatches = Matches.objects.filter(tournament_id=match.tournament_id, status__in=[StatusMatches.NOT_PLAYED.value])
+	logger.debug(f'number of matches: {mymatches.count()}')
 	if mymatches.count() == 0:
 		logger.debug(f'tournament passed to create next round: {match.id}')
 		tournament.status = StatusTournaments.CREATE_NEXT_ROUND.value
-		actualise_tournament(match.mytournament_id)	
+		tournament.save()
+		actualise_tournament(match.tournament_id)
 
 	return JsonResponse({'status': 'success', 'message': 'Match finished successfully', 'data': None}, status=200)

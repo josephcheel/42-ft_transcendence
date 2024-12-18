@@ -61,7 +61,7 @@ def actualise_tournament(tournament_id):
 				match_third.save()
 			else:
 				match_third = Matches.objects.create(
-					tournament_id=mymatches[0].tournament_id,
+					tournament_id=tournament_id,
 					player_id_1=None, 
 					winner_id=None,
 					player_id_2=None,
