@@ -18,7 +18,10 @@
         "win_rate": "Win Rate",
         "detail": "Detail",
         "match_details": "Match details",
-        "no_matches": "No matches played yet"
+        "no_matches": "No matches played yet",
+        "no_win": "No win matches found",
+        "no_lost": "No lost matches found",
+        "no_found": "No matches found"
     },
     "general": {
         "username": "Username",
@@ -46,7 +49,15 @@
     "friends": {
         "friends_title": "My Friends",
         "placeholder_search": "Search for friends",
-        "requests_title": "Friend Requests"
+        "requests_title": "Friend Requests",
+        "add": "Add Friend",
+        "name": "Friend's Name",
+        "no_request": "No friend requests",
+        "accept": "Accept",
+        "decline": "Decline",
+        "request": "Friend Requests",
+        "no_friend_found": "No friends found",
+        "my_friend": "My Friends"
     },
     "tournaments": {
         "create_tournament": "Create Tournament",
@@ -67,7 +78,13 @@
         "check_inv": "Review and accept invitations to join tournaments.",
         "winner": "Winner",
         "second": "Second",
-        "third": "Third"
+        "third": "Third",
+        "manage": "Manage your tournaments",
+        "start_your": "start your created tournaments",
+        "start": "start",
+        "no_created": "No tournaments created yet",
+        "no_matches": "No matches to play in the future!",
+        "no_invitations": "No invitations to play any tournament"
     },
     "listtournaments": {
         "loading_tournaments": "Loading tournaments",

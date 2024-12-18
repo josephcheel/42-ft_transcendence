@@ -37,7 +37,7 @@
         </div>
         <div class="mb-3">
           <label for="lang" class="form-label">{{ $t('general.language') }}</label>
-          <div class="dropdown-menu" style="display: block; position: relative;">
+          <div class="dropdown-menu" style="display: block; position: relative; display: flex; flex-direction: column; left: 10%; top:0%;">
             <a class="dropdown-item" :class="{ active: user.lang === 'en' }" @click="changeLang('en');">English</a>
             <a class="dropdown-item" :class="{ active: user.lang === 'es' }" @click="changeLang('es');">Español</a>
             <a class="dropdown-item" :class="{ active: user.lang === 'fr' }" @click="changeLang('fr');">Français</a>
@@ -46,7 +46,9 @@
       </div>
 
       <!-- Botón para alternar entre modo de edición y visualización -->
-      <div v-if="editProfile" class="text-center">
+      <div v-if="editProfile" class="text-center" style="position: absolute;
+      bottom: 0;
+        left: 40%;">
         <button class="btn btn-primary" @click="toggleEdit">
           {{ isEditing ? 'Save' : 'Edit' }}
         </button>

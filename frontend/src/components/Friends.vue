@@ -8,7 +8,7 @@
 			<div class="col-12 col-md-8 mb-3 order-2 order-md-1 mb-3">
 				<div class="card ">
 					<div class="card-body">
-						<h1 class="card-title">My Friends</h1>
+						<h1 class="card-title">{{ $t('friends.my_friend')}}</h1>
 						<!-- Search Input -->
 						<div class="d-flex align-items-center mb-3">
 							<input v-model="searchQuery" @input="filterFriends" class="form-control mb-3" type="text"
@@ -50,7 +50,7 @@
 
 							</ul>
 							<div v-else>
-								<p>No friends found</p>
+								<p>{{ $t('friends.no_friend_found')}}</p>
 							</div>
 						</div>
 					</div>
@@ -69,7 +69,7 @@
 					<div class="col-12">
 						<div class="card">
 							<div class="card-body">
-								<h2 class="card-title">Friend Requests</h2>
+								<h2 class="card-title">{{ $t('friends.request')}}</h2>
 								<div v-if="friendsRequest.length" class="card-text">
 									<ul class="friend-requests-list">
 										<li v-for="request in friendsRequest" :key="request.friendship_id"
@@ -84,15 +84,15 @@
 													{{ request.username }}
 												</span>
 												<button @click="changeFriendship(request.username, 'accepted')"
-													class="accept">Accept</button>
+													class="accept">{{ $t('friends.accept')}}</button>
 												<button @click="changeFriendship(request.username, 'declined')"
-													class="decline">Decline</button>
+													class="decline">{{ $t('friends.decline')}}</button>
 											</div>
 										</li>
 									</ul>
 								</div>
 								<div v-else>
-									<p>No friend requests</p>
+									<p>{{ $t('friends.no_request')}}</p>
 								</div>
 							</div>
 						</div>
@@ -106,21 +106,20 @@
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<div class="modal-header">
-					<h5 class="modal-title" id="addFriendModalLabel">Add Friend</h5>
+					<h5 class="modal-title" id="addFriendModalLabel">{{ $t('friends.add')}}</h5>
 					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
 						@click="closeModal"></button>
 				</div>
 				<div class="modal-body">
 					<!-- Add Friend Form -->
 					<div class="mb-3">
-						<label for="friendName" class="form-label">Friend's Name</label>
+						<label for="friendName" class="form-label">{{ $t('friends.name')}}</label>
 						<input type="text" class="form-control" id="friendName" v-model="newFriendName"
 							placeholder="Enter friend's name" />
 					</div>
 				</div>
 				<div class="modal-footer">
-					<button type="button" class="btn btn-primary" data-bs-dismiss="modal" @click="addFriend">Add
-						Friend</button>
+					<button type="button" class="btn btn-primary" data-bs-dismiss="modal" @click="addFriend">{{ $t('friends.add')}}</button>
 				</div>
 			</div>
 		</div>

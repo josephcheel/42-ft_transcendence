@@ -3,12 +3,12 @@
         "forget_pass": "¿Olvidaste tu contraseña?",
         "no_account": "¿No tienes una cuenta?",
         "enter": "Entrar",
-        "subtitle" : "¡Entra en la próxima dimensión de Pong, totalmente inmersivo, rápido y en un impresionante 3D!",
-        "placehold_username" : "Introduce tu nombre de usuario",
-        "placehold_password" : "Introduce tu contraseña"
+        "subtitle" : "¡Entra en la próxima dimensión de Pong, completamente inmersivo, rápido y en un impresionante 3D!",
+        "placehold_username" : "Ingresa tu nombre de usuario",
+        "placehold_password" : "Ingresa tu contraseña"
     },
     "register": {
-        "register_title": "Crear una cuenta",
+        "register_title": "Crea una cuenta",
         "alreadyAcc": "¿Ya tienes una cuenta?"
     },
     "game_stats": {
@@ -18,7 +18,10 @@
         "win_rate": "Tasa de victorias",
         "detail": "Detalle",
         "match_details": "Detalles del partido",
-        "no_matches": "Aún no has jugado partidas"
+        "no_matches": "Aún no se han jugado partidos",
+        "no_win": "No se encontraron partidos ganados",
+        "no_lost": "No se encontraron partidos perdidos",
+        "no_found": "No se encontraron partidos"
     },
     "general": {
         "username": "Nombre de usuario",
@@ -29,49 +32,63 @@
         "lastname": "Apellido",
         "confirm_pass": "Confirmar contraseña",
         "email": "Correo electrónico",
-        "username_tournament": "Nombre de usuario para el torneo",
+        "username_tournament": "Nombre de usuario del torneo",
         "picprofile": "Imagen de perfil",
-        "enter_email" : "Introduce tu correo electrónico",
-        "game_explain": "¡Invita a tu amigo a unirse! Usa este código de partida",
-        "score": "Puntos",
+        "enter_email" : "Ingresa el correo electrónico",
+        "game_explain": "¡Invita a tu amigo a unirse! Usa este código de partido",
+        "score": "Puntuación",
         "waiting": "Esperando jugadores...",
         "edit_profile": "Editar perfil",
         "user_profile": "Perfil de usuario",
-         "language": "Idioma",
-         "close": "Cerrar",
-         "alert": "Próximo partido",
-         "alert_text": "Tienes un partido por jugar del torneo"
+        "language": "Idioma",
+        "close": "cerrar",
+        "alert": "PRÓXIMO PARTIDO",
+        "alert_text": "Tienes un partido próximo"
     },
     "friends": {
         "friends_title": "Mis amigos",
         "placeholder_search": "Buscar amigos",
-        "requests_title": "Solicitudes de amistad"
+        "requests_title": "Solicitudes de amistad",
+        "add": "Agregar amigo",
+        "name": "Nombre del amigo",
+        "no_request": "No hay solicitudes de amistad",
+        "accept": "Aceptar",
+        "decline": "Rechazar",
+        "request": "Solicitudes de amistad",
+        "no_friend_found": "No se encontraron amigos",
+        "my_friend": "Mis amigos"
     },
     "tournaments": {
         "create_tournament": "Crear torneo",
         "tournament_name": "Nombre del torneo",
-        "placehold_name": "Introduce el nombre del torneo",
+        "placehold_name": "Ingresa el nombre del torneo",
         "tournament_date": "Fecha de inicio",
-        "max_goals": "Máximo de goles",
+        "max_goals": "Máximos goles",
         "speed": "Velocidad",
-        "add_player": "Añadir jugador",
-        "placehold_playername": "Introduce el nombre del jugador",
-        "add": "Añadir",
+        "add_player": "Agregar jugador",
+        "placehold_playername": "Ingresa el nombre del jugador",
+        "add": "Agregar",
         "create": "Crear",
         "your_tournaments": "Tus torneos",
-        "upcoming": "Próximos partidos de torneo",
-        "check_list": "Consulta el calendario de tus próximos partidos y prepárate.",
+        "upcoming": "Partidos de torneos próximos",
+        "check_list": "Revisa el calendario de tus próximos partidos y prepárate.",
         "round": "Ronda",
         "pending_tournaments": "Torneos pendientes",
-        "check_inv": "Revisa y acepta las invitaciones para unirte a los torneos.",
-        "winner" : "Ganador",
-        "second" : "Segundo",
-        "third" : "Tercero"
+        "check_inv": "Revisa y acepta invitaciones para unirte a torneos.",
+        "winner": "Ganador",
+        "second": "Segundo",
+        "third": "Tercero",
+        "manage": "Gestiona tus torneos",
+        "start_your": "inicia tus torneos creados",
+        "start": "iniciar",
+        "no_created": "Aún no se han creado torneos",
+        "no_matches": "¡No hay partidos por jugar en el futuro!",
+        "no_invitations": "No hay invitaciones para jugar un torneo"
     },
     "listtournaments": {
         "loading_tournaments": "Cargando torneos",
         "list_tournaments": "Lista de torneos",
-        "empty_tournaments_list": "Lista de torneos vacia"
+        "empty_tournaments_list": "Lista de torneos vacía"
     },
     "games": {
         "local_match": "Partida local",
@@ -86,7 +103,7 @@
     },
     "not_found": {
         "not_found": "No encontrado",
-        "explain_not_found": "La página que buscas no pudo ser encontrada.",
+        "explain_not_found": "La página que buscas no se pudo encontrar.",
         "go_back" : "Volver",
         "go_home" : "Inicio"
     },
@@ -108,12 +125,12 @@
             "listTournaments": "Mis torneos"
         },
         "email": "Correo electrónico",
-        "reset_pass": "Restablece tu contraseña",
+        "reset_pass": "Restaurar tu contraseña",
         "name_placeholder": "nombre",
         "lastname_placeholder": "apellido",
         "username_placeholder": "nombre de usuario",
         "password_placeholder": "contraseña",
-        "confirm_pass_placeholder": "confirma la contraseña",
+        "confirm_pass_placeholder": "confirmar contraseña",
         "logout": "Cerrar sesión",
         "gamestats": "Estadísticas de juego"
     }

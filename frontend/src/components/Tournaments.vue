@@ -10,20 +10,20 @@
 							<router-link id="play-button" class="btn btn-primary w-100 " to="/tournaments/create">{{ $t('tournaments.create_tournament')}}!</router-link>
 						</section>
 						<section class="mt-3">
-							<h2 class="h4"> Manage your tournaments </h2>
-							<p class="text-muted">start your created tournaments</p>
+							<h2 class="h4"> {{ $t('tournaments.manage')}}Manage your tournaments </h2>
+							<p class="text-muted">{{ $t('tournaments.start_your')}}start your created tournaments</p>
 							<div class="list-group overflow-auto" style="max-height: 150px;">
 								
 								<div v-if="my_tournaments.length" v-for="tournament in my_tournaments" class="list-group-item d-flex justify-content-between align-items-center">
 									{{ tournament.name }} - {{ new Date(tournament.date_start).toLocaleString() }}
 									<div>
 										<button class="btn btn-primary" @click="closeTournament(tournament.id)" title="Accept" style="padding: 15px;">
-											start
+											{{ $t('tournaments.start')}}
 										</button>
 									</div>
 								</div>
 								<div v-else class="list-group-item d-flex justify-content-center align-items-center text-center text-muted" style="padding: 40px;">
-									No tournaments created yet
+									{{ $t('tournaments.no_created')}}
 								</div>
 							</div>
 						</section>
@@ -54,7 +54,7 @@
 								
 							</ul>
 							<div v-else class="list-group-item d-flex justify-content-center align-items-center text-center text-muted" style="padding: 40px;">
-									No matches to play in the future!
+								{{ $t('tournaments.no_matches')}}
 							</div>
 						</div>
 						</section>
@@ -74,7 +74,7 @@
 									</div>
 								</div>
 								<div v-else class="list-group-item d-flex justify-content-center align-items-center text-center text-muted" style="padding: 40px;">
-									No invitations to play any tournament
+									{{ $t('tournaments.no_invitations')}}
 								</div>
 							</div>
 						</section>
