@@ -304,8 +304,9 @@ def test_close_tournament():
 def test_finish_tournament():
 	for i in range(1, total_players + 1):
 		response = get_request(
-			mysessions[i], list_tournaments_url + f"test{i}", csrf[i])
+			mysessions[i], list_tournaments_status_url + f"test{i}", csrf[i])
 		list_tournaments = json.loads(response.json()['data'])
+		list_tournaments = [tournament for tournament in list_tournaments if tournament['status'] == 'closed']
 		if list_tournaments == []:
 			print(f"User test{i} has no tournaments")
 		else:
@@ -454,6 +455,7 @@ if __name__ == "__main__":
 		list_matches_by_tournament_id_url = f'https://{DOMAIN}:8000/api/tournaments/list_matches_by_tournament_id/'
 		list_invitations = f'https://{DOMAIN}:8000/api/tournaments/list_invitations/'
 		list_tournaments_url = f'https://{DOMAIN}:8000/api/tournaments/list_tournaments/'
+		list_tournaments_status_url = f'https://{DOMAIN}:8000/api/tournaments/list_tournaments_status/'
 		start_match_url = f'https://{DOMAIN}:8000/api/tournaments/start_match/'
 		get_results_from_blockchain_url = f'https://{DOMAIN}:8000/api/blockchain/get_results_from_blockchain/'
 	if len(sys.argv) == 2:
