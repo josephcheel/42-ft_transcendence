@@ -14,6 +14,30 @@ logger = logging.getLogger('django')
 @shared_task
 def check_match_db_status():
 	matches_passed = Matches.objects.filter(
+		date_time__lt=timezone.now() - timedelta(minutes=5),
+		status=StatusMatches.WAITING_PLAYER1.value
+	)
+	if matches_passed.count() > 0:
+		for mymatch in matches_passed:
+			mymatch.winner_id = mymatch.player_id_2
+			mymatch.looser_id = mymatch.player_id_1
+			mymatch.points_looser = 0
+			mymatch.status = StatusMatches.PLAYED.value
+			mymatch.save()
+		return None
+	matches_passed = Matches.objects.filter(
+		date_time__lt=timezone.now() - timedelta(minutes=5),
+		status=StatusMatches.WAITING_PLAYER2.value
+	)
+	if matches_passed.count() > 0:
+		for mymatch in matches_passed:
+			mymatch.winner_id = mymatch.player_id_1
+			mymatch.looser_id = mymatch.player_id_2
+			mymatch.points_looser = 0
+			mymatch.status = StatusMatches.PLAYED.value
+			mymatch.save()
+		return None
+	matches_passed = Matches.objects.filter(
     	date_time__lt=timezone.now() - timedelta(minutes=5),
 		status=StatusMatches.NOT_PLAYED.value
 	)
