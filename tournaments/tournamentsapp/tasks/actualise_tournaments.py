@@ -35,6 +35,12 @@ def actualise_tournament(tournament_id):
 		case 2:
 			logger.debug("Is semifinal round")
 			mymatches = Matches.objects.filter(
+				status__in=[StatusMatches.NOT_PLAYED.value, 
+							StatusMatches.WAITING_PLAYER1.value, 
+							StatusMatches.WAITING_PLAYER2.value])
+			if mymatches.count() > 0:
+				return
+			mymatches = Matches.objects.filter(
 				tournament_id=tournament_id, 
 				number_round=2, 
 				round=Rounds.SEMIFINAL_ROUND.value,
