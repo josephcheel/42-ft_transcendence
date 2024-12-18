@@ -22,9 +22,9 @@ def get_csrf_token(session, url):
 
 content_json_type = 'application/json'
 
-total_players = 16
-total_matches = 45
-total_tournaments = 7
+total_players = 4
+total_matches = 4
+total_tournaments = 1
 
 def get_request(session, url, csrf_token, data=None):
 	# Add CSRF token to the headers
