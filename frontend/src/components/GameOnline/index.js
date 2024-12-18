@@ -91,7 +91,7 @@ export default {
 		},
 		setVolume()
 		{
-			if (localStorage.getItem('volume') === 'muted')
+			if (localStorage.getItem('volume') === 'mute')
 			{
 				document.getElementById('volume').checked = true;
 				this.listener.setMasterVolume(0);
@@ -130,13 +130,7 @@ export default {
 
 			/* Listener for the camera */
 			this.listener = new THREE.AudioListener();
-			this.camera.add(this.listener);
-
-			this.endSound = new SoundEffect(this.listener, '/assets/audio/end.wav', 0.5);
-			this.goalSound = new SoundEffect(this.listener, '/assets/audio/goal4.wav', 0.5);
-			this.paddlecollisionSound = new SoundEffect(this.listener, '/assets/audio/beep2.mp3', 0.5);
-			this.wallCollisionSound = new SoundEffect(this.listener, '/assets/audio/beep.mp3', 0.5);
-			
+			// this.listener.setMasterVolume(0);
 			document.getElementById('volume').addEventListener('change', () => {
 				const volumeButton =  document.getElementById('volume');
 				if (volumeButton.checked)
@@ -150,6 +144,14 @@ export default {
 					localStorage.setItem('volume', 'unmute');
 				}	
 			});
+			
+			this.camera.add(this.listener);
+
+			this.endSound = new SoundEffect(this.listener, '/assets/audio/end.wav', 0.5);
+			this.goalSound = new SoundEffect(this.listener, '/assets/audio/goal4.wav', 0.5);
+			this.paddlecollisionSound = new SoundEffect(this.listener, '/assets/audio/beep2.mp3', 0.5);
+			this.wallCollisionSound = new SoundEffect(this.listener, '/assets/audio/beep.mp3', 0.5);
+			
 
 			/* Paddle for the player */
 			this.paddle1 = new Paddle(this.scene, CENTER_DISTANCE_TO_PADDLE, 0, 0);
@@ -385,7 +387,7 @@ export default {
 				console.log('Connected to server');
 				if (matchId && tournamentId)
 				{
-					axios.post(`https://${this.$router.ORIGIN_IP}/api/tournaments/start_match`, {"UUID": matchId})
+					axios.post(`https://${this.$router.ORIGIN_IP}:8000/api/tournaments/start_match/`, {"UUID": matchId})
 					.then(response => {
 						console.log('Match started successfully:', response.data);
 					  })
@@ -504,6 +506,20 @@ export default {
 					for (let i = 0; i < elements.length; i++) {
 						elements[i].style.display = 'none';
 					}
+					console.log('Reconnected to server', data);
+					if (data.player1.id == this.socket.id)
+					{
+						if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent))
+							this.changeCameraPosition(2);
+						this.playerNb = 2;
+					}
+					else if (data.player2.id == this.socket.id)
+					{
+						
+						if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent))
+							this.changeCameraPosition(1);
+						this.playerNb = 1;
+					}
 					this.animate()
 					
 					this.loadImages( data.player1.username, data.player2.username);
@@ -543,7 +559,10 @@ export default {
 					this.endGame();
 				});
 				this.socket.on('closeTheGame', () => {
-					location.reload();
+					if (this.matchId && this.tournamentId)
+						this.$router.push(`/tournaments`);
+					else 
+						location.reload();
 				});
 				this.socket.on('colision-paddle', () => {
 					this.playPaddleCollision();

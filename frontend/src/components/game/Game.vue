@@ -265,7 +265,7 @@ export default {
 	methods: {
 		setVolume()
 		{
-			if (localStorage.getItem('volume') === 'muted')
+			if (localStorage.getItem('volume') === 'mute')
 			{
 				document.getElementById('volume').checked = true;
 				this.listener.setMasterVolume(0);
@@ -292,12 +292,12 @@ export default {
 				if (volumeButton.checked)
 				{
 					this.listener.setMasterVolume(0);
-					localStorage.setItem('volume', 'muted');
+					localStorage.setItem('volume', 'mute');
 				}
 				else
 				{
 					this.listener.setMasterVolume(0.5);
-					localStorage.setItem('volume', 'unmuted');
+					localStorage.setItem('volume', 'unmute');
 				}
 			});
 

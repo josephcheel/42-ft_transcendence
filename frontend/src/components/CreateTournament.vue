@@ -1,6 +1,6 @@
 <template>
 	<div  class="card container-fluid mt-4">
-		<img @click="this.$router.go(-1)" src="/assets/icons/reply.svg" alt="go back" id="goBackIcon" class="mt-3 me-3 clickable-icon" style="z-index: 1">
+		<img @click="this.$router.push('/tournaments')" src="/assets/icons/reply.svg" alt="go back" id="goBackIcon" class="mt-3 me-3 clickable-icon" style="z-index: 1">
 		<div class="row">
 					<!-- Form to create a new tournament -->
 					<form  @submit.prevent="createTournament" class="col col-md-12 bg-light p-4">

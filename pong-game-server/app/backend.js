@@ -139,20 +139,22 @@ class Vector3 {
 
 }
 
-function finishMatch(matchId, winner, winnerPoints, looser, looserPoints, sessionId) {
+function finishMatch(matchId, winner, winnerPoints, looser, looserPoints, sessionId, csrftoken) {
     // Make the POST request using fetch API
+    console.log('API CALL', { matchId, winner, winnerPoints, looser, looserPoints, sessionId, csrftoken });
     fetch(`http://tournaments:8000/tournaments/finish_match/`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json', // Set content type to JSON
-        'Cookie': `sessionid=${sessionId}` // Manually include sessionid cookie
+        'Cookie': `sessionid=${sessionId}; csrftoken=${csrftoken}`, // Manually include sessionid cookie
+        'X-CSRFToken': csrftoken
       },
       body: JSON.stringify({
         match_id: matchId,
         winner: winner,
-        winner_points: winnerPoints,
+        points_winner: winnerPoints,
         looser: looser,
-        looser_points: looserPoints
+        points_looser: looserPoints
       })
     })
     .then(response => {
@@ -160,6 +162,7 @@ function finishMatch(matchId, winner, winnerPoints, looser, looserPoints, sessio
         // If response is successful (status code 200-299)
         return response.json(); // Parse the JSON response body
       }
+      console.log('Response:', response);
       // If response is not successful, throw an error
       throw new Error('Something went wrong');
     })
@@ -172,6 +175,8 @@ function finishMatch(matchId, winner, winnerPoints, looser, looserPoints, sessio
     })
     .catch(error => {
       // Handle errors
+      console.error('Error finishing match:', error.message);
+      console.log('Error finishing match:', {error });
       if (error.message === 'Something went wrong') {
         console.error('The match has already been played or there was a server issue.');
         // this.$toast.error('The match has already been played or there was a server issue.');
@@ -228,8 +233,9 @@ class Ball extends UserInput {
                         io.to(this.room).socketsLeave(this.room);
                         let winner = { username: undefined, points: 0};
                         let loser = { username: undefined, points: 0 };
-                        let match_uuid = undefined;
-                        let sessionid = undefined
+                        let match_uuid = -1;
+                        let sessionid = undefined;
+                        let csrftoken = undefined;
                         for (let id in players) {
                             if (players[id].room == this.room) {
                                 console.log('player1')
@@ -237,8 +243,10 @@ class Ball extends UserInput {
                                 if (players[id].nb == 2) {
                                     winner.username = players[id].username;
                                     winner.points = this.score.player1;
-                                    match_uuid = players[id].matchId;
+                                    if (players[id].matchId && players[id].tournamentId)
+                                        match_uuid = players[id].matchId;
                                     sessionid = players[id].sessionId;
+                                    csrftoken = players[id].csrftoken;
                                 }
                                 else {
                                     loser.username = players[id].username;
@@ -248,7 +256,7 @@ class Ball extends UserInput {
                             }
                         }
                         console.log('API CALL', { winner, loser });
-                        finishMatch(match_uuid, winner.username, winner.points, loser.username, loser.points, sessionid)
+                        finishMatch(match_uuid, winner.username, winner.points, loser.username, loser.points, sessionid, csrftoken)
                     }, 5000);
                 }
                 else
@@ -265,6 +273,9 @@ class Ball extends UserInput {
                         io.to(this.room).socketsLeave(this.room);
                         let winner = { username: undefined, points: 0 };
                         let loser = { username: undefined, points: 0 };
+                        let match_uuid = -1;
+                        let sessionid = undefined
+                        let csrftoken = undefined;
                         for (let id in players) {
                             if (players[id].room == this.room) {
                                 console.log('player2')
@@ -272,6 +283,10 @@ class Ball extends UserInput {
                                 if (players[id].nb == 1) {
                                     winner.username = players[id].username;
                                     winner.points = this.score.player2;
+                                    if (players[id].matchId && players[id].tournamentId)
+                                        match_uuid = players[id].matchId;
+                                    sessionid = players[id].sessionId;
+                                    csrftoken = players[id].csrftoken;
                                 }
                                 else {
                                     loser.username = players[id].username;
@@ -280,13 +295,14 @@ class Ball extends UserInput {
                                 delete players[id];
                             }
                         }
-                        // let json = {winner: winner.username, looser: loser.username, winner_points: winner.points, looser_points: loser.points};
+                        // let json = {winner: winner.username, looser: loser.username, points_winner: winner.points, points_looser: loser.points};
                         // let response = axios.post(`https://${ORIGIN_IP}:8000/api/tournaments/match_finish`, json);
                         // if (response.status === 200)
                         // {
                         //     console.log('200', { response });
                         // }
                         console.log('API CALL', { winner, loser });
+                        finishMatch(match_uuid, winner.username, winner.points, loser.username, loser.points, sessionid, csrftoken)
                         // this.finished = true;
                     }, 5000);
                 }
@@ -344,6 +360,7 @@ class Paddle extends UserInput {
         this.matchId = null;
         this.tournamentId = null;
         this.sessionId = null;
+        this.csrftoken = null;
         this.username = undefined;
         this.ball = undefined;
         this.up = false;
@@ -571,7 +588,7 @@ io.on("connection", (socket) => {
         for (let id in players) {
             if (id !== socket.id) {
                 const otherPlayer = players[id];
-                if (otherPlayer.isWaiting && otherPlayer.matchId === matchId && otherPlayer.tournamentId === tournamentId) {
+                if (otherPlayer.isWaiting && otherPlayer.matchId === matchId && otherPlayer.tournamentId === tournamentId && username !== otherPlayer.username) {
                     pairedPlayerId = id;
                     break;
                 }
@@ -603,6 +620,7 @@ io.on("connection", (socket) => {
                 const cookies = cookie.parse(cookiesHeader);  // This returns an object
                 
                 players[socket.id].sessionId = cookies.sessionid;  // Access the sessionid cookie  
+                players[socket.id].csrftoken = cookies.csrftoken;
                 console.log('SessionID:', players[socket.id].sessionId);  // Log sessionid value
             } else {
                 console.log('No cookies found');
@@ -637,6 +655,7 @@ io.on("connection", (socket) => {
                 const cookies = cookie.parse(cookiesHeader);  // This returns an object
                 
                 players[socket.id].sessionId = cookies.sessionid;  // Access the sessionid cookie  
+                players[socket.id].csrftoken = cookies.csrftoken;  // Access the csrftoken cookie
                 console.log('SessionID:', players[socket.id].sessionId);  // Log sessionid value
             } else {
                 console.log('No cookies found');

@@ -12,7 +12,7 @@
     </div>
 
     <div :class="{ 'content-wrapper': !isNav() }">
-      <div
+      <div v-if="isTournament()"
       class="modal fade"
       id="exampleModalCenter"
       tabindex="-1"
@@ -83,6 +83,10 @@ export default {
     },
     isNav() {
       const nonNavPaths = ['/', '/game', '/game-online', '/login', '/register', '/forgot-password'];
+      return nonNavPaths.includes(this.$route.path) || this.$route.name === 'NotFound';
+    },
+    isTournament() {
+      const nonNavPaths = ['/tournaments', '/tournaments/create', '/play', '/select-game'];
       return nonNavPaths.includes(this.$route.path) || this.$route.name === 'NotFound';
     },
     changeLang() {

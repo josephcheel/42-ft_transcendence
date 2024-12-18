@@ -2,7 +2,7 @@ FROM node:18 AS build
 
 WORKDIR /app
 
-#COPY .env ./
+COPY .env ./
 COPY package*.json ./
 RUN npm install
 COPY . .
@@ -18,7 +18,6 @@ COPY . .
 RUN mkdir -p /etc/nginx/ssl/
 
 RUN apk add --no-cache openssl vim curl iputils
-#COPY /dist /usr/share/nginx/html
 COPY --from=build /app/dist /usr/share/nginx/html
 # Update package index and install prerequisites
 # Install dependencies and Node.js

@@ -261,8 +261,8 @@ class test_close_tournament (TestCase):
 				else:
 					the_winner_id = match.player_id_1.username
 					the_looser_id = match.player_id_2.username
-				looser_points = random.randint(0, 5)
-				self.match_to_finish = {'match_id': match.id,'winner': the_winner_id, 'looser': the_looser_id, 'winner_points': tournament.winning_points, 'looser_points': looser_points}
+				points_looser = random.randint(0, 5)
+				self.match_to_finish = {'match_id': match.id,'winner': the_winner_id, 'looser': the_looser_id, 'points_winner': tournament.winning_points, 'points_looser': points_looser}
 				self.base_json['status'] = 'success'
 				self.base_json['message'] = 'Match finished successfully'
 				self.base_json['data'] = None

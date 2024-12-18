@@ -38,15 +38,19 @@ ALLOWED_HOSTS = ['localhost', 'users', 'tournaments',
 
 CSRF_TRUSTED_ORIGINS = [
     f'https://{ORIGIN_IP}:8000',  # Your frontend origin
+    'https://localhost:8000',
+
 ]
 
 
 CORS_ALLOWED_ORIGINS = [
     f'https://{ORIGIN_IP}:8000',
+    'https://localhost:8000',
 ]
 
 CORS_ALLOW_CREDENTIALS = True
 SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SAMESITE = 'None'
 CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SAMESITE = 'None'  # or 'Lax' depending on your requirements
 SESSION_COOKIE_HTTPONLY = False  # Make sure this is set correctly

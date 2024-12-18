@@ -1,16 +1,15 @@
 <template>
 	
-		<div  class="card container-fluid mt-4">
-			<img @click="this.$router.go(-1)" src="/assets/icons/reply.svg" alt="go back" id="goBackIcon" class="mt-3 me-3 clickable-icon" style="z-index: 1">
-			<div class="row">
-				
-					<!-- Form to create a new tournament -->
-					<div id="your-tournaments"class="col col-md-6 bg-light p-4">
-						<section class="col d-flex justify-content-center  ">
-							<!-- <h1 class="titles">{{ $t('tournaments.create_tournament')}}</h1> -->
-							<router-link id="play-button" class="btn btn-primary w-100" to="/tournaments/create">{{ $t('tournaments.create_tournament')}}!</router-link>
+	<div  class="card container-fluid mt-4">
+			<img @click="$router.push('/select-game') " src="/assets/icons/reply.svg" alt="go back" id="goBackIcon"s style="z-index: 1">
+			<div class="row ">
+
+				<!-- Form to create a new tournament -->
+				<div id="your-tournaments"class=" col-sm-12 col-md-6 col-lg-6 bg-light p-4">
+						<section class="row d-flex justify-content-center align-items-center">
+							<router-link id="play-button" class="btn btn-primary w-100 " to="/tournaments/create">{{ $t('tournaments.create_tournament')}}!</router-link>
 						</section>
-						<section class="col mt-4">
+						<section class="mt-3">
 							<h2 class="h4"> Manage your tournaments </h2>
 							<p class="text-muted">start your created tournaments</p>
 							<div class="list-group overflow-auto" style="max-height: 150px;">
@@ -29,26 +28,22 @@
 							</div>
 						</section>
 					</div>
-					<div id="your-tournaments"class="col col-md-6 bg-light p-4">
+					<div class="col col-md-6 bg-light p-4">
 						<h1 class="titles">{{ $t('tournaments.your_tournaments')}}</h1>
 						<!-- Section 1: Upcoming Tournaments -->
 						<section class="mt-3">
 							<h2 class="h4">{{ $t('tournaments.upcoming')}}</h2>
 							<p class="text-muted">{{ $t('tournaments.check_list')}}</p>
 							<div class="overflow-auto" style="max-height: 150px;">
-							<ul class="list-group">
-								<li v-if="matches.lenght" v-for="match in matches" id="matches" class="list-group-item" @click="goToMatch(match.match_UUID, match.tournament_UUID)">
+							<ul v-if="matches.length" class="list-group">
+								<li v-for="match in matches" id="matches" class="list-group-item" @click="goToMatch(match.match_UUID, match.tournament_UUID)">
 									<div class="row">
 										<div class="col">
 											<h3>{{ match.tournament_name }}</h3>
 										</div>
 										<div class="col">
-											<h5>{{ $t('tournaments.round')}}</h5>
-											<h4><strong>{{ match.round }}</strong></h4>
-										</div>
-										<div class="col">
 											<h5>{{ $t('tournaments.max_goals')}}</h5>
-											<h4><strong>{{ match.points_winner }}</strong></h4>
+											<h4><strong>5</strong></h4>
 										</div>
 										<div class="col">
 											<p id="datetime"><strong> {{ new Date(match.date_time_match).toLocaleString()  }}</strong></p> 
@@ -56,10 +51,11 @@
 										</div>
 									</div>
 								</li>
-								<div v-else class="list-group-item d-flex justify-content-center align-items-center text-center text-muted" style="padding: 40px;">
-									No matches to play in the future!
-								</div>
+								
 							</ul>
+							<div v-else class="list-group-item d-flex justify-content-center align-items-center text-center text-muted" style="padding: 40px;">
+									No matches to play in the future!
+							</div>
 						</div>
 						</section>
 
@@ -74,7 +70,7 @@
 										<button class="btn btn-link" title="Accept" style="padding: 15px;">
 											<img @click="acceptTournament(invitation.tournament_id_id)" src="/assets/icons/check.svg" alt="Accept" width="24" height="24">
 										</button>
-										<button @click="declineTournament" class="btn btn-close" title="Decline" aria-label="Close" style="padding: 0;"></button>
+
 									</div>
 								</div>
 								<div v-else class="list-group-item d-flex justify-content-center align-items-center text-center text-muted" style="padding: 40px;">
@@ -306,11 +302,16 @@ export default {
 		font-size: 0.8em;
 		max-width: 90% !important;
 	}
-	.col {
+	#play-button {
+		font-size: 2em !important;
+		max-width: 500px;
+		max-height: 100px;
+	}
+	#your-tournaments {
 		display: flex;
 		flex-direction: column;
 		justify-content: center;
-		/* align-items:  center; */
+		font-size: 1em;
 	}
 	.form-label {
 		color: black !important;
