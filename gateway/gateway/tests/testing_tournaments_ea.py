@@ -201,6 +201,30 @@ def test_create_tournament():
 		assert response.json()['status'] == 'success'
 		assert response.json()['message'] == 'Tournament created successfully'
 
+def test_create_1_tournament():
+	players = []
+	for i in range(1, 5):
+		players.append(f'test{i}')
+		#print(f"players: {players}")
+		my_data = {
+			"name" : f'test_tournament_{i}',
+            'username': f'test{i}',
+            'password': 'test',
+            'date_start': (datetime.now(EuropeZone) + timedelta(minutes=1)).isoformat(),
+            'max_players': total_players,
+			'winning_points': 7,
+            'cost': 1,
+            'price_1': 1000,
+            'price_2': 500,
+            'price_3': 250,
+            'players': players, }
+	response = send_request(
+			mysessions[i], create_tournament_url, csrf[i], my_data)
+	print(f"test _torunament_{i} created {response.json()}")
+	assert response.status_code == 200
+	assert response.json()['status'] == 'success'
+	assert response.json()['message'] == 'Tournament created successfully'
+
 def test_accept_invitation():
 	for i in range (1, total_players + 1):
 		user_data = {'username': f"test{i}", 'password': "test"}
@@ -228,6 +252,33 @@ def test_accept_invitation():
 						assert response.status_code == 200
 						assert response.json()['status'] == 'success'
 						assert response.json()['message'] == 'Invitation accepted successfully'
+
+def test_accept_all_invitations():
+	for i in range (1, total_players + 1):
+		user_data = {'username': f"test{i}", 'password': "test"}
+		response = send_request(mysessions[i], login_url, csrf[i], user_data)
+		assert response.status_code == 200
+		response=get_request(mysessions[i], list_invitations + f"test{i}" , csrf[i])
+		print(list_invitations + f"test{i}")
+		print(f"User test{i} list of invitations: {response.json()}")
+		invitation_list = json.loads(response.json()['data'])
+		if invitation_list == []:
+			print(f"User test{i} has no invitations")
+		else:
+			n=0
+			for invitation in invitation_list:
+				print ("La invitacion es:  ", invitation)
+				if invitation['status'] == 'ignored':
+					my_data = {
+					'tournament_id': invitation['tournament_id_id'],
+					'status': 'accepted',
+					}
+					response = send_request(mysessions[i], accept_invitation, csrf[i], my_data)
+					print ("data_sent     " , my_data)
+					print(f"User test{i} accepted 	invitation {response.json()}")
+					assert response.status_code == 200
+					assert response.json()['status'] == 'success'
+					assert response.json()['message'] == 'Invitation accepted successfully'
 
 def test_close_tournament():
 	for i in range(1, total_players + 1):
@@ -421,6 +472,12 @@ if __name__ == "__main__":
 			play_match()
 			test_logout_user()
 			close_sessions()
+		elif sys.argv[2] == "tournament1":
+			test_register_user()
+			test_create_1_tournament()
+			test_accept_all_invitations()
+			test_close_tournament()
+			test_logout_user()
 		elif sys.argv[2] == 'tournament':
 			tournament = 3
 			test_register_user()
