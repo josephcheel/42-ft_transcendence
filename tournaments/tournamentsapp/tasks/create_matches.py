@@ -7,11 +7,13 @@ import uuid
 from user.models import User
 
 
-def CreateMatches(tournament_id, tournament_players:User, extra_round, current_round):
+def CreateMatches(tournament_id, tournament_players, extra_round, current_round):
 	tournament = Tournaments.objects.get(id=tournament_id)
 	next_match_date = tournament.last_match_date
 	player_nr = tournament_players.count()
 	match player_nr:
+		
+		# We only have 2 players, we create the final round
 		case 2:
 			Matches.objects.create(
 				tournament_id = tournament_id, 
@@ -89,4 +91,5 @@ def CreateMatches(tournament_id, tournament_players:User, extra_round, current_r
 					tournament_UUID = tournament.UUID)
 				next_match_date += timedelta(minutes=TIME_DELTA)
 			tournament.current_round = current_round + extra_round
+	tournament.save()
 	return next_match_date
