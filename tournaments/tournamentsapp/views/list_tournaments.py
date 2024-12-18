@@ -4,8 +4,10 @@ from tournamentsapp.models import Tournaments
 from datetime import datetime
 from django.db import OperationalError
 from django.http import JsonResponse
+from tournamentsapp.status_options import StatusTournaments
 import json
 from django.contrib.auth import get_user_model
+
 
 User = get_user_model()
 
@@ -15,8 +17,7 @@ def list_tournaments(request, username):
     #player = request.user
 	try:
 		player = User.objects.get(username=username)
-		tournament_data = Tournaments.objects.filter(player_id=player.id)
-		tournament_data = Tournaments.objects.filter(player_id=player.id)
+		tournament_data = Tournaments.objects.filter(player_id=player.id, status=StatusTournaments.OPEN_TOURNAMENT.value)
 		# Convert any datetime fields to string
 		tournament_list = list(tournament_data.values())
 		for tournament in tournament_list:
