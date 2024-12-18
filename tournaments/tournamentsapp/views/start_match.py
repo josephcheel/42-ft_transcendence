@@ -21,7 +21,7 @@ def start_match(request):
 		mymatch = Matches.objects.get(match_UUID=match_id)
 	except Matches.DoesNotExist:
 		return JsonResponse({'status': 'error', 'message': 'A match does not exist', 'data': None}, status=400)
-	if mymatch.date_time > timezone.now()- timedelta(minutes=1):
+	if  timezone.now() < mymatch.date_time - timedelta(minutes=1):
 		return JsonResponse({'status': 'error', 'message': 'the match can only start 1 minute before', 'data': None}, status=400)
 	if mymatch.player_id_1.id != player.id and mymatch.player_id_2.id != player.id: 
 		return JsonResponse({'status': 'error', 'message': 'You are not a player of this match', 'data': None}, status=400)
