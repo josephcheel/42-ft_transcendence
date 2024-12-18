@@ -29,6 +29,7 @@ def actualise_tournament(tournament_id):
 			tournament.id_third = mymatch.winner_id
 			if mymatch.status != StatusMatches.ABORTED.value:
 				mymatch.status = StatusMatches.NEXT_ROUND_ASSIGNED.value
+			logger.debug("Is final round i finish the turnament")
 			finish_tournament(tournament.id)
 		# We are at the semifinal round
 		case 2:
@@ -123,6 +124,9 @@ def actualise_tournament(tournament_id):
 			tournament.last_match_date += timedelta(minutes=TIME_DELTA * 2)
 			tournament.current_round = 1
 			tournament.save()
+			if mymatches.count() <= 0:
+				finish_tournament(tournament.id)
+				
 		# This is everythin that's not final or semifinal
 		case _:
 			logger.debug("Is qualified round")
