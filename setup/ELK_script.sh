@@ -6,7 +6,7 @@ echo "Waiting for Kibana to start..."
 until curl -s -u "elastic:${ELASTIC_PASSWORD}" -s -XGET "http://kibana:5601/api/status" | grep -q "\"level\":\"available\""; do sleep 1; done
 echo "Exporting dashboards to Kibana"
 
-until curl -u "elastic:${ELASTIC_PASSWORD}" --cacert config/certs/ca/ca.crt "https://es01:9200/_cluster/health?pretty" | grep -q "yellow"; do sleep 1; done
+until curl -s -u "elastic:${ELASTIC_PASSWORD}" --cacert config/certs/ca/ca.crt "https://es01:9200/_cluster/health?pretty" | grep -q "yellow"; do sleep 1; done
 
 curl --max-time 600 -s -u "elastic:${ELASTIC_PASSWORD}" --cacert config/certs/ca/ca.crt -X PUT "https://es01:9200/_ilm/policy/7days_policy" -H "Content-Type: application/json" -d '{
     "policy": {
