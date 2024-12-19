@@ -84,12 +84,6 @@ def actualise_tournament(tournament_id):
 			# There can 0, 1 or 2 matches. 0 if both are aborted 1 or 2 if they are OKAY
 			# We need to create the final round if it's not equal to 0
 			if mymatches.count() != 0:
-				if matches.count() == 2:
-					player1= mymatches[0].winner_id
-					player2 = mymatches[1].winner_id
-				else:
-					player1 = mymatches[0].winner_id
-					player2= mymatches[0].looser_id
 				match_final = Matches.objects.create(
 					tournament_id=mymatches[0].tournament_id,
 					player_id_1=mymatches[0].winner_id,
