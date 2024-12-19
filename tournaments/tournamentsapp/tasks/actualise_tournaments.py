@@ -90,7 +90,7 @@ def actualise_tournament(tournament_id):
 				match_final = Matches.objects.create(
 					tournament_id=mymatches[0].tournament_id,
 					player_id_1=mymatches[0].winner_id,
-					player_id_2= mymatches[0].looser_id if mymatches.count() == 1 else  mymatches[1].looser_id, 
+					player_id_2= mymatches[0].looser_id if mymatches.count() == 1 else  mymatches[1].winner_id, 
 					winner_id=mymatches[0].winner_id,
 					looser_id=mymatches[0].looser_id,
 					date_time=tournament.last_match_date + timedelta(minutes=TIME_DELTA * 2), 
