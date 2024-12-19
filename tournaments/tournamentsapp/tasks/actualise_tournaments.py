@@ -2,7 +2,7 @@ from __future__ import absolute_import
 from datetime import timedelta
 from tournamentsapp.models import Tournaments, Matches
 from tournamentsapp.status_options import StatusMatches, Rounds, StatusTournaments
-from tournamentsapp.tasks.create_matches import CreateMatches
+from tournamentsapp.tasks.create_matches import CreateMatches_next_round
 from .finish_tournament import finish_tournament
 from celery import shared_task
 from tournaments.settings import TIME_DELTA
@@ -155,9 +155,9 @@ def actualise_tournament(tournament_id):
 				return
 			tournament_players = []
 			for mymatch in mymatches:
-				tournament_players.append(mymatch.winner_id_id)
+				tournament_players.append(mymatch.winner_id)
 			tournament_players = User.objects.filter(id__in=tournament_players)
-			CreateMatches(tournament_id, tournament_players, extra_round = 0, current_round = tournament.current_round)
+			CreateMatches_next_round(tournament_id, tournament_players, extra_round = 0, current_round = tournament.current_round)
 
 
 			"""

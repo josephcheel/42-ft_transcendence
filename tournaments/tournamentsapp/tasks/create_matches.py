@@ -10,7 +10,10 @@ from user.models import User
 def CreateMatches(tournament_id, tournament_players, extra_round, current_round):
 	tournament = Tournaments.objects.get(id=tournament_id)
 	next_match_date = tournament.last_match_date
-	player_nr = tournament_players.count()
+	try:
+		player_nr = tournament_players.count()
+	except:
+		player_nr = len(tournament_players)
 	match player_nr:
 		
 		# We only have 2 players, we create the final round
@@ -81,6 +84,64 @@ def CreateMatches(tournament_id, tournament_players, extra_round, current_round)
 					tournament_id = tournament_id,
 					date_time = next_match_date,
 					player_id_1 = tournament_players[i].player_id,
+					player_id_2 = player_2,
+					winner_id = player_winner,
+                    points_winner=tournament.winning_points,
+					round=Rounds.QUALIFIED_ROUND.value,
+					number_round = current_round + extra_round,
+					status=status,
+					match_UUID = uuid.uuid4(),
+					tournament_UUID = tournament.UUID)
+				next_match_date += timedelta(minutes=TIME_DELTA)
+			tournament.current_round = current_round + extra_round
+	tournament.save()
+	return next_match_date
+
+def CreateMatches_next_round(tournament_id, tournament_players, extra_round, current_round):
+	tournament = Tournaments.objects.get(id=tournament_id)
+	next_match_date = tournament.last_match_date
+	player_nr = tournament_players.count()
+	match player_nr:
+		case 4:
+			Matches.objects.create(
+				tournament_id = tournament_id,
+				number_round = 2,
+				date_time = next_match_date,
+				player_id_1 = tournament_players[0],
+				player_id_2 = tournament_players[1],
+				points_winner=tournament.winning_points,
+				round=Rounds.SEMIFINAL_ROUND.value,
+				match_UUID = uuid.uuid4(),
+				tournament_UUID = tournament.UUID)
+			next_match_date += timedelta(minutes=TIME_DELTA)
+			Matches.objects.create(
+				tournament_id=tournament_id,
+				number_round=2,
+				date_time=next_match_date,
+				player_id_1=tournament_players[2],
+				player_id_2=tournament_players[3],
+				points_winner=tournament.winning_points,
+				round=Rounds.SEMIFINAL_ROUND.value,
+				match_UUID = uuid.uuid4(),
+				tournament_UUID = tournament.UUID)
+
+			tournament.current_round = 2
+		case _:
+			numero_partidos = int(math.pow(2, current_round + extra_round -1)) 
+			for i in range (0, numero_partidos):
+				try:
+					player_2 = tournament_players[i + numero_partidos]
+					status = StatusMatches.NOT_PLAYED.value
+					player_winner = None
+				except:
+					player_2 = None
+					player_winner = tournament_players[i]
+					status = StatusMatches.WALKOVER.value
+
+				Matches.objects.create(
+					tournament_id = tournament_id,
+					date_time = next_match_date,
+					player_id_1 = tournament_players[i],
 					player_id_2 = player_2,
 					winner_id = player_winner,
                     points_winner=tournament.winning_points,
