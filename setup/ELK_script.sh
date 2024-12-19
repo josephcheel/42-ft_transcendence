@@ -7,8 +7,73 @@ until curl -s -u "elastic:${ELASTIC_PASSWORD}" -s -XGET "http://kibana:5601/api/
 echo "Exporting dashboards to Kibana"
 
 
+curl -u "elastic:${ELASTIC_PASSWORD}" --cacert config/certs/ca/ca.crt -X PUT "https://es01:9200/_ilm/policy/7days_policy" -H "Content-Type: application/json" -d '{
+    "policy": {
+        "phases": {
+        "hot": {
+            "min_age": "0ms",
+            "actions": {
+            "rollover": {
+                "max_age": "7d"
+            }
+            }
+        },
+        "delete": {
+            "min_age": "7d",
+            "actions": {
+            "delete": {}
+            }
+        }
+        }
+    }
+    }'
+
+
+
+curl -u "elastic:${ELASTIC_PASSWORD}" --cacert config/certs/ca/ca.crt -X PUT "https://es01:9200/_index_template/gateway_template" \
+    -H "Content-Type: application/json" \
+    -d '{
+    "index_patterns": ["gate*"],
+    "template": {
+        "settings": {
+        "index.lifecycle.name": "7days_policy",
+        "index.lifecycle.rollover_alias": "gateway"
+        }
+    }
+    }'
+
+curl -u "elastic:${ELASTIC_PASSWORD}" --cacert config/certs/ca/ca.crt -X PUT "https://es01:9200/_index_template/usermanagement_template" \
+    -H "Content-Type: application/json" \
+    -d '{
+    "index_patterns": ["user*"],
+    "template": {
+        "settings": {
+        "index.lifecycle.name": "7days_policy",
+        "index.lifecycle.rollover_alias": "usermanagement"
+        }
+    }
+    }'
+
+
+curl -u "elastic:${ELASTIC_PASSWORD}" --cacert config/certs/ca/ca.crt -X PUT "https://es01:9200/_index_template/tournaments_template" \
+    -H "Content-Type: application/json" \
+    -d '{
+    "index_patterns": ["tour*"],
+    "template": {
+        "settings": {
+        "index.lifecycle.name": "7days_policy",
+        "index.lifecycle.rollover_alias": "tournaments"
+        }
+    }
+    }'
 
 curl  -u "elastic:${ELASTIC_PASSWORD}" -X POST "http://kibana:5601/api/saved_objects/_import" -H "kbn-xsrf: true" --form file=@/ELK/data_views.ndjson
+
+
+echo "DONE WITH policy"
+
+
+
 
 DASHBOARD_ID=$(curl  -u "elastic:${ELASTIC_PASSWORD}" -X POST "http://kibana:5601/api/saved_objects/_import" -H "kbn-xsrf: true" --form file=@/ELK/gateway_dashboard.ndjson | jq -r '.successResults[0].id')
 
