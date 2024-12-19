@@ -4,6 +4,7 @@ import json
 from tournamentsapp.models import Tournaments, Matches
 from tournamentsapp.status_options import  StatusMatches, StatusTournaments
 from tournamentsapp.tasks.actualise_tournaments import actualise_tournament
+from tournamentsapp.tasks.check_round_tournament import check_round_tournament
 from django.utils import timezone
 from user.models import User
 import logging
@@ -60,12 +61,7 @@ def finish_match(request):
 	except Tournaments.DoesNotExist:
 		winner.puntos += 100
 		return JsonResponse({'status': 'error', 'message': 'Free play finished', 'data': None}, status=200)
-	mymatches = Matches.objects.filter(tournament_id=match.tournament_id, status__in=[StatusMatches.NOT_PLAYED.value])
-	logger.debug(f'number of matches: {mymatches.count()}')
-	if mymatches.count() == 0:
-		logger.debug(f'tournament passed to create next round: {match.id}')
-		tournament.status = StatusTournaments.CREATE_NEXT_ROUND.value
-		tournament.save()
+	if check_round_tournament(tournament_id):
 		actualise_tournament(match.tournament_id)
 
 	return JsonResponse({'status': 'success', 'message': 'Match finished successfully', 'data': None}, status=200)
