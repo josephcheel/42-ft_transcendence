@@ -159,7 +159,7 @@ export default {
           this.tname = data[0].tournament_name;
           this.openModal();
           this.match = data[0].id;
-        }
+        } 
       })
     }
 
