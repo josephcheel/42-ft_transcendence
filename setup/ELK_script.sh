@@ -6,8 +6,9 @@ echo "Waiting for Kibana to start..."
 until curl -s -u "elastic:${ELASTIC_PASSWORD}" -s -XGET "http://kibana:5601/api/status" | grep -q "\"level\":\"available\""; do sleep 1; done
 echo "Exporting dashboards to Kibana"
 
+until curl -s -u "elastic:${ELASTIC_PASSWORD}" --cacert config/certs/ca/ca.crt "https://es01:9200/_cluster/health?pretty" | grep -q "yellow"; do sleep 1; done
 
-until curl -s -u "elastic:${ELASTIC_PASSWORD}" --cacert config/certs/ca/ca.crt -X PUT "https://es01:9200/_ilm/policy/7days_policy" -H "Content-Type: application/json" -d '{
+curl --max-time 600 -s -u "elastic:${ELASTIC_PASSWORD}" --cacert config/certs/ca/ca.crt -X PUT "https://es01:9200/_ilm/policy/7days_policy" -H "Content-Type: application/json" -d '{
     "policy": {
         "phases": {
         "hot": {
@@ -26,11 +27,11 @@ until curl -s -u "elastic:${ELASTIC_PASSWORD}" --cacert config/certs/ca/ca.crt -
         }
         }
     }
-    }' --max-time 600
+    }' 
 
 
 
-until curl -s -u "elastic:${ELASTIC_PASSWORD}" --cacert config/certs/ca/ca.crt -X PUT "https://es01:9200/_index_template/gateway_template" \
+curl --max-time 600 -s -u "elastic:${ELASTIC_PASSWORD}" --cacert config/certs/ca/ca.crt -X PUT "https://es01:9200/_index_template/gateway_template" \
     -H "Content-Type: application/json" \
     -d '{
     "index_patterns": ["gate*"],
@@ -40,9 +41,9 @@ until curl -s -u "elastic:${ELASTIC_PASSWORD}" --cacert config/certs/ca/ca.crt -
         "index.lifecycle.rollover_alias": "gateway"
         }
     }
-    }' --max-time 600
+    }' 
 
-until curl -s -u "elastic:${ELASTIC_PASSWORD}" --cacert config/certs/ca/ca.crt -X PUT "https://es01:9200/_index_template/usermanagement_template" \
+curl --max-time 600 -s -u "elastic:${ELASTIC_PASSWORD}" --cacert config/certs/ca/ca.crt -X PUT "https://es01:9200/_index_template/usermanagement_template" \
     -H "Content-Type: application/json" \
     -d '{
     "index_patterns": ["user*"],
@@ -52,9 +53,9 @@ until curl -s -u "elastic:${ELASTIC_PASSWORD}" --cacert config/certs/ca/ca.crt -
         "index.lifecycle.rollover_alias": "usermanagement"
         }
     }
-    }' --max-time 600
+    }' 
 
-curl -s -u "elastic:${ELASTIC_PASSWORD}" --cacert config/certs/ca/ca.crt -X PUT "https://es01:9200/_index_template/tournaments_template" \
+curl --max-time 600 -s -u "elastic:${ELASTIC_PASSWORD}" --cacert config/certs/ca/ca.crt -X PUT "https://es01:9200/_index_template/tournaments_template" \
     -H "Content-Type: application/json" \
     -d '{
     "index_patterns": ["tour*"],
@@ -64,9 +65,9 @@ curl -s -u "elastic:${ELASTIC_PASSWORD}" --cacert config/certs/ca/ca.crt -X PUT 
         "index.lifecycle.rollover_alias": "tournaments"
         }
     }
-    }' --max-time 600
+    }' 
 
-curl  -u "elastic:${ELASTIC_PASSWORD}" -X POST "http://kibana:5601/api/saved_objects/_import" -H "kbn-xsrf: true" --form file=@/ELK/data_views.ndjson
+curl  --max-time 600  -u "elastic:${ELASTIC_PASSWORD}" -X POST "http://kibana:5601/api/saved_objects/_import" -H "kbn-xsrf: true" --form file=@/ELK/data_views.ndjson
 
 
 echo "DONE WITH policy"
