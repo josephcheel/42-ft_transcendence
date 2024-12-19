@@ -13,7 +13,7 @@ def check_round_tournament(tournament_id):
 	logger.debug(f'number of matches pending: {mymatches.count()}')
 	if mymatches.count() == 0:
 		tournament = Tournaments.objects.get(id=tournament_id)
-		logger.debug(f'tournament {tournament.id} round number {tournament.round} passed to create next round')
+		logger.debug(f'tournament {tournament.id} round number {tournament.current_round} passed to create next round')
 		tournament.status = StatusTournaments.CREATE_NEXT_ROUND.value
 		tournament.save()
 		return True
