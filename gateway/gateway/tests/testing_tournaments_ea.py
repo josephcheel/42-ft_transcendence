@@ -22,8 +22,8 @@ def get_csrf_token(session, url):
 
 content_json_type = 'application/json'
 
-total_players = 4
-total_matches = 2
+total_players = 8
+matches = 2
 total_tournaments = 1
 
 def get_request(session, url, csrf_token, data=None):
