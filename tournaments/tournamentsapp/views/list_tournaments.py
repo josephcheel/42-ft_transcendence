@@ -6,7 +6,9 @@ from django.db import OperationalError
 from django.http import JsonResponse
 from tournamentsapp.status_options import StatusTournaments
 import json
+import logging
 from django.contrib.auth import get_user_model
+logger = logging.getLogger('django')
 
 
 User = get_user_model()
@@ -43,14 +45,14 @@ def list_tournaments_status(request, username):
 		for tournament in tournament_list:
 			if tournament["hash"] is not None:
 				results = get_results(tournament['hash'])
+			logger.info('Results: %s', results)
 			if len(results) > 0:
 				data_to_return.append({
 					"id": tournament["id"],
 					"name": tournament["name"],
 					"winner": results[0],
 					"second": results[1],
-					"third": results[2],
-					"date_start": results[4].isoformat()})
+					"third": results[2],})
 		data = json.dumps(data_to_return)
 		return JsonResponse({'status': 'success', 'message': 'List of tournaments cereated', 'data': data}, status=200)
 	except OperationalError:

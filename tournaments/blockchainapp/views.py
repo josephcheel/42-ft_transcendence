@@ -70,7 +70,9 @@ def get_balance_from_web3(wallet):
 		raise Exception('Error connecting to the blockchain')
 	balance = web3.eth.get_balance(wallet)
 	return balance
+
 def get_results(hash):
+	logger.info(f'Getting results from the blockchain for contract {hash}')
 	try:
 		web3 = Web3(Web3.HTTPProvider(settings.GANACHE_URL))
 		logger.info('Connected to the blockchain 1')
@@ -88,7 +90,10 @@ def get_results(hash):
 	# ABI del contrato (exportada al compilar el contrato en Remix/Hardhat/Truffle)
 	contract = web3.eth.contract(address=contract_addr, abi=abi)
 	logger.info('Contract: %s', contract)
-	results = contract.functions.get_Tournament().call()
+	try:
+		results = contract.functions.get_Tournament().call()
+	except:
+		return []
 	return results
 
 @require_post
