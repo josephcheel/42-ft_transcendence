@@ -155,7 +155,7 @@ def actualise_tournament(tournament_id):
 				return
 			tournament_players = []
 			for mymatch in mymatches:
-				tournament_players.append(mymatch.winner_id)
+				tournament_players.append(mymatch.winner_id_id)
 			tournament_players = User.objects.filter(id__in=tournament_players)
 			CreateMatches(tournament_id, tournament_players, extra_round = 0, current_round = tournament.current_round)
 
