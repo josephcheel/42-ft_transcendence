@@ -5,7 +5,8 @@ from tournaments.settings import TIME_DELTA
 import math
 import uuid
 from user.models import User
-
+import logging
+logger = logging.getLogger('django')
 
 def CreateMatches(tournament_id, tournament_players, extra_round, current_round):
 	tournament = Tournaments.objects.get(id=tournament_id)
@@ -99,6 +100,7 @@ def CreateMatches(tournament_id, tournament_players, extra_round, current_round)
 
 def CreateMatches_next_round(tournament_id, tournament_players, extra_round, current_round):
 	tournament = Tournaments.objects.get(id=tournament_id)
+	logger.debug(f"tournament: {tournament_players}")
 	next_match_date = tournament.last_match_date
 	player_nr = tournament_players.count()
 	match player_nr:
