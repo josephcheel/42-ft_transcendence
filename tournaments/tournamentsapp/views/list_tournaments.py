@@ -42,7 +42,7 @@ def list_tournaments_status(request, username):
 		data_to_return = []
 		for tournament in tournament_list:
 			if tournament["hash"] is not None:
-				results = get_results(tournament)
+				results = get_results(tournament['hash'])
 			if len(results) > 0:
 				data_to_return.append({
 					"id": tournament["id"],
