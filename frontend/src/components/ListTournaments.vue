@@ -10,7 +10,6 @@
     <ul v-if="tournaments.length" class="list-group">
       <li v-for="tournament in tournaments" :key="tournament.id" class="list-group-item">
         <h5>{{ tournament.name }}</h5>
-        <p><strong>{{ $t('tournaments.tournament_date')}}</strong> {{ tournament.date_start || "No especificada" }}</p>
         <p><strong>{{ $t('tournaments.winner')}}</strong> {{ tournament.winner || "No especificada" }}</p>
         <p><strong>{{ $t('tournaments.second')}}</strong> {{ tournament.second || "No especificada" }}</p>
         <p><strong>{{ $t('tournaments.third')}}</strong> {{ tournament.third || "No especificada" }}</p>

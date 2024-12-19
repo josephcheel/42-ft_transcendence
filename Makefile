@@ -48,7 +48,7 @@ stop :
 start : 
 	@$(COMPOSE) -f $(DOCKER_COMPOSE_FILE) start
 
-rebuild: stop rm_files volumes compile copy_env build
+rebuild: stop rm_files volumes build_certs copy_env build
 	@echo "$(GREEN_COLOR)Rebuilding containers...$(RESET_COLOR)"
 
 rm_files:

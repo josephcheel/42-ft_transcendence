@@ -16,7 +16,6 @@
       <button v-if="display" type="submit" class="btn btn-primary w-100 mt-4 login-button">{{ $t('login.enter')}}</button>
     </form>
     <div class="forgot-password-signup text-center">
-      <router-link class="forgot-password-signup mt-5" id="forgot" @click.prevent="navigateTo('Forgotps')" to="#">{{ $t('login.forget_pass')}}</router-link>
       <p id="forgot">{{ $t('login.no_account')}} <router-link id="register" @click.prevent="navigateTo('Register')" to="#">{{ $t('general.register')}}</router-link></p>
     </div>
     <div

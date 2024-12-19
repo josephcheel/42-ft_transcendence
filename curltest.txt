@@ -24,3 +24,6 @@ curl -i -X GET http://localhost:8000/api/user/get_profile/ \
 
 
 curl -i -X GET http://usermanagement:8000/user/get_profile/1/ -H "Content-Type: application/json" -b "sessionid=sgod13niyhin0thidk7l0n8nh97s3tpw" -v
+
+
+select  id , tournament_id , is_player1_in_room , is_player2_in_room , date_time      , status, player_id_1_id ,player_id_2_id from tournamentsapp_matches;

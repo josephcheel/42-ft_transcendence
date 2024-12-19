@@ -2,6 +2,15 @@
 from django.http import JsonResponse
 import json
 from functools import wraps
+from django.contrib.auth import get_user_model
+from django.db import OperationalError
+import logging
+from django.conf import settings
+
+if not settings.DEBUG:
+    logger = logging.getLogger('django')
+    logger.setLevel(logging.DEBUG)
+User = get_user_model()
 
 def user_is_authenticated(function):
 	@wraps(function)

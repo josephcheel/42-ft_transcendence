@@ -207,6 +207,7 @@
           if (response.status === 200)
           {
 			this.$i18n.locale = 'en';
+			localStorage.clear();
 			this.$router.push('/');
 			console.log(response);
           }

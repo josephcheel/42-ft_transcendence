@@ -2,18 +2,21 @@ from tournamentsapp.wrappers import require_post, validate_json
 from django.http import JsonResponse
 import json
 from tournamentsapp.models import Tournaments, Matches
-from tournamentsapp.status_options import  StatusMatches, Rounds
+from tournamentsapp.status_options import  StatusMatches, StatusTournaments
 from tournamentsapp.tasks.actualise_tournaments import actualise_tournament
+from tournamentsapp.tasks.check_round_tournament import check_round_tournament
 from django.utils import timezone
 from user.models import User
+import logging
+
+logger = logging.getLogger('django')
 
 @require_post
 @validate_json
 def finish_match(request):
 	data = request.data
 	match_id = request.data.get('match_id')
-
-	if match_id < 0:
+	if type(match_id) == int and match_id < 0:
 		player1 = User.objects.get(username=data.get('winner'))
 		player2 = User.objects.get(username=data.get('looser'))
 		Matches.objects.create(
@@ -30,7 +33,7 @@ def finish_match(request):
 		)
 		return JsonResponse({'status': 'success', 'message': 'Match finished successfully', 'data': None}, status=200)
 	try:
-		match = Matches.objects.get(id=match_id)
+		match = Matches.objects.get(match_UUID=match_id)
 	except Matches.DoesNotExist:
 			return JsonResponse({'status': 'error', 'message': 'The match does not exist', 'data': None}, status=400)
 
@@ -58,6 +61,7 @@ def finish_match(request):
 	except Tournaments.DoesNotExist:
 		winner.puntos += 100
 		return JsonResponse({'status': 'error', 'message': 'Free play finished', 'data': None}, status=200)
-	actualise_tournament(match.id)
+	if check_round_tournament(tournament_id):
+		actualise_tournament(match.tournament_id)
 
 	return JsonResponse({'status': 'success', 'message': 'Match finished successfully', 'data': None}, status=200)

@@ -15,7 +15,7 @@ import Gamestats from '../components/Gamestats.vue'
 import NotFound from '../components/NotFound.vue'
 import ListTournaments from '../components/ListTournaments.vue'
 
-import { isAuthorized } from '../utils/isAuthorized'
+import { isAuthorized, isUsernameLocalStorage, checkUser } from '../utils/isAuthorized'
 import Tournaments from '../components/Tournaments.vue'
 import Friends from '../components/Friends.vue'
 import CreateTournament from '../components/CreateTournament.vue'
@@ -129,21 +129,30 @@ router.ORIGIN_IP = import.meta.env.VITE_VUE_APP_ORIGIN_IP || 'localhost';
 
 router.beforeResolve (async (to, from, next) => {
  
-  // const isLoggedIn = await isAuthorized(router.ORIGIN_IP); // Accessing ORIGIN_IP
-  // console.log("Is logged in: ", isLoggedIn);
-  // if (to.path === '/')
-  // {
-  //   if (isLoggedIn) {
-  //     next({ path: '/play' });
-  //     return;
-  //   }
-  // }
-  // else {
-  //   if (!isLoggedIn) {
-  //     next({ path: '/', params: { currentView: 'Login' } });
-  //     return;
-  //   }
-  // }
+  
+  let isLoggedIn = await isAuthorized(router.ORIGIN_IP); // Accessing ORIGIN_IP
+  
+  let isUsername = await isUsernameLocalStorage();
+  let user = null;
+
+  if (isUsername)
+    user = await checkUser(router.ORIGIN_IP);
+
+  console.log("Is logged in: ", isLoggedIn);
+  if (to.path === '/')
+  {
+    if (isLoggedIn && isUsername && user) {
+      next({ path: '/play' });
+      return;
+    }
+  }
+  else {
+    if (!isLoggedIn || !isUsername || !user) {
+      next({ path: '/', params: { currentView: 'Login' } });
+      return;
+    }
+  
+  }
 
   if (to.path === '/' || to.path === '/game' || to.path === '/game-online') {
     document.body.style.overflow = 'hidden';

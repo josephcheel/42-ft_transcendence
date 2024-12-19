@@ -3,13 +3,16 @@ from django.http import JsonResponse
 from web3 import Web3
 from blockchainapp.contracts.abi import abi
 from blockchainapp.contracts.bytecode import bytecode
-from user.models import User
 from tournamentsapp.models import Tournaments
 from tournamentsapp.wrappers import require_post, user_is_authenticated, validate_json
 import tournaments.settings as settings
 import time
 import logging
 import json
+
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 
 logger = logging.getLogger('django')
 # Create your views here.
@@ -67,21 +70,30 @@ def get_balance_from_web3(wallet):
 		raise Exception('Error connecting to the blockchain')
 	balance = web3.eth.get_balance(wallet)
 	return balance
+
 def get_results(hash):
+	logger.info(f'Getting results from the blockchain for contract {hash}')
 	try:
 		web3 = Web3(Web3.HTTPProvider(settings.GANACHE_URL))
-		logger.info('Connected to the blockchain')
+		logger.info('Connected to the blockchain 1')
 	except:
-		return JsonResponse({'status': 'error', 'message': 'Error connecting to the blockchain', 'data': None}, status=500)
-	contract_addr = web3.to_checksum_address(hash)
+		return []
+	try:
+		contract_addr = web3.to_checksum_address(hash)
+	except:
+		logger.info('No contract')
+		return []
 	if not Web3.is_address(contract_addr):
 		logger.error("Invalid contract address: %s", contract_addr)
-		return JsonResponse({'status': 'error', 'message': 'Invalid contract address', 'data': None}, status=400)
+		return []
 	logger.info('Contract address: %s', contract_addr)
 	# ABI del contrato (exportada al compilar el contrato en Remix/Hardhat/Truffle)
 	contract = web3.eth.contract(address=contract_addr, abi=abi)
 	logger.info('Contract: %s', contract)
-	results = contract.functions.get_Tournament().call()
+	try:
+		results = contract.functions.get_Tournament().call()
+	except:
+		return []
 	return results
 
 @require_post
@@ -103,7 +115,7 @@ def make_transaction(request):
 	try:
 		try:
 			web3 = Web3(Web3.HTTPProvider(settings.GANACHE_URL))
-			logger.info('Connected to the blockchain')
+			logger.info('Connected to the blockchain 2')
 		except:
 			return JsonResponse({'status': 'error', 'message': 'Error connecting to the blockchain', 'data': None}, status=500)
 		account = user.ethereum_address
@@ -130,7 +142,7 @@ def get_results_from_blockchain(request):
 	tournament_id = data.get("tournament_id")
 #	try:
 	tournament = Tournaments.objects.get(id=tournament_id)
-	get_results(tournament.hash)
+	results = get_results(tournament.hash)
 	
 	my_data = json.dumps({
 		'first_place': results[0],

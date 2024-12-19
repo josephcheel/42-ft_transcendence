@@ -26,6 +26,8 @@ from tournamentsapp.views.list_tournaments import list_tournaments, list_tournam
 from tournamentsapp.views.list_matches import list_matches, list_matches_by_tournament_id, list_not_played_matches
 from tournamentsapp.views.list_invitations import list_invitations
 from tournamentsapp.views.edit_tournament import edit_tournament
+from tournamentsapp.views.get_next_match import get_next_match
+from tournamentsapp.views.disconnect_user import disconnect_user
 
 
 urlpatterns = [
@@ -46,5 +48,7 @@ urlpatterns = [
     path('list_matches_by_tournament_id/<str:tournament_id>/',
          list_matches_by_tournament_id, name='list_matches_by_tournament_id'),
     path('list_invitations/<str:username>/', list_invitations, name = 'list_invitations'),
+    path('get_next_match/<str:username>/', get_next_match, name = 'get_next_match'),
+    path('disconnect_user', disconnect_user, name = 'disconnect_user'),
 
 ]
