@@ -1,5 +1,5 @@
 <!--HEADER-->
-<h1 align="center"> Transcendence | 
+<h1 align="center"> ft_transcendence | 
  <picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://cdn.simpleicons.org/42/white">
   <img alt="42" width=40 align="center" src="https://cdn.simpleicons.org/42/Black">
