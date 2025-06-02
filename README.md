@@ -13,9 +13,6 @@
 
 https://github.com/user-attachments/assets/63c137d9-7b9b-4e65-b5f0-1edf1cb4a676
 
-https://github.com/user-attachments/assets/4fe92a4b-ea2d-4edc-88d7-96c32ce3cb34
-
-
 
 ## Table of Contents
 - [Introduction](#introduction)
