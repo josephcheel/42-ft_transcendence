@@ -10,3 +10,19 @@
 <!--FINISH HEADER-->
 
 > A web application focused on replicating the classic Pong game. It includes features like real-time multiplayer gameplay, tournaments, and user management for a competitive and engaging experience.
+
+
+## Table of Contents
+- [Introduction](#introduction)
+- [Features](#features) <!-- Optional, but helpful -->
+- [Installation](#installation)
+- [Usage](#usage)
+- [Configuration](#configuration) <!-- Optional -->
+- [Examples](#examples) <!-- Optional -->
+
+## Introduction
+## Features
+## Installation
+## Usage
+## Configuration
+## Examples
