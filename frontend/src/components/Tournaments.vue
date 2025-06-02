@@ -79,14 +79,14 @@
 								</button>
 							</div>
 
-									</div>
+									<!-- </div> -->
 								</div>
 								<div v-else class="list-group-item d-flex justify-content-center align-items-center text-center text-muted" style="padding: 40px;">
 									{{ $t('tournaments.no_invitations')}}
 								</div>
 							</div>
-						</section>
-					</div>
+					</section>
+				</div>
 			</div>
 		</div>
 </template>
