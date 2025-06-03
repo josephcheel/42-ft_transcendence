@@ -28,7 +28,23 @@ https://github.com/user-attachments/assets/63c137d9-7b9b-4e65-b5f0-1edf1cb4a676
 
 ## Introduction
 ## Features
+
+- **Backend** powered by [Django](https://www.djangoproject.com/)
+- **Frontend** built with [Vue.js](https://vuejs.org/) and styled using [Bootstrap](https://getbootstrap.com/)
+- **Data storage** using [PostgreSQL](https://www.postgresql.org/) database
+- **Blockchain integration** for secure and transparent tournament results
+- **Real-time gameplay** with WebSockets for remote players
+- **Tournaments** and **local match** support for competitive and casual play
+- **Friends system** to connect and play with others
+- **User & game statistics dashboards** for insightful analytics
+- **Log management** via the ELK Stack (Elasticsearch, Logstash, Kibana)
+- **Monitoring & alerting** with [Prometheus](https://prometheus.io/) and [Grafana](https://grafana.com/)
+- **Microservices architecture** with RESTful APIs
+- **Responsive design** for seamless use across devices
+- **Multilingual support** for a global user base
+
 ## Installation
+
 ## Usage
 ## Configuration
 
