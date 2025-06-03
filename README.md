@@ -21,7 +21,7 @@ https://github.com/user-attachments/assets/63c137d9-7b9b-4e65-b5f0-1edf1cb4a676
 
 - [Introduction](#introduction)
 - [Features](#features)
-- [Installation](#installation)
+- [Installation](#installation-and-configuration)
 - [Usage](#usage)
 - [Configuration](#configuration) 
 - [Gallery](#gallery)
@@ -43,10 +43,49 @@ https://github.com/user-attachments/assets/63c137d9-7b9b-4e65-b5f0-1edf1cb4a676
 - **Responsive design** for seamless use across devices
 - **Multilingual support** for a global user base
 
-## Installation
+## Installation and Configuration
+### 📦 Prerequisites for Installation
+
+Before installing and running the project, make sure the following are available on your system:
+
+- **Docker**  
+- **Docker Compose**
+- **Make** (for running setup commands)
+- **.env** file with the required environment variables
+
+### 1. Copy the **env_sample** as **.env** and change whatever you consider
+
+### 2. (OPTIONAL) Set a variable if you want to be availeable for your network, if not set defaults to localhost
+```bash
+export IP_ADDR="{YOUR_IP}"
+```
+
+
+### 3. (OPTIONAL) You can also chage the SSL_CERT_FILE and SSL_CERT_KEY in the .env to add your own certificates paths, if you don't specify a SSL_CERT_FILE and SSL_CERT_KEY by default will generate a selfsigned.crt and selfsigned.key  
+```
+SSL_CERT_FILE="{YOUR_FILE_CRT_PATH}"
+SSL_CERT_KEY="{YOUR_FILE_KEY_PATH}"
+```
+
+### 4. Execute
+```bash
+make
+```
 
 ## Usage
-## Configuration
+> [!NOTE]
+> If you've done the second step of the [Installation and Configuration section](#installation-and-configuration) you'll use the first option
+if you set your own IP_ADDR environment variable then access via:
+```
+https://{YOUR_IP}:8000 
+https://{YOUR_IP}:4000
+```
+
+if you have not set IP_ADDR then use:
+```
+https://localhost:8000 
+https://localhost:4000
+```
 
 ## Gallery
 <div align="center">
