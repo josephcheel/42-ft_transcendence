@@ -19,13 +19,15 @@ https://github.com/user-attachments/assets/63c137d9-7b9b-4e65-b5f0-1edf1cb4a676
 
 ## Table of Contents
 
+<!--
 - [Introduction](#introduction)
+-->
+
 - [Features](#features)
 - [Installation](#installation-and-configuration)
 - [Usage](#usage)
 - [Gallery](#gallery)
 
-## Introduction
 ## Features
 
 - **Backend** powered by [Django](https://www.djangoproject.com/)
